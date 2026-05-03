@@ -1,0 +1,24 @@
+<div class="page-header"><h1>Containers</h1><p class="subtitle">Docker workloads & resource usage</p></div>
+<div class="grid">
+  <div *ngFor="let c of containers()" class="card container-card">
+    <div class="container-header">
+      <div class="container-title">
+        <span class="badge" [class]="statusClass(c.status)"><span class="status-dot" [class.online]="c.status === 'running'" [class.offline]="c.status === 'exited'"></span>{{c.status}}</span>
+        <span class="container-name">{{c.name}}</span>
+      </div>
+      <div class="container-meta">
+        <span class="image">{{c.image}}</span>
+        <span *ngIf="c.health" class="badge" [class]="healthClass(c.health)">{{c.health}}</span>
+      </div>
+    </div>
+    <div class="container-stats">
+      <div class="stat-row"><span class="stat-label">CPU</span><div class="stat-bar"><div class="stat-fill" [style.width.%]="c.cpuPercent"></div></div><span class="stat-value">{{c.cpuPercent}}%</span></div>
+      <div class="stat-row"><span class="stat-label">RAM</span><div class="stat-bar"><div class="stat-fill" [style.width.%]="memPercent(c)"></div></div><span class="stat-value">{{c.memoryBytes | bytes}}/{{c.memoryLimit | bytes}} ({{memPercent(c)}}%)</span></div>
+    </div>
+    <div class="container-footer">
+      <span *ngIf="c.ports.length">Ports: <span *ngFor="let p of c.ports; let last = last">{{p.host}}:{{p.container}}{{last ? '' : ', '}}</span></span>
+      <span *ngIf="c.restarts > 0" [class.high]="c.restarts > 2">Restarts: {{c.restarts}}</span>
+      <span>{{c.startedAt | relativeTime}}</span>
+    </div>
+  </div>
+</div>

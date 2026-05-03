@@ -1,0 +1,47 @@
+<div class="page-header"><h1>Kubernetes</h1><p class="subtitle">Cluster workloads & node resources</p></div>
+<div class="tabs">
+  <button class="btn" [class.btn--active]="activeTab() === 'pods'" (click)="setTab('pods')">Pods ({{pods().length}})</button>
+  <button class="btn" [class.btn--active]="activeTab() === 'nodes'" (click)="setTab('nodes')">Nodes ({{nodes().length}})</button>
+</div>
+<div *ngIf="activeTab() === 'pods'">
+  <div class="card">
+    <table class="table">
+      <thead><tr><th>Status</th><th>Name</th><th>Namespace</th><th>Ready</th><th>Restarts</th><th>Age</th><th>Node</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let pod of pods()">
+          <td><span class="badge" [class]="statusClass(pod.status)"><span class="status-dot" [class.online]="pod.status === 'Running'" [class.warning]="pod.status === 'Pending'" [class.offline]="pod.status === 'Failed'"></span>{{pod.status}}</span></td>
+          <td class="pod-name">{{pod.name}}</td>
+          <td>{{pod.namespace}}</td>
+          <td>{{pod.ready}}/{{pod.containers}}</td>
+          <td [class.high]="pod.restarts > 2">{{pod.restarts}}</td>
+          <td>{{pod.ageSeconds | duration}}</td>
+          <td>{{pod.node}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div *ngIf="activeTab() === 'nodes'">
+  <div class="grid">
+    <div *ngFor="let node of nodes()" class="card node-card">
+      <div class="node-header">
+        <span class="node-name">{{node.name}}</span>
+        <span class="badge" [class]="nodeStatusClass(node.status)"><span class="status-dot" [class.online]="node.status === 'Ready'" [class.offline]="node.status !== 'Ready'"></span>{{node.status}}</span>
+      </div>
+      <div *ngIf="node.osImage" class="node-meta">{{node.osImage}} · {{node.kernelVersion}}</div>
+      <div class="node-stats">
+        <div class="stat-row">
+          <span class="stat-label">CPU</span>
+          <div class="stat-bar"><div class="stat-fill" [style.width.%]="cpuPercent(node)"></div></div>
+          <span class="stat-value">{{node.cpuCores.used}}/{{node.cpuCores.total}} cores ({{cpuPercent(node)}}%)</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">RAM</span>
+          <div class="stat-bar"><div class="stat-fill" [style.width.%]="memPercent(node)"></div></div>
+          <span class="stat-value">{{node.memoryBytes.used | bytes}}/{{node.memoryBytes.total | bytes}} ({{memPercent(node)}}%)</span>
+        </div>
+      </div>
+      <div class="node-footer"><span>Pods: {{node.pods}}/{{node.podCapacity}}</span><span>Age: {{node.ageSeconds | duration}}</span></div>
+    </div>
+  </div>
+</div>

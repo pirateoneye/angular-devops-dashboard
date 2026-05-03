@@ -1,0 +1,33 @@
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <p class="subtitle">System overview & real-time metrics</p>
+</div>
+<div class="summary-row">
+  <div class="card summary-card"><div class="summary-label">Pipelines</div><div class="summary-value">{{totalPipelines()}}</div></div>
+  <div class="card summary-card"><div class="summary-label">Success Rate</div><div class="summary-value">{{successRate()}}%</div></div>
+  <div class="card summary-card"><div class="summary-label">Active Alerts</div><div class="summary-value" [class.alert]="activeAlerts() > 0">{{activeAlerts()}}</div></div>
+  <div class="card summary-card"><div class="summary-label">Containers</div><div class="summary-value">{{runningContainers()}}</div></div>
+</div>
+<div class="card metrics-card">
+  <h2>Live Metrics</h2>
+  <div class="metrics-grid">
+    <div *ngFor="let m of metrics()" class="metric">
+      <div class="metric-header"><span class="metric-label">{{m.label}}</span><span class="metric-value">{{m.value | number:'1.0-1'}}{{m.unit}}</span></div>
+      <div class="metric-bar"><div class="metric-fill" [style.width.%]="(m.value / m.max) * 100" [style.background]="m.color"></div></div>
+    </div>
+  </div>
+</div>
+<div class="grid env-grid">
+  <div *ngFor="let env of environments()" class="card env-card">
+    <div class="env-header">
+      <span class="env-name">{{env.name}}</span>
+      <span class="badge" [class]="statusClass(env.status)"><span class="status-dot" [class.online]="env.status === 'healthy'" [class.warning]="env.status === 'degraded'"></span>{{env.status}}</span>
+    </div>
+    <div class="env-meta"><span>{{env.region}}</span><span>{{env.version}}</span></div>
+    <div class="env-stats">
+      <div class="env-stat"><span class="env-stat-label">Uptime</span><span class="env-stat-value">{{env.uptime}}%</span></div>
+      <div class="env-stat"><span class="env-stat-label">Error Rate</span><span class="env-stat-value" [class.high]="env.errorRate > 1">{{env.errorRate}}%</span></div>
+      <div class="env-stat"><span class="env-stat-label">Last Deploy</span><span class="env-stat-value">{{env.lastDeploy | relativeTime}}</span></div>
+    </div>
+  </div>
+</div>

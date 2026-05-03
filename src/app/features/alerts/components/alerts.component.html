@@ -1,0 +1,24 @@
+<div class="page-header"><h1>Alerts</h1><p class="subtitle">{{unacknowledgedCount()}} unacknowledged alerts</p></div>
+<div class="filters">
+  <button *ngFor="let s of severities()" class="btn" [class.btn--active]="filterSeverity() === s" (click)="setFilter(s)">{{severityIcon(s)}} {{s | titlecase}}</button>
+  <button class="btn" (click)="setFilter('')">All</button>
+</div>
+<div class="alerts">
+  <div *ngFor="let alert of filteredAlerts()" class="card alert-card" [class.alert-card--acknowledged]="alert.acknowledged">
+    <div class="alert-header">
+      <div class="alert-title">
+        <span class="severity-icon">{{severityIcon(alert.severity)}}</span>
+        <span class="alert-text">{{alert.title}}</span>
+        <span class="badge" [class]="severityClass(alert.severity)">{{alert.severity}}</span>
+      </div>
+      <div class="alert-meta"><span>{{alert.service}}</span><span>{{alert.timestamp | relativeTime}}</span></div>
+    </div>
+    <div class="alert-body">{{alert.message}}</div>
+    <div class="alert-actions">
+      <button *ngIf="!alert.acknowledged" class="btn btn--primary" (click)="acknowledge(alert.id)">Acknowledge</button>
+      <span *ngIf="alert.acknowledged" class="ack-badge">Acknowledged by {{alert.acknowledgedBy}} · {{alert.acknowledgedAt ? (alert.acknowledgedAt | relativeTime) : ''}}</span>
+      <a *ngIf="alert.runbookUrl" [href]="alert.runbookUrl" target="_blank" class="btn">Runbook</a>
+    </div>
+  </div>
+  <div *ngIf="filteredAlerts().length === 0" class="empty">No alerts match current filter.</div>
+</div>

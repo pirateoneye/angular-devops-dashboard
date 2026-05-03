@@ -1,0 +1,13 @@
+.toast-container {
+  position: fixed; top: 20px; right: 20px; z-index: 1000;
+  display: flex; flex-direction: column; gap: 8px;
+  .toast {
+    padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    animation: slideIn 0.3s ease;
+    &.success { background: rgba(35,134,54,0.9); color: white; }
+    &.error   { background: rgba(218,54,51,0.9); color: white; }
+    &.warning { background: rgba(210,153,34,0.9); color: #0d1117; }
+    &.info    { background: rgba(31,111,235,0.9); color: white; }
+  }
+}
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }

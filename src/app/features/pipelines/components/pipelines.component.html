@@ -1,0 +1,25 @@
+<div class="page-header"><h1>Pipelines</h1><p class="subtitle">CI/CD status & history</p></div>
+<div class="filters">
+  <button class="btn" [class.btn--active]="filter() === ''" (click)="setFilter('')">All</button>
+  <button class="btn" [class.btn--active]="filter() === 'success'" (click)="setFilter('success')">Success</button>
+  <button class="btn" [class.btn--active]="filter() === 'failed'" (click)="setFilter('failed')">Failed</button>
+  <button class="btn" [class.btn--active]="filter() === 'running'" (click)="setFilter('running')">Running</button>
+</div>
+<div class="pipeline-list">
+  <div *ngFor="let p of filtered()" class="card pipeline-card">
+    <div class="pipeline-header">
+      <div class="pipeline-title">
+        <span class="badge" [class]="statusClass(p.status)"><span class="status-dot" [class.online]="p.status === 'success'" [class.offline]="p.status === 'failed'" [class.pending]="p.status === 'running'"></span>{{p.status}}</span>
+        <span class="pipeline-name">{{p.name}}</span>
+      </div>
+      <div class="pipeline-meta">
+        <span>{{p.branch}}</span><span class="commit">{{p.commit}}</span><span>{{p.duration | duration}}</span><span>{{p.startedAt | relativeTime}}</span>
+      </div>
+    </div>
+    <div class="pipeline-stages">
+      <div *ngFor="let s of p.stages" class="stage" [class]="stageClass(s)" [style.width.%]="stageWidth(s, p.duration)">
+        <span class="stage-name">{{s.name}}</span><span class="stage-dur">{{s.duration | duration}}</span>
+      </div>
+    </div>
+  </div>
+</div>

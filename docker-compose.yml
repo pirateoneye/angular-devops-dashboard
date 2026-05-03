@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  devops-dashboard:
+    build: .
+    container_name: devops-dashboard
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    networks:
+      - devops-net
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  devops-net:
+    driver: bridge

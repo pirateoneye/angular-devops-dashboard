@@ -1,0 +1,53 @@
+<div class="page-header">
+  <h1>Docker Containers</h1>
+  <p class="subtitle">Container runtime status & resource usage</p>
+</div>
+
+<div *ngIf="loading" class="loading">Loading containers...</div>
+
+<div *ngIf="!loading" class="containers">
+  <div class="grid cols-3">
+    <div *ngFor="let c of containers" class="card container-card">
+      <div class="container-header">
+        <div class="container-title">
+          <span class="badge" [class]="statusClass(c.status)">
+            <span class="status-dot" [class]="c.status === 'running' ? 'online' : c.status === 'restarting' ? 'warning' : 'offline'"></span>
+            {{c.status}}
+          </span>
+          <span class="container-name">{{c.name}}</span>
+        </div>
+        <span *ngIf="c.health" class="badge" [class]="c.health === 'healthy' ? 'success' : c.health === 'unhealthy' ? 'danger' : 'warning'">
+          {{c.health}}
+        </span>
+      </div>
+
+      <div class="container-image">{{c.image}}</div>
+
+      <div *ngIf="c.ports.length" class="container-ports">
+        <span *ngFor="let port of c.ports" class="port-tag">{{port}}</span>
+      </div>
+
+      <div class="container-resources">
+        <div class="resource">
+          <span class="resource-label">CPU</span>
+          <div class="resource-bar">
+            <div class="resource-fill" [style.width.%]="c.cpu"></div>
+          </div>
+          <span class="resource-value">{{c.cpu}}%</span>
+        </div>
+        <div class="resource">
+          <span class="resource-label">MEM</span>
+          <div class="resource-bar">
+            <div class="resource-fill" [style.width.%]="memPercent(c)"></div>
+          </div>
+          <span class="resource-value">{{c.memory}}/{{c.memoryLimit}}MB</span>
+        </div>
+      </div>
+
+      <div class="container-footer">
+        <span>⏱ {{c.uptime}}</span>
+        <span class="container-id">{{c.id}}</span>
+      </div>
+    </div>
+  </div>
+</div>

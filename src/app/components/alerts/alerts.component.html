@@ -1,0 +1,58 @@
+<div class="page-header">
+  <h1>Alerts</h1>
+  <p class="subtitle">{{unacknowledgedCount}} unacknowledged alerts</p>
+</div>
+
+<div class="filters">
+  <button
+    *ngFor="let s of severities"
+    class="btn"
+    [class.active]="filterSeverity === s"
+    [class]="filterSeverity === s ? severityClass(s) : ''"
+    (click)="filterSeverity = filterSeverity === s ? '' : s"
+  >
+    {{severityIcon(s)}} {{s | titlecase}}
+  </button>
+  <button class="btn" (click)="filterSeverity = ''">All</button>
+</div>
+
+<div *ngIf="loading" class="loading">Loading alerts...</div>
+
+<div *ngIf="!loading" class="alerts">
+  <div
+    *ngFor="let alert of filteredAlerts"
+    class="card alert-card"
+    [class.acknowledged]="alert.acknowledged"
+  >
+    <div class="alert-header">
+      <div class="alert-title">
+        <span class="severity-icon">{{severityIcon(alert.severity)}}</span>
+        <span class="alert-text">{{alert.title}}</span>
+        <span class="badge" [class]="severityClass(alert.severity)">{{alert.severity}}</span>
+      </div>
+      <div class="alert-meta">
+        <span>{{alert.service}}</span>
+        <span>{{alert.timestamp | date:'short'}}</span>
+      </div>
+    </div>
+
+    <div class="alert-body">
+      {{alert.message}}
+    </div>
+
+    <div class="alert-actions">
+      <button
+        *ngIf="!alert.acknowledged"
+        class="btn primary"
+        (click)="acknowledge(alert)"
+      >
+        ✓ Acknowledge
+      </button>
+      <span *ngIf="alert.acknowledged" class="ack-badge">✓ Acknowledged</span>
+    </div>
+  </div>
+
+  <div *ngIf="filteredAlerts.length === 0" class="empty">
+    No alerts match current filter.
+  </div>
+</div>

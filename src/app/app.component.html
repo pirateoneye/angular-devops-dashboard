@@ -1,0 +1,31 @@
+<header class="app-header">
+  <div class="container header-content">
+    <div class="brand">
+      <span class="brand-icon">◈</span>
+      <span class="brand-text">DevOps Dashboard</span>
+    </div>
+    <nav class="main-nav">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        class="nav-link"
+      >
+        <span class="nav-icon">{{item.icon}}</span>
+        <span class="nav-label">{{item.label}}</span>
+      </a>
+    </nav>
+    <div class="header-actions">
+      <span class="status-indicator">
+        <span class="status-dot online"></span>
+        Connected
+      </span>
+    </div>
+  </div>
+</header>
+
+<main class="app-main">
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+</main>

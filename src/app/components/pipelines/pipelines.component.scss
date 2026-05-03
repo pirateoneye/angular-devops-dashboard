@@ -1,0 +1,83 @@
+.page-header {
+  margin-bottom: 24px;
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #8b949e; font-size: 14px; }
+}
+
+.pipeline-card {
+  margin-bottom: 12px;
+}
+
+.pipeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 4px 0;
+
+  .pipeline-main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+
+    .pipe-name { font-weight: 600; font-size: 15px; }
+    .pipe-meta { font-size: 13px; color: #8b949e; font-family: 'SF Mono', monospace; }
+  }
+
+  .pipe-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #8b949e;
+    font-size: 13px;
+
+    .expand-icon { font-size: 10px; width: 20px; text-align: center; }
+  }
+}
+
+.pipeline-stages {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #30363d;
+
+  .stage {
+    display: grid;
+    grid-template-columns: 24px 1fr 120px;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(#30363d, 0.3);
+
+    .stage-info {
+      display: flex;
+      justify-content: space-between;
+      .stage-name { font-size: 13px; font-weight: 500; }
+      .stage-duration { font-size: 12px; color: #8b949e; font-family: 'SF Mono', monospace; }
+    }
+
+    .stage-bar {
+      height: 4px;
+      background: #30363d;
+      border-radius: 2px;
+      overflow: hidden;
+
+      .stage-progress {
+        height: 100%;
+        width: 100%;
+        &.success { background: #238636; }
+        &.danger { background: #da3633; }
+        &.info { background: #1f6feb; animation: progress-pulse 1.5s infinite; }
+        &.neutral { background: #8b949e; opacity: 0.4; }
+        &.warning { background: #d29922; opacity: 0.4; }
+      }
+    }
+  }
+}
+
+@keyframes progress-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loading { text-align: center; padding: 60px; color: #8b949e; }

@@ -6,7 +6,8 @@
     "start": "npx serve -s /opt/app-root/src/dist/merchantservices.web.tools -l 8080",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -25,15 +26,8 @@
     "bootstrap": "^5.3.3",
     "crypto-js": "^4.2.0",
     "jsrsasign": "^11.1.0",
-    "magen-lib": "file:./magen-lib",
-    "net": "^1.0.2",
-    "ng-angular-popup": "^0.6.2",
     "ngx-infinite-scroll": "^17.0.1",
-    "ngx-toastr": "^19.0.0",
-    "primeng": "^17.18.3",
     "rxjs": "~7.8.0",
-    "sockjs-client": "^1.6.1",
-    "stompjs": "^2.3.3",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },
@@ -42,6 +36,12 @@
     "@types/crypto-js": "^4.2.2",
     "@types/jasmine": "~5.1.0",
     "@types/jsrsasign": "^10.5.15",
+    "@angular-eslint/builder": "^17.5.0",
+    "@angular-eslint/eslint-plugin": "^17.5.0",
+    "@angular-eslint/eslint-plugin-template": "^17.5.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
+    "eslint": "^8.57.0",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

@@ -1,0 +1,10 @@
+.cron-input { display:flex; gap:8px; margin-bottom:10px; }
+.cron-input .tool-input-mono { flex:1; }
+.cron-human { margin-top:10px; font-family:'Open Sans',sans-serif; font-size:13px; color:#144e83; font-weight:600; }
+.cron-next { margin-top:6px; font-size:13px; color:#495057; }
+.cron-next strong { color:#009649; }
+.cron-table { width:100%; margin-top:10px; border-collapse:collapse; font-size:12px; }
+.cron-table th, .cron-table td { border-bottom:1px solid #e9ecef; padding:4px 8px; text-align:left; }
+.cron-table th { color:#144e83; }
+.cron-label { font-weight:600; color:#144e83; }
+.rt-mono { font-family:monospace; }

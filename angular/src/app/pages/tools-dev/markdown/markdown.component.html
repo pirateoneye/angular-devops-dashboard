@@ -1,0 +1,17 @@
+<div class="container pt-2 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Markdown Preview</h2>
+    <h4 class="tool-sub">Parser markdown minimal (heading, bold, italic, list, code, link, quote, hr).</h4>
+    <div class="tool-divider"></div>
+    <div class="jf-grid">
+      <div>
+        <label class="tool-label">Markdown</label>
+        <textarea class="tool-area" rows="14" [(ngModel)]="input" (ngModelChange)="render()"></textarea>
+      </div>
+      <div>
+        <label class="tool-label">Preview</label>
+        <div class="md-preview" [innerHTML]="html"></div>
+      </div>
+    </div>
+  </mat-card>
+</div>

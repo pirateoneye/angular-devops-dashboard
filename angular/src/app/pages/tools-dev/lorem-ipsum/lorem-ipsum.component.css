@@ -1,0 +1,3 @@
+.li-options { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:12px; }
+.li-field { color:#144e83; font-family:'Open Sans',sans-serif; font-weight:600; font-size:12px; display:flex; align-items:center; gap:6px; }
+.li-num { width:64px; border:1px solid #ddd; border-radius:6px; padding:4px; }

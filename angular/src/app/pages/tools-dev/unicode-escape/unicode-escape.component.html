@@ -1,0 +1,22 @@
+<div class="container pt-2 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Unicode Escape Converter</h2>
+    <h4 class="tool-sub">Encode teks ke \uXXXX / \u&#123;XXXXX&#125; dan sebaliknya.</h4>
+    <div class="tool-divider"></div>
+    <div class="jf-grid">
+      <div>
+        <label class="tool-label">Input</label>
+        <textarea class="tool-area" rows="6" [(ngModel)]="input" placeholder="Halo dunia / \u0048\u0061\u006c\u006f"></textarea>
+      </div>
+      <div>
+        <label class="tool-label">Output</label>
+        <textarea class="tool-area" rows="6" [value]="output" readonly></textarea>
+      </div>
+    </div>
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="encode()">Encode (Text &rarr; \u)</button>
+      <button class="btn-primary" (click)="decode()">Decode (\u &rarr; Text)</button>
+      <button class="btn-secondary" (click)="copy()" [disabled]="!output">Copy</button>
+    </div>
+  </mat-card>
+</div>

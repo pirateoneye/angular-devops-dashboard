@@ -1,0 +1,5 @@
+.ib-file { font-size:13px; }
+.ib-preview { margin-top:12px; display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+.ib-img { max-width:100%; max-height:300px; border:1px solid #e9ecef; border-radius:8px; }
+.ib-meta { display:flex; gap:14px; font-size:12px; color:#495057; font-family:monospace; }
+.ib-dl { text-decoration:none; display:inline-flex; align-items:center; }

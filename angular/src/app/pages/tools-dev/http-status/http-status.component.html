@@ -1,0 +1,18 @@
+<div class="container pt-2 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">HTTP Status Reference</h2>
+    <h4 class="tool-sub">Daftar kode status HTTP + pencarian.</h4>
+    <div class="tool-divider"></div>
+    <input class="tool-input-mono" [(ngModel)]="query" placeholder="Cari kode / nama / deskripsi..." />
+    <table class="hs-table">
+      <thead><tr><th>Code</th><th>Name</th><th>Desc</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let s of filtered()">
+          <td><span [class]="catClass(s.cat)" class="hs-badge">{{ s.code }}</span></td>
+          <td class="hs-name">{{ s.text }}</td>
+          <td class="hs-desc">{{ s.desc }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </mat-card>
+</div>

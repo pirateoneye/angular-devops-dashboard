@@ -1,0 +1,18 @@
+<div class="container pt-2 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Cron Explainer</h2>
+    <h4 class="tool-sub">Jelaskan ekspresi cron (5 field) + perkiraan next run.</h4>
+    <div class="tool-divider"></div>
+    <div class="cron-input">
+      <input class="tool-input-mono" [(ngModel)]="expr" (ngModelChange)="explain()" placeholder="*/5 * * * *" />
+      <button class="btn-primary" (click)="explain()">Explain</button>
+    </div>
+    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    <div *ngIf="human && !error" class="cron-human">{{ human }}</div>
+    <div *ngIf="nextRun && !error" class="cron-next">Next run: <strong>{{ nextRun }}</strong></div>
+    <table class="cron-table" *ngIf="detail.length && !error">
+      <thead><tr><th>Field</th><th>Nilai</th></tr></thead>
+      <tbody><tr *ngFor="let d of detail"><td class="cron-label">{{ d.label }}</td><td class="rt-mono">{{ d.desc }}</td></tr></tbody>
+    </table>
+  </mat-card>
+</div>

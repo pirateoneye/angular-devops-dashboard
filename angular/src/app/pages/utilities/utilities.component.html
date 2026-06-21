@@ -1,0 +1,22 @@
+<div class="container util-wrap">
+  <aside class="util-tabs">
+    <button *ngFor="let t of tools" class="util-tab" [class.active]="active === t.slug" (click)="select(t.slug)">
+      <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
+      <span>{{ t.label }}</span>
+    </button>
+  </aside>
+  <section class="util-content">
+    <ng-container [ngSwitch]="active">
+      <app-json-formatter *ngSwitchCase="'json-formatter'"></app-json-formatter>
+      <app-decoder *ngSwitchCase="'decoder'"></app-decoder>
+      <app-regex-tester *ngSwitchCase="'regex-tester'"></app-regex-tester>
+      <app-id-generator *ngSwitchCase="'id-generator'"></app-id-generator>
+      <app-hash-generator *ngSwitchCase="'hash-generator'"></app-hash-generator>
+      <app-password-generator *ngSwitchCase="'password-generator'"></app-password-generator>
+      <app-text-diff *ngSwitchCase="'text-diff'"></app-text-diff>
+      <app-color-converter *ngSwitchCase="'color-converter'"></app-color-converter>
+      <app-text-transforms *ngSwitchCase="'text-transforms'"></app-text-transforms>
+      <app-base-converter *ngSwitchCase="'base-converter'"></app-base-converter>
+    </ng-container>
+  </section>
+</div>

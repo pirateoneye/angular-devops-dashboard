@@ -1,0 +1,12 @@
+.util-wrap { display:flex; gap:12px; align-items:flex-start; padding-top:8px; padding-bottom:12px; }
+.util-tabs { display:flex; flex-direction:column; gap:4px; flex:0 0 140px; position:sticky; top:8px; }
+.util-tab { display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e9ecef; border-radius:8px; padding:7px 10px; cursor:pointer; font-family:'Open Sans',sans-serif; font-size:12px; font-weight:600; color:#495057; text-align:left; }
+.util-tab mat-icon { font-size:18px; width:18px; height:18px; color:#005caa; }
+.util-tab.active { background:#005caa; color:#fff; border-color:#005caa; }
+.util-tab.active mat-icon { color:#fff; }
+.util-content { flex:1; min-width:0; }
+@media (max-width:768px) {
+  .util-wrap { flex-direction:column; }
+  .util-tabs { flex-direction:row; flex-wrap:wrap; position:static; flex:1 1 auto; }
+  .util-tab { flex:0 0 auto; }
+}

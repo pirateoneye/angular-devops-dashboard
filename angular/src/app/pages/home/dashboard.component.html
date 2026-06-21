@@ -1,4 +1,4 @@
-<div class="container pt-3 pb-3">
+<div class="container pt-2 pb-3">
   <div class="dash-hero">
     <h1 class="dash-hero-title">MSV Tools</h1>
     <p class="dash-hero-sub">Pusat kontrol tools dev &amp; piket Merchant Services.</p>
@@ -7,7 +7,7 @@
   <ng-container *ngFor="let g of groups">
     <h2 class="dash-section-title">{{ g.label }}</h2>
     <div class="dash-grid">
-      <a *ngFor="let t of tilesFor(g.key)" class="dash-tile" [routerLink]="t.route">
+      <a *ngFor="let t of tilesFor(g.key)" class="dash-tile" [routerLink]="t.route" [queryParams]="t.queryParams || null">
         <mat-icon class="dash-tile-icon" aria-hidden="true">{{ t.icon }}</mat-icon>
         <div class="dash-tile-body">
           <div class="dash-tile-title">{{ t.label }}</div>

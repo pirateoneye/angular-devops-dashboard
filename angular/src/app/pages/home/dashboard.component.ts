@@ -10,6 +10,7 @@ interface ToolTile {
   icon: string;
   route: string;
   group: 'tools-dev' | 'utility' | 'piket';
+  queryParams?: { t: string };
 }
 
 @Component({
@@ -34,16 +35,7 @@ export class DashboardComponent {
     { label: 'Paimon Dupe', description: 'Cek duplikat Paimon', icon: 'content_copy', route: '/tools-dev/paimon-dupe', group: 'tools-dev' },
     { label: 'MSV Test', description: 'Sandbox komponen MSV', icon: 'science', route: '/tools-dev/msv-test', group: 'tools-dev' },
     { label: 'MSV Docs', description: 'Dokumentasi komponen MSV', icon: 'menu_book', route: '/tools-dev/msv-docs', group: 'tools-dev' },
-    { label: 'JSON Formatter', description: 'Format & validasi JSON', icon: 'data_object', route: '/tools-dev/json-formatter', group: 'utility' },
-    { label: 'Decoder', description: 'Base64 / URL / JWT decoder', icon: 'lock_open', route: '/tools-dev/decoder', group: 'utility' },
-    { label: 'Regex Tester', description: 'Uji regex + capture groups', icon: 'rule', route: '/tools-dev/regex-tester', group: 'utility' },
-    { label: 'ID Generator', description: 'UUID & timestamp generator', icon: 'fingerprint', route: '/tools-dev/id-generator', group: 'utility' },
-    { label: 'Hash Generator', description: 'MD5/SHA hash teks', icon: 'fingerprint', route: '/tools-dev/hash-generator', group: 'utility' },
-    { label: 'Password Generator', description: 'Password acak aman', icon: 'vpn_key', route: '/tools-dev/password-generator', group: 'utility' },
-    { label: 'Text Diff', description: 'Bandingkan dua teks', icon: 'compare_arrows', route: '/tools-dev/text-diff', group: 'utility' },
-    { label: 'Color Converter', description: 'HEX/RGB/HSL', icon: 'palette', route: '/tools-dev/color-converter', group: 'utility' },
-    { label: 'Text Transforms', description: 'Case/sort/escape/counts', icon: 'transform', route: '/tools-dev/text-transforms', group: 'utility' },
-    { label: 'Base Converter', description: 'Bin/Oct/Dec/Hex', icon: 'calculate', route: '/tools-dev/base-converter', group: 'utility' },
+    { label: 'Utilities', description: '10 tools: JSON, decoder, regex, UUID, hash, password, diff, color, transforms, base', icon: 'build', route: '/utilities', group: 'utility' },
     { label: 'List Keluhan', description: 'Daftar keluhan piket', icon: 'list_alt', route: '/piket/keluhan-list', group: 'piket' },
     { label: 'Fix Data User', description: 'Perbaiki data user', icon: 'edit', route: '/piket/fix-data-user', group: 'piket' },
     { label: 'Fix After Merge CIS', description: 'Perbaikan pasca merge CIS', icon: 'merge_type', route: '/piket/fix-after-merge-cis', group: 'piket' },

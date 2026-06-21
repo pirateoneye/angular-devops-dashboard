@@ -1,14 +1,4 @@
-.tool-card { border-radius:16px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-.tool-title { margin:0; color:#144e83; font-family:'Open Sans',sans-serif; font-weight:700; }
-.tool-sub { margin:4px 0 0; color:#495057; font-family:'Open Sans',sans-serif; font-weight:400; }
-.tool-divider { height:1px; background:#e9ecef; margin:14px 0; }
-.tool-label { display:block; color:#144e83; font-family:'Open Sans',sans-serif; font-weight:600; margin:14px 0 6px; }
-.tool-area { width:100%; font-family:monospace; font-size:13px; border:1px solid #ddd; border-radius:10px; padding:10px; resize:vertical; box-sizing:border-box; }
-.tt-stats { color:#495057; font-size:12px; margin-top:6px; }
-.tt-buttons { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
-.tt-btn { background:#fff; color:#005caa; border:1px solid #005caa; border-radius:18px; padding:6px 14px; font-size:13px; cursor:pointer; font-family:'Open Sans',sans-serif; }
+.tt-stats { color:#495057; font-size:11px; margin-top:4px; }
+.tt-buttons { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+.tt-btn { background:#fff; color:#005caa; border:1px solid #005caa; border-radius:16px; padding:4px 12px; font-size:12px; cursor:pointer; font-family:'Open Sans',sans-serif; }
 .tt-btn:hover { background:#f8f9fa; }
-.tool-actions { display:flex; gap:10px; margin-top:14px; }
-.btn-secondary { background:#fff; color:#005caa; border:1px solid #005caa; border-radius:24px; padding:10px 22px; font-weight:600; cursor:pointer; font-family:'Open Sans',sans-serif; }
-.btn-secondary:hover { background:#f8f9fa; }
-.btn-secondary:disabled { color:#cfcfcf; border-color:#cfcfcf; cursor:not-allowed; }

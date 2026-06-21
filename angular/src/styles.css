@@ -7,3 +7,23 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+
+/* ===== Shared, densified styles for tool pages (global) ===== */
+.tool-card { border-radius:12px; padding:14px; box-shadow:0 1px 4px rgba(0,0,0,.05); margin-bottom:10px; }
+.tool-title { margin:0; color:#144e83; font-family:'Open Sans',sans-serif; font-weight:700; font-size:16px; }
+.tool-sub { margin:2px 0 0; color:#495057; font-family:'Open Sans',sans-serif; font-weight:400; font-size:13px; }
+.tool-divider { height:1px; background:#e9ecef; margin:10px 0; }
+.tool-label { display:block; color:#144e83; font-family:'Open Sans',sans-serif; font-weight:600; margin-bottom:4px; font-size:12px; }
+.tool-area { width:100%; font-family:monospace; font-size:12px; border:1px solid #ddd; border-radius:8px; padding:8px; resize:vertical; box-sizing:border-box; }
+.tool-input-mono { width:100%; font-family:monospace; font-size:12px; border:1px solid #ddd; border-radius:8px; padding:8px; box-sizing:border-box; }
+.tool-actions { display:flex; gap:8px; align-items:center; margin-top:10px; flex-wrap:wrap; }
+.btn-primary { background:#005caa; color:#fff; border:none; border-radius:20px; padding:7px 16px; font-weight:600; cursor:pointer; font-family:'Open Sans',sans-serif; font-size:13px; }
+.btn-primary:hover { background:#144e83; }
+.btn-primary:disabled { background:#cfcfcf; cursor:not-allowed; }
+.btn-secondary { background:#fff; color:#005caa; border:1px solid #005caa; border-radius:20px; padding:7px 16px; font-weight:600; cursor:pointer; font-family:'Open Sans',sans-serif; font-size:13px; }
+.btn-secondary:hover { background:#f8f9fa; }
+.btn-secondary:disabled { color:#cfcfcf; border-color:#cfcfcf; cursor:not-allowed; }
+.icon-btn { background:transparent; border:none; cursor:pointer; color:#005caa; display:flex; align-items:center; padding:2px; }
+.icon-btn mat-icon { font-size:18px; width:18px; height:18px; }
+.tool-error { margin-top:8px; color:#cd1923; background:#ffd9d3; border-radius:8px; padding:8px 12px; font-family:monospace; font-size:12px; }
+.tool-stats { color:#495057; font-size:12px; }

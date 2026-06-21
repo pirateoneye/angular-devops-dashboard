@@ -1,21 +1,10 @@
-.tool-card { border-radius:16px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-.tool-title { margin:0; color:#144e83; font-family:'Open Sans',sans-serif; font-weight:700; }
-.tool-sub { margin:4px 0 0; color:#495057; font-family:'Open Sans',sans-serif; font-weight:400; }
-.tool-divider { height:1px; background:#e9ecef; margin:14px 0; }
-.tool-label { display:block; color:#144e83; font-family:'Open Sans',sans-serif; font-weight:600; margin-bottom:6px; }
-.tool-area { width:100%; font-family:monospace; font-size:13px; border:1px solid #ddd; border-radius:10px; padding:10px; resize:vertical; box-sizing:border-box; }
-.td-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.tool-actions { display:flex; gap:10px; align-items:center; margin-top:14px; }
-.btn-primary { background:#005caa; color:#fff; border:none; border-radius:24px; padding:10px 22px; font-weight:600; cursor:pointer; font-family:'Open Sans',sans-serif; }
-.btn-primary:hover { background:#144e83; }
-.btn-secondary { background:#fff; color:#005caa; border:1px solid #005caa; border-radius:24px; padding:10px 22px; font-weight:600; cursor:pointer; font-family:'Open Sans',sans-serif; }
-.btn-secondary:hover { background:#f8f9fa; }
-.td-stats { color:#495057; font-size:13px; margin-left:auto; font-family:monospace; }
-.td-result { margin-top:14px; border:1px solid #e9ecef; border-radius:10px; max-height:400px; overflow:auto; font-family:monospace; font-size:13px; }
-.td-line { display:flex; padding:2px 8px; white-space:pre-wrap; word-break:break-word; }
+.td-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.td-stats { color:#495057; font-size:12px; margin-left:auto; font-family:monospace; }
+.td-result { margin-top:10px; border:1px solid #e9ecef; border-radius:8px; max-height:380px; overflow:auto; font-family:monospace; font-size:12px; }
+.td-line { display:flex; padding:1px 6px; white-space:pre-wrap; word-break:break-word; }
 .td-line.add { background:#e6f9e6; }
 .td-line.del { background:#fdecea; }
-.td-sign { width:18px; flex:0 0 auto; color:#999; user-select:none; }
+.td-sign { width:16px; flex:0 0 auto; color:#999; user-select:none; }
 .td-text { white-space:pre-wrap; }
 .td-line.add .td-sign { color:#009649; }
 .td-line.del .td-sign { color:#cd1923; }

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { BatchList } from 'src/app/shared/model/interface/batchlist.interface';
+import { environment } from 'src/environments/environment';
 import { StatusAPI } from 'src/app/shared/model/enum/status-api.enum';
 import { DatePipe } from '@angular/common';
 import { NgZone } from '@angular/core';
@@ -68,19 +69,12 @@ export class BatchRunnerComponent implements OnInit {
   runBatch(id: number) {
     this.currentProcessing = id;
 
-    let url = 'https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/batch/runner/' + id;
+    const url = environment.hostBatchRunner + '/v1.0.0/batch/runner/' + id;
     // create body
     let body = {
       runBy: this.user
     };
 
-    let request = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    };
 
     this.httpClient.post(url, body).subscribe(
       response => {
@@ -120,7 +114,7 @@ export class BatchRunnerComponent implements OnInit {
   {
     this.ngZone.run(() => {
       // 10.43.6.180:55295/batch.runner
-      let url = 'https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/batch/list';
+      const url = environment.hostBatchRunner + '/v1.0.0/batch/list';
       let option : any = {observe : "response"};
       this.httpClient.get(url, option) .subscribe((response : any) => {
         if(response.body.error_schema.error_code != "MSV-200-001")

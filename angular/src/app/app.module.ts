@@ -1,4 +1,4 @@
-import { LOCALE_ID, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './module/material.module';
@@ -93,7 +93,6 @@ registerLocaleData(localeId);
     { provide: LOCALE_ID, useValue: 'id' },
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}
 

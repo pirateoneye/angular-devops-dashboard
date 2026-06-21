@@ -26,3 +26,16 @@
     font-family: 'Open Sans', sans-serif;
 }
 
+.login-btn {
+  background-color: #005caa;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 48px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.login-btn:hover { background-color: #144e83; }

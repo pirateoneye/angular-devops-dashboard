@@ -1,0 +1,44 @@
+<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Regex Tester</h2>
+    <h4 class="tool-sub">Uji ekspresi reguler dan lihat capture groups.</h4>
+    <div class="tool-divider"></div>
+
+    <div class="rt-row">
+      <div class="rt-pattern">
+        <label class="tool-label">Pattern</label>
+        <input class="tool-input-mono" [(ngModel)]="pattern" (ngModelChange)="run()" placeholder="\b(\w+)@(\w+)\.(\w+)\b" />
+      </div>
+      <div class="rt-flags">
+        <label class="tool-label">Flags</label>
+        <input class="tool-input-mono" [(ngModel)]="flags" (ngModelChange)="run()" placeholder="g" />
+      </div>
+    </div>
+
+    <label class="tool-label">Test string</label>
+    <textarea class="tool-area" rows="6" [(ngModel)]="testString" (ngModelChange)="run()" placeholder="Teks untuk diuji..."></textarea>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="run()">Run</button>
+      <span class="tool-stats" *ngIf="matches.length">{{ matches.length }} match</span>
+    </div>
+
+    <div class="tool-error" *ngIf="error">{{ error }}</div>
+
+    <div class="rt-highlight" *ngIf="!error && testString" [innerHTML]="highlighted"></div>
+
+    <table class="rt-table" *ngIf="matches.length && !error">
+      <thead>
+        <tr><th>#</th><th>Index</th><th>Match</th><th>Groups</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of matches; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ m.index }}</td>
+          <td class="rt-mono">{{ m.match }}</td>
+          <td class="rt-mono">{{ m.groups.join(' | ') }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </mat-card>
+</div>

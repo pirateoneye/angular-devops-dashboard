@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { Routes } from '@angular/router';
 import { BatchRunnerComponent } from './pages/tools-dev/batch-runner/batch-runner.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -68,8 +68,13 @@ const routes: Routes = [
     canActivate: [PiketGuard],
   },
   { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: 'tools-dev/batch-runner', pathMatch: 'full' },
-  { path: '**', redirectTo: 'tools-dev/batch-runner', pathMatch: 'full' },
+  { path: 'dashboard', loadComponent: () => import('./pages/home/dashboard.component').then(m => m.DashboardComponent) },
+  { path: 'tools-dev/json-formatter', loadComponent: () => import('./pages/tools-dev/json-formatter/json-formatter.component').then(m => m.JsonFormatterComponent) },
+  { path: 'tools-dev/decoder', loadComponent: () => import('./pages/tools-dev/decoder/decoder.component').then(m => m.DecoderComponent) },
+  { path: 'tools-dev/regex-tester', loadComponent: () => import('./pages/tools-dev/regex-tester/regex-tester.component').then(m => m.RegexTesterComponent) },
+  { path: 'tools-dev/id-generator', loadComponent: () => import('./pages/tools-dev/id-generator/id-generator.component').then(m => m.IdGeneratorComponent) },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
 ];
 
 @NgModule({

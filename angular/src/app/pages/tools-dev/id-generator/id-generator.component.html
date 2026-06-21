@@ -1,0 +1,64 @@
+<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">ID &amp; Timestamp Generator</h2>
+    <h4 class="tool-sub">Generate UUID v4 dan lihat timestamp saat ini.</h4>
+    <div class="tool-divider"></div>
+
+    <h3 class="tool-section">UUID v4</h3>
+    <div class="id-row">
+      <input class="tool-input-mono" [value]="uuid" readonly />
+      <button class="icon-btn" (click)="copy(uuid)" title="Copy"><mat-icon>file_copy</mat-icon></button>
+    </div>
+
+    <div class="tool-actions">
+      <label class="id-count-label">Jumlah:
+        <input type="number" class="id-count" [value]="uuidCount" (input)="uuidCount = +$any($event.target).value" min="1" max="50" />
+      </label>
+      <button class="btn-primary" (click)="generate()">Generate</button>
+      <button class="btn-secondary" (click)="copy(uuids.join('\n'))" *ngIf="uuids.length > 1">Copy all</button>
+    </div>
+
+    <div class="id-list" *ngIf="uuids.length > 1">
+      <div *ngFor="let u of uuids" class="id-list-item">
+        <span class="rt-mono">{{ u }}</span>
+        <button class="icon-btn small" (click)="copy(u)" title="Copy"><mat-icon>content_copy</mat-icon></button>
+      </div>
+    </div>
+
+    <h3 class="tool-section">Timestamp</h3>
+    <div class="ts-grid">
+      <div class="ts-item">
+        <label class="tool-label">Epoch (ms)</label>
+        <div class="id-row">
+          <input class="tool-input-mono" [value]="nowMs" readonly />
+          <button class="icon-btn" (click)="copy(nowMs)"><mat-icon>file_copy</mat-icon></button>
+        </div>
+      </div>
+      <div class="ts-item">
+        <label class="tool-label">Epoch (sec)</label>
+        <div class="id-row">
+          <input class="tool-input-mono" [value]="nowSec" readonly />
+          <button class="icon-btn" (click)="copy(nowSec)"><mat-icon>file_copy</mat-icon></button>
+        </div>
+      </div>
+      <div class="ts-item">
+        <label class="tool-label">ISO 8601 (UTC)</label>
+        <div class="id-row">
+          <input class="tool-input-mono" [value]="nowIso" readonly />
+          <button class="icon-btn" (click)="copy(nowIso)"><mat-icon>file_copy</mat-icon></button>
+        </div>
+      </div>
+      <div class="ts-item">
+        <label class="tool-label">Local</label>
+        <div class="id-row">
+          <input class="tool-input-mono" [value]="nowLocal" readonly />
+          <button class="icon-btn" (click)="copy(nowLocal)"><mat-icon>file_copy</mat-icon></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="refreshTime()">Refresh time</button>
+    </div>
+  </mat-card>
+</div>

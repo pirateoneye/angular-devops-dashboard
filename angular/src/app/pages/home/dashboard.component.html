@@ -1,0 +1,19 @@
+<div class="container pt-3 pb-3">
+  <div class="dash-hero">
+    <h1 class="dash-hero-title">MSV Tools</h1>
+    <p class="dash-hero-sub">Pusat kontrol tools dev &amp; piket Merchant Services.</p>
+  </div>
+
+  <ng-container *ngFor="let g of groups">
+    <h2 class="dash-section-title">{{ g.label }}</h2>
+    <div class="dash-grid">
+      <a *ngFor="let t of tilesFor(g.key)" class="dash-tile" [routerLink]="t.route">
+        <mat-icon class="dash-tile-icon" aria-hidden="true">{{ t.icon }}</mat-icon>
+        <div class="dash-tile-body">
+          <div class="dash-tile-title">{{ t.label }}</div>
+          <div class="dash-tile-desc">{{ t.description }}</div>
+        </div>
+      </a>
+    </div>
+  </ng-container>
+</div>

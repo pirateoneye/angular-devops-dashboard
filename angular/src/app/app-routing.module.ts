@@ -69,7 +69,7 @@ const routes: Routes = [
   },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', loadComponent: () => import('./pages/home/dashboard.component').then(m => m.DashboardComponent) },
-  { path: 'utilities', loadComponent: () => import('./pages/utilities/utilities.component').then(m => m.UtilitiesComponent) },
+  { path: 'utilities', loadComponent: () => import('./pages/toolbox/toolbox.component').then(m => m.ToolboxComponent) },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
 ];

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +14,7 @@ import { ColorConverterComponent } from '../tools-dev/color-converter/color-conv
 import { TextTransformsComponent } from '../tools-dev/text-transforms/text-transforms.component';
 import { BaseConverterComponent } from '../tools-dev/base-converter/base-converter.component';
 
-type ToolSlug =
+export type ToolSlug =
   | 'json-formatter' | 'decoder' | 'regex-tester' | 'id-generator'
   | 'hash-generator' | 'password-generator' | 'text-diff'
   | 'color-converter' | 'text-transforms' | 'base-converter';
@@ -22,7 +22,7 @@ type ToolSlug =
 interface ToolTab { slug: ToolSlug; label: string; icon: string; }
 
 @Component({
-  selector: 'app-utilities',
+  selector: 'app-toolbox',
   standalone: true,
   imports: [
     CommonModule, RouterModule, MatIconModule,
@@ -30,10 +30,13 @@ interface ToolTab { slug: ToolSlug; label: string; icon: string; }
     HashGeneratorComponent, PasswordGeneratorComponent, TextDiffComponent,
     ColorConverterComponent, TextTransformsComponent, BaseConverterComponent,
   ],
-  templateUrl: './utilities.component.html',
-  styleUrls: ['./utilities.component.css'],
+  templateUrl: './toolbox.component.html',
+  styleUrls: ['./toolbox.component.css'],
 })
-export class UtilitiesComponent implements OnInit {
+export class ToolboxComponent implements OnInit {
+  /** Default tab when used as an embedded component (no query param). */
+  @Input() initialTab: ToolSlug = 'json-formatter';
+
   active: ToolSlug = 'json-formatter';
   tools: ToolTab[] = [
     { slug: 'json-formatter', label: 'JSON', icon: 'data_object' },
@@ -51,20 +54,21 @@ export class UtilitiesComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
-    this.sync();
-    this.route.queryParamMap.subscribe(() => this.sync());
+    this.active = this.initialTab;
+    this.syncFromQuery();
+    this.route.queryParamMap.subscribe(() => this.syncFromQuery());
   }
 
-  private sync(): void {
+  private syncFromQuery(): void {
     const t = this.route.snapshot.queryParamMap.get('t') as ToolSlug | null;
     if (t && this.tools.some((x) => x.slug === t)) this.active = t;
   }
 
   select(slug: ToolSlug): void {
     this.active = slug;
-    this.router.navigate(['/utilities'], {
-      queryParams: { t: slug },
-      queryParamsHandling: 'merge',
-    });
+    // Only sync the URL when hosted on the /utilities route; embedded usage stays in-memory.
+    if (this.router.url.startsWith('/utilities')) {
+      this.router.navigate(['/utilities'], { queryParams: { t: slug }, queryParamsHandling: 'merge' });
+    }
   }
 }

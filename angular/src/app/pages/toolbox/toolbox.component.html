@@ -1,11 +1,11 @@
-<div class="container util-wrap">
-  <aside class="util-tabs">
-    <button *ngFor="let t of tools" class="util-tab" [class.active]="active === t.slug" (click)="select(t.slug)">
+<div class="container toolbox-wrap">
+  <aside class="toolbox-tabs">
+    <button *ngFor="let t of tools" class="toolbox-tab" [class.active]="active === t.slug" (click)="select(t.slug)">
       <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
       <span>{{ t.label }}</span>
     </button>
   </aside>
-  <section class="util-content">
+  <section class="toolbox-content">
     <ng-container [ngSwitch]="active">
       <app-json-formatter *ngSwitchCase="'json-formatter'"></app-json-formatter>
       <app-decoder *ngSwitchCase="'decoder'"></app-decoder>

@@ -12,6 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BatchRunnerComponent } from './pages/tools-dev/batch-runner/batch-runner.component';
 import { LoginComponent } from './pages/login/login.component';
 import { AppRoutingModule } from './app-routing.module';
+import { ToolboxComponent } from './pages/toolbox';
 import { MsvFormsModule } from './shared/components/msv-forms/msv-forms.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
@@ -73,6 +74,7 @@ registerLocaleData(localeId);
   ],
   imports: [
     AppRoutingModule,
+    ToolboxComponent,
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,

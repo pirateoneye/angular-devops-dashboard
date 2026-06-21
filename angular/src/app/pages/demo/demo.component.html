@@ -1,0 +1,12 @@
+<div class="container demo-head">
+  <h2 class="demo-title">Toolbox Demo &mdash; embedded global component</h2>
+  <p class="demo-text">
+    Seluruh toolbox di bawah ini di-render oleh satu tag:
+    <code>&lt;app-toolbox initialTab="color-converter"&gt;&lt;/app-toolbox&gt;</code>.
+    Tidak perlu import per-komponen &mdash; <code>ToolboxComponent</code> sudah terdaftar di
+    <code>AppModule</code>, jadi setiap halaman bisa langsung memanggilnya.
+  </p>
+  <p class="demo-hint">Ganti <code>initialTab</code> ke salah satu: <code>json-formatter | decoder | regex-tester | id-generator | hash-generator | password-generator | text-diff | color-converter | text-transforms | base-converter</code></p>
+</div>
+
+<app-toolbox initialTab="color-converter"></app-toolbox>

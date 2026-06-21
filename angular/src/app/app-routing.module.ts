@@ -24,6 +24,7 @@ import { PublishKafkaComponent } from './pages/tools-dev/publish-kafka/publish-k
 import { MsvTestComponent } from './pages/tools-dev/msv-test/msv-test.component';
 import { MsvDocsComponent } from './pages/tools-dev/msv-docs/msv-docs.component';
 import { CalendarPiketComponent } from './pages/piket/calendar-piket/calendar-piket.component';
+import { DemoComponent } from './pages/demo/demo.component';
 
 const routes: Routes = [
   { path: 'tools-dev/gitlab/tags-monitor', component: GitlabTagsMonitorComponent },
@@ -68,6 +69,7 @@ const routes: Routes = [
     canActivate: [PiketGuard],
   },
   { path: 'login', component: LoginComponent },
+  { path: 'demo', component: DemoComponent },
   { path: 'dashboard', loadComponent: () => import('./pages/home/dashboard.component').then(m => m.DashboardComponent) },
   { path: 'utilities', loadComponent: () => import('./pages/toolbox/toolbox.component').then(m => m.ToolboxComponent) },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

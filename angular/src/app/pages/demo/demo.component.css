@@ -1,0 +1,5 @@
+.demo-head { padding-top: 14px; padding-bottom: 4px; }
+.demo-title { margin: 0; color: #144e83; font-family: 'Open Sans', sans-serif; font-weight: 700; font-size: 18px; }
+.demo-text { margin: 6px 0; color: #495057; font-family: 'Open Sans', sans-serif; font-size: 13px; line-height: 1.5; }
+.demo-hint { margin: 4px 0 10px; color: #885403; font-family: 'Open Sans', sans-serif; font-size: 12px; }
+code { background: #eef2f7; border-radius: 4px; padding: 1px 6px; font-family: monospace; font-size: 12px; color: #144e83; }

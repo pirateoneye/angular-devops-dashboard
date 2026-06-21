@@ -1,4 +1,4 @@
-﻿import { LOCALE_ID, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { LOCALE_ID, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './module/material.module';
@@ -11,7 +11,6 @@ import { ModalInsertNameComponent } from './shared/component/modal/insert-name/m
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BatchRunnerComponent } from './pages/tools-dev/batch-runner/batch-runner.component';
 import { LoginComponent } from './pages/login/login.component';
-import { MagenLibModule } from 'magen-lib';
 import { AppRoutingModule } from './app-routing.module';
 import { MsvFormsModule } from './shared/components/msv-forms/msv-forms.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -84,7 +83,6 @@ registerLocaleData(localeId);
     MatSlideToggleModule,
     MatAutocompleteModule,
     FormsModule,
-    MagenLibModule,
     MsvFormsModule,
     InfiniteScrollModule,
     ReactiveFormsModule,

@@ -1,8 +1,4 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { NgZone } from '@angular/core';
-import { ChangeDetectorRef } from '@angular/core';
 import { ModalInsertNameComponent } from './shared/component/modal/insert-name/modal-insert-name.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UserService } from './shared/service/user-service/user.service';

@@ -1,0 +1,8 @@
+<div class="msv-divider" [ngClass]="dividerClasses">
+  <span class="divider-line" *ngIf="!text || orientation === 'vertical'"></span>
+  <ng-container *ngIf="text && orientation === 'horizontal'">
+    <span class="divider-line"></span>
+    <span class="divider-text">{{ text }}</span>
+    <span class="divider-line"></span>
+  </ng-container>
+</div>

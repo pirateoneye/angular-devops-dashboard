@@ -1,0 +1,23 @@
+<div class="msv-checkbox-group" [class.horizontal]="direction === 'horizontal'" [class.disabled]="disabled">
+  <label *ngFor="let option of options" class="msv-checkbox-option" [class.disabled]="option.disabled || disabled">
+    <input 
+      type="checkbox" 
+      [value]="option.value" 
+      [checked]="isChecked(option.value)"
+      [disabled]="option.disabled || disabled"
+      (change)="onCheckboxChange(option.value, $event)"
+      (blur)="onBlur()"
+    />
+    <span class="msv-checkbox-custom"></span>
+    <span class="msv-checkbox-label">{{ option.label }}</span>
+  </label>
+</div>
+
+<div *ngIf="showError" class="msv-checkbox-group-error">
+  <ng-container *ngIf="errorTemplate; else defaultError">
+    <ng-container *ngTemplateOutlet="errorTemplate; context: { $implicit: errors }"></ng-container>
+  </ng-container>
+  <ng-template #defaultError>
+    <span class="error-message">{{ errors[0] }}</span>
+  </ng-template>
+</div>

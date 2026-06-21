@@ -1,0 +1,123 @@
+<div class="app-container">
+  <div>
+    <section class="bg-layout d-flex flex-column justify-content-center" style="background-image: url('../assets/bg.png'); background-size: cover; background-position: center; background-repeat: no-repeat; height: 10vh; position: relative;">
+      <div class="container d-flex justify-content-between">
+        <div>
+          <img src="../assets/logo.png" alt="logo" style="width: 55px; margin-left: auto; margin-right: auto;">
+        </div>
+        <div class="d-flex align-items-center w-100 justify-content-end">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle link-button" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
+              UAT/DEV Stuff
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center" routerLink="tools-dev/batch-runner">
+                  <mat-icon>
+                    event_note
+                  </mat-icon>
+                  Batch Runner
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center" routerLink="tools-dev/crypto">
+                  <mat-icon>
+                    enhanced_encryption
+                  </mat-icon>
+                  Crypto
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="tools-dev/delete-data">
+                  <mat-icon>
+                    delete
+                  </mat-icon>
+                  Delete Data
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="tools-dev/check-data">
+                  <mat-icon>
+                    search
+                  </mat-icon>
+                  Check Data
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="tools-dev/file-server-manager">
+                  <mat-icon>
+                    folder
+                  </mat-icon>
+                  File Server Manager
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="tools-dev/push-notif-fcm">
+                  <mat-icon>
+                    notifications
+                  </mat-icon>
+                  Push Notif FCM
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="tools-dev/publish-kafka">
+                  <mat-icon>
+                    send
+                  </mat-icon>
+                  Publish Kafka
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center" routerLink="tools-dev/gitlab/tags-monitor">
+                  <mat-icon>
+                    label
+                  </mat-icon>
+                  GitLab Tags Monitor
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle link-button" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
+              Piket
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center" routerLink="piket/keluhan-list">
+                  <mat-icon>
+                    list_alt
+                  </mat-icon>
+                  List Keluhan
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="piket/fix-data-user">
+                  <mat-icon>
+                    edit
+                  </mat-icon>
+                  Fix Data User
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="piket/fix-after-merge-cis">
+                  <mat-icon>
+                    edit
+                  </mat-icon>
+                  Fix After Merge CIS
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="user-chip ms-3 pt-2 pb-2 align-items-center d-flex" (click)="editUsername()">
+            <mat-icon class="" style="color: #005CAA;">person</mat-icon>
+            <span class="ms-2" style="color: #005CAA;">{{user}}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+
+  <router-outlet></router-outlet>
+</div>

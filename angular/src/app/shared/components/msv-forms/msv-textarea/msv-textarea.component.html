@@ -1,0 +1,21 @@
+<div class="msv-textarea-container">
+  <label *ngIf="label" class="msv-textarea-label">{{ label }}</label>
+  <textarea
+    [placeholder]="placeholder"
+    [value]="value"
+    [disabled]="disabled"
+    [rows]="rows"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    class="form-control"
+    [class.is-invalid]="showError"
+  ></textarea>
+  <ng-container *ngIf="showError">
+    <ng-container *ngIf="errorTemplate; else defaultError">
+      <ng-container *ngTemplateOutlet="errorTemplate; context: {$implicit: errors}"></ng-container>
+    </ng-container>
+    <ng-template #defaultError>
+      <div class="msv-textarea-error">{{ errors[0] }}</div>
+    </ng-template>
+  </ng-container>
+</div>

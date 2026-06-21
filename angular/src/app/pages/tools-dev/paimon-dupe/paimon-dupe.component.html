@@ -1,0 +1,247 @@
+<!-- DNS Monitor -->
+<div class="app">
+
+  <!-- Toasts -->
+  <div class="toasts">
+    @for (t of toasts(); track t.id) {
+    <div class="toast" [class]="t.type" (click)="dismissToast(t.id)">
+      @if (t.type === 'ok') { ✓ } @else if (t.type === 'err') { ✕ } @else { ℹ }
+      {{ t.msg }}
+    </div>
+    }
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+  <div class="loader">
+    <div class="spin"></div>
+  </div>
+  }
+
+  <!-- Header -->
+  <header>
+    <h1>DNS Monitor</h1>
+    <div class="hdr-right">
+      @if (loggedIn()) {
+      <span class="badge">{{ username() }}</span>
+      <button class="icon-btn" (click)="showLogin.set(true)" title="Settings">⚙</button>
+      <button class="icon-btn" (click)="logout()" title="Logout">↪</button>
+      } @else {
+      <button class="btn primary" (click)="showLogin.set(true)">Login</button>
+      }
+    </div>
+  </header>
+
+  <!-- Login Modal -->
+  @if (showLogin()) {
+  <div class="overlay" (click)="loggedIn() && showLogin.set(false)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>Connect</h2>
+      <form [formGroup]="form" (ngSubmit)="login()">
+        <label>Base URL<input formControlName="baseUrl" class="input" /></label>
+        <label>Username<input formControlName="username" class="input" /></label>
+        <label>Token<input type="password" formControlName="token" class="input" /></label>
+        <label class="chk"><input type="checkbox" formControlName="remember" /> Remember</label>
+        <div class="modal-btns">
+          <button type="submit" class="btn primary" [disabled]="!form.valid || loading()">Connect</button>
+          @if (loggedIn()) { <button type="button" class="btn ghost" (click)="showLogin.set(false)">Cancel</button> }
+        </div>
+      </form>
+    </div>
+  </div>
+  }
+
+  @if (loggedIn()) {
+  <div class="main">
+
+    <!-- ========================================== -->
+    <!-- TASK DNS SECTION (from get_task API) -->
+    <!-- ========================================== -->
+    <section class="section">
+      <div class="section-hdr">
+        <div>
+          <h2>📋 My Tasks</h2>
+          <p>DNS from your assigned tasks - can suspend/unsuspend</p>
+        </div>
+        <div class="section-actions">
+          <div class="stats">
+            <span class="stat up">{{ upCount() }} UP</span>
+            <span class="stat oos">{{ oosCount() }} OOS</span>
+            <span class="stat down">{{ downCount() }} DOWN</span>
+          </div>
+          @if (selectedSvc().size) {
+          <span class="muted">{{ selectedSvc().size }} svc</span>
+          <button class="btn danger sm" (click)="bulkSuspend()" [disabled]="loading()">⏸ Suspend</button>
+          <button class="btn success sm" (click)="bulkUnsuspend()" [disabled]="loading()">▶ Unsuspend</button>
+          <button class="btn ghost sm" (click)="clearSvcSel()">Clear</button>
+          }
+          <button class="btn outline sm" (click)="refreshTaskDns()" [disabled]="loading()">↻ Refresh</button>
+          <button class="btn outline sm" (click)="fetchTasks()" [disabled]="loading()">🔄 Reload Tasks</button>
+        </div>
+      </div>
+
+      @if (taskDnsList().length === 0) {
+      <div class="empty-state">No active tasks. Your assigned DNS will appear here.</div>
+      } @else {
+
+      <!-- Task DNS Tabs -->
+      <div class="tabs">
+        <button class="tab" [class.on]="taskTab() === 'internal'" (click)="taskTab.set('internal')">🏢 Internal ({{
+          taskInternal().length }})</button>
+        <button class="tab" [class.on]="taskTab() === 'external'" (click)="taskTab.set('external')">🌐 External ({{
+          taskExternal().length }})</button>
+      </div>
+
+      <!-- Task DNS List -->
+      <div class="dns-list">
+        @for (d of currentTaskDns(); track d.fqdn) {
+        <div class="dns-card task-card">
+          <div class="dns-hdr" (click)="toggleExpand(d.fqdn, d.zone, 'task')">
+            <div class="dns-left">
+              <span class="arrow">{{ d.isExpanded ? '▼' : '▶' }}</span>
+              <h3>{{ d.fqdn }}</h3>
+              <span class="zone-tag" [class]="d.zone">{{ d.zone }}</span>
+              @if (countState(d, 'UP')) { <span class="pill up">{{ countState(d, 'UP') }}</span> }
+              @if (countState(d, 'OUT OF SERVICE')) { <span class="pill oos">{{ countState(d, 'OUT OF SERVICE')
+                }}</span> }
+              @if (countState(d, 'DOWN')) { <span class="pill down">{{ countState(d, 'DOWN') }}</span> }
+            </div>
+            <div class="dns-right">
+              @if (d.lastUpdated) { <span class="ts">{{ d.lastUpdated | date:'HH:mm:ss' }}</span> }
+              <button class="icon-btn sm" (click)="$event.stopPropagation(); fetchStatus(d.fqdn, d.zone, 'task')"
+                [disabled]="d.isLoading">↻</button>
+              <button class="icon-btn sm danger" (click)="$event.stopPropagation(); suspendDns(d.fqdn, d.zone)"
+                [disabled]="loading()">⏸</button>
+              <button class="icon-btn sm success" (click)="$event.stopPropagation(); unsuspendDns(d.fqdn, d.zone)"
+                [disabled]="loading()">▶</button>
+            </div>
+          </div>
+
+          @if (d.isExpanded) {
+          <div class="svc-list">
+            @if (d.isLoading) {
+            <div class="svc-loading">
+              <div class="spin sm"></div> Loading...
+            </div>
+            } @else if (!d.services.length) {
+            <div class="svc-empty">No services</div>
+            } @else {
+            @for (s of d.services; track s.svc_name) {
+            <div class="svc-row" [class]="stateClass(s.state)">
+              <label class="svc-chk"><input type="checkbox" [checked]="isSvcSelected(s.svc_name)"
+                  (change)="toggleSvc(s.svc_name)" /></label>
+              <span class="svc-dot"></span>
+              <span class="svc-name">{{ s.svc_name.split('/').pop() }}</span>
+              <span class="svc-ip">{{ s.svr_ip }}:{{ s.svr_port }}</span>
+              <span class="svc-state">{{ s.state }}</span>
+              <div class="svc-acts">
+                <button class="micro danger" (click)="suspend(s, d.fqdn, d.zone)" [disabled]="loading()">⏸</button>
+                <button class="micro success" (click)="unsuspend(s, d.fqdn, d.zone)" [disabled]="loading()">▶</button>
+              </div>
+            </div>
+            }
+            }
+          </div>
+          }
+        </div>
+        }
+        @if (!currentTaskDns().length) { <div class="empty-zone">No DNS in this zone</div> }
+      </div>
+      }
+    </section>
+
+    <!-- ========================================== -->
+    <!-- MONITORING DNS SECTION (from pool) -->
+    <!-- ========================================== -->
+    <section class="section">
+      <div class="section-hdr">
+        <div>
+          <h2>👁 Monitoring</h2>
+          <p>View-only DNS monitoring</p>
+        </div>
+        <div class="section-actions">
+          <button class="btn outline sm" (click)="refreshMonitorDns()"
+            [disabled]="loading() || !monitoringDnsList().length">↻ Refresh</button>
+        </div>
+      </div>
+
+      <!-- Pool Selection -->
+      <div class="pool-section">
+        <h4>Add DNS to Monitor</h4>
+        <div class="pool-tabs">
+          <button class="mini-tab" [class.on]="monitorTab() === 'internal'"
+            (click)="monitorTab.set('internal')">Internal ({{ poolInternal().length }})</button>
+          <button class="mini-tab" [class.on]="monitorTab() === 'external'"
+            (click)="monitorTab.set('external')">External ({{ poolExternal().length }})</button>
+        </div>
+        <div class="pool-list">
+          @for (p of (monitorTab() === 'internal' ? poolInternal() : poolExternal()); track p.fqdn) {
+          <label class="pool-item" [class.on]="isMonitoringSelected(p.fqdn)">
+            <input type="checkbox" [checked]="isMonitoringSelected(p.fqdn)"
+              (change)="toggleMonitoringSelection(p.fqdn)" />
+            <span>{{ p.fqdn }}</span>
+          </label>
+          }
+          @if ((monitorTab() === 'internal' ? poolInternal() : poolExternal()).length === 0) {
+          <p class="pool-empty">All DNS are already in tasks or monitoring</p>
+          }
+        </div>
+        @if (selectedMonitoring().size) {
+        <button class="btn primary sm" (click)="addToMonitoring()">+ Add {{ selectedMonitoring().size }} to
+          Monitoring</button>
+        }
+      </div>
+
+      <!-- Monitoring DNS List -->
+      @if (monitoringDnsList().length) {
+      <div class="dns-list">
+        @for (d of monitoringDnsList(); track d.fqdn) {
+        <div class="dns-card monitor-card">
+          <div class="dns-hdr" (click)="toggleExpand(d.fqdn, d.zone, 'monitor')">
+            <div class="dns-left">
+              <span class="arrow">{{ d.isExpanded ? '▼' : '▶' }}</span>
+              <h3>{{ d.fqdn }}</h3>
+              <span class="zone-tag" [class]="d.zone">{{ d.zone }}</span>
+              @if (countState(d, 'UP')) { <span class="pill up">{{ countState(d, 'UP') }}</span> }
+              @if (countState(d, 'OUT OF SERVICE')) { <span class="pill oos">{{ countState(d, 'OUT OF SERVICE')
+                }}</span> }
+              @if (countState(d, 'DOWN')) { <span class="pill down">{{ countState(d, 'DOWN') }}</span> }
+            </div>
+            <div class="dns-right">
+              @if (d.lastUpdated) { <span class="ts">{{ d.lastUpdated | date:'HH:mm:ss' }}</span> }
+              <button class="icon-btn sm" (click)="$event.stopPropagation(); fetchStatus(d.fqdn, d.zone, 'monitor')"
+                [disabled]="d.isLoading">↻</button>
+              <button class="icon-btn sm" (click)="$event.stopPropagation(); removeFromMonitoring(d.fqdn)"
+                title="Remove">✕</button>
+            </div>
+          </div>
+
+          @if (d.isExpanded) {
+          <div class="svc-list">
+            @if (d.isLoading) {
+            <div class="svc-loading">
+              <div class="spin sm"></div> Loading...
+            </div>
+            } @else if (!d.services.length) {
+            <div class="svc-empty">No services</div>
+            } @else {
+            @for (s of d.services; track s.svc_name) {
+            <div class="svc-row monitor-row" [class]="stateClass(s.state)">
+              <span class="svc-dot"></span>
+              <span class="svc-name">{{ s.svc_name.split('/').pop() }}</span>
+              <span class="svc-ip">{{ s.svr_ip }}:{{ s.svr_port }}</span>
+              <span class="svc-state">{{ s.state }}</span>
+            </div>
+            }
+            }
+          </div>
+          }
+        </div>
+        }
+      </div>
+      }
+    </section>
+
+  </div>
+  }
+</div>

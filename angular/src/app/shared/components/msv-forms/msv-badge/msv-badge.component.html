@@ -1,0 +1,4 @@
+<div class="msv-badge-wrapper">
+  <ng-content></ng-content>
+  <span *ngIf="shouldShowBadge" [class]="badgeClass">{{ displayValue }}</span>
+</div>

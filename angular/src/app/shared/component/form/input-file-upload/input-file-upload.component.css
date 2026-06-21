@@ -1,0 +1,24 @@
+.drop-zone {
+    border: 2px dashed #005CAA;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    color: #005CAA;
+    height: 200px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+   
+.drop-zone:hover, .drag-over {
+    background-color: #005baa25;
+}
+
+progress{
+  vertical-align: bottom;
+  height: 20px;
+}

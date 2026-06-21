@@ -1,0 +1,128 @@
+@import '../_variables.css';
+
+.msv-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.msv-radio-group.horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.msv-radio-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  font-family: var(--msv-font-family);
+  font-size: 14px;
+  transition: opacity 0.2s ease;
+}
+
+.msv-radio-option:hover:not(.disabled) .msv-radio-circle {
+  border-color: var(--msv-focus-color);
+  transform: scale(1.05);
+}
+
+.msv-radio-option.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Hide native radio input */
+.msv-radio-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Custom radio circle */
+.msv-radio-circle {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--msv-border-color);
+  border-radius: 50%;
+  background: #fff;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.msv-radio-circle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--msv-primary-color);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Checked state */
+.msv-radio-option input[type="radio"]:checked + .msv-radio-circle {
+  border-color: var(--msv-primary-color);
+  border-width: 2px;
+}
+
+.msv-radio-option input[type="radio"]:checked + .msv-radio-circle::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Focus state */
+.msv-radio-option input[type="radio"]:focus + .msv-radio-circle {
+  box-shadow: 0 0 0 3px rgba(20, 78, 131, 0.1);
+}
+
+/* Disabled state */
+.msv-radio-option input[type="radio"]:disabled + .msv-radio-circle {
+  background: #f5f5f5;
+}
+
+.msv-radio-label {
+  color: #333;
+  line-height: 1.5;
+}
+
+.msv-radio-option.disabled .msv-radio-label {
+  color: #999;
+}
+
+/* Error styles */
+.msv-radio-error {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--msv-error-color);
+  font-family: var(--msv-font-family);
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-message {
+  display: block;
+}
+
+/* Disabled group */
+.msv-radio-group.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}

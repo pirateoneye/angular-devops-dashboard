@@ -1,0 +1,101 @@
+﻿<div class="container pt-3 pb-3">
+  <mat-card class="example-card mb-3 mat-elevation-z5 p-4" style="border-radius: 16px">
+    <h2 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+      Jadwal Piket
+    </h2>
+    <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
+      Kalender jadwal piket berdasarkan file .txt
+    </h4>
+
+    <div style="width: 100%; height: 1px; background-color: #E9ECEF; padding: 0; margin: 0; margin-bottom: 16px;"></div>
+
+    <!-- File Upload -->
+    <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+      <button mat-raised-button color="primary" (click)="fileInput.click()">
+        <mat-icon>upload_file</mat-icon> Upload Jadwal (.txt)
+      </button>
+      <input hidden type="file" #fileInput accept=".txt" (change)="onFileSelected($event)">
+      <span *ngIf="fileName" class="text-muted">{{ fileName }}</span>
+    </div>
+
+    <ng-container *ngIf="statusMenu == statusAPI.LOADING">
+      <div class="d-flex align-items-center flex-column" style="padding: 40px 0;">
+        <img src="assets/loading4.gif" alt="loading" style="width: 75px;">
+        <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400; margin-top: 12px;">
+          Memuat Jadwal...
+        </h4>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="statusMenu == statusAPI.FAILED">
+      <div class="alert alert-danger" role="alert">
+        Gagal membaca file. Pastikan format benar: TANGGAL,PIC1,PIC2,PIC3
+      </div>
+    </ng-container>
+
+    <!-- Calendar Navigation -->
+    <div class="calendar-nav d-flex align-items-center justify-content-between mb-3">
+      <button mat-icon-button (click)="prevMonth()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <div class="month-year">
+        <h3 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+          {{ monthNames[currentMonth] }} {{ currentYear }}
+        </h3>
+      </div>
+      <div class="d-flex gap-2">
+        <button mat-stroked-button (click)="goToToday()">Hari Ini</button>
+        <button mat-icon-button (click)="nextMonth()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="calendar-grid">
+      <!-- Day Headers -->
+      <div class="day-header" *ngFor="let day of dayNames">{{ day }}</div>
+
+      <!-- Days -->
+      <div
+        class="day-cell"
+        *ngFor="let cell of calendarDays"
+        [class.other-month]="!cell.isCurrentMonth"
+        [class.has-schedule]="cell.schedule"
+        [class.today]="cell.isToday"
+      >
+        <div class="day-number">{{ cell.day }}</div>
+        <div class="pic-list" *ngIf="cell.schedule">
+          <div class="pic-item pic-1" title="PIC 1: {{ cell.schedule.pic1 }}">
+            <span class="pic-label">1</span> {{ cell.schedule.pic1 }}
+          </div>
+          <div class="pic-item pic-2" title="PIC 2: {{ cell.schedule.pic2 }}">
+            <span class="pic-label">2</span> {{ cell.schedule.pic2 }}
+          </div>
+          <div class="pic-item pic-3" title="PIC 3: {{ cell.schedule.pic3 }}">
+            <span class="pic-label">3</span> {{ cell.schedule.pic3 }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend mt-3 d-flex gap-3 flex-wrap">
+      <div class="legend-item">
+        <span class="legend-box today-box"></span> Hari Ini
+      </div>
+      <div class="legend-item">
+        <span class="legend-box schedule-box"></span> Ada Jadwal
+      </div>
+      <div class="legend-item">
+        <span class="legend-box pic1-box"></span> PIC 1
+      </div>
+      <div class="legend-item">
+        <span class="legend-box pic2-box"></span> PIC 2
+      </div>
+      <div class="legend-item">
+        <span class="legend-box pic3-box"></span> PIC 3
+      </div>
+    </div>
+  </mat-card>
+</div>

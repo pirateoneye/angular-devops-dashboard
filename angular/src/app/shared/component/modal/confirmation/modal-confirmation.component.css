@@ -1,0 +1,37 @@
+button{
+    font-family: 'Open Sans';
+    font-weight: 700;
+    outline: none;
+    border: none;
+    background-color: white;
+    color: rgb(65, 65, 65);
+}
+
+
+.cancel-button{
+    transition: all 0.3s;
+    width: 50%;
+    height: 40px;
+    border-radius: 5px 0 0 5px;
+}
+
+.cancel-button:hover{
+    transition: all 0.3s;
+    color: white;
+    background-color: #aa0039;
+}
+
+
+.ok-button{
+    transition: all 0.3s;
+    width: 50%;
+    height: 40px;
+    border-radius: 0 5px 5px 0;
+}
+
+.ok-button:hover{
+    transition: all 0.3s;
+    color: white;
+    background-color: #005CAA;
+}
+

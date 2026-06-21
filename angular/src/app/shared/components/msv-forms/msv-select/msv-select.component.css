@@ -1,0 +1,41 @@
+.msv-select-container {
+  margin-bottom: 1rem;
+}
+
+.msv-select-label {
+  display: block;
+  color: var(--msv-primary-color, #144e83);
+  font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.select-key {
+  transition: all 0.3s;
+  width: 100%;
+  cursor: pointer;
+  height: var(--msv-input-height, 45px);
+  border-radius: var(--msv-border-radius, 5px);
+  padding: var(--msv-input-padding, 5px 10px);
+  border: 1px solid var(--msv-border-color, #ced4da);
+}
+
+.select-key:hover {
+  background-color: #e2e2e2;
+}
+
+.select-key:focus {
+  box-shadow: none;
+  outline: 0 none;
+  border-color: var(--msv-focus-color, #005caa);
+}
+
+.select-key.is-invalid {
+  border-color: var(--msv-error-color, #dc3545);
+}
+
+.msv-select-error {
+  color: var(--msv-error-color, #dc3545);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}

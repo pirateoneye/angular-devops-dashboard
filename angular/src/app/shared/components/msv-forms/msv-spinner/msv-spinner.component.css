@@ -1,0 +1,16 @@
+.msv-spinner {
+  display: inline-block;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 50%;
+  animation: msv-spin 0.8s linear infinite;
+}
+
+@keyframes msv-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,26 @@
+<nav class="breadcrumb-container" aria-label="Breadcrumb">
+  <ol class="breadcrumb">
+    <li 
+      *ngFor="let item of items; let i = index; let isLast = last" 
+      class="breadcrumb-item"
+      [class.breadcrumb-item-active]="isLast"
+    >
+      <a 
+        *ngIf="!isLast && item.route" 
+        [routerLink]="item.route"
+        class="breadcrumb-link"
+      >
+        {{ item.label }}
+      </a>
+      <span *ngIf="!isLast && !item.route" class="breadcrumb-text">
+        {{ item.label }}
+      </span>
+      <span *ngIf="isLast" class="breadcrumb-current">
+        {{ item.label }}
+      </span>
+      <span *ngIf="!isLast" class="breadcrumb-separator" aria-hidden="true">
+        {{ separator }}
+      </span>
+    </li>
+  </ol>
+</nav>

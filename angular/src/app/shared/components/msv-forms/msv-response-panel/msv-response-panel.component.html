@@ -1,0 +1,15 @@
+<div class="msv-response-panel" *ngIf="response && response.status">
+  <div class="panel-header">
+    <msv-status-badge [status]="response.status"></msv-status-badge>
+  </div>
+
+  <div class="panel-message" *ngIf="response.message">
+    <span class="message-label">Response:</span>
+    <span class="message-text">{{ response.message }}</span>
+  </div>
+
+  <div class="panel-data" *ngIf="showData && hasData">
+    <div class="data-label">Response Data:</div>
+    <pre class="data-content">{{ formattedData }}</pre>
+  </div>
+</div>

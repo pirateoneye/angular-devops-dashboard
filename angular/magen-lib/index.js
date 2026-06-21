@@ -1,0 +1,1 @@
+﻿exports.MagenLibModule = class MagenLibModule {};

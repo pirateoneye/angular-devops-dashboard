@@ -1,0 +1,240 @@
+.bg-layout {
+    background: #005caa;
+    height: 5rem;
+  }
+  
+  
+  .icon-overlay {
+    position: relative;
+    background-color: transparent;
+  }
+  
+  .icon-overlay:before {
+    content: " ";
+    width: calc(100% + 15rem);
+    height: 11rem;
+    position: absolute;
+    left: -15rem;
+    /* background-image: url(clove-ornament.139a2d89f497d64c.svg);
+    */
+    background-position: -10rem -27rem;
+  }
+  
+  .idle-background {}
+  
+  .on-process-background {
+    background-color: beige !important;
+  }
+  
+  .success-background {
+    background-color: #d4edda !important;
+  }
+  
+  .failed-background {
+    background-color: #f8d7da !important;
+  }
+  
+  
+  .example-card {
+    /* max-width: 400px;
+    */
+    background-color: #fff;
+    color: black;
+  }
+  
+  .example-header-image {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+  }
+  
+  
+  ::ng-deep .mat-progress-bar-fill::after {
+    background-color: #1E457C;
+  }
+  
+  ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #1E457C;
+    }
+  
+  ::ng-deep .mat-progress-bar-buffer {
+    background: #E4E8EB;
+  }
+  
+  ::ng-deep .mat-progress-bar {
+    border-radius: 2px;
+  }
+  
+  .log-box
+  {
+    white-space: pre-wrap;
+      background-color: rgb(227 227 227);
+      padding: 10px;
+      border: 2px solid rgb(184 184 184);
+      border-radius: 10px;
+      overflow-wrap: break-word;
+  }
+
+  .batch-list-card {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem; 
+  }
+
+  
+  .badge-close {
+    width: fit-content;
+    background-color: #C2FFC5;
+    color: #009649;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    border-radius: 24px;
+    padding: 5px 15px;
+  }
+  
+  .badge-info {
+    width: fit-content;
+    background-color: #0561c2;
+    color: #fbfcff;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    border-radius: 24px;
+    padding: 5px 15px;
+  }
+  
+  .badge-assigned {
+    width: fit-content;
+    background-color: #FFE592;
+    color: #885403;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    border-radius: 24px;
+    padding: 5px 15px;
+  }
+  
+  .badge-failed {
+    width: fit-content;
+    background-color: #FFD9D3;
+    color: #CD1923;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    border-radius: 24px;
+    padding: 5px 15px;
+  }
+  
+  .badge-notyet {
+    width: fit-content;
+    background-color: #CFCFCF;
+    color: #495057;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    border-radius: 24px;
+    padding: 5px 15px;
+  }
+  
+  .information {
+    width: 100%;
+    background-color: #E6F3FF;
+    color: #885403;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 12px;
+  }
+  
+  .button-primary {
+    display: flex;
+    justify-content: center;
+    border-radius: 24px;
+    background-color: #005CAA;
+    color: #FFFFFF;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 24px;
+    padding-right: 24px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+    
+  .button-danger {
+    display: flex;
+    justify-content: center;
+    border-radius: 24px;
+    background-color: #CD1923;
+    color: #FFFFFF;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 24px;
+    padding-right: 24px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .button-primary-disabled {
+    display: flex;
+    justify-content: center;
+    border-radius: 24px;
+    background-color: #CFCFCF;
+    color: #FFFFFF;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 24px;
+    padding-right: 24px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    transition: all 0.3s;
+    cursor: not-allowed;
+  }
+  
+  
+  .button-primary:hover {
+    background-color: #144e83;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  
+  .button-secondary {
+    display: flex;
+    border: 1px solid #005CAA;
+    justify-content: center;
+    border-radius: 24px;
+    background-color: #FFFFFF;
+    color: #005CAA;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 24px;
+    padding-right: 24px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .button-secondary:hover {
+    background-color: #f8f9fa;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  
+  ::ng-deep .custom-modalbox {
+    mat-dialog-container {
+        padding: 40;
+        background-color: white;
+        border-radius: 20px;
+        
+    }
+  }
+
+  .select{
+    outline: none;
+    font-family: 'Open Sans';
+    transition: all 0.3s;
+    width: 100%;
+    cursor: pointer;
+    height: 45px;
+    border-radius: 5px;
+    padding: 5px;
+  }
+  
+  

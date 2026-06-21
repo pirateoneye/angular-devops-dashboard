@@ -1,0 +1,29 @@
+.badge-available {
+  width: fit-content;
+  background-color: #c2ffc5;
+  color: #009649;
+  font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.badge-failed {
+  width: fit-content;
+  background-color: #ffd9d3;
+  color: #cd1923;
+  font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.badge-unavailable {
+  width: fit-content;
+  background-color: #ffe592;
+  color: #885403;
+  font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}

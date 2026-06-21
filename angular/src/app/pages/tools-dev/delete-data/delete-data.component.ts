@@ -1,0 +1,100 @@
+import { HttpClient } from '@angular/common/http';
+import { Component, inject, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Title } from '@angular/platform-browser';
+import { ModalConfirmationComponent } from 'src/app/shared/component/modal/confirmation/modal-confirmation.component';
+import { UserService } from 'src/app/shared/service/user-service/user.service';
+
+@Component({
+  selector: 'delete-data',
+  templateUrl: './delete-data.component.html',
+  styleUrls: ['./delete-data.component.css']
+})
+export class DeleteDataComponent {
+  submissionType : string = "riplay";
+  deleteBy : string = "email";
+  deleteValue : string = "";
+  isDeleteValuePristine : boolean = true;
+  response : any = {
+    submissionType : null,
+    deleteBy : null,
+    deleteValue : null,
+    status : null,
+    message : null
+  }
+
+  placeholder : any ={
+    "riplay": "RIPLAY",
+    "no-referensi" :"No. Referensi",
+    "mid" :"MID",
+    "no-kartu" :"No. kartu",
+    "merchant-baru" :"Merchant Baru",
+    "kelola-toko" :"Kelola Toko",
+    "no-rekening" : "No. Rekening",
+    "email" : "Email"
+  }
+
+  option : any = {
+    "merchant-baru" : [
+      "no-referensi",
+      "no-rekening",
+      "no-kartu"
+    ],
+    "kelola-toko" : [
+      "no-referensi",
+      "mid"
+    ],
+    "riplay" : [
+      "email"
+    ]
+  }
+
+  readonly dialog = inject(MatDialog);
+
+  constructor(private httpClient : HttpClient,
+    private userService : UserService
+  ){}
+
+  onChangeSubmissionType(){
+    this.deleteBy =  this.option[this.submissionType][0];
+    this.deleteValue ="";
+  }
+
+
+  onClickDeleteButton(){
+    if(this.deleteValue == "")
+    {
+      this.isDeleteValuePristine = false;
+      return;
+    }
+    let dialogConfig = {width: '500px',
+        data: {
+          title: `Delete Data`,
+          message : "Apakah anda ingin menghapus data <b>" + this.placeholder[this.submissionType] + "</b> dengan <b>" + this.placeholder[this.deleteBy] + " " + this.deleteValue + "</b>?"
+        }
+    };
+    this.dialog.open(ModalConfirmationComponent, dialogConfig).afterClosed().subscribe((res) =>{
+      if(!res)
+      {
+        return;
+      }
+      this.response.status = "ON_PROCESS";
+      this.response.submissionType = this.submissionType;
+      this.response.deleteBy = this.deleteBy;
+      this.response.deleteValue = this.deleteValue;
+      let user = localStorage.getItem('user');
+      let url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/data/pengajuan/${this.submissionType}/${this.deleteBy}/${this.deleteValue}?audittrailUser=${user}`
+      console.log(url);
+      this.httpClient.delete(url).subscribe((response : any) =>{
+        console.log("success hit service: ", response)
+        this.response.status = "SUCCESS";
+        this.response.message = response.error_message.english;
+      }, (error) =>{
+        console.error("error hit service: ", error)
+        this.response.status = "ERROR";
+        this.response.message = error.message ? error.message :  error.error_message.english;
+      });
+    })
+  }
+
+}

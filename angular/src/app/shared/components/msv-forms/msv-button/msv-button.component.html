@@ -1,0 +1,22 @@
+<button
+  [type]="type"
+  [disabled]="isDisabled"
+  [class]="buttonClasses.join(' ')"
+  [class.full-width]="fullWidth"
+  (click)="onClick()"
+>
+  <ng-container *ngIf="loading; else notLoading">
+    <ng-container *ngIf="loadingTemplate; else defaultLoading">
+      <ng-container *ngTemplateOutlet="loadingTemplate"></ng-container>
+    </ng-container>
+    <ng-template #defaultLoading>
+      <span class="spinner"></span>
+      <span>{{ config.loadingText }}</span>
+    </ng-template>
+  </ng-container>
+  <ng-template #notLoading>
+    <ng-content select="[msvPrefix]"></ng-content>
+    <ng-content></ng-content>
+    <ng-content select="[msvSuffix]"></ng-content>
+  </ng-template>
+</button>

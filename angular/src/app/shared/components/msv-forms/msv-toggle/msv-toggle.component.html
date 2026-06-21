@@ -1,0 +1,31 @@
+<div class="msv-toggle-container">
+  <label 
+    *ngIf="label && labelPosition === 'before'" 
+    class="msv-toggle-label msv-toggle-label-before"
+    [class.disabled]="disabled"
+  >
+    {{ label }}
+  </label>
+  
+  <div 
+    class="msv-toggle-track" 
+    [class.checked]="value"
+    [class.disabled]="disabled"
+    (click)="toggle()"
+    (keydown)="onKeyDown($event)"
+    tabindex="0"
+    role="switch"
+    [attr.aria-checked]="value"
+    [attr.aria-disabled]="disabled"
+  >
+    <div class="msv-toggle-thumb"></div>
+  </div>
+  
+  <label 
+    *ngIf="label && labelPosition === 'after'" 
+    class="msv-toggle-label msv-toggle-label-after"
+    [class.disabled]="disabled"
+  >
+    {{ label }}
+  </label>
+</div>

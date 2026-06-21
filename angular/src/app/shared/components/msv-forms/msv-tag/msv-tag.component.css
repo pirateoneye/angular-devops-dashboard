@@ -1,0 +1,115 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 6px 14px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tag-content {
+  line-height: 1.2;
+}
+
+.tag-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  margin: 0 -4px 0 2px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.7;
+}
+
+.tag-remove:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.15);
+  transform: scale(1.1);
+}
+
+.tag-remove:active {
+  transform: scale(0.95);
+}
+
+/* Primary variant */
+.tag-primary {
+  background: linear-gradient(135deg, #1a5fa5 0%, var(--msv-primary-color) 100%);
+  color: #ffffff;
+}
+
+.tag-primary:hover {
+  box-shadow: 0 2px 8px rgba(20, 78, 131, 0.25);
+  transform: translateY(-1px);
+}
+
+.tag-primary .tag-remove {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.tag-primary .tag-remove:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Success variant */
+.tag-success {
+  background: linear-gradient(135deg, #c2ffc5 0%, #d4ffdb 100%);
+  color: #006b2d;
+  border: 1px solid rgba(40, 167, 69, 0.15);
+}
+
+.tag-success:hover {
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+  transform: translateY(-1px);
+  border-color: rgba(40, 167, 69, 0.25);
+}
+
+/* Warning variant */
+.tag-warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #fffbeb 100%);
+  color: #885403;
+  border: 1px solid rgba(255, 193, 7, 0.25);
+}
+
+.tag-warning:hover {
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.25);
+  transform: translateY(-1px);
+  border-color: rgba(255, 193, 7, 0.35);
+}
+
+/* Error variant */
+.tag-error {
+  background: linear-gradient(135deg, #ffe5e5 0%, #fff0f0 100%);
+  color: #b91c1c;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.tag-error:hover {
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.25);
+  transform: translateY(-1px);
+  border-color: rgba(220, 53, 69, 0.3);
+}
+
+/* Default variant */
+.tag-default {
+  background: linear-gradient(135deg, #f3f4f6 0%, #f9fafb 100%);
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.tag-default:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
+}

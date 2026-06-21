@@ -1,0 +1,144 @@
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'msv-divider',
+  template: `
+    <div class="msv-divider" [ngClass]="dividerClasses">
+      <span class="divider-line" *ngIf="!text || orientation === 'vertical'"></span>
+      <ng-container *ngIf="text && orientation === 'horizontal'">
+        <span class="divider-line"></span>
+        <span class="divider-text">{{ text }}</span>
+        <span class="divider-line"></span>
+      </ng-container>
+    </div>
+  `,
+  styles: [`
+    .msv-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Horizontal orientation (default) */
+    .divider-horizontal {
+      width: 100%;
+      height: 1px;
+      flex-direction: row;
+    }
+
+    .divider-horizontal .divider-line {
+      flex: 1;
+      height: 1px;
+      background-color: var(--msv-border-color);
+      border: none;
+    }
+
+    /* Vertical orientation */
+    .divider-vertical {
+      height: 100%;
+      width: 1px;
+      flex-direction: column;
+    }
+
+    .divider-vertical .divider-line {
+      flex: 1;
+      width: 1px;
+      background-color: var(--msv-border-color);
+      border: none;
+    }
+
+    /* Dashed variant */
+    .divider-dashed.divider-horizontal .divider-line {
+      background-color: transparent;
+      background-image: repeating-linear-gradient(
+        to right,
+        var(--msv-border-color) 0,
+        var(--msv-border-color) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+    }
+
+    .divider-dashed.divider-vertical .divider-line {
+      background-color: transparent;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        var(--msv-border-color) 0,
+        var(--msv-border-color) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+    }
+
+    /* Text in the middle (horizontal only) */
+    .divider-text {
+      padding: 0 16px;
+      color: rgba(0, 0, 0, 0.65);
+      font-size: 14px;
+      font-family: var(--msv-font-family);
+      white-space: nowrap;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    /* Accessibility */
+    .msv-divider {
+      margin: 24px 0;
+    }
+
+    .divider-vertical {
+      margin: 0 24px;
+    }
+
+    /* Animation on render - subtle fade-in with expansion */
+    @keyframes divider-reveal {
+      from {
+        opacity: 0;
+        transform: scaleX(0.5);
+      }
+      to {
+        opacity: 1;
+        transform: scaleX(1);
+      }
+    }
+
+    @keyframes divider-reveal-vertical {
+      from {
+        opacity: 0;
+        transform: scaleY(0.5);
+      }
+      to {
+        opacity: 1;
+        transform: scaleY(1);
+      }
+    }
+
+    .divider-horizontal .divider-line {
+      animation: divider-reveal 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .divider-vertical .divider-line {
+      animation: divider-reveal-vertical 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .divider-text {
+      animation: divider-reveal 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+    }
+  `],
+})
+export class MsvDividerComponent {
+  @Input() orientation: 'horizontal' | 'vertical' = 'horizontal';
+  @Input() text: string = '';
+  @Input() dashed: boolean = false;
+
+  get dividerClasses(): string[] {
+    const classes = [`divider-${this.orientation}`];
+    if (this.dashed) {
+      classes.push('divider-dashed');
+    }
+    if (this.text) {
+      classes.push('with-text');
+    }
+    return classes;
+  }
+}

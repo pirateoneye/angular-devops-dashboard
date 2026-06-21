@@ -1,0 +1,31 @@
+<div class="msv-select-container">
+  <label *ngIf="label" class="msv-select-label">{{ label }}</label>
+  <select
+    [value]="value"
+    [disabled]="disabled"
+    (change)="onSelectionChange($event)"
+    (blur)="onBlur()"
+    class="form-control select-key"
+    [class.is-invalid]="showError"
+  >
+    <option value="" disabled>{{ placeholder }}</option>
+    <ng-container *ngFor="let option of options">
+      <ng-container *ngIf="optionTemplate; else defaultOption">
+        <option [value]="option.value" [disabled]="option.disabled">
+          <ng-container *ngTemplateOutlet="optionTemplate; context: {$implicit: option}"></ng-container>
+        </option>
+      </ng-container>
+      <ng-template #defaultOption>
+        <option [value]="option.value" [disabled]="option.disabled">{{ option.label }}</option>
+      </ng-template>
+    </ng-container>
+  </select>
+  <ng-container *ngIf="showError">
+    <ng-container *ngIf="errorTemplate; else defaultError">
+      <ng-container *ngTemplateOutlet="errorTemplate; context: {$implicit: errors}"></ng-container>
+    </ng-container>
+    <ng-template #defaultError>
+      <div class="msv-select-error">{{ errors[0] }}</div>
+    </ng-template>
+  </ng-container>
+</div>

@@ -1,0 +1,7 @@
+<div class="msv-progress-container">
+  <div class="msv-progress-track">
+    <div [ngClass]="progressClasses" [ngStyle]="progressStyles">
+      <span *ngIf="showLabel" class="msv-progress-label">{{ clampedValue }}%</span>
+    </div>
+  </div>
+</div>

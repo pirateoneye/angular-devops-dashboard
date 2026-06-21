@@ -1,0 +1,131 @@
+<div class="container pt-3 pb-3">
+  <mat-card
+    class="example-card mb-3 mat-elevation-z5 p-4"
+    style="border-radius: 16px"
+  >
+    <h2
+      class="m-0"
+      style="
+        color: #144e83;
+        font-family: &quot;Open Sans&quot;;
+        font-weight: 700;
+      "
+    >
+      Check Data
+    </h2>
+    <h4
+      style="
+        color: #495057;
+        font-family: &quot;Open Sans&quot;;
+        font-weight: 400;
+      "
+    >
+      Tools untuk check data di environment UAT
+    </h4>
+
+    <div
+      style="
+        width: 100%;
+        height: 1px;
+        background-color: #e9ecef;
+        padding: 0;
+        margin: 0;
+      "
+    ></div>
+
+    <div class="batch-list-card">
+      <!-- Jenis Data - Use msv-select -->
+      <msv-select
+        label="Jenis Data"
+        [(ngModel)]="submissionType"
+        [options]="submissionTypeOptions"
+        (selectionChange)="onChangeSubmissionType()"
+      >
+      </msv-select>
+
+      <!-- Target - Keep original layout (has select prefix in input group) -->
+      <div class="d-flex row">
+        <h3
+          class="col-4 m-0"
+          style="
+            color: #144e83;
+            font-family: &quot;Open Sans&quot;;
+            font-weight: 700;
+          "
+        >
+          Target
+        </h3>
+      </div>
+      <div class="d-flex row mt-2 mb-4" style="padding-right: 0px">
+        <div class="col-12" style="padding-right: 0px">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <select class="select-target" [(ngModel)]="checkBy">
+                <option
+                  *ngFor="let opt of option[submissionType].checkBy"
+                  [value]="opt"
+                >
+                  {{ placeholder[opt] }}
+                </option>
+              </select>
+            </div>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Target"
+              [(ngModel)]="checkValue"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Response Section - Refactored with msv-response-panel -->
+      <div *ngIf="response.status != null">
+        <!-- Custom info header - keep this for app-specific context -->
+        <div
+          class="information-header mb-3"
+          style="color: #005caa; font-family: &quot;Open Sans&quot;"
+        >
+          <div class="d-flex align-items-center">
+            <mat-icon style="color: #005caa"> info </mat-icon>
+            <h4
+              style="
+                color: #005caa;
+                font-family: &quot;Open Sans&quot;;
+                margin: 0;
+                margin-left: 10px;
+              "
+            >
+              Check Data <b>{{ placeholder[response.submissionType] }}</b> By
+              <b
+                >{{ placeholder[response.checkBy] }}
+                {{ response.checkValue }}</b
+              >
+            </h4>
+          </div>
+        </div>
+
+        <!-- Response panel - replaces the rest -->
+        <msv-response-panel
+          [response]="response"
+          [showData]="true"
+        ></msv-response-panel>
+      </div>
+
+      <!-- Button - Use msv-button -->
+      <div class="d-flex row mb-4" style="margin-top: 50px">
+        <div class="col-12">
+          <msv-button
+            variant="primary"
+            [loading]="response.status == 'ON_PROCESS'"
+            [disabled]="response.status == 'ON_PROCESS'"
+            [fullWidth]="true"
+            (clicked)="onClickCheckButton()"
+          >
+            Check
+          </msv-button>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+</div>

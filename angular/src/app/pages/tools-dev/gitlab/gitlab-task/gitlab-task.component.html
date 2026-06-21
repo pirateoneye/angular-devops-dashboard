@@ -1,0 +1,567 @@
+<div class="container pt-3 pb-3">
+    <div class="app">
+
+        <!-- Header -->
+        <header>
+            <div>
+                <h1>GitLab Bulk</h1>
+                <p>Create MRs, tags, and branches across projects</p>
+            </div>
+            <div class="hdr-right">
+                @if (isAuth()) {
+                <code class="token-badge">{{ maskedToken() }}</code>
+                <button class="icon-btn" (click)="showLogin.set(true)" title="Change Token">S</button>
+                <button class="icon-btn" (click)="logout()" title="Logout">X</button>
+                } @else {
+                <button class="btn primary" (click)="showLogin.set(true)">Login</button>
+                }
+            </div>
+        </header>
+
+        <!-- Login Modal -->
+        @if (showLogin()) {
+        <div class="overlay" (click)="isAuth() && showLogin.set(false)">
+            <div class="modal" (click)="$event.stopPropagation()">
+                <h2>GitLab Token</h2>
+                <p class="hint">Enter your Personal Access Token with <code>api</code> scope</p>
+                <p class="hint warning">Token is stored in memory only - you'll need to re-enter it each session</p>
+                <form [formGroup]="loginForm" (ngSubmit)="login()">
+                    <label>Token<input type="password" formControlName="token" class="input"
+                            placeholder="glpat-xxxx" /></label>
+                    <div class="modal-btns">
+                        <button type="submit" class="btn primary" [disabled]="!loginForm.valid || loading()">
+                            @if (loading()) { Validating... } @else { Connect }
+                        </button>
+
+                        @if (isAuth()) { <button type="button" class="btn ghost"
+                            (click)="showLogin.set(false)">Cancel</button> }
+                    </div>
+                </form>
+            </div>
+        </div>
+        }
+
+        <!-- Loading -->
+        @if (loading()) {
+        <div class="loader">
+            <div class="spin"></div>
+        </div>
+        }
+
+        <!-- Results Popup -->
+        @if (showResultsPopup()) {
+        <div class="overlay" (click)="closeResultsPopup()">
+            <div class="results-modal" (click)="$event.stopPropagation()">
+                <div class="results-header">
+                    <h2>
+                        @if (failedResults().length === 0) {
+                        Execution Complete
+                        } @else {
+                        Execution Complete ({{ failedResults().length }} failed)
+                        }
+                    </h2>
+                    <button class="icon-btn" (click)="closeResultsPopup()">X</button>
+                </div>
+
+                <div class="results-summary">
+                    <span class="success-count">{{ successfulResults().length }} successful</span>
+                    @if (failedResults().length > 0) {
+                    <span class="fail-count">{{ failedResults().length }} failed</span>
+                    }
+                </div>
+
+                <div class="results-list">
+                    @for (result of mrResults(); track result.projectId + result.source + result.target) {
+                    <div class="result-row" [class.success]="result.success" [class.error]="!result.success">
+                        <div class="result-info">
+                            <span class="result-icon">@if (result.success) { V } @else { X }</span>
+                            <span class="result-project">{{ result.projectName }}</span>
+                            <span class="result-branch">{{ result.source }} -> {{ result.target }}</span>
+                        </div>
+                        @if (result.success && result.mrUrl) {
+                        <div class="result-actions">
+                            <a [href]="result.mrUrl" target="_blank" class="btn ghost sm">Open</a>
+                            <button class="btn ghost sm" (click)="copyLink(result.mrUrl!)">Copy</button>
+                        </div>
+                        } @else if (result.error) {
+                        <span class="result-error">{{ result.error }}</span>
+                        }
+                    </div>
+                    }
+                </div>
+
+                <div class="results-footer">
+                    <button class="btn primary" (click)="copyAllLinks()" [disabled]="successfulResults().length === 0">
+                        Copy All Links ({{ successfulResults().length }})
+                    </button>
+                    <button class="btn ghost" (click)="closeResultsPopup()">Close</button>
+                </div>
+            </div>
+        </div>
+        }
+
+        @if (isAuth() && !showLogin()) {
+        <main>
+
+            <!-- Step 1: Group -->
+            <section class="section">
+                <h2 class="step"><span class="num">1</span> Select Group</h2>
+                <div class="groups">
+                    @for (g of GROUPS; track g.id) {
+                    <button class="group-card" [class.active]="groupId() === g.id" (click)="selectGroup(g.id)">
+                        <span class="gicon">F</span>
+                        <span class="gname">{{ g.name }}</span>
+                        <span class="gid">#{{ g.id }}</span>
+                    </button>
+                    }
+                </div>
+            </section>
+
+            <!-- Step 2: Action -->
+            <section class="section">
+                <h2 class="step"><span class="num">2</span> Select Action</h2>
+                <div class="actions">
+                    @for (a of ACTIONS; track a.id) {
+                    <button class="action-card" [class.active]="selectedAction() === a.id" (click)="setAction(a.id)">
+                        <span class="aicon">{{ a.icon }}</span>
+                        <span class="aname">{{ a.name }}</span>
+                        <span class="adesc">{{ a.desc }}</span>
+                    </button>
+                    }
+                </div>
+            </section>
+
+            <!-- Step 3: Configure -->
+            <section class="section">
+                <h2 class="step"><span class="num">3</span> Configure</h2>
+                <form [formGroup]="actionForm" class="config-form">
+
+                    <!-- Merge Request Configuration -->
+                    @if (selectedAction() === 'merge') {
+
+                    <!-- MR Mode Toggle -->
+                    <div class="mode-toggle-container">
+                        <span class="mode-label">MR Mode:</span>
+                        <div class="mode-toggle">
+                            <button type="button" [class.active]="mrMode() === 'single'"
+                                (click)="setMrMode('single')">Single MR</button>
+                            <button type="button" [class.active]="mrMode() === 'chained'"
+                                (click)="setMrMode('chained')">Chained MRs</button>
+                        </div>
+                    </div>
+
+                    @if (mrMode() === 'single') {
+                    <!-- Branch Mode Toggle -->
+                    <div class="mode-toggle-container">
+                        <span class="mode-label">Branch Config:</span>
+                        <div class="mode-toggle">
+                            <button type="button" [class.active]="branchMode() === 'same'"
+                                (click)="setBranchMode('same')">Same for all</button>
+                            <button type="button" [class.active]="branchMode() === 'per-project'"
+                                (click)="setBranchMode('per-project')">Per project</button>
+                        </div>
+                    </div>
+
+                    @if (branchMode() === 'same') {
+                    <div class="row">
+                        <label>Source Branch<input formControlName="source" class="input"
+                                placeholder="develop" /></label>
+                        <label>Target Branch<input formControlName="target" class="input" placeholder="main" /></label>
+                    </div>
+                    }
+                    } @else {
+                    <!-- Chained MR Configuration -->
+                    <div class="chain-section">
+                        <h3>Quick Templates</h3>
+                        <div class="chain-templates">
+                            @for (template of CHAIN_TEMPLATES; track template.name) {
+                            <button type="button" class="btn outline sm" (click)="applyTemplate(template)">
+                                {{ template.name }}
+                            </button>
+                            }
+                        </div>
+
+                        <h3>Chain Flow</h3>
+                        <div class="chain-builder">
+                            @for (step of chainSteps(); track step; let i = $index; let last = $last) {
+                            <div class="chain-step">
+                                <input type="text" class="input chain-input" [value]="step"
+                                    (input)="updateChainStep(i, $any($event.target).value)" />
+                                @if (!last) {
+                                <span class="chain-arrow">-></span>
+                                }
+                            </div>
+                            }
+                        </div>
+                        <div class="chain-actions">
+                            <div class="add-step-row">
+                                <input type="text" class="input" placeholder="New branch name"
+                                    [value]="newChainBranch()" (input)="newChainBranch.set($any($event.target).value)"
+                                    (keyup.enter)="addChainStep()" />
+                                <button type="button" class="btn outline sm" (click)="addChainStep()">+ Add</button>
+                            </div>
+                            <button type="button" class="btn ghost sm" (click)="removeLastChainStep()"
+                                [disabled]="chainSteps().length <= 2">- Remove Last</button>
+                        </div>
+
+                        <div class="chain-preview">
+                            <h4>Will create {{ chainPreview().length }} MR(s) per project:</h4>
+                            <ul>
+                                @for (step of chainPreview(); track step.source + step.target; let i = $index) {
+                                <li>MR {{ i + 1 }}: {{ step.source }} -> {{ step.target }}</li>
+                                }
+                            </ul>
+                            <p class="chain-warning">Stops on first error for each project</p>
+                        </div>
+                    </div>
+                    }
+
+                    <label>Title (optional)<input formControlName="title" class="input"
+                            placeholder="Auto-generated" /></label>
+                    <label>Description<textarea formControlName="desc" class="input" rows="2"
+                            placeholder="MR description..."></textarea></label>
+                    }
+
+                    <!-- Tag Configuration -->
+                    @if (selectedAction() === 'tag') {
+                    <div class="row">
+                        <label>Tag Name<input formControlName="tagName" class="input" placeholder="v1.0.0" /></label>
+                        <label>From Branch<input formControlName="source" class="input" placeholder="main" /></label>
+                    </div>
+                    <label>Tag Message<input formControlName="tagMsg" class="input"
+                            placeholder="Release notes..." /></label>
+                    }
+
+                    <!-- Create Branch Configuration -->
+                    @if (selectedAction() === 'branch') {
+                    <div class="row">
+                        <label>Branch Name<input formControlName="branchName" class="input"
+                                placeholder="feature/new-feature" /></label>
+                        <label>From Branch<input formControlName="source" class="input" placeholder="main" /></label>
+                    </div>
+                    }
+
+                    <!-- Delete Branch Configuration -->
+                    @if (selectedAction() === 'delete-branch') {
+                    @if (isSingleProject() && branches().length > 0) {
+                    <label>Branch to Delete
+                        <select formControlName="deleteBranchName" class="input">
+                            <option value="">-- Select Branch --</option>
+                            @for (b of branches(); track b.name) {
+                            <option [value]="b.name">{{ b.name }} @if (b.protected) { (protected) }</option>
+                            }
+                        </select>
+                    </label>
+                    } @else {
+                    <label>Branch Name<input formControlName="deleteBranchName" class="input"
+                            placeholder="branch-to-delete" /></label>
+                    }
+                    }
+
+                    <!-- Close/Merge MR Configuration -->
+                    @if (selectedAction() === 'close-mr') {
+                    @if (isSingleProject() && openMRs().length > 0) {
+                    <label>Select MR
+                        <select formControlName="mrIid" class="input">
+                            <option [ngValue]="null">-- Select MR --</option>
+                            @for (mr of openMRs(); track mr.iid) {
+                            <option [ngValue]="mr.iid">!{{ mr.iid }} - {{ mr.title }}</option>
+                            }
+                        </select>
+                    </label>
+                    } @else {
+                    <label>MR IID<input type="number" formControlName="mrIid" class="input" placeholder="123" /></label>
+                    }
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" formControlName="mrAction" value="merge" /> Merge
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" formControlName="mrAction" value="close" /> Close
+                        </label>
+                    </div>
+                    }
+
+                    <!-- Update Labels Configuration -->
+                    @if (selectedAction() === 'update-labels') {
+                    @if (isSingleProject() && openMRs().length > 0) {
+                    <label>Select MR
+                        <select formControlName="mrIid" class="input">
+                            <option [ngValue]="null">-- Select MR --</option>
+                            @for (mr of openMRs(); track mr.iid) {
+                            <option [ngValue]="mr.iid">!{{ mr.iid }} - {{ mr.title }}</option>
+                            }
+                        </select>
+                    </label>
+                    } @else {
+                    <label>MR IID<input type="number" formControlName="mrIid" class="input" placeholder="123" /></label>
+                    }
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" formControlName="labelAction" value="add" /> Add Labels
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" formControlName="labelAction" value="remove" /> Remove Labels
+                        </label>
+                    </div>
+
+                    @if (isSingleProject() && labels().length > 0) {
+                    <div class="labels-section">
+                        <h4>Select Labels</h4>
+                        <div class="label-list">
+                            @for (label of labels(); track label.id) {
+                            <label class="label-item" [class.selected]="selectedLabels().has(label.name)"
+                                (click)="toggleLabel(label.name)">
+                                <span class="label-color" [style.background]="label.color"></span>
+                                <span class="label-name">{{ label.name }}</span>
+                            </label>
+                            }
+                        </div>
+                    </div>
+                    }
+                    }
+
+                </form>
+            </section>
+
+            <!-- Single Project Metadata (Reviewers, Labels, Milestone) -->
+            @if (isSingleProject() && selectedAction() === 'merge') {
+            <section class="section">
+                <h2 class="step"><span class="num">3.5</span> Project Options
+                    @if (loadingMetadata()) { <span class="spin sm"></span> }
+                </h2>
+
+                <div class="metadata-grid">
+                    <!-- Reviewers -->
+                    <div class="metadata-card">
+                        <h4>Reviewers <span class="count">({{ selectedReviewers().size }})</span></h4>
+                        <div class="dropdown-container">
+                            <button class="dropdown-toggle"
+                                (click)="showReviewersDropdown.set(!showReviewersDropdown())">
+                                @if (selectedReviewers().size === 0) { Select reviewers... }
+                                @else { {{ selectedReviewers().size }} selected }
+                            </button>
+                            @if (showReviewersDropdown()) {
+                            <div class="dropdown-panel">
+                                @for (member of members(); track member.id) {
+                                <label class="dropdown-item" (click)="$event.stopPropagation()">
+                                    <input type="checkbox" [checked]="selectedReviewers().has(member.id)"
+                                        (change)="toggleReviewer(member.id)" />
+                                    <span>{{ member.username }} - {{ member.name }}</span>
+                                </label>
+                                }
+                                @if (members().length === 0) {
+                                <div class="dropdown-empty">No members found</div>
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Assignees -->
+                    <div class="metadata-card">
+                        <h4>Assignees <span class="count">({{ selectedAssignees().size }})</span></h4>
+                        <div class="dropdown-container">
+                            <button class="dropdown-toggle"
+                                (click)="showAssigneesDropdown.set(!showAssigneesDropdown())">
+                                @if (selectedAssignees().size === 0) { Select assignees... }
+                                @else { {{ selectedAssignees().size }} selected }
+                            </button>
+                            @if (showAssigneesDropdown()) {
+                            <div class="dropdown-panel">
+                                @for (member of members(); track member.id) {
+                                <label class="dropdown-item" (click)="$event.stopPropagation()">
+                                    <input type="checkbox" [checked]="selectedAssignees().has(member.id)"
+                                        (change)="toggleAssignee(member.id)" />
+                                    <span>{{ member.username }} - {{ member.name }}</span>
+                                </label>
+                                }
+                                @if (members().length === 0) {
+                                <div class="dropdown-empty">No members found</div>
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Labels -->
+                    <div class="metadata-card">
+                        <h4>Labels <span class="count">({{ selectedLabels().size }})</span></h4>
+                        <div class="dropdown-container">
+                            <button class="dropdown-toggle" (click)="showLabelsDropdown.set(!showLabelsDropdown())">
+                                @if (selectedLabels().size === 0) { Select labels... }
+                                @else { {{ selectedLabels().size }} selected }
+                            </button>
+                            @if (showLabelsDropdown()) {
+                            <div class="dropdown-panel">
+                                @for (label of labels(); track label.id) {
+                                <label class="dropdown-item" (click)="$event.stopPropagation()">
+                                    <input type="checkbox" [checked]="selectedLabels().has(label.name)"
+                                        (change)="toggleLabel(label.name)" />
+                                    <span class="label-color-sm" [style.background]="label.color"></span>
+                                    <span>{{ label.name }}</span>
+                                </label>
+                                }
+                                @if (labels().length === 0) {
+                                <div class="dropdown-empty">No labels found</div>
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Milestone -->
+                    <div class="metadata-card">
+                        <h4>Milestone</h4>
+                        <select class="input" [value]="selectedMilestone() || ''"
+                            (change)="selectedMilestone.set($any($event.target).value ? +$any($event.target).value : null)">
+                            <option value="">-- No Milestone --</option>
+                            @for (m of milestones(); track m.id) {
+                            <option [value]="m.id">{{ m.title }}</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </section>
+            }
+
+            <!-- Step 4: Projects -->
+            <section class="section">
+                <h2 class="step">
+                    <span class="num">4</span> Select Projects
+                    @if (group()) { <span class="tag orange">{{ group()?.name }}</span> }
+                    <span class="tag">{{ selected().size }} selected</span>
+                </h2>
+
+                @if (!groupId()) {
+                <div class="empty-prompt">Select a group first</div>
+                } @else {
+                <div class="toolbar">
+                    <input type="text" class="input search" placeholder="Search..." [value]="search()"
+                        (input)="onSearch($any($event.target).value)" />
+                    <div class="toolbar-r">
+                        <button class="btn ghost sm" (click)="selectAll()">Select All</button>
+                        <button class="btn ghost sm" (click)="clearSelection()">Clear</button>
+                        <button class="btn outline sm" (click)="loadProjects(groupId()!)" [disabled]="loading()">
+                            Refresh</button>
+                    </div>
+                </div>
+
+                <div class="project-list">
+                    @if (loading()) {
+                    <div class="list-msg">
+                        <div class="spin sm"></div> Loading...
+                    </div>
+                    } @else if (filtered().length === 0) {
+                    <div class="list-msg">No projects found</div>
+                    } @else {
+                    @for (p of filtered(); track p.id) {
+                    <label class="project-row" [class.selected]="isSelected(p.id)">
+                        <input type="checkbox" [checked]="isSelected(p.id)" (change)="toggle(p.id)" />
+                        <span class="pname">{{ p.name }}</span>
+                        <span class="ppath">{{ p.path_with_namespace }}</span>
+                    </label>
+                    }
+                    }
+                </div>
+                }
+            </section>
+
+            <!-- Step 5: Branch Validation (for MR action) -->
+            @if (selectedAction() === 'merge' && selected().size > 0) {
+            <section class="section">
+                <h2 class="step">
+                    <span class="num">5</span> Validate Branches
+                    @if (allBranchesValid()) { <span class="tag success">All Valid</span> }
+                    @else if (branchValidation().size > 0) { <span class="tag danger">Issues Found</span> }
+                </h2>
+
+                <div class="validation-section">
+                    <button class="btn primary" (click)="validateBranches()" [disabled]="validatingBranches()">
+                        @if (validatingBranches()) { Validating... } @else { Verify Branches }
+                    </button>
+
+                    @if (branchValidation().size > 0) {
+                    <div class="validation-results">
+                        @for (pid of selected(); track pid) {
+                        <div class="validation-row" [class.valid]="getValidation(pid)?.valid"
+                            [class.invalid]="!getValidation(pid)?.valid">
+                            <span class="v-icon">@if (getValidation(pid)?.valid) { V } @else { X }</span>
+                            <span class="v-name">{{ getProjectName(pid) }}</span>
+                            @if (getValidation(pid)?.error) {
+                            <span class="v-error">{{ getValidation(pid)?.error }}</span>
+                            }
+                        </div>
+                        }
+                    </div>
+                    }
+
+                    <!-- Per-Project Configuration (when per-project mode selected) -->
+                    @if (branchMode() === 'per-project' && mrMode() === 'single' && projectBranches().size > 0) {
+                    <div class="per-project-config">
+                        <h4>Configure branches per project:</h4>
+                        @for (pid of selected(); track pid) {
+                        <div class="per-project-row">
+                            <span class="pp-name">{{ getProjectName(pid) }}</span>
+                            <select class="input sm" (change)="setPerProjectSource(pid, $any($event.target).value)">
+                                <option value="">-- Source --</option>
+                                @for (b of getBranchesForProject(pid); track b.name) {
+                                <option [value]="b.name">{{ b.name }}</option>
+                                }
+                            </select>
+                            <span class="pp-arrow">-></span>
+                            <select class="input sm" (change)="setPerProjectTarget(pid, $any($event.target).value)">
+                                <option value="">-- Target --</option>
+                                @for (b of getBranchesForProject(pid); track b.name) {
+                                <option [value]="b.name">{{ b.name }}</option>
+                                }
+                            </select>
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+            </section>
+            }
+
+            <!-- Execute -->
+            <section class="section">
+                <button class="btn-exec" (click)="execute()" [disabled]="!canExecute()">
+                    @if (loading()) { Processing... }
+                    @else if (selectedAction() === 'merge' && mrMode() === 'chained') {
+                    Execute {{ chainPreview().length }} MR(s) on {{ selected().size }} project(s)
+                    }
+                    @else { Execute on {{ selected().size }} project(s) }
+                </button>
+                @if (selectedAction() === 'merge' && branchMode() === 'same' && !allBranchesValid() && selected().size >
+                0) {
+                <p class="exec-hint">Verify branches before executing</p>
+                }
+            </section>
+
+            <!-- Logs -->
+            <section class="section">
+                <div class="log-hdr">
+                    <h2 class="step">Activity Log</h2>
+                    <button class="btn ghost sm" (click)="clearLogs()">Clear</button>
+                </div>
+                <div class="log-list">
+                    @if (logs().length === 0) {
+                    <div class="list-msg">No activity yet</div>
+                    } @else {
+                    @for (l of logs(); track l.id) {
+                    <div class="log-row" [class]="l.type">
+                        <span class="ltime">{{ l.time | date:'HH:mm:ss' }}</span>
+                        <span class="lmsg">{{ l.msg }}</span>
+                        <span class="licon">@if (l.type === 'ok') { V } @else if (l.type === 'err') { X } @else { i
+                            }</span>
+                    </div>
+                    }
+                    }
+                </div>
+            </section>
+
+        </main>
+        }
+    </div>
+</div>

@@ -1,0 +1,43 @@
+
+<h3 class="mt-3" style="color: #144E83; font-family: 'Open Sans'; font-weight: 600;">
+    Quick Handle
+</h3>
+<div class="information">
+    <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+        Need Follow Up
+    </h3>
+    <div class="d-flex row  mt-2 mb-2" style="padding-right: 0px;">
+        <div style="padding-right: 0px;">
+            <select [(ngModel)]="quickHandleIsNeedFU" class="select" style="width: 98%;">
+                <option value="false">Tidak</option>
+                <option value="true">Iya</option>
+            </select>
+        </div>
+    </div>
+
+    <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+        Method
+    </h3>
+    <div class="d-flex row  mt-2 mb-2" style="padding-right: 0px;">
+        <div style="padding-right: 0px;">
+            <select [(ngModel)]="quickHandleMethod" class="select" style="width: 98%;">
+                <option value="PERBAIKAN_DATA_USER">Perbaikan Data User</option>
+                <option value="MANUAL">Manual</option>
+                <option value="UNHANDLED">Set Unhandled</option>
+            </select>
+        </div>
+    </div>
+    <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+        Panel
+    </h3>
+    <ng-container [ngSwitch]="quickHandleMethod">
+        <app-fix-data-user *ngSwitchCase="'PERBAIKAN_DATA_USER'" [mid]="keluhan.mid" [email]="keluhan.email" (afterSubmit)="submitQuickHandleManualFixDataUser($event)"></app-fix-data-user>
+        <ng-container *ngSwitchCase="'MANUAL'">
+            <textarea style="width: 100%;" class="form-control" rows="2" maxlength="100" [(ngModel)]="quickHandleNotes"></textarea>
+            <button style="width: 100%;" class="button-primary mt-3" (click)="submitQuickHandleManual()">Submit</button>
+        </ng-container>
+        <ng-container *ngSwitchCase="'UNHANDLED'">
+            <button style="width: 100%;" class="button-danger mt-3" (click)="submitQuickHandleSetUnhandled()">Set Unhandled</button>
+        </ng-container>
+    </ng-container>
+</div>

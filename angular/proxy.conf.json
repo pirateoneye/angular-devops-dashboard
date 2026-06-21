@@ -1,0 +1,7 @@
+{
+    "/v1": {
+        "target": "http://10.61.45.150:8081",
+        "secure": false,
+        "changeOrigin": true
+    }
+}

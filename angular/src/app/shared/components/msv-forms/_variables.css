@@ -1,0 +1,12 @@
+:root {
+  --msv-primary-color: #144e83;
+  --msv-error-color: #dc3545;
+  --msv-success-color: #28a745;
+  --msv-warning-color: #ffc107;
+  --msv-border-color: #ced4da;
+  --msv-focus-color: #005caa;
+  --msv-font-family: 'Open Sans', sans-serif;
+  --msv-border-radius: 5px;
+  --msv-input-height: 45px;
+  --msv-input-padding: 5px 10px;
+}

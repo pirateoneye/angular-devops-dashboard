@@ -1,0 +1,16 @@
+.msv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+  border: 1px solid var(--msv-border-color, #ced4da);
+  border-radius: var(--msv-border-radius, 5px);
+  padding: 8px;
+  background-color: #fff;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.msv-list.selectable {
+  cursor: pointer;
+}

@@ -1,0 +1,50 @@
+.msv-response-panel {
+  width: 100%;
+  background-color: #e6f3ff;
+  color: var(--msv-focus-color, #005caa);
+  font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 1rem;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.panel-message {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.message-label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.message-text {
+  font-weight: 400;
+}
+
+.panel-data {
+  margin-top: 0.75rem;
+}
+
+.data-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.data-content {
+  padding: 5px;
+  background: #f7f7f7;
+  border-radius: 15px;
+  color: #030273;
+  font-family: monospace;
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

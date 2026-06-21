@@ -1,0 +1,28 @@
+<div class="msv-datepicker-container">
+  <label *ngIf="label" class="msv-datepicker-label">{{ label }}</label>
+  <div class="datepicker-wrapper">
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [placeholder]="placeholder"
+      [value]="value"
+      [disabled]="disabled"
+      [min]="minDate"
+      [max]="maxDate"
+      (dateChange)="onDateChange($event)"
+      (blur)="onBlur()"
+      class="form-control"
+      [class.is-invalid]="showError"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker" [disabled]="disabled"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </div>
+  <ng-container *ngIf="showError">
+    <ng-container *ngIf="errorTemplate; else defaultError">
+      <ng-container *ngTemplateOutlet="errorTemplate; context: {$implicit: errors}"></ng-container>
+    </ng-container>
+    <ng-template #defaultError>
+      <div class="msv-datepicker-error">{{ errors[0] }}</div>
+    </ng-template>
+  </ng-container>
+</div>

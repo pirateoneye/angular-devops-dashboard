@@ -1,0 +1,38 @@
+<div class="msv-number-container">
+  <label *ngIf="label" class="msv-number-label">{{ label }}</label>
+  <div class="msv-number-input-group">
+    <button 
+      *ngIf="showButtons" 
+      type="button" 
+      class="msv-number-btn decrement" 
+      (click)="decrement()" 
+      [disabled]="disabled || atMin"
+      [attr.aria-label]="'Decrement'">−</button>
+    <input 
+      type="text" 
+      inputmode="numeric"
+      [value]="displayValue"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      (input)="onInput($event)" 
+      (blur)="onBlur()"
+      class="form-control"
+      [class.is-invalid]="showError"
+      [attr.aria-label]="label || 'Number input'" />
+    <button 
+      *ngIf="showButtons" 
+      type="button" 
+      class="msv-number-btn increment"
+      (click)="increment()" 
+      [disabled]="disabled || atMax"
+      [attr.aria-label]="'Increment'">+</button>
+  </div>
+  <ng-container *ngIf="showError">
+    <ng-container *ngIf="errorTemplate; else defaultError">
+      <ng-container *ngTemplateOutlet="errorTemplate; context: {$implicit: errors}"></ng-container>
+    </ng-container>
+    <ng-template #defaultError>
+      <div class="msv-number-error">{{ errors[0] }}</div>
+    </ng-template>
+  </ng-container>
+</div>

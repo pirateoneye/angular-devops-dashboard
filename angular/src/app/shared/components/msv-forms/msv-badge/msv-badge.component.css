@@ -1,0 +1,56 @@
+.msv-badge-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.msv-badge-wrapper > span {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  
+  font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1;
+  
+  min-width: 20px;
+  height: 20px;
+  padding: 4px 6px;
+  
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  box-shadow: 0 0 0 2px var(--msv-background-color, #ffffff);
+  white-space: nowrap;
+}
+
+.badge-dot {
+  min-width: 8px !important;
+  width: 8px;
+  height: 8px;
+  padding: 0 !important;
+  border-radius: 50%;
+}
+
+.badge-primary {
+  background-color: var(--msv-color-primary, #0066cc);
+  color: #ffffff;
+}
+
+.badge-success {
+  background-color: var(--msv-color-success, #009649);
+  color: #ffffff;
+}
+
+.badge-warning {
+  background-color: var(--msv-color-warning, #f59e0b);
+  color: #ffffff;
+}
+
+.badge-error {
+  background-color: var(--msv-color-error, #cd1923);
+  color: #ffffff;
+}

@@ -73,6 +73,12 @@ const routes: Routes = [
   { path: 'tools-dev/decoder', loadComponent: () => import('./pages/tools-dev/decoder/decoder.component').then(m => m.DecoderComponent) },
   { path: 'tools-dev/regex-tester', loadComponent: () => import('./pages/tools-dev/regex-tester/regex-tester.component').then(m => m.RegexTesterComponent) },
   { path: 'tools-dev/id-generator', loadComponent: () => import('./pages/tools-dev/id-generator/id-generator.component').then(m => m.IdGeneratorComponent) },
+  { path: 'tools-dev/hash-generator', loadComponent: () => import('./pages/tools-dev/hash-generator/hash-generator.component').then(m => m.HashGeneratorComponent) },
+  { path: 'tools-dev/password-generator', loadComponent: () => import('./pages/tools-dev/password-generator/password-generator.component').then(m => m.PasswordGeneratorComponent) },
+  { path: 'tools-dev/text-diff', loadComponent: () => import('./pages/tools-dev/text-diff/text-diff.component').then(m => m.TextDiffComponent) },
+  { path: 'tools-dev/color-converter', loadComponent: () => import('./pages/tools-dev/color-converter/color-converter.component').then(m => m.ColorConverterComponent) },
+  { path: 'tools-dev/text-transforms', loadComponent: () => import('./pages/tools-dev/text-transforms/text-transforms.component').then(m => m.TextTransformsComponent) },
+  { path: 'tools-dev/base-converter', loadComponent: () => import('./pages/tools-dev/base-converter/base-converter.component').then(m => m.BaseConverterComponent) },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
 ];

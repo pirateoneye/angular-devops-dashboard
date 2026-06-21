@@ -1,0 +1,22 @@
+<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Hash Generator</h2>
+    <h4 class="tool-sub">Buat hash MD5/SHA dari teks (client-side, via crypto-js).</h4>
+    <div class="tool-divider"></div>
+
+    <label class="tool-label">Input</label>
+    <textarea class="tool-area" rows="6" [(ngModel)]="input" placeholder="Ketik atau tempel teks..."></textarea>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="generate()">Generate semua hash</button>
+    </div>
+
+    <div class="hash-list" *ngIf="results.length">
+      <div *ngFor="let r of results" class="hash-row">
+        <span class="hash-algo">{{ r.algo }}</span>
+        <input class="hash-val" [value]="r.hash" readonly />
+        <button class="icon-btn" (click)="copy(r.hash)" title="Copy"><mat-icon>file_copy</mat-icon></button>
+      </div>
+    </div>
+  </mat-card>
+</div>

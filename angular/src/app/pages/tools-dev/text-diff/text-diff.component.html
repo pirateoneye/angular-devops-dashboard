@@ -1,0 +1,31 @@
+<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Text Diff</h2>
+    <h4 class="tool-sub">Bandingkan dua teks per baris (line-based LCS diff).</h4>
+    <div class="tool-divider"></div>
+
+    <div class="td-grid">
+      <div>
+        <label class="tool-label">Teks A (lama)</label>
+        <textarea class="tool-area" rows="10" [(ngModel)]="left" placeholder="Teks lama..."></textarea>
+      </div>
+      <div>
+        <label class="tool-label">Teks B (baru)</label>
+        <textarea class="tool-area" rows="10" [(ngModel)]="right" placeholder="Teks baru..."></textarea>
+      </div>
+    </div>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="compare()">Bandingkan</button>
+      <button class="btn-secondary" (click)="clear()">Clear</button>
+      <span class="td-stats" *ngIf="diff.length">+{{ added }} &minus;{{ removed }} ={{ unchanged }}</span>
+    </div>
+
+    <div class="td-result" *ngIf="diff.length">
+      <div *ngFor="let line of diff" class="td-line" [class.add]="line.type === 'add'" [class.del]="line.type === 'del'">
+        <span class="td-sign">{{ line.type === 'add' ? '+' : line.type === 'del' ? '-' : ' ' }}</span>
+        <span class="td-text">{{ line.text }}</span>
+      </div>
+    </div>
+  </mat-card>
+</div>

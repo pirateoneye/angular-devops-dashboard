@@ -1,0 +1,13 @@
+.tool-card { border-radius:16px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.tool-title { margin:0; color:#144e83; font-family:'Open Sans',sans-serif; font-weight:700; }
+.tool-sub { margin:4px 0 0; color:#495057; font-family:'Open Sans',sans-serif; font-weight:400; }
+.tool-divider { height:1px; background:#e9ecef; margin:14px 0; }
+.tool-error { color:#cd1923; background:#ffd9d3; border-radius:10px; padding:10px 14px; font-size:13px; margin-bottom:12px; }
+.bc-input { display:flex; gap:10px; margin-bottom:14px; }
+.bc-field { flex:1; font-family:monospace; font-size:14px; border:1px solid #ddd; border-radius:10px; padding:10px; }
+.bc-select { border:1px solid #ddd; border-radius:10px; padding:0 12px; font-family:'Open Sans',sans-serif; }
+.bc-out { display:flex; flex-direction:column; gap:8px; }
+.bc-row { display:flex; align-items:center; gap:10px; }
+.bc-label { width:46px; color:#144e83; font-weight:700; font-family:'Open Sans',sans-serif; font-size:13px; }
+.bc-val { flex:1; font-family:monospace; font-size:13px; border:1px solid #ddd; border-radius:8px; padding:8px; background:#fafafa; }
+.icon-btn { background:transparent; border:none; cursor:pointer; color:#005caa; display:flex; align-items:center; }

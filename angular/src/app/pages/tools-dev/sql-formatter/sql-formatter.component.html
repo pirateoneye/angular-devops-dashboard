@@ -1,0 +1,40 @@
+﻿<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">SQL Formatter</h2>
+    <h4 class="tool-sub">Format &amp; minify SQL (SELECT / INSERT / UPDATE / DDL). Keyword kapital &amp; indentasi.</h4>
+    <div class="tool-divider"></div>
+
+    <div class="cj-row">
+      <label>Indent
+        <select [(ngModel)]="indent">
+          <option value="2">2 spasi</option>
+          <option value="4">4 spasi</option>
+          <option value="1">1 spasi</option>
+        </select>
+      </label>
+      <label><input type="checkbox" [(ngModel)]="uppercaseKeywords" /> Keyword UPPERCASE</label>
+    </div>
+
+    <div class="jf-grid">
+      <div>
+        <label class="tool-label">SQL Input</label>
+        <textarea class="tool-area" rows="14" [(ngModel)]="input" placeholder="select id,name from users where id in (1,2,3) order by name"></textarea>
+      </div>
+      <div>
+        <label class="tool-label">Output</label>
+        <textarea class="tool-area" rows="14" [value]="output" readonly placeholder="Hasil..."></textarea>
+        <button class="copy-btn" (click)="copyOutput()" *ngIf="output" title="Copy">
+          <mat-icon>file_copy</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="format()">Format</button>
+      <button class="btn-primary" (click)="minify()">Minify</button>
+      <button class="btn-secondary" (click)="clear()">Clear</button>
+    </div>
+
+    <div class="tool-error" *ngIf="error">{{ error }}</div>
+  </mat-card>
+</div>

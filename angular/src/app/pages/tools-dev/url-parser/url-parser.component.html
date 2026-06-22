@@ -1,0 +1,46 @@
+﻿<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">URL Parser</h2>
+    <h4 class="tool-sub">Pecah URL menjadi komponen (protocol, host, port, path, query, hash) &amp; daftar query parameter.</h4>
+    <div class="tool-divider"></div>
+
+    <label class="tool-label">URL</label>
+    <textarea class="tool-area" rows="3" [(ngModel)]="input" placeholder="https://example.com/path?q=1"></textarea>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="parse()">Parse</button>
+      <button class="btn-secondary" (click)="clear()">Clear</button>
+    </div>
+
+    <div class="tool-error" *ngIf="error">{{ error }}</div>
+
+    <ng-container *ngIf="parsed">
+      <label class="tool-label" style="margin-top:12px">Komponen</label>
+      <table class="up-table">
+        <tbody>
+          <tr *ngFor="let c of components">
+            <th>{{ c.label }}</th>
+            <td>
+              <code>{{ c.value }}</code>
+              <button class="icon-btn" *ngIf="c.value && c.value !== '-'" (click)="copyValue(c.value)" title="Salin">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <label class="tool-label" style="margin-top:12px">Query Parameter ({{ params.length }})</label>
+      <table class="up-table" *ngIf="params.length; else noParams">
+        <thead><tr><th>Key</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let p of params">
+            <td><code>{{ p.key }}</code></td>
+            <td><code>{{ p.value }}</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #noParams><div class="ts-hint">Tidak ada query parameter.</div></ng-template>
+    </ng-container>
+  </mat-card>
+</div>

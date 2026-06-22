@@ -1,8 +1,18 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../module/material.module';
+import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule],
   selector: 'app-piket-authorization',
   templateUrl: './piket-authorization.component.html',
   styleUrls: ['./piket-authorization.component.css']

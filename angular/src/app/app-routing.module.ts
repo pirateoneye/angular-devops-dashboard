@@ -1,75 +1,51 @@
-import { NgModule } from '@angular/core';
-import { Routes } from '@angular/router';
-import { BatchRunnerComponent } from './pages/tools-dev/batch-runner/batch-runner.component';
-import { LoginComponent } from './pages/login/login.component';
-import { RouterModule } from '@angular/router';
-import { CryptoComponent } from './pages/tools-dev/crypto/crypto.component';
-import { FixDataUserComponent } from './pages/piket/fix-data-user/fix-data-user.component';
-import { CheckDataComponent } from './pages/tools-dev/check-data/check-data.component';
-import { DeleteDataComponent } from './pages/tools-dev/delete-data/delete-data.component';
+﻿import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 import { PiketGuard } from './shared/service/auth-guard/piket.guard';
-// import { GitlabGuard } from './service/auth-guard/gitlab.guard';
-import { PiketAuthorizationComponent } from './pages/piket/piket-authorization/piket-authorization.component';
-import { KeluhanListComponent } from './pages/piket/keluhan-list/keluhan-list.component';
-// import { GitlabAuthComponent } from './pages/gitlab/gitlab-auth/gitlab-auth.component';
-import { GitlabTaskComponent } from './pages/tools-dev/gitlab/gitlab-task/gitlab-task.component';
-import { GitlabBulkComponent } from './pages/tools-dev/gitlab/gitlab-bulk/gitlab-bulk.component';
-import { GitlabTagsMonitorComponent } from './pages/tools-dev/gitlab/gitlab-tags-monitor/gitlab-tags-monitor.component';
-import { PaimonDupeComponent } from './pages/tools-dev/paimon-dupe/paimon-dupe.component';
-import { FixAfterMergeCisComponent } from './pages/piket/fix-after-merge-cis/fix-after-merge-cis.component';
-
-import { FileServerManagerComponent } from './pages/tools-dev/file-server-manager/file-server-manager.component';
-import { PushNotifFcmComponent } from './pages/tools-dev/push-notif-fcm/push-notif-fcm.component';
-import { PublishKafkaComponent } from './pages/tools-dev/publish-kafka/publish-kafka.component';
-import { MsvTestComponent } from './pages/tools-dev/msv-test/msv-test.component';
-import { MsvDocsComponent } from './pages/tools-dev/msv-docs/msv-docs.component';
-import { CalendarPiketComponent } from './pages/piket/calendar-piket/calendar-piket.component';
-import { DemoComponent } from './pages/demo/demo.component';
 
 const routes: Routes = [
-  { path: 'tools-dev/gitlab/tags-monitor', component: GitlabTagsMonitorComponent },
-  { path: 'tools-dev/gitlab/task', component: GitlabTaskComponent },
-  { path: 'tools-dev/gitlab/bulk', component: GitlabBulkComponent },
-  { path: 'tools-dev/paimon-dupe', component: PaimonDupeComponent },
-  { path: 'tools-dev/batch-runner', component: BatchRunnerComponent },
+  { path: 'tools-dev/gitlab/tags-monitor', loadComponent: () => import('./pages/tools-dev/gitlab/gitlab-tags-monitor/gitlab-tags-monitor.component').then(m => m.GitlabTagsMonitorComponent) },
+  { path: 'tools-dev/gitlab/task', loadComponent: () => import('./pages/tools-dev/gitlab/gitlab-task/gitlab-task.component').then(m => m.GitlabTaskComponent) },
+  { path: 'tools-dev/gitlab/bulk', loadComponent: () => import('./pages/tools-dev/gitlab/gitlab-bulk/gitlab-bulk.component').then(m => m.GitlabBulkComponent) },
+  { path: 'tools-dev/paimon-dupe', loadComponent: () => import('./pages/tools-dev/paimon-dupe/paimon-dupe.component').then(m => m.PaimonDupeComponent) },
+  { path: 'tools-dev/batch-runner', loadComponent: () => import('./pages/tools-dev/batch-runner/batch-runner.component').then(m => m.BatchRunnerComponent) },
   {
     path: 'tools-dev/crypto',
-    component: CryptoComponent,
+    loadComponent: () => import('./pages/tools-dev/crypto/crypto.component').then(m => m.CryptoComponent),
     canActivate: [PiketGuard],
   },
-  { path: 'tools-dev/delete-data', component: DeleteDataComponent },
-  { path: 'tools-dev/check-data', component: CheckDataComponent },
+  { path: 'tools-dev/delete-data', loadComponent: () => import('./pages/tools-dev/delete-data/delete-data.component').then(m => m.DeleteDataComponent) },
+  { path: 'tools-dev/check-data', loadComponent: () => import('./pages/tools-dev/check-data/check-data.component').then(m => m.CheckDataComponent) },
   {
     path: 'tools-dev/file-server-manager',
-    component: FileServerManagerComponent,
+    loadComponent: () => import('./pages/tools-dev/file-server-manager/file-server-manager.component').then(m => m.FileServerManagerComponent),
   },
-  { path: 'tools-dev/push-notif-fcm', component: PushNotifFcmComponent },
-  { path: 'tools-dev/publish-kafka', component: PublishKafkaComponent },
-  { path: 'tools-dev/msv-test', component: MsvTestComponent },
-  { path: 'tools-dev/msv-docs', component: MsvDocsComponent },
-  { path: 'piket/login', component: PiketAuthorizationComponent },
+  { path: 'tools-dev/push-notif-fcm', loadComponent: () => import('./pages/tools-dev/push-notif-fcm/push-notif-fcm.component').then(m => m.PushNotifFcmComponent) },
+  { path: 'tools-dev/publish-kafka', loadComponent: () => import('./pages/tools-dev/publish-kafka/publish-kafka.component').then(m => m.PublishKafkaComponent) },
+  { path: 'tools-dev/msv-test', loadComponent: () => import('./pages/tools-dev/msv-test/msv-test.component').then(m => m.MsvTestComponent) },
+  { path: 'tools-dev/msv-docs', loadComponent: () => import('./pages/tools-dev/msv-docs/msv-docs.component').then(m => m.MsvDocsComponent) },
+  { path: 'piket/login', loadComponent: () => import('./pages/piket/piket-authorization/piket-authorization.component').then(m => m.PiketAuthorizationComponent) },
   {
     path: 'piket/keluhan-list',
-    component: KeluhanListComponent,
+    loadComponent: () => import('./pages/piket/keluhan-list/keluhan-list.component').then(m => m.KeluhanListComponent),
     canActivate: [PiketGuard],
   },
   {
     path: 'piket/fix-data-user',
-    component: FixDataUserComponent,
+    loadComponent: () => import('./pages/piket/fix-data-user/fix-data-user.component').then(m => m.FixDataUserComponent),
     canActivate: [PiketGuard],
   },
   {
     path: 'piket/fix-after-merge-cis',
-    component: FixAfterMergeCisComponent,
+    loadComponent: () => import('./pages/piket/fix-after-merge-cis/fix-after-merge-cis.component').then(m => m.FixAfterMergeCisComponent),
     canActivate: [PiketGuard],
   },
   {
     path: 'piket/calendar',
-    component: CalendarPiketComponent,
+    loadComponent: () => import('./pages/piket/calendar-piket/calendar-piket.component').then(m => m.CalendarPiketComponent),
     canActivate: [PiketGuard],
   },
-  { path: 'login', component: LoginComponent },
-  { path: 'demo', component: DemoComponent },
+  { path: 'login', loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent) },
+  { path: 'demo', loadComponent: () => import('./pages/demo/demo.component').then(m => m.DemoComponent) },
   { path: 'dashboard', loadComponent: () => import('./pages/home/dashboard.component').then(m => m.DashboardComponent) },
   { path: 'utilities', loadComponent: () => import('./pages/toolbox/toolbox.component').then(m => m.ToolboxComponent) },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -80,6 +56,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
-
-
+export class AppRoutingModule { }

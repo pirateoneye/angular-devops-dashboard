@@ -1,0 +1,12 @@
+﻿.cj-opts { margin-bottom:10px; }
+.cj-dir { display:flex; gap:14px; align-items:center; flex-wrap:wrap; font-size:13px; }
+.cj-dir label { display:inline-flex; align-items:center; gap:4px; cursor:pointer; color:#144e83; font-weight:600; }
+.cj-row { display:flex; gap:14px; align-items:center; margin-top:8px; flex-wrap:wrap; font-size:13px; }
+.cj-row label { display:inline-flex; align-items:center; gap:4px; cursor:pointer; color:#495057; }
+.cj-row select { border:1px solid #ddd; border-radius:6px; padding:3px 6px; font-size:12px; }
+.cj-swap { padding:4px 10px; }
+.jf-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.jf-grid > div { position:relative; }
+.copy-btn { position:absolute; top:26px; right:4px; background:transparent; border:none; cursor:pointer; color:#005caa; padding:2px; }
+.copy-btn mat-icon { font-size:18px; width:18px; height:18px; }
+@media (max-width:768px){ .jf-grid { grid-template-columns:1fr; } }

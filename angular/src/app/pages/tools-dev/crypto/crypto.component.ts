@@ -1,8 +1,18 @@
-import { Component, inject } from '@angular/core';
+﻿import { Component, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as CryptoJS from 'crypto-js';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../module/material.module';
+import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule],
   selector: 'crypto',
   templateUrl: './crypto.component.html',
   styleUrls: ['./crypto.component.css']

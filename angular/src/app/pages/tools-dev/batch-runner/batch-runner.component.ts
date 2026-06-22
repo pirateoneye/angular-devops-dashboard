@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+﻿import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { BatchList } from 'src/app/shared/model/interface/batchlist.interface';
 import { environment } from 'src/environments/environment';
@@ -9,8 +9,18 @@ import { ChangeDetectorRef } from '@angular/core';
 import { ModalInsertNameComponent } from '../../../shared/component/modal/insert-name/modal-insert-name.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../../../shared/service/user-service/user.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../module/material.module';
+import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule],
   selector: 'msv-batch-runner',
   templateUrl: './batch-runner.component.html',
   styleUrls: ['./batch-runner.component.css'],

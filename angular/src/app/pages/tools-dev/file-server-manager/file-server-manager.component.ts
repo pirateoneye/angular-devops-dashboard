@@ -1,10 +1,21 @@
-import { Component, inject, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MCB_TOOLS_FILE_SERVER_MANAGER_DELETE_FILE, MCB_TOOLS_FILE_SERVER_MANAGER_DOWNLOAD_FILE, MCB_TOOLS_FILE_SERVER_MANAGER_LIST_CATEGORY_FILE, MCB_TOOLS_FILE_SERVER_MANAGER_LIST_FILE_BY_CATEGORY, MCB_TOOLS_FILE_SERVER_MANAGER_WRITE_FILE } from 'src/app/core/constant/api.constant';
 import { ModalConfirmationComponent } from 'src/app/shared/component/modal/confirmation/modal-confirmation.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../module/material.module';
+import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { InputFileUploadComponent } from '../../../shared/component/form/input-file-upload/input-file-upload.component';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule, InputFileUploadComponent],
   selector: 'app-file-server-manager',
   templateUrl: './file-server-manager.component.html',
   styleUrls: ['./file-server-manager.component.css']

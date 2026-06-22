@@ -1,0 +1,7 @@
+﻿.cj-row { display:flex; gap:14px; align-items:center; margin:10px 0; flex-wrap:wrap; font-size:13px; }
+.cj-row label { display:inline-flex; align-items:center; gap:4px; color:#495057; }
+.rp-list { display:flex; flex-direction:column; gap:6px; margin:6px 0 10px; }
+.rp-item { display:flex; align-items:center; gap:8px; background:#f8f9fa; border:1px solid #e9ecef; border-radius:8px; padding:6px 10px; }
+.rp-no { background:#005caa; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; }
+.rp-item code { font-family:monospace; color:#144e83; flex:1; }
+.rp-idx { color:#888; font-size:11px; }

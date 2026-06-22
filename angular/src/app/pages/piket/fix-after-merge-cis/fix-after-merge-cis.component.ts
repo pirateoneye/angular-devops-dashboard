@@ -1,11 +1,21 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+﻿import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, catchError, combineLatest, concatMap, from, mergeMap, Observable, of, skip, switchMap, takeUntil, tap, throwError, timeout, toArray } from 'rxjs';
 import { Router } from '@angular/router';
 import { IndukCicilan } from 'src/app/shared/model/interface/indukcicilan.interface';
 import { UserMessi } from 'src/app/shared/model/interface/user-messi.interface';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../module/material.module';
+import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule],
   selector: 'app-fix-after-merge-cis',
   templateUrl: './fix-after-merge-cis.component.html',
   styleUrls: ['./fix-after-merge-cis.component.css']

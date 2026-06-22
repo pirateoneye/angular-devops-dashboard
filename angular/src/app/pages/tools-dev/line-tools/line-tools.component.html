@@ -1,0 +1,43 @@
+﻿<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Line Tools</h2>
+    <h4 class="tool-sub">Tambah prefix/suffix &amp; penomoran per baris, atau gabungkan (join) baris dengan separator.</h4>
+    <div class="tool-divider"></div>
+
+    <label class="tool-label">Input (satu item per baris)</label>
+    <textarea class="tool-area" rows="6" [(ngModel)]="input" placeholder="apple
+banana
+cherry"></textarea>
+
+    <div class="lt-grid">
+      <label>Prefix <input class="lt-in" [(ngModel)]="prefix" placeholder="&quot;- &quot;" /></label>
+      <label>Suffix <input class="lt-in" [(ngModel)]="suffix" placeholder="&quot;,&quot;" /></label>
+      <label>Mode
+        <select [(ngModel)]="mode">
+          <option value="each">Tiap baris</option>
+          <option value="join">Gabung (join)</option>
+        </select>
+      </label>
+      <label *ngIf="mode === 'join'">Separator <input class="lt-in" [(ngModel)]="separator" placeholder=", " /></label>
+      <label><input type="checkbox" [(ngModel)]="numbering" /> Penomoran</label>
+      <label *ngIf="numbering">Mulai <input type="number" class="lt-in lt-sm" [(ngModel)]="startAt" /></label>
+      <label *ngIf="numbering">Step <input type="number" class="lt-in lt-sm" [(ngModel)]="step" /></label>
+      <label *ngIf="numbering">Pad <input type="number" class="lt-in lt-sm" [(ngModel)]="pad" /></label>
+      <label *ngIf="numbering">Pad char <input class="lt-in lt-sm" [(ngModel)]="padChar" maxlength="1" /></label>
+      <label><input type="checkbox" [(ngModel)]="trimFirst" /> Trim tiap baris</label>
+      <label><input type="checkbox" [(ngModel)]="skipBlank" /> Buang baris kosong</label>
+    </div>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="run()">Run</button>
+      <button class="btn-secondary" (click)="copy()" [disabled]="!output">Copy</button>
+      <button class="btn-secondary" (click)="example()">Contoh</button>
+      <button class="btn-secondary" (click)="clear()">Clear</button>
+    </div>
+
+    <div class="tool-stats">{{ stats }}</div>
+
+    <label class="tool-label" style="margin-top:10px">Output</label>
+    <textarea class="tool-area" rows="6" [value]="output" readonly placeholder="Hasil muncul di sini..."></textarea>
+  </mat-card>
+</div>

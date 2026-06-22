@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UserService } from 'src/app/shared/service/user-service/user.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, MatDialogModule],
   selector: 'modal-insert-name',
   templateUrl: './modal-insert-name.component.html',
   styleUrls: ['./modal-insert-name.component.css', '../../../../app.component.css']

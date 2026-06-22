@@ -127,8 +127,16 @@ interface ActionDef {
 // ============================================================================
 // COMPONENT
 // ============================================================================
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../../module/material.module';
+import { MsvFormsModule } from '../../../../shared/components/msv-forms/msv-forms.module';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule],
     selector: 'app-gitlab-bulk',
     templateUrl: './gitlab-bulk.component.html',
     styleUrls: ['./gitlab-bulk.component.css'],

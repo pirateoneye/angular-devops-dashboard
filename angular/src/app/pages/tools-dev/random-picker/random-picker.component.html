@@ -1,0 +1,46 @@
+﻿<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Random Picker &amp; Shuffler</h2>
+    <h4 class="tool-sub">Pilih item acak (unik/berulang) atau kocok urutan list dengan Fisher-Yates.</h4>
+    <div class="tool-divider"></div>
+
+    <label class="tool-label">Daftar item (satu per baris)</label>
+    <textarea class="tool-area" rows="6" [(ngModel)]="input" placeholder="Apel
+Mangga
+Jeruk"></textarea>
+
+    <div class="cj-row">
+      <label>Jumlah pilih <input type="number" min="1" [(ngModel)]="count" style="width:64px" /></label>
+      <label><input type="checkbox" [(ngModel)]="unique" /> Unik (tanpa pengulangan)</label>
+      <label><input type="checkbox" [(ngModel)]="sortResult" /> Urutkan hasil</label>
+    </div>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="pick()">Pick</button>
+      <button class="btn-secondary" (click)="shuffle()">Shuffle All</button>
+      <button class="btn-secondary" (click)="example()">Contoh</button>
+      <button class="btn-secondary" (click)="clear()">Clear</button>
+    </div>
+
+    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    <div class="tool-stats">{{ items.length }} item</div>
+
+    <ng-container *ngIf="picks.length">
+      <label class="tool-label" style="margin-top:10px">Hasil pilihan ({{ picks.length }})</label>
+      <div class="rp-list">
+        <div class="rp-item" *ngFor="let p of picks; let i = index">
+          <span class="rp-no">{{ i + 1 }}</span>
+          <code>{{ p.value }}</code>
+          <span class="rp-idx">#{{ p.index + 1 }}</span>
+        </div>
+      </div>
+      <button class="btn-secondary" (click)="copy(picksText)">Copy hasil</button>
+    </ng-container>
+
+    <ng-container *ngIf="shuffled.length">
+      <label class="tool-label" style="margin-top:10px">Hasil shuffle</label>
+      <textarea class="tool-area" rows="6" [value]="shuffledText" readonly></textarea>
+      <button class="btn-secondary" (click)="copy(shuffledText)">Copy</button>
+    </ng-container>
+  </mat-card>
+</div>

@@ -1,0 +1,45 @@
+﻿<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Chmod Calculator</h2>
+    <h4 class="tool-sub">Hitung permission Unix: rwx ↔ oktal ↔ simbolik, lengkap dengan setuid/setgid/sticky-bit.</h4>
+    <div class="tool-divider"></div>
+
+    <div class="cm-grid">
+      <div class="cm-group" *ngFor="let g of groups">
+        <div class="cm-group-head">{{ g.label }} ({{ g.letter }})</div>
+        <label><input type="checkbox" [(ngModel)]="perms[g.key].read" /> read (4)</label>
+        <label><input type="checkbox" [(ngModel)]="perms[g.key].write" /> write (2)</label>
+        <label><input type="checkbox" [(ngModel)]="perms[g.key].execute" /> execute (1)</label>
+        <button class="cm-mini" (click)="toggleAll(g.key, true)">All</button>
+        <button class="cm-mini" (click)="toggleAll(g.key, false)">None</button>
+      </div>
+    </div>
+
+    <div class="cm-special">
+      <label><input type="checkbox" [(ngModel)]="setuid" /> setuid (4)</label>
+      <label><input type="checkbox" [(ngModel)]="setgid" /> setgid (2)</label>
+      <label><input type="checkbox" [(ngModel)]="sticky" /> sticky (1)</label>
+    </div>
+
+    <div class="cm-result">
+      <div class="cm-box"><span class="cm-lbl">Oktal</span><code class="cm-val">{{ octal }}</code><button class="icon-btn" (click)="copy(octal)"><mat-icon>content_copy</mat-icon></button></div>
+      <div class="cm-box"><span class="cm-lbl">Simbolik</span><code class="cm-val">{{ symbolic }}</code><button class="icon-btn" (click)="copy(symbolic)"><mat-icon>content_copy</mat-icon></button></div>
+      <div class="cm-box"><span class="cm-lbl">chmod</span><code class="cm-val">chmod {{ octalNoSpecial.length === 3 && !setuid && !setgid && !sticky ? octalNoSpecial : octal }} file</code></div>
+    </div>
+
+    <div class="cm-summary tool-stats">{{ summary }}</div>
+
+    <div class="tool-divider"></div>
+    <label class="tool-label">Terapkan dari input</label>
+    <div class="cj-row">
+      <input class="tool-input-mono" style="flex:1" [(ngModel)]="inputStr" placeholder="755 atau rwxr-xr-x" />
+      <button class="btn-primary" (click)="parseInput()">Apply</button>
+    </div>
+    <div class="tool-error" *ngIf="parseError">{{ parseError }}</div>
+
+    <label class="tool-label" style="margin-top:10px">Preset</label>
+    <div class="cm-presets">
+      <button class="cm-chip" *ngFor="let p of presets" (click)="applyPreset(p)">{{ p }}</button>
+    </div>
+  </mat-card>
+</div>

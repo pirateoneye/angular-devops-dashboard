@@ -1,7 +1,10 @@
-import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
+﻿import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule],
   selector: 'input-file-upload',
   templateUrl: './input-file-upload.component.html',
   styleUrls: ['./input-file-upload.component.css']

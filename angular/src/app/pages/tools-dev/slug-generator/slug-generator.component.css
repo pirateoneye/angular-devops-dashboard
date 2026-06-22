@@ -1,0 +1,6 @@
+﻿.cj-row { display:flex; gap:14px; align-items:center; margin:10px 0; flex-wrap:wrap; font-size:13px; }
+.cj-row label { display:inline-flex; align-items:center; gap:4px; cursor:pointer; color:#495057; }
+.cj-row select, .cj-row input[type=number] { border:1px solid #ddd; border-radius:6px; padding:3px 6px; font-size:12px; }
+.ts-hint { color:#888; font-size:11px; }
+.sl-preview { background:#f8f9fa; border:1px solid #e9ecef; border-radius:8px; padding:8px 10px; margin-bottom:10px; }
+.sl-preview code { font-family:monospace; font-size:13px; color:#144e83; word-break:break-all; }

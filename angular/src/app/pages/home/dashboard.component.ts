@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -35,7 +35,7 @@ export class DashboardComponent {
     { label: 'Paimon Dupe', description: 'Cek duplikat Paimon', icon: 'content_copy', route: '/tools-dev/paimon-dupe', group: 'tools-dev' },
     { label: 'MSV Test', description: 'Sandbox komponen MSV', icon: 'science', route: '/tools-dev/msv-test', group: 'tools-dev' },
     { label: 'MSV Docs', description: 'Dokumentasi komponen MSV', icon: 'menu_book', route: '/tools-dev/msv-docs', group: 'tools-dev' },
-    { label: 'Utilities', description: '10 tools: JSON, decoder, regex, UUID, hash, password, diff, color, transforms, base', icon: 'build', route: '/utilities', group: 'utility' },
+    { label: 'Utilities', description: '27 tools: JSON, decoder, regex, UUID, hash, password, diff, color, transforms, base, URL, chmod, line-tools, random, word-freq & more', icon: 'build', route: '/utilities', group: 'utility' },
     { label: 'List Keluhan', description: 'Daftar keluhan piket', icon: 'list_alt', route: '/piket/keluhan-list', group: 'piket' },
     { label: 'Fix Data User', description: 'Perbaiki data user', icon: 'edit', route: '/piket/fix-data-user', group: 'piket' },
     { label: 'Fix After Merge CIS', description: 'Perbaikan pasca merge CIS', icon: 'merge_type', route: '/piket/fix-after-merge-cis', group: 'piket' },

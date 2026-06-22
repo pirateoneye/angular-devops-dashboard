@@ -1,0 +1,35 @@
+﻿<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Slug Generator</h2>
+    <h4 class="tool-sub">Buat URL slug dari judul teks &mdash; fold aksen ke ASCII, hapus stop-word, batasi panjang.</h4>
+    <div class="tool-divider"></div>
+
+    <label class="tool-label">Judul / Teks</label>
+    <textarea class="tool-area" rows="4" [(ngModel)]="input" placeholder="10 Tips Menulis Kode yang Bersih & Rapi!"></textarea>
+
+    <div class="cj-row">
+      <label>Separator
+        <select [(ngModel)]="separator">
+          <option value="-">- strip</option>
+          <option value="_">_ garis bawah</option>
+          <option value=".">. titik</option>
+        </select>
+      </label>
+      <label><input type="checkbox" [(ngModel)]="lowercase" /> Lowercase</label>
+      <label><input type="checkbox" [(ngModel)]="strictAscii" /> Fold ke ASCII</label>
+      <label><input type="checkbox" [(ngModel)]="stripStopWords" /> Buang stop-word</label>
+      <label>Max len
+        <input type="number" min="0" [(ngModel)]="maxLength" style="width:64px" /> <span class="ts-hint">(0 = tanpa batas)</span>
+      </label>
+    </div>
+
+    <label class="tool-label">Preview slug</label>
+    <div class="sl-preview"><code>{{ slug || '(ketik di atas)' }}</code></div>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="generate()">Generate</button>
+      <button class="btn-secondary" (click)="copyOutput()" [disabled]="!slug">Copy</button>
+      <button class="btn-secondary" (click)="clear()">Clear</button>
+    </div>
+  </mat-card>
+</div>

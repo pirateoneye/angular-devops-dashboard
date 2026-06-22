@@ -1,0 +1,47 @@
+﻿<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Text Sort / Dedupe</h2>
+    <h4 class="tool-sub">Sortir baris (alfabetis, natural, panjang, acak), hapus duplikat, trim, &amp; buang baris kosong.</h4>
+    <div class="tool-divider"></div>
+
+    <div class="cj-row">
+      <label>Mode
+        <select [(ngModel)]="mode">
+          <option value="asc">A &rarr; Z</option>
+          <option value="desc">Z &rarr; A</option>
+          <option value="natural-asc">Natural A&rarr;Z</option>
+          <option value="natural-desc">Natural Z&rarr;A</option>
+          <option value="length-asc">Panjang pendek&rarr;panjang</option>
+          <option value="length-desc">Panjang panjang&rarr;pendek</option>
+          <option value="shuffle">Acak</option>
+        </select>
+      </label>
+      <label><input type="checkbox" [(ngModel)]="caseSensitive" /> Case-sensitive</label>
+      <label><input type="checkbox" [(ngModel)]="dedupe" /> Hapus duplikat</label>
+      <label><input type="checkbox" [(ngModel)]="trimLines" /> Trim</label>
+      <label><input type="checkbox" [(ngModel)]="removeBlank" /> Buang kosong</label>
+    </div>
+
+    <div class="jf-grid">
+      <div>
+        <label class="tool-label">Input (satu baris per item)</label>
+        <textarea class="tool-area" rows="14" [(ngModel)]="input" placeholder="pisang&#10;apel&#10;Apel&#10;jeruk"></textarea>
+      </div>
+      <div>
+        <label class="tool-label">Output</label>
+        <textarea class="tool-area" rows="14" [value]="output" readonly placeholder="Hasil..."></textarea>
+        <button class="copy-btn" (click)="copyOutput()" *ngIf="output" title="Copy">
+          <mat-icon>file_copy</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="process()">Proses</button>
+      <button class="btn-secondary" (click)="clear()">Clear</button>
+      <span class="tool-stats" *ngIf="stats">{{ stats }}</span>
+    </div>
+
+    <div class="tool-error" *ngIf="error">{{ error }}</div>
+  </mat-card>
+</div>

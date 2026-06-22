@@ -1,4 +1,4 @@
-<div class="container toolbox-wrap">
+﻿<div class="container toolbox-wrap">
   <aside class="toolbox-tabs">
     <button *ngFor="let t of tools" class="toolbox-tab" [class.active]="active === t.slug" (click)="select(t.slug)">
       <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
@@ -23,6 +23,17 @@
       <app-cron-explainer *ngSwitchCase="'cron-explainer'"></app-cron-explainer>
       <app-image-base64 *ngSwitchCase="'image-base64'"></app-image-base64>
       <app-lorem-ipsum *ngSwitchCase="'lorem-ipsum'"></app-lorem-ipsum>
+      <app-timestamp-converter *ngSwitchCase="'timestamp-converter'"></app-timestamp-converter>
+      <app-csv-json *ngSwitchCase="'csv-json'"></app-csv-json>
+      <app-sql-formatter *ngSwitchCase="'sql-formatter'"></app-sql-formatter>
+      <app-text-sort *ngSwitchCase="'text-sort'"></app-text-sort>
+      <app-char-counter *ngSwitchCase="'char-counter'"></app-char-counter>
+      <app-slug-generator *ngSwitchCase="'slug-generator'"></app-slug-generator>
+      <app-url-parser *ngSwitchCase="'url-parser'"></app-url-parser>
+      <app-chmod-calc *ngSwitchCase="'chmod-calc'"></app-chmod-calc>
+      <app-line-tools *ngSwitchCase="'line-tools'"></app-line-tools>
+      <app-random-picker *ngSwitchCase="'random-picker'"></app-random-picker>
+      <app-word-frequency *ngSwitchCase="'word-frequency'"></app-word-frequency>
     </ng-container>
   </section>
 </div>

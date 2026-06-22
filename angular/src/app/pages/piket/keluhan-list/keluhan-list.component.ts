@@ -1,11 +1,22 @@
-import { DatePipe } from '@angular/common';
+﻿import { DatePipe } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { StatusAPI } from 'src/app/shared/model/enum/status-api.enum';
 import { KeluhanList } from 'src/app/shared/model/interface/keluhanlist.interface';
 import { UserService } from 'src/app/shared/service/user-service/user.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../../../module/material.module';
+import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { QuickHandleComponent } from './component/quick-handle/quick-handle.component';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule, QuickHandleComponent],
   selector: 'app-keluhan-list',
   templateUrl: './keluhan-list.component.html',
   styleUrls: ['./keluhan-list.component.css']

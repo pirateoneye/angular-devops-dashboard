@@ -1,11 +1,15 @@
-import { Component, Input } from '@angular/core';
+﻿import { Component, Input } from '@angular/core';
 import { KeluhanList } from 'src/app/shared/model/interface/keluhanlist.interface';
-import { KeluhanListComponent } from '../../keluhan-list.component';
 import { HttpClient } from '@angular/common/http';
 import { StatusAPI } from 'src/app/shared/model/enum/status-api.enum';
 import { UserService } from 'src/app/shared/service/user-service/user.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { FixDataUserComponent } from '../../../fix-data-user/fix-data-user.component';
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, FormsModule, FixDataUserComponent],
   selector: 'quick-handle',
   templateUrl: './quick-handle.component.html',
   styleUrls: ['./quick-handle.component.css']

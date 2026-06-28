@@ -5,9 +5,11 @@
     <div class="tool-divider"></div>
 
     <div class="dec-modes">
-      <button *ngFor="let m of modes" class="dec-mode" [class.active]="mode === m.key" (click)="mode = m.key; clear()">
-        {{ m.label }}
-      </button>
+      @for (m of modes; track m.key) {
+        <button class="dec-mode" [class.active]="mode === m.key" (click)="mode = m.key; clear()">
+          {{ m.label }}
+        </button>
+      }
     </div>
 
     <div class="jf-grid">
@@ -18,9 +20,11 @@
       <div>
         <label class="tool-label">Output</label>
         <textarea class="tool-area" rows="10" [value]="output" readonly placeholder="Hasil..."></textarea>
-        <button class="copy-btn" (click)="copyOutput()" *ngIf="output" title="Copy">
-          <mat-icon>file_copy</mat-icon>
-        </button>
+        @if (output) {
+          <button class="copy-btn icon-btn" (click)="copyOutput()" title="Copy" aria-label="Copy output">
+            <mat-icon aria-hidden="true">file_copy</mat-icon>
+          </button>
+        }
       </div>
     </div>
 
@@ -30,6 +34,8 @@
       <button class="btn-secondary" (click)="clear()">Clear</button>
     </div>
 
-    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    @if (error) {
+      <div class="tool-error" role="alert">{{ error }}</div>
+    }
   </mat-card>
 </div>

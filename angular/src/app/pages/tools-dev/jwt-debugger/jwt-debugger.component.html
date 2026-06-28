@@ -1,0 +1,66 @@
+<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">JWT Debugger / Verifier</h2>
+    <h4 class="tool-sub">Decode header & payload, cek kadaluarsa, verifikasi signature (HS* / RS* / ES* / PS*) via jsrsasign.</h4>
+    <div class="tool-divider"></div>
+
+    <label class="tool-label">JWT</label>
+    <textarea class="tool-area" rows="5" [(ngModel)]="token" placeholder="paste eyJhbGciOi..."></textarea>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="decode()">Decode</button>
+    </div>
+
+    @if (error) {
+      <div class="tool-error" role="alert">{{ error }}</div>
+    }
+
+    @if (decoded) {
+      <div class="exp-badge" [class.valid]="expiry?.status === 'valid'"
+           [class.expired]="expiry?.status === 'expired'"
+           [class.nbf]="expiry?.status === 'not-yet-valid'"
+           [class.noexp]="expiry?.status === 'no-expiry'">
+        alg: {{ decoded.alg }} · {{ expiry?.statusLabel }}
+      </div>
+
+      @if (expiry) {
+        <div class="claims-grid">
+          @if (expiry.iat) {
+            <div class="claim"><span>iat</span>{{ expiry.iat }}</div>
+          }
+          @if (expiry.nbf) {
+            <div class="claim"><span>nbf</span>{{ expiry.nbf }}</div>
+          }
+          @if (expiry.exp) {
+            <div class="claim"><span>exp</span>{{ expiry.exp }}</div>
+          }
+        </div>
+      }
+
+      <label class="tool-label">Header</label>
+      <pre class="code-block">{{ decoded.headerJson }}</pre>
+
+      <label class="tool-label">Payload</label>
+      <pre class="code-block">{{ decoded.payloadJson }}</pre>
+
+      <div class="tool-divider"></div>
+
+      <label class="tool-label">Verify key (secret untuk HS*, PEM pubkey untuk RS*/ES*/PS*)</label>
+      <textarea class="tool-area" rows="4" [(ngModel)]="verifyKey" placeholder="shared secret atau -----BEGIN PUBLIC KEY-----..."></textarea>
+
+      <div class="tool-actions">
+        <button class="btn-secondary" (click)="verify()" [disabled]="!verifyKey">Verify signature</button>
+      </div>
+
+      @if (verified === 'ok') {
+        <div class="verify-result ok" role="status">✓ Signature valid</div>
+      }
+      @if (verified === 'fail') {
+        <div class="verify-result fail" role="alert">✗ Signature tidak valid</div>
+      }
+      @if (verifyError) {
+        <div class="tool-error" role="alert">{{ verifyError }}</div>
+      }
+    }
+  </mat-card>
+</div>

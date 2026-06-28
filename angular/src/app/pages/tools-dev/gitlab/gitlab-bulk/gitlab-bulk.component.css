@@ -1,19 +1,19 @@
 /* =============================================================================
-   GitLab Bulk v2 - Enhanced Dark Theme
+   GitLab Bulk v2 - House light theme
    ============================================================================= */
 
 :root {
-    --bg: #0f172a;
-    --bg-card: #1e293b;
-    --bg-hover: #334155;
-    --border: #334155;
-    --text: #f1f5f9;
-    --muted: #94a3b8;
-    --dim: #64748b;
-    --primary: #3b82f6;
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --danger: #ef4444;
+    --bg: #f6f6f6;
+    --bg-card: #ffffff;
+    --bg-hover: #eef3f8;
+    --border: #ced4da;
+    --text: #212529;
+    --muted: #6c757d;
+    --dim: #8a94a6;
+    --primary: #005caa;
+    --success: #137a43;
+    --warning: #8a5a12;
+    --danger: #cd1923;
     --orange: #f97316;
 }
 
@@ -22,7 +22,7 @@
     min-height: 100vh;
     background: var(--bg);
     color: var(--text);
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
     font-size: 14px;
 }
 
@@ -40,8 +40,9 @@ header {
 
 header h1 {
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 700;
     margin: 0;
+    color: #144e83;
 }
 
 header p {
@@ -59,7 +60,7 @@ header p {
 .token-badge {
     padding: 6px 10px;
     background: var(--bg-hover);
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 12px;
     font-family: monospace;
     color: var(--muted);
@@ -76,7 +77,7 @@ main {
 .btn {
     padding: 8px 16px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -86,15 +87,6 @@ main {
 .btn:disabled {
     opacity: 0.5;
     cursor: default;
-}
-
-.btn.primary {
-    background: var(--primary);
-    color: white;
-}
-
-.btn.primary:hover:not(:disabled) {
-    background: #2563eb;
 }
 
 .btn.success {
@@ -134,7 +126,7 @@ main {
     justify-content: center;
     background: var(--bg-hover);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     color: var(--text);
     cursor: pointer;
     font-size: 14px;
@@ -147,9 +139,9 @@ main {
 .btn-exec {
     width: 100%;
     padding: 16px 24px;
-    background: linear-gradient(135deg, var(--success), #16a34a);
+    background: linear-gradient(135deg, var(--success), #0f5d33);
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     color: white;
     font-size: 16px;
     font-weight: 600;
@@ -159,7 +151,7 @@ main {
 
 .btn-exec:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
+    box-shadow: 0 4px 16px rgba(19, 122, 67, 0.3);
 }
 
 .btn-exec:disabled {
@@ -349,7 +341,7 @@ main {
     padding: 10px 12px;
     background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     color: var(--text);
     font-size: 13px;
 }
@@ -372,7 +364,7 @@ select.input {
 .loader {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -445,12 +437,12 @@ select.input {
 }
 
 .tag.success {
-    background: rgba(34, 197, 94, 0.2);
+    background: rgba(19, 122, 67, 0.2);
     color: var(--success);
 }
 
 .tag.danger {
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(205, 25, 35, 0.2);
     color: var(--danger);
 }
 
@@ -469,7 +461,7 @@ select.input {
     padding: 16px;
     background: var(--bg-card);
     border: 2px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.15s;
 }
@@ -514,7 +506,7 @@ select.input {
     padding: 16px 12px;
     background: var(--bg-card);
     border: 2px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.15s;
     text-align: center;
@@ -522,13 +514,13 @@ select.input {
 
 .action-card:hover {
     border-color: var(--primary);
-    background: rgba(59, 130, 246, 0.05);
+    background: rgba(0, 92, 170, 0.05);
 }
 
 .action-card.active {
     border-color: var(--primary);
-    background: rgba(59, 130, 246, 0.1);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    background: rgba(0, 92, 170, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 92, 170, 0.15);
 }
 
 .aicon {
@@ -557,7 +549,7 @@ select.input {
 .config-form {
     background: var(--bg-card);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid var(--border);
 }
 
@@ -590,7 +582,7 @@ select.input {
 .mode-toggle {
     display: flex;
     background: var(--bg);
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 3px;
 }
 
@@ -688,8 +680,8 @@ select.input {
 
 .chain-preview {
     padding: 12px;
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    background: rgba(0, 92, 170, 0.1);
+    border: 1px solid rgba(0, 92, 170, 0.3);
     border-radius: 8px;
 }
 
@@ -770,7 +762,7 @@ select.input {
 
 .label-item.selected {
     border-color: var(--primary);
-    background: rgba(59, 130, 246, 0.1);
+    background: rgba(0, 92, 170, 0.1);
 }
 
 .label-color {
@@ -800,7 +792,7 @@ select.input {
 .metadata-card {
     background: var(--bg-card);
     padding: 16px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid var(--border);
 }
 
@@ -825,7 +817,7 @@ select.input {
     padding: 10px 12px;
     background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     color: var(--muted);
     font-size: 13px;
     text-align: left;
@@ -843,7 +835,7 @@ select.input {
     right: 0;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     margin-top: 4px;
     max-height: 200px;
     overflow-y: auto;
@@ -905,14 +897,14 @@ select.input {
     padding: 40px;
     background: var(--bg-card);
     border: 2px dashed var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     color: var(--dim);
 }
 
 .project-list {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     max-height: 320px;
     overflow-y: auto;
 }
@@ -945,7 +937,7 @@ select.input {
 }
 
 .project-row.selected {
-    background: rgba(59, 130, 246, 0.1);
+    background: rgba(0, 92, 170, 0.1);
 }
 
 .project-row input {
@@ -966,7 +958,7 @@ select.input {
 .validation-section {
     background: var(--bg-card);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid var(--border);
 }
 
@@ -991,11 +983,11 @@ select.input {
 }
 
 .validation-row.valid {
-    background: rgba(34, 197, 94, 0.05);
+    background: rgba(19, 122, 67, 0.05);
 }
 
 .validation-row.invalid {
-    background: rgba(239, 68, 68, 0.05);
+    background: rgba(205, 25, 35, 0.05);
 }
 
 .v-icon {
@@ -1066,7 +1058,7 @@ select.input {
 .log-list {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     max-height: 200px;
     overflow-y: auto;
 }

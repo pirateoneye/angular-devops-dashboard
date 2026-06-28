@@ -1,26 +1,352 @@
-﻿/* You can add global styles to this file, and also import other style files */
-@import 'app/shared/components/msv-forms/_variables.css';
+/* You can add global styles to this file, and also import any style files */
+@import "app/shared/components/msv-forms/_variables.css";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: #f6f6f6;}
+/* ============================================================
+   Theme tokens. Light is the default; dark is applied by setting
+   data-theme="dark" on <html> (managed by ThemeService).
+   ============================================================ */
+:root {
+  --msv-bg: #f6f6f6;
+  --msv-surface: #ffffff;
+  --msv-surface-2: #f8f9fa;
+  --msv-text: #1f2933;
+  --msv-text-muted: #495057;
+  --msv-border: #e9ecef;
+  --msv-input-border: #ddd;
 
+  --msv-primary: #005caa;
+  --msv-primary-hover: #144e83;
+  --msv-primary-contrast: #ffffff;
+  --msv-accent-bg: #e6f3ff;
+  --msv-accent-text: #005caa;
+
+  --msv-error-bg: #ffd9d3;
+  --msv-error: #cd1923;
+  --msv-success-bg: #d4edda;
+  --msv-success: #009649;
+  --msv-warning-bg: #ffe592;
+  --msv-warning: #885403;
+
+  --msv-shadow: rgba(0, 0, 0, 0.05);
+  --msv-shadow-lg: rgba(0, 0, 0, 0.12);
+  --msv-overlay: rgba(0, 0, 0, 0.45);
+
+  /* Radius scale (single source of truth for corner roundness) */
+  --msv-radius-sm: 8px;
+  --msv-radius-md: 12px;
+  --msv-radius-lg: 16px;
+  --msv-radius-pill: 999px;
+
+  /* Elevation scale (three coherent depth levels) */
+  --msv-elev-1: 0 1px 2px var(--msv-shadow);
+  --msv-elev-2: 0 1px 4px var(--msv-shadow);
+  --msv-elev-3: 0 12px 40px var(--msv-shadow-lg);
+
+  /* Material surface overrides (light defaults match prebuilt theme) */
+  --mdc-elevated-card-container-color: var(--msv-surface);
+  --mdc-filled-card-container-color: var(--msv-surface);
+  --mat-dialog-container-elevation-shadow: none;
+}
+
+[data-theme="dark"] {
+  --msv-bg: #0f1419;
+  --msv-surface: #1a2027;
+  --msv-surface-2: #21262d;
+  --msv-text: #e6edf3;
+  --msv-text-muted: #9aa7b4;
+  --msv-border: #2d333b;
+  --msv-input-border: #3a4148;
+
+  --msv-primary: #4a9eff;
+  --msv-primary-hover: #6db3ff;
+  --msv-primary-contrast: #0b1a2a;
+  --msv-accent-bg: #14233a;
+  --msv-accent-text: #6db3ff;
+
+  --msv-error-bg: #3a1d1d;
+  --msv-error: #ff9b9b;
+  --msv-success-bg: #14301f;
+  --msv-success: #6bd89a;
+  --msv-warning-bg: #3a2f14;
+  --msv-warning: #f0c674;
+
+  --msv-shadow: rgba(0, 0, 0, 0.4);
+  --msv-shadow-lg: rgba(0, 0, 0, 0.55);
+  --msv-overlay: rgba(0, 0, 0, 0.65);
+
+  /* Material surfaces follow the dark palette */
+  --mdc-elevated-card-container-color: var(--msv-surface);
+  --mdc-filled-card-container-color: var(--msv-surface);
+  --mat-dialog-container-color: var(--msv-surface);
+  --mat-dialog-container-elevation-shadow: 0 8px 28px var(--msv-shadow-lg);
+  --mdc-filled-text-field-container-color: var(--msv-surface-2);
+  --mdc-outlined-text-field-container-color: var(--msv-surface);
+  --mdc-outlined-text-field-input-text-color: var(--msv-text);
+  --mdc-filled-text-field-input-text-color: var(--msv-text);
+  --mdc-outlined-text-field-label-text-color: var(--msv-text-muted);
+  --mdc-outlined-text-field-outline-color: var(--msv-input-border);
+  --mat-menu-container-color: var(--msv-surface);
+  --mat-menu-item-label-text-color: var(--msv-text);
+  --mat-snack-bar-button-color: var(--msv-accent-text);
+  --mat-snack-bar-container-color: var(--msv-surface-2);
+  --mat-snack-bar-content-text-color: var(--msv-text);
+  --mat-option-selected-state-label-text-color: var(--msv-accent-text);
+  --mat-chip-selected-with-icon-container-color: var(--msv-accent-bg);
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--msv-bg);
+  color: var(--msv-text);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
 
 /* ===== Shared, densified styles for tool pages (global) ===== */
-.tool-card { border-radius:12px; padding:14px; box-shadow:0 1px 4px rgba(0,0,0,.05); margin-bottom:10px; }
-.tool-title { margin:0; color:#144e83; font-family:'Open Sans',sans-serif; font-weight:700; font-size:16px; }
-.tool-sub { margin:2px 0 0; color:#495057; font-family:'Open Sans',sans-serif; font-weight:400; font-size:13px; }
-.tool-divider { height:1px; background:#e9ecef; margin:10px 0; }
-.tool-label { display:block; color:#144e83; font-family:'Open Sans',sans-serif; font-weight:600; margin-bottom:4px; font-size:12px; }
-.tool-area { width:100%; font-family:monospace; font-size:12px; border:1px solid #ddd; border-radius:8px; padding:8px; resize:vertical; box-sizing:border-box; }
-.tool-input-mono { width:100%; font-family:monospace; font-size:12px; border:1px solid #ddd; border-radius:8px; padding:8px; box-sizing:border-box; }
-.tool-actions { display:flex; gap:8px; align-items:center; margin-top:10px; flex-wrap:wrap; }
-.btn-primary { background:#005caa; color:#fff; border:none; border-radius:20px; padding:7px 16px; font-weight:600; cursor:pointer; font-family:'Open Sans',sans-serif; font-size:13px; }
-.btn-primary:hover { background:#144e83; }
-.btn-primary:disabled { background:#cfcfcf; cursor:not-allowed; }
-.btn-secondary { background:#fff; color:#005caa; border:1px solid #005caa; border-radius:20px; padding:7px 16px; font-weight:600; cursor:pointer; font-family:'Open Sans',sans-serif; font-size:13px; }
-.btn-secondary:hover { background:#f8f9fa; }
-.btn-secondary:disabled { color:#cfcfcf; border-color:#cfcfcf; cursor:not-allowed; }
-.icon-btn { background:transparent; border:none; cursor:pointer; color:#005caa; display:flex; align-items:center; padding:2px; }
-.icon-btn mat-icon { font-size:18px; width:18px; height:18px; }
-.tool-error { margin-top:8px; color:#cd1923; background:#ffd9d3; border-radius:8px; padding:8px 12px; font-family:monospace; font-size:12px; }
-.tool-stats { color:#495057; font-size:12px; }
+.tool-card {
+  border-radius: var(--msv-radius-md);
+  padding: 14px;
+  background: var(--msv-surface);
+  color: var(--msv-text);
+  box-shadow: var(--msv-elev-2);
+  margin-bottom: 10px;
+}
+.tool-title {
+  margin: 0;
+  color: var(--msv-primary);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+}
+.tool-sub {
+  margin: 2px 0 0;
+  color: var(--msv-text-muted);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+}
+.tool-divider {
+  height: 1px;
+  background: var(--msv-border);
+  margin: 10px 0;
+}
+.tool-label {
+  display: block;
+  color: var(--msv-primary);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+.tool-area {
+  width: 100%;
+  font-family: monospace;
+  font-size: 12px;
+  background: var(--msv-surface);
+  color: var(--msv-text);
+  border: 1px solid var(--msv-input-border);
+  border-radius: var(--msv-radius-sm);
+  padding: 8px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+.tool-area::placeholder {
+  color: var(--msv-text-muted);
+}
+.tool-input-mono {
+  width: 100%;
+  font-family: monospace;
+  font-size: 12px;
+  background: var(--msv-surface);
+  color: var(--msv-text);
+  border: 1px solid var(--msv-input-border);
+  border-radius: var(--msv-radius-sm);
+  padding: 8px;
+  box-sizing: border-box;
+}
+.tool-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.btn-primary {
+  background: var(--msv-primary);
+  color: var(--msv-primary-contrast);
+  border: none;
+  border-radius: var(--msv-radius-pill);
+  padding: 7px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: "Open Sans", sans-serif;
+  font-size: 13px;
+}
+.btn-primary:hover {
+  background: var(--msv-primary-hover);
+}
+.btn-primary:disabled {
+  background: var(--msv-border);
+  color: var(--msv-text-muted);
+  cursor: not-allowed;
+}
+.btn-secondary {
+  background: var(--msv-surface);
+  color: var(--msv-primary);
+  border: 1px solid var(--msv-primary);
+  border-radius: var(--msv-radius-pill);
+  padding: 7px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: "Open Sans", sans-serif;
+  font-size: 13px;
+}
+.btn-secondary:hover {
+  background: var(--msv-accent-bg);
+}
+.btn-secondary:disabled {
+  color: var(--msv-text-muted);
+  border-color: var(--msv-border);
+  cursor: not-allowed;
+}
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--msv-primary);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+.icon-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+.tool-error {
+  margin-top: 8px;
+  color: var(--msv-error);
+  background: var(--msv-error-bg);
+  border-radius: var(--msv-radius-sm);
+  padding: 8px 12px;
+  font-family: monospace;
+  font-size: 12px;
+}
+.tool-stats {
+  color: var(--msv-text-muted);
+  font-size: 12px;
+}
+
+/* ===== A11y: focus-visible ring for interactive tool controls ===== */
+.icon-btn:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.tool-area:focus-visible,
+.tool-input-mono:focus-visible {
+  outline: 2px solid var(--msv-primary);
+  outline-offset: 2px;
+}
+
+/* ===== A11y: respect reduced-motion preference ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ===== Reusable empty / loading state helpers ===== */
+.tool-empty {
+  color: var(--msv-text-muted);
+  font-family: "Open Sans", sans-serif;
+  font-size: 13px;
+  padding: 14px;
+  text-align: center;
+}
+.tool-loading {
+  color: var(--msv-primary);
+  font-family: "Open Sans", sans-serif;
+  font-size: 13px;
+  padding: 14px;
+  text-align: center;
+}
+
+/* ===== Bootstrap dropdown / form-control dark-mode overrides ===== */
+[data-theme="dark"] .dropdown-menu {
+  background-color: var(--msv-surface);
+  border-color: var(--msv-border);
+  color: var(--msv-text);
+}
+[data-theme="dark"] .dropdown-item {
+  color: var(--msv-text);
+}
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus {
+  background-color: var(--msv-accent-bg);
+  color: var(--msv-accent-text);
+}
+[data-theme="dark"] .dropdown-divider {
+  border-color: var(--msv-border);
+}
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: var(--msv-surface);
+  color: var(--msv-text);
+  border-color: var(--msv-input-border);
+}
+[data-theme="dark"] .form-control::placeholder {
+  color: var(--msv-text-muted);
+}
+[data-theme="dark"] .table {
+  color: var(--msv-text);
+}
+
+/* ===== Material dark-mode surface fixes (for the prebuilt indigo-pink theme) ===== */
+[data-theme="dark"] .mat-mdc-card,
+[data-theme="dark"] .mat-mdc-dialog-surface,
+[data-theme="dark"] .mat-mdc-menu-panel,
+[data-theme="dark"] .mat-mdc-autocomplete-panel,
+[data-theme="dark"] .mat-mdc-select-panel,
+[data-theme="dark"] .cdk-overlay-pane .mat-mdc-select-panel {
+  background-color: var(--msv-surface) !important;
+  color: var(--msv-text) !important;
+}
+[data-theme="dark"] .mat-mdc-snack-bar-container {
+  background-color: var(--msv-surface-2) !important;
+  color: var(--msv-text) !important;
+}
+[data-theme="dark"] .mat-mdc-form-field input,
+[data-theme="dark"] .mat-mdc-form-field textarea {
+  color: var(--msv-text);
+}
+[data-theme="dark"] .mat-mdc-form-field-subscript-wrapper,
+[data-theme="dark"] .mat-mdc-form-field-hint {
+  color: var(--msv-text-muted);
+}
+[data-theme="dark"] .mat-mdc-paginator {
+  background-color: var(--msv-surface);
+  color: var(--msv-text);
+}
+[data-theme="dark"] .mat-mdc-table {
+  background-color: var(--msv-surface);
+}
+[data-theme="dark"] .mat-mdc-table .mdc-data-table__header-row,
+[data-theme="dark"] .mat-mdc-table .mat-mdc-header-row {
+  background-color: var(--msv-surface-2);
+}
+[data-theme="dark"] .mat-mdc-table .mat-mdc-row:hover {
+  background-color: var(--msv-surface-2);
+}
+[data-theme="dark"] .mdc-text-field--outlined .mdc-notched-outline__leading,
+[data-theme="dark"] .mdc-text-field--outlined .mdc-notched-outline__notch,
+[data-theme="dark"] .mdc-text-field--outlined .mdc-notched-outline__trailing {
+  border-color: var(--msv-input-border);
+}

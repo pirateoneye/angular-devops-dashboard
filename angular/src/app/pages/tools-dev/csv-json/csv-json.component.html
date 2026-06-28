@@ -1,4 +1,4 @@
-﻿<div class="container pt-3 pb-3">
+<div class="container pt-3 pb-3">
   <mat-card class="tool-card">
     <h2 class="tool-title">CSV &harr; JSON</h2>
     <h4 class="tool-sub">Konversi dua arah CSV &amp; JSON, dukung delimiter kustom, header, dan tipe data otomatis.</h4>
@@ -8,7 +8,7 @@
       <div class="cj-dir">
         <label><input type="radio" [(ngModel)]="direction" value="csv2json" (change)="convert()" /> CSV &rarr; JSON</label>
         <label><input type="radio" [(ngModel)]="direction" value="json2csv" (change)="convert()" /> JSON &rarr; CSV</label>
-        <button class="btn-secondary cj-swap" (click)="swap()"><mat-icon style="vertical-align:middle;font-size:16px">swap_horiz</mat-icon> Tukar</button>
+        <button class="btn-secondary cj-swap" (click)="swap()"><mat-icon style="vertical-align:middle;font-size:16px" aria-hidden="true">swap_horiz</mat-icon> Tukar</button>
       </div>
       <div class="cj-row">
         <label>Delimiter
@@ -20,7 +20,9 @@
             <option value="custom">Custom</option>
           </select>
         </label>
-        <input class="tool-input-mono" *ngIf="delimiter==='custom'" [(ngModel)]="customDelimiter" (ngModelChange)="convert()" placeholder=";" style="width:60px" />
+        @if (delimiter==='custom') {
+          <input class="tool-input-mono" [(ngModel)]="customDelimiter" (ngModelChange)="convert()" placeholder=";" style="width:60px" aria-label="Custom delimiter" />
+        }
         <label><input type="checkbox" [(ngModel)]="hasHeader" (change)="convert()" /> Header</label>
         <label><input type="checkbox" [(ngModel)]="pretty" (change)="convert()" /> Pretty</label>
       </div>
@@ -28,24 +30,30 @@
 
     <div class="jf-grid">
       <div>
-        <label class="tool-label">{{ direction === 'csv2json' ? 'CSV Input' : 'JSON Input' }}</label>
-        <textarea class="tool-area" rows="14" [(ngModel)]="input" (ngModelChange)="convert()" placeholder='{{ direction==="csv2json" ? "a,b,c\n1,2,3" : "[{\"a\":1}]" }}'></textarea>
+        <label class="tool-label" for="cj-input">{{ direction === 'csv2json' ? 'CSV Input' : 'JSON Input' }}</label>
+        <textarea id="cj-input" class="tool-area" rows="14" [(ngModel)]="input" (ngModelChange)="convert()" placeholder='{{ direction==="csv2json" ? "a,b,c\n1,2,3" : "[{\"a\":1}]" }}'></textarea>
       </div>
       <div>
-        <label class="tool-label">Output</label>
-        <textarea class="tool-area" rows="14" [value]="output" readonly placeholder="Hasil..."></textarea>
-        <button class="copy-btn" (click)="copyOutput()" *ngIf="output" title="Copy">
-          <mat-icon>file_copy</mat-icon>
-        </button>
+        <label class="tool-label" for="cj-output">Output</label>
+        <textarea id="cj-output" class="tool-area" rows="14" [value]="output" readonly placeholder="Hasil..."></textarea>
+        @if (output) {
+          <button class="copy-btn" (click)="copyOutput()" title="Copy" aria-label="Copy output">
+            <mat-icon aria-hidden="true">file_copy</mat-icon>
+          </button>
+        }
       </div>
     </div>
 
     <div class="tool-actions">
       <button class="btn-primary" (click)="convert()">Konversi</button>
       <button class="btn-secondary" (click)="clear()">Clear</button>
-      <span class="tool-stats" *ngIf="stats">{{ stats }}</span>
+      @if (stats) {
+        <span class="tool-stats">{{ stats }}</span>
+      }
     </div>
 
-    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    @if (error) {
+      <div class="tool-error" role="alert">{{ error }}</div>
+    }
   </mat-card>
 </div>

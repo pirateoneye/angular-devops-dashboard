@@ -12,10 +12,13 @@
             <label for="passwordInput" class="font-general" style="color: #144E83; font-family: 'Open Sans'; font-weight: 600; font-size: 16px; margin-right: 24px;">
                 Password
             </label>
-            <input [(ngModel)]="passwordInput" name="passwordInput" type="password" class="form-control input-text-field" id="passwordInput" placeholder="Masukkan Password">
+            <input [(ngModel)]="passwordInput" name="passwordInput" type="password" class="form-control input-text-field" id="passwordInput" placeholder="Masukkan Password" aria-label="Password">
         </div>
+        @if (loginError) {
+            <div class="tool-error w-100 mt-2" role="alert">{{ loginError }}</div>
+        }
         <div style="width: 100%; max-width: 100%;" class="d-flex flex-column align-items-center mt-3">
-            <button class="login-btn" (click)="loginAction()">Masuk</button>
+            <button class="login-btn" (click)="loginAction()" aria-label="Masuk">Masuk</button>
         </div>
     </mat-card>
 </div>

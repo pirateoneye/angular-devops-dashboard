@@ -1,12 +1,302 @@
-.toolbox-wrap { display:flex; gap:12px; align-items:flex-start; padding-top:8px; padding-bottom:12px; }
-.toolbox-tabs { display:flex; flex-direction:column; gap:4px; flex:0 0 140px; position:sticky; top:8px; }
-.toolbox-tab { display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e9ecef; border-radius:8px; padding:7px 10px; cursor:pointer; font-family:'Open Sans',sans-serif; font-size:12px; font-weight:600; color:#495057; text-align:left; }
-.toolbox-tab mat-icon { font-size:18px; width:18px; height:18px; color:#005caa; }
-.toolbox-tab.active { background:#005caa; color:#fff; border-color:#005caa; }
-.toolbox-tab.active mat-icon { color:#fff; }
-.toolbox-content { flex:1; min-width:0; }
-@media (max-width:768px) {
-  .toolbox-wrap { flex-direction:column; }
-  .toolbox-tabs { flex-direction:row; flex-wrap:wrap; position:static; flex:1 1 auto; }
-  .toolbox-tab { flex:0 0 auto; }
+.toolbox-wrap {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding-top: 10px;
+  padding-bottom: 12px;
+}
+
+.toolbox-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 0 212px;
+  position: sticky;
+  top: 60px;
+  max-height: calc(100vh - 76px);
+}
+
+/* Mobile-only toggle bar; hidden on desktop. */
+.toolbox-mobile-bar {
+  display: none;
+}
+
+/* Search box */
+.toolbox-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--msv-surface);
+  border: 1px solid var(--msv-input-border);
+  border-radius: 10px;
+  padding: 6px 8px;
+}
+.toolbox-search-icon {
+  color: var(--msv-text-muted);
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+.toolbox-search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--msv-text);
+  font-size: 13px;
+  font-family: "Open Sans", sans-serif;
+}
+.toolbox-search-input::placeholder {
+  color: var(--msv-text-muted);
+}
+.toolbox-search-clear {
+  border: none;
+  background: transparent;
+  color: var(--msv-text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 2px;
+}
+.toolbox-search-clear:focus-visible {
+  outline: 2px solid var(--msv-primary);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+
+.toolbox-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.toolbox-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.toolbox-scroll::-webkit-scrollbar-thumb {
+  background: var(--msv-border);
+  border-radius: 4px;
+}
+
+.toolbox-group-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--msv-text-muted);
+  padding: 10px 8px 4px;
+  position: sticky;
+  top: 0;
+  background: var(--msv-bg);
+  z-index: 1;
+}
+.toolbox-group-title mat-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+/* A tool row holds the select button and its sibling favorite-star button. */
+.toolbox-tab-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.toolbox-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  background: var(--msv-surface);
+  border: 1px solid var(--msv-border);
+  border-radius: 8px;
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 7px 8px;
+  cursor: pointer;
+  font-family: "Open Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--msv-text-muted);
+  text-align: left;
+  position: relative;
+}
+.toolbox-tab mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--msv-primary);
+  flex: 0 0 auto;
+}
+.toolbox-tab-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.toolbox-tab:focus-visible,
+.toolbox-star-btn:focus-visible {
+  outline: 2px solid var(--msv-primary);
+  outline-offset: -2px;
+}
+.toolbox-tab-row:hover .toolbox-tab {
+  border-color: var(--msv-primary);
+  color: var(--msv-text);
+}
+
+/* Favorite star toggle — sibling button, fully focusable and labeled. */
+.toolbox-star-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  background: var(--msv-surface);
+  border: 1px solid var(--msv-border);
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  padding: 0 6px;
+  cursor: pointer;
+}
+.toolbox-star {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--msv-border);
+  opacity: 0;
+  transition:
+    opacity 0.15s ease,
+    color 0.15s ease;
+}
+.toolbox-tab-row:hover .toolbox-star,
+.toolbox-star.on {
+  opacity: 1;
+}
+.toolbox-star.on {
+  color: #f5a623;
+}
+.toolbox-star-btn:hover .toolbox-star {
+  color: #f5a623;
+  opacity: 1;
+}
+
+/* Active tool row — primary fill across both buttons. */
+.toolbox-tab-row.active .toolbox-tab {
+  background: var(--msv-primary);
+  color: var(--msv-primary-contrast);
+  border-color: var(--msv-primary);
+}
+.toolbox-tab-row.active .toolbox-tab mat-icon {
+  color: var(--msv-primary-contrast);
+}
+.toolbox-tab-row.active .toolbox-star-btn {
+  background: var(--msv-primary);
+  border-color: var(--msv-primary);
+}
+.toolbox-tab-row.active .toolbox-star {
+  color: var(--msv-primary-contrast);
+  opacity: 1;
+}
+.toolbox-tab-row.active .toolbox-star.on {
+  color: #ffd54f;
+}
+
+.toolbox-empty {
+  color: var(--msv-text-muted);
+  font-size: 12px;
+  padding: 16px 8px;
+  text-align: center;
+}
+
+.toolbox-content {
+  flex: 1;
+  min-width: 0;
+}
+.toolbox-loading {
+  color: var(--msv-text-muted);
+  font-size: 13px;
+  padding: 24px 8px;
+}
+
+@media (max-width: 768px) {
+  .toolbox-wrap {
+    flex-direction: column;
+  }
+  .toolbox-tabs {
+    flex: 1 1 auto;
+    max-height: none;
+    position: sticky;
+    top: 60px;
+    z-index: 5;
+  }
+
+  /* Compact toggle bar replaces the 700px chip wall by default. */
+  .toolbox-mobile-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: var(--msv-surface);
+    border: 1px solid var(--msv-border);
+    border-radius: var(--msv-radius-md);
+    padding: 10px 12px;
+    color: var(--msv-text);
+    font-family: "Open Sans", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .toolbox-mobile-bar mat-icon {
+    color: var(--msv-primary);
+  }
+  .toolbox-mobile-label {
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .toolbox-mobile-chevron {
+    color: var(--msv-text-muted);
+  }
+
+  /* Search + chip list are hidden until the bar is toggled open. */
+  .toolbox-search,
+  .toolbox-scroll {
+    display: none;
+  }
+  .toolbox-tabs.mobile-tabs-open .toolbox-search {
+    display: flex;
+    margin-bottom: 6px;
+  }
+  .toolbox-tabs.mobile-tabs-open .toolbox-scroll {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow: visible;
+    gap: 6px 4px;
+    padding-bottom: 6px;
+  }
+
+  /* Group titles span the full row and keep a distinct underline so category
+     boundaries stay readable when the chips wrap across multiple lines. */
+  .toolbox-group-title {
+    flex-basis: 100%;
+    background: var(--msv-surface);
+    border-bottom: 1px solid var(--msv-border);
+    position: static;
+    padding: 8px 4px 4px;
+  }
+  .toolbox-tab-row {
+    flex: 0 0 auto;
+  }
+  .toolbox-star {
+    opacity: 1;
+  }
 }

@@ -1,7 +1,7 @@
 .hs-table { width:100%; margin-top:12px; border-collapse:collapse; font-size:12px; }
-.hs-table th, .hs-table td { border-bottom:1px solid #e9ecef; padding:6px 8px; text-align:left; vertical-align:top; }
+.hs-table th, .hs-table td { border-bottom:1px solid #ced4da; padding:6px 8px; text-align:left; vertical-align:top; }
 .hs-table th { color:#144e83; font-family:'Open Sans',sans-serif; }
-.hs-badge { display:inline-block; border-radius:6px; padding:2px 8px; font-weight:700; font-family:monospace; color:#fff; }
+.hs-badge { display:inline-block; border-radius:8px; padding:2px 8px; font-weight:700; font-family:monospace; color:#fff; }
 .hs-1 { background:#17a2b8; } .hs-2 { background:#009649; } .hs-3 { background:#005caa; }
 .hs-4 { background:#885403; } .hs-5 { background:#cd1923; }
 .hs-name { font-weight:600; color:#144e83; white-space:nowrap; }

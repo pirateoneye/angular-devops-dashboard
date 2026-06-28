@@ -1,9 +1,10 @@
-﻿import { Component, inject, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ModalConfirmationComponent } from 'src/app/shared/component/modal/confirmation/modal-confirmation.component';
 import { SelectOption } from 'src/app/shared/components/msv-forms/interfaces';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -73,6 +74,7 @@ export class CheckDataComponent implements OnInit {
   };
 
   readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(private httpClient: HttpClient) {}
 
@@ -98,11 +100,9 @@ export class CheckDataComponent implements OnInit {
     this.response.submissionType = this.submissionType;
     this.response.checkBy = this.checkBy;
     this.response.checkValue = this.checkValue;
-    let url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/data/${this.prefix}/${this.submissionType}/${this.checkBy}/${this.checkValue}`;
-    console.log(url);
-    this.httpClient.get(url).subscribe(
+    const url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/data/${this.prefix}/${this.submissionType}/${this.checkBy}/${this.checkValue}`;
+    this.httpClient.get(url).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       (response: any) => {
-        console.log('success hit service: ', response);
         this.response.status = 'SUCCESS';
         this.response.message = response.error_schema.error_message.english;
         this.response.data = response.output_schema;

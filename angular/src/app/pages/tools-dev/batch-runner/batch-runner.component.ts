@@ -1,5 +1,5 @@
 ﻿import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { BatchList } from 'src/app/shared/model/interface/batchlist.interface';
 import { environment } from 'src/environments/environment';
 import { StatusAPI } from 'src/app/shared/model/enum/status-api.enum';
@@ -9,6 +9,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { ModalInsertNameComponent } from '../../../shared/component/modal/insert-name/modal-insert-name.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../../../shared/service/user-service/user.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -30,7 +31,9 @@ export class BatchRunnerComponent implements OnInit {
   batchList : BatchList[] = [];
   statusMenu : StatusAPI = StatusAPI.LOADING;
   currentProcessing = 0;
-  user : any;
+  user : string | null = null;
+
+  private readonly destroyRef = inject(DestroyRef);
 
   statusBackground =
   {
@@ -62,9 +65,11 @@ export class BatchRunnerComponent implements OnInit {
       this.editUsername();
     }
 
-    this.userService.user.subscribe((user) => {
-      this.user = user;
-    });
+    this.userService.user
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user) => {
+        this.user = user;
+      });
 
   }
 
@@ -81,14 +86,13 @@ export class BatchRunnerComponent implements OnInit {
 
     const url = environment.hostBatchRunner + '/v1.0.0/batch/runner/' + id;
     // create body
-    let body = {
+    const body = {
       runBy: this.user
     };
 
 
-    this.httpClient.post(url, body).subscribe(
+    this.httpClient.post(url, body).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       response => {
-        console.log(response);
         // handle response
       },
       error => {
@@ -125,8 +129,8 @@ export class BatchRunnerComponent implements OnInit {
     this.ngZone.run(() => {
       // 10.43.6.180:55295/batch.runner
       const url = environment.hostBatchRunner + '/v1.0.0/batch/list';
-      let option : any = {observe : "response"};
-      this.httpClient.get(url, option) .subscribe((response : any) => {
+      const option : any = {observe : "response"};
+      this.httpClient.get(url, option) .pipe(takeUntilDestroyed(this.destroyRef)).subscribe((response : any) => {
         if(response.body.error_schema.error_code != "MSV-200-001")
         {
           this.statusMenu = StatusAPI.FAILED;

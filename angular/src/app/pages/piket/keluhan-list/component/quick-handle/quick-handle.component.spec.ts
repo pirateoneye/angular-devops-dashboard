@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { QuickHandleComponent } from './quick-handle.component';
 
@@ -8,7 +9,7 @@ describe('QuickHandleComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [QuickHandleComponent]
+      imports: [QuickHandleComponent, HttpClientTestingModule]
     });
     fixture = TestBed.createComponent(QuickHandleComponent);
     component = fixture.componentInstance;

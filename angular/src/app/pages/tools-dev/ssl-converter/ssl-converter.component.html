@@ -1,0 +1,194 @@
+<div class="container pt-3 pb-3">
+  <mat-card class="tool-card ssl-card">
+
+    <!-- Header -->
+    <header class="ssl-head">
+      <div class="ssl-head__titles">
+        <h2 class="tool-title">SSL Converter</h2>
+        <p class="tool-sub">Deteksi otomatis &amp; konversi sertifikat / kunci SSL — sepenuhnya di sisi klien.</p>
+      </div>
+      @if (hasInput) {
+        <button type="button" class="ssl-clear icon-btn" (click)="clear()" aria-label="Bersihkan input dan mulai ulang" title="Bersihkan input">
+          <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+      }
+    </header>
+    <div class="tool-divider"></div>
+
+    <!-- Dropzone (lead affordance) -->
+    <label class="ssl-dropzone"
+           [class.ssl-dropzone--active]="dragActive"
+           [class.ssl-dropzone--detected]="!!detection && detection.type !== SslType.UNKNOWN"
+           tabindex="0" role="button"
+           (keydown.enter)="fileInput.click()" (keydown.space)="$event.preventDefault(); fileInput.click()"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave($event)"
+           (drop)="onDrop($event)">
+      <input #fileInput type="file" hidden (change)="onFile($event)"
+             accept=".pem,.cer,.crt,.der,.key,.p7b,.p7c,.csr,.pub,.p12,.pfx,.jks"
+             aria-label="Pilih file SSL untuk dikonversi" />
+      <span class="ssl-dropzone__halo" aria-hidden="true"></span>
+      <mat-icon class="ssl-dropzone__icon" aria-hidden="true">cloud_upload</mat-icon>
+      @if (!detection || detection.type === SslType.UNKNOWN) {
+        <span class="ssl-dropzone__title">
+          Jatuhkan file SSL, atau klik untuk pilih
+        </span>
+      }
+      @if (detection && detection.type !== SslType.UNKNOWN) {
+        <span class="ssl-dropzone__title">
+          Ganti dengan file lain
+        </span>
+      }
+      @if (!detection || detection.type === SslType.UNKNOWN) {
+        <span class="ssl-dropzone__sub">
+          Format yang didukung
+        </span>
+      }
+      @if (!detection || detection.type === SslType.UNKNOWN) {
+        <ul class="ssl-chips" aria-label="Ekstensi file yang didukung">
+          @for (ext of supported; track ext) {
+            <li class="ssl-chip">{{ ext }}</li>
+          }
+        </ul>
+      }
+      @if (detection && detection.type !== SslType.UNKNOWN && byteCount) {
+        <span class="ssl-dropzone__sub">
+          {{ byteCount | number }} byte
+        </span>
+      }
+    </label>
+
+    <!-- Paste area -->
+    <div class="ssl-paste">
+      <label class="tool-label" for="sslInput">atau tempel PEM / base64 DER</label>
+      <textarea id="sslInput" class="tool-area ssl-textarea" rows="4" [(ngModel)]="rawText"
+                (ngModelChange)="onInput()"
+                placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                aria-label="Tempel teks PEM atau base64 DER"
+                spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+    </div>
+
+    <!-- Password (encrypted keys only) -->
+    @if (detection?.isEncrypted) {
+      <div class="ssl-section ssl-pwd">
+        <label class="tool-label" for="sslPwd">Password kunci terenkripsi</label>
+        <input id="sslPwd" type="password" class="tool-input-mono" [(ngModel)]="password"
+               (ngModelChange)="onPassword()" placeholder="Password dekripsi" autocomplete="current-password"
+               aria-label="Password kunci terenkripsi" />
+      </div>
+    }
+
+    <!-- Error -->
+    @if (error) {
+      <div class="tool-error ssl-error" role="alert">
+        <mat-icon class="ssl-error__icon" aria-hidden="true">error_outline</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+    }
+
+    <!-- Detection badge -->
+    @if (detection && detection.type !== SslType.UNKNOWN) {
+      <div class="ssl-badge">
+        <span class="ssl-badge__mark" aria-hidden="true">
+          <mat-icon class="ssl-badge__icon">{{ iconForType(detection.type) }}</mat-icon>
+        </span>
+        <div class="ssl-badge__main">
+          <span class="ssl-badge__label">{{ detection.label }}</span>
+          <span class="ssl-badge__meta">
+            {{ detection.encoding }}
+            @if (byteCount) {
+              <span class="ssl-pill">{{ byteCount | number }} byte</span>
+            }
+            @if (detection.isEncrypted) {
+              <span class="ssl-pill ssl-pill--enc">terenkripsi</span>
+            }
+            @if (keyAlg) {
+              <span class="ssl-pill ssl-pill--alg">{{ keyAlg }}</span>
+            }
+            @if (certState) {
+              <span class="ssl-pill" [ngClass]="certState.cls">{{ certState.label }}</span>
+            }
+          </span>
+        </div>
+      </div>
+    }
+
+    <!-- Metadata -->
+    @if (metadata) {
+      <section class="ssl-meta" aria-label="Detail metadata sertifikat">
+        @if (metadata.subject) { <div class="ssl-meta__row"><span class="ssl-meta__k">Subject</span><span class="ssl-meta__v">{{ metadata.subject }}</span></div> }
+        @if (metadata.issuer) { <div class="ssl-meta__row"><span class="ssl-meta__k">Issuer</span><span class="ssl-meta__v">{{ metadata.issuer }}</span></div> }
+        @if (metadata.serial) { <div class="ssl-meta__row"><span class="ssl-meta__k">Serial</span><span class="ssl-meta__v">{{ metadata.serial }}</span></div> }
+        @if (metadata.notBefore) { <div class="ssl-meta__row"><span class="ssl-meta__k">Not Before</span><span class="ssl-meta__v">{{ metadata.notBefore }}</span></div> }
+        @if (metadata.notAfter) { <div class="ssl-meta__row"><span class="ssl-meta__k">Not After</span><span class="ssl-meta__v">{{ metadata.notAfter }}</span></div> }
+        @if (metadata.sigAlg) { <div class="ssl-meta__row"><span class="ssl-meta__k">Signature Alg</span><span class="ssl-meta__v">{{ metadata.sigAlg }}</span></div> }
+        @if (metadata.san) { <div class="ssl-meta__row"><span class="ssl-meta__k">SAN</span><span class="ssl-meta__v">{{ metadata.san }}</span></div> }
+        @if (metadata.keyAlg) { <div class="ssl-meta__row"><span class="ssl-meta__k">Key Alg</span><span class="ssl-meta__v">{{ metadata.keyAlg }}</span></div> }
+        @if (metadata.keySize) { <div class="ssl-meta__row"><span class="ssl-meta__k">Key Size</span><span class="ssl-meta__v">{{ metadata.keySize }}</span></div> }
+        @if (metadata.chainCount) { <div class="ssl-meta__row"><span class="ssl-meta__k">Chain</span><span class="ssl-meta__v">{{ metadata.chainCount }} sertifikat</span></div> }
+        @if (metadata.subjects) { <div class="ssl-meta__row ssl-meta__row--stack"><span class="ssl-meta__k">Subjects</span><pre class="ssl-meta__v ssl-meta__subjects">{{ metadata.subjects }}</pre></div> }
+        @if (metadata.verified) { <div class="ssl-meta__row"><span class="ssl-meta__k">CSR Signature</span><span class="ssl-meta__v ssl-meta__v--ok">{{ metadata.verified }}</span></div> }
+      </section>
+    }
+
+    <!-- Outputs -->
+    @if (outputs.length) {
+      <section class="ssl-section" aria-label="Pilih format konversi">
+        <span class="tool-label">Konversi ke</span>
+        <div class="ssl-outs">
+          @for (o of outputs; track o.fmt) {
+            <button type="button" class="ssl-out"
+                    [class.ssl-out--active]="selectedFmt === o.fmt" (click)="doConvert(o.fmt)"
+                    [attr.aria-pressed]="selectedFmt === o.fmt">
+              <span class="ssl-out__label">{{ o.label }}</span>
+              <span class="ssl-out__hint">{{ o.hint }}</span>
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Result -->
+    @if (output) {
+      <section class="ssl-result" aria-live="polite">
+        <div class="ssl-result__head">
+          <div class="ssl-result__name">
+            <mat-icon class="ssl-result__fileicon" aria-hidden="true">{{ output.bytes ? 'description' : 'insert_drive_file' }}</mat-icon>
+            <span class="ssl-result__filename">{{ output.fileName }}</span>
+          </div>
+          <div class="ssl-result__actions">
+            <button type="button" class="btn-secondary ssl-action" (click)="copy()" [disabled]="!output.text" aria-label="Salin hasil ke clipboard" title="Salin">
+              <mat-icon class="ssl-btnicon" aria-hidden="true">content_copy</mat-icon><span>Salin</span>
+            </button>
+            <button type="button" class="btn-primary ssl-action" (click)="download()" aria-label="Unduh hasil sebagai file" title="Unduh">
+              <mat-icon class="ssl-btnicon" aria-hidden="true">download</mat-icon><span>Unduh</span>
+            </button>
+          </div>
+        </div>
+        @if (output.text) {
+          <pre class="ssl-preview">{{ previewText }}</pre>
+        }
+        @if (previewTruncated) {
+          <div class="ssl-preview__trunc">Pratinjau dipotong — unduh file untuk teks lengkap.</div>
+        }
+        @if (output.bytes && !output.error) {
+          <details class="ssl-binary">
+            <summary class="ssl-binary__summary">
+              <mat-icon class="ssl-binary__icon" aria-hidden="true">memory</mat-icon>
+              <span>Pratinjau heksadesimal</span>
+              <span class="ssl-binary__size">{{ output.bytes.length | number }} byte</span>
+            </summary>
+            <pre class="ssl-hex">{{ hexPreview }}</pre>
+          </details>
+        }
+        @if (output.error) {
+          <div class="tool-error ssl-error" role="alert">
+            <mat-icon class="ssl-error__icon" aria-hidden="true">error_outline</mat-icon>
+            <span>{{ output.error }}</span>
+          </div>
+        }
+      </section>
+    }
+
+  </mat-card>
+</div>

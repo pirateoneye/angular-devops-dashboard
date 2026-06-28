@@ -1,4 +1,4 @@
-﻿<div class="container pt-3 pb-3">
+<div class="container pt-3 pb-3">
   <mat-card class="tool-card">
     <h2 class="tool-title">Timestamp Converter</h2>
     <h4 class="tool-sub">Konversi Unix timestamp &harr; tanggal (ISO/UTC/local) dengan auto-detect detik vs milidetik.</h4>
@@ -6,13 +6,13 @@
 
     <div class="ts-now">
       <div><span class="ts-label">Sekarang</span> <code>{{ nowSec }}</code> (s) &nbsp; <code>{{ nowIso }}</code></div>
-      <button class="btn-secondary" (click)="refreshNow()"><mat-icon style="vertical-align:middle;font-size:16px">refresh</mat-icon> Refresh</button>
+      <button class="btn-secondary" (click)="refreshNow()"><mat-icon aria-hidden="true" style="vertical-align:middle;font-size:16px">refresh</mat-icon> Refresh</button>
     </div>
 
     <div class="ts-grid">
       <div>
-        <label class="tool-label">Unix Timestamp</label>
-        <input class="tool-input-mono" [(ngModel)]="unixInput" placeholder="1700000000" (keydown.enter)="fromUnix()" />
+        <label class="tool-label" for="ts-unix">Unix Timestamp</label>
+        <input id="ts-unix" class="tool-input-mono" [(ngModel)]="unixInput" placeholder="1700000000" (keydown.enter)="fromUnix()" />
         <div class="ts-unit">
           Satuan:
           <label><input type="radio" [(ngModel)]="unit" value="s" (change)="fromUnix()" /> detik</label>
@@ -26,23 +26,27 @@
       </div>
 
       <div>
-        <label class="tool-label">Tanggal (ISO / string)</label>
-        <input class="tool-input-mono" [(ngModel)]="dateInput" placeholder="2024-01-01T00:00:00Z" (keydown.enter)="fromDate()" />
+        <label class="tool-label" for="ts-date">Tanggal (ISO / string)</label>
+        <input id="ts-date" class="tool-input-mono" [(ngModel)]="dateInput" placeholder="2024-01-01T00:00:00Z" (keydown.enter)="fromDate()" />
         <div class="tool-actions">
           <button class="btn-primary" (click)="fromDate()">Konversi</button>
         </div>
       </div>
     </div>
 
-    <div class="ts-result" *ngIf="outIso">
-      <div class="ts-row"><span>Unix (s)</span><code>{{ outUnixSec }}</code><button class="icon-btn" (click)="copy(outUnixSec)"><mat-icon>file_copy</mat-icon></button></div>
-      <div class="ts-row"><span>Unix (ms)</span><code>{{ outUnixMs }}</code><button class="icon-btn" (click)="copy(outUnixMs)"><mat-icon>file_copy</mat-icon></button></div>
-      <div class="ts-row"><span>ISO 8601</span><code>{{ outIso }}</code><button class="icon-btn" (click)="copy(outIso)"><mat-icon>file_copy</mat-icon></button></div>
-      <div class="ts-row"><span>UTC</span><code>{{ outUtc }}</code><button class="icon-btn" (click)="copy(outUtc)"><mat-icon>file_copy</mat-icon></button></div>
-      <div class="ts-row"><span>Local</span><code>{{ outLocal }}</code></div>
-      <div class="ts-row"><span>Relative</span><code>{{ outRelative }}</code></div>
-    </div>
+    @if (outIso) {
+      <div class="ts-result">
+        <div class="ts-row"><span>Unix (s)</span><code>{{ outUnixSec }}</code><button class="icon-btn" (click)="copy(outUnixSec)" aria-label="Salin Unix seconds"><mat-icon aria-hidden="true">file_copy</mat-icon></button></div>
+        <div class="ts-row"><span>Unix (ms)</span><code>{{ outUnixMs }}</code><button class="icon-btn" (click)="copy(outUnixMs)" aria-label="Salin Unix milliseconds"><mat-icon aria-hidden="true">file_copy</mat-icon></button></div>
+        <div class="ts-row"><span>ISO 8601</span><code>{{ outIso }}</code><button class="icon-btn" (click)="copy(outIso)" aria-label="Salin ISO 8601"><mat-icon aria-hidden="true">file_copy</mat-icon></button></div>
+        <div class="ts-row"><span>UTC</span><code>{{ outUtc }}</code><button class="icon-btn" (click)="copy(outUtc)" aria-label="Salin UTC string"><mat-icon aria-hidden="true">file_copy</mat-icon></button></div>
+        <div class="ts-row"><span>Local</span><code>{{ outLocal }}</code></div>
+        <div class="ts-row"><span>Relative</span><code>{{ outRelative }}</code></div>
+      </div>
+    }
 
-    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    @if (error) {
+      <div class="tool-error" role="alert">{{ error }}</div>
+    }
   </mat-card>
 </div>

@@ -19,7 +19,7 @@
                 <div class="col-12" style="padding-right: 0px;">
                     <div class="input-group">
                         <input type="text" class="form-control " placeholder="Email" [(ngModel)]="email"
-                            [disabled]="response.status == 'ON_PROCESS'">
+                            [disabled]="response.status === 'ON_PROCESS'" aria-label="Email">
                     </div>
                 </div>
             </div>
@@ -33,26 +33,28 @@
                 <div class="col-12" style="padding-right: 0px;">
                     <div class="input-group">
                         <input type="text" class="form-control " placeholder="MID" [(ngModel)]="mid"
-                            [disabled]="response.status == 'ON_PROCESS'">
+                            [disabled]="response.status === 'ON_PROCESS'" aria-label="MID Yang Dikeluhkan">
                     </div>
                 </div>
             </div>
 
-            <ng-container *ngIf="logs.length != 0">
+            @if (logs.length != 0) {
                 <div class="d-flex row">
                     <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
                         Logs
                     </h3>
                 </div>
                 <div class="information" style="max-height: 300px; overflow-y: auto; "  #logContainer>
-                    <div class="d-flex align-items-center" *ngFor="let log of logs">
-                        <p style="margin-top: 1px;margin-bottom: 1px;" [ngClass]="'log-' +log.status"> {{log.date |
-                            date: 'yyyy-MM-dd HH:mm:ss' }} [{{log.level}}] - {{log.message}}</p>
-                    </div>
+                    @for (log of logs; track $index) {
+                        <div class="d-flex align-items-center">
+                            <p style="margin-top: 1px;margin-bottom: 1px;" [ngClass]="'log-' +log.status"> {{log.date |
+                                date: 'yyyy-MM-dd HH:mm:ss' }} [{{log.level}}] - {{log.message}}</p>
+                        </div>
+                    }
                 </div>
-            </ng-container>
+            }
 
-            <ng-container *ngIf="result != null">
+            @if (result != null) {
                 <div class="d-flex row mt-3">
                     <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
                         Result
@@ -64,10 +66,10 @@
                             {{result.message}}</p>
                     </div>
                 </div>
-            </ng-container>
+            }
 
 
-            <ng-container  *ngIf="response.status == 'SUCCESS'">
+            @if (response.status === 'SUCCESS') {
                 <div class="d-flex row mt-3">
                     <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
                         Informasi User Merchant
@@ -94,16 +96,20 @@
                                     <td>
                                         <div class="td-div-ul-scrollable-data">
                                             <ul class="td-ul-scrollable-data">
-                                                <li *ngFor="let data of response.data.before.attributes.mid">{{data}}
-                                                </li>
+                                                @for (data of response.data.before.attributes.mid; track $index) {
+                                                    <li>{{data}}
+                                                    </li>
+                                                }
                                             </ul>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="td-div-ul-scrollable-data">
                                             <ul class="td-ul-scrollable-data">
-                                                <li *ngFor="let data of response.data.after.attributes.mid">{{data}}
-                                                </li>
+                                                @for (data of response.data.after.attributes.mid; track $index) {
+                                                    <li>{{data}}
+                                                    </li>
+                                                }
                                             </ul>
                                         </div>
                                     </td>
@@ -115,29 +121,34 @@
                                 </tr>
                                 <tr>
                                     <td><b>Role MCB</b></td>
-                                    <td class="text-center"><span
-                                            *ngFor="let data of response.data.before.clientRoles['bca-mcb']">{{data}}</span>
+                                    <td class="text-center"><span>
+                                            @for (data of response.data.before.clientRoles['bca-mcb']; track $index) { {{data}} }
+                                        </span>
                                     </td>
-                                    <td class="text-center"><span
-                                            *ngFor="let data of response.data.after.clientRoles['bca-mcb']">{{data}}</span>
+                                    <td class="text-center"><span>
+                                            @for (data of response.data.after.clientRoles['bca-mcb']; track $index) { {{data}} }
+                                        </span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><b>Role QRMS</b></td>
-                                    <td class="text-center"><span
-                                            *ngFor="let data of response.data.before.clientRoles['bca-qrms']">{{data}}</span>
+                                    <td class="text-center"><span>
+                                            @for (data of response.data.before.clientRoles['bca-qrms']; track $index) { {{data}} }
+                                        </span>
                                     </td>
-                                    <td class="text-center"><span
-                                            *ngFor="let data of response.data.after.clientRoles['bca-qrms']">{{data}}</span>
+                                    <td class="text-center"><span>
+                                            @for (data of response.data.after.clientRoles['bca-qrms']; track $index) { {{data}} }
+                                        </span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><b>CIN</b></td>
-                                    <td class="text-center"><span
-                                            *ngFor="let data of response.data.before.attributes.cin">{{data}}</span>
+                                    <td class="text-center"><span>
+                                            @for (data of response.data.before.attributes.cin; track $index) { {{data}} }
+                                        </span>
                                     </td>
-                                    <td class="text-center"><span
-                                            *ngFor="let data of response.data.after.attributes.cin">{{data}}</span></td>
+                                    <td class="text-center"><span>
+                                            @for (data of response.data.after.attributes.cin; track $index) { {{data}} }</span></td>
                                 </tr>
                                 <tr>
                                     <td><b>Enabled</b></td>
@@ -154,9 +165,9 @@
                     </div>
                 </div>
 
-            </ng-container>
+            }
 
-            <ng-container *ngIf="(response.data?.other | keyvalue)?.length">
+            @if ((response.data?.other | keyvalue)?.length) {
                 <div class="d-flex row mt-3" >
                     <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
                         Informasi Lainnya
@@ -172,39 +183,47 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr style="vertical-align: middle;" *ngIf="response.data.other?.listNotRegisteredPTEN">
-                                    <td style="width: 200px;"><b>QRIS Statis Yang Belum Terdaftar Di PTEN</b></td>
-                                    <td>
-                                        <div class="td-div-ul-scrollable-data">
-                                            <ul class="td-ul-scrollable-data">
-                                                <li *ngFor="let data of response.data.other?.listNotRegisteredPTEN">{{data}}</li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr style="vertical-align: middle;" *ngIf="response.data.other?.listCicilan0">
-                                    <td ><b>MID Cicilan 0%</b></td>
-                                    <td>
-                                        <div class="td-div-ul-scrollable-data">
-                                            <ul class="td-ul-scrollable-data">
-                                                <li *ngFor="let data of response.data.other?.listCicilan0">{{data}}</li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @if (response.data.other?.listNotRegisteredPTEN) {
+                                    <tr style="vertical-align: middle;">
+                                        <td style="width: 200px;"><b>QRIS Statis Yang Belum Terdaftar Di PTEN</b></td>
+                                        <td>
+                                            <div class="td-div-ul-scrollable-data">
+                                                <ul class="td-ul-scrollable-data">
+                                                    @for (data of response.data.other?.listNotRegisteredPTEN; track $index) {
+                                                        <li>{{data}}</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (response.data.other?.listCicilan0) {
+                                    <tr style="vertical-align: middle;">
+                                        <td ><b>MID Cicilan 0%</b></td>
+                                        <td>
+                                            <div class="td-div-ul-scrollable-data">
+                                                <ul class="td-ul-scrollable-data">
+                                                    @for (data of response.data.other?.listCicilan0; track $index) {
+                                                        <li>{{data}}</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
 
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </ng-container>    
+            }
 
             <div class="d-flex row mb-4" style="margin-top: 50px;">
                 <div class="col-12">
                     <button style="width: 100%;" class="button-primary"
-                        [class.button-primary-disabled]="response.status == 'ON_PROCESS'"
-                        [disabled]="response.status == 'ON_PROCESS'" (click)="onClickSubmitButton()">
-                        {{response.status != 'ON_PROCESS' ? "Submit" : "On Process"}}
+                        [class.button-primary-disabled]="response.status === 'ON_PROCESS'"
+                        [disabled]="response.status === 'ON_PROCESS'" (click)="onClickSubmitButton()">
+                        {{response.status !== 'ON_PROCESS' ? "Submit" : "On Process"}}
                     </button>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -11,8 +11,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './color-converter.component.html',
   styleUrls: ['./color-converter.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ColorConverterComponent {
+export class ColorConverterComponent implements OnInit {
   hex = '#005caa';
   r = 0;
   g = 92;

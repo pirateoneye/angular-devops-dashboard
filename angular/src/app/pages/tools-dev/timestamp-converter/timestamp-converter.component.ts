@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './timestamp-converter.component.html',
   styleUrls: ['./timestamp-converter.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimestampConverterComponent {
   /** Seconds input (unix). */

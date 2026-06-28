@@ -4,25 +4,33 @@
     <h4 class="tool-sub">Encode gambar ke data URL dan sebaliknya, lengkap dengan preview &amp; download.</h4>
     <div class="tool-divider"></div>
 
-    <label class="tool-label">Pilih file gambar</label>
-    <input type="file" accept="image/*" (change)="onFile($event)" class="ib-file" />
+    <label class="tool-label" for="ib-file">Pilih file gambar</label>
+    <input id="ib-file" type="file" accept="image/*" (change)="onFile($event)" class="ib-file" />
 
-    <label class="tool-label" style="margin-top:12px;">Atau tempel data URL</label>
-    <textarea class="tool-area" rows="4" [(ngModel)]="dataUrl" (ngModelChange)="onUrlInput()" placeholder="data:image/png;base64,..."></textarea>
+    <label class="tool-label" for="ib-url" style="margin-top:12px;">Atau tempel data URL</label>
+    <textarea id="ib-url" class="tool-area" rows="4" [(ngModel)]="dataUrl" (ngModelChange)="onUrlInput()" placeholder="data:image/png;base64,..."></textarea>
 
-    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    @if (error) {
+      <div class="tool-error" role="alert">{{ error }}</div>
+    }
 
-    <div class="ib-preview" *ngIf="dataUrl && !error">
-      <img [src]="dataUrl" alt="preview" class="ib-img" />
-      <div class="ib-meta">
-        <span>{{ fileName }}</span>
-        <span *ngIf="size">{{ size }}</span>
-        <span *ngIf="!size && dataUrl">~{{ byteLength }}</span>
+    @if (dataUrl && !error) {
+      <div class="ib-preview">
+        <img [src]="dataUrl" alt="preview" class="ib-img" />
+        <div class="ib-meta">
+          <span>{{ fileName }}</span>
+          @if (size) {
+            <span>{{ size }}</span>
+          }
+          @if (!size && dataUrl) {
+            <span>~{{ byteLength }}</span>
+          }
+        </div>
+        <div class="tool-actions">
+          <button class="btn-secondary" (click)="copy()" [disabled]="!dataUrl">Copy</button>
+          <a class="btn-primary ib-dl" [href]="dataUrl" [download]="fileName">Download</a>
+        </div>
       </div>
-      <div class="tool-actions">
-        <button class="btn-secondary" (click)="copy()" [disabled]="!dataUrl">Copy</button>
-        <a class="btn-primary ib-dl" [href]="dataUrl" [download]="fileName">Download</a>
-      </div>
-    </div>
+    }
   </mat-card>
 </div>

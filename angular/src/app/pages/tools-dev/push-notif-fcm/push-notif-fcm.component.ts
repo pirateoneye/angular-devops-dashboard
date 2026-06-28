@@ -1,7 +1,8 @@
 ﻿import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, inject, DestroyRef } from '@angular/core';
 import { KJUR, KEYUTIL } from 'jsrsasign'; // Impor dari jsrsasign
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -65,20 +66,22 @@ export class PushNotifFcmComponent {
     }
   };
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(private http: HttpClient) { }
 
   submit() {
     of(0).pipe(
+      takeUntilDestroyed(this.destroyRef),
       switchMap(() => this.generateAccessToken()),
       switchMap((accessToken : string | null) => this.pushNotifFcm(accessToken)),
     ).subscribe((response) => {
-      console.info("Final", response); 
       this.response.message = 'Success Push Notification';
       this.response.data = response;
       this.response.status = "SUCCESS";
-    }, 
+    },
     (e) => {
-      console.error("Error",  e);  
+      console.error("Error",  e);
     });
   }
 
@@ -103,9 +106,8 @@ export class PushNotifFcmComponent {
 
     // Sign the JWT using jsrsasign
     const key : any= KEYUTIL.getKey(this.serviceAccount[this.env].private_key);
-    const signedJWT = KJUR.jws.JWS.sign(jwtHeader.alg, jwtHeaderStr, jwtPayloadStr, key); 
-    console.log("signedJwt", signedJWT);
-    
+    const signedJWT = KJUR.jws.JWS.sign(jwtHeader.alg, jwtHeaderStr, jwtPayloadStr, key);
+
     const url = 'https://oauth2.googleapis.com/token';
     const requestBody = `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${signedJWT}`;
     const headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
@@ -133,7 +135,7 @@ export class PushNotifFcmComponent {
       'Content-Type': 'application/json'
     });
 
-    let url = `https://fcm.googleapis.com/v1/projects/${this.serviceAccount[this.env].project_id}/messages:send`;
+    const url = `https://fcm.googleapis.com/v1/projects/${this.serviceAccount[this.env].project_id}/messages:send`;
     return this.http.post(url, this.requestBody, { headers: headers }).pipe(
       catchError(error => {
         this.buildErrorReponse('Error Push Notification FCM', error);

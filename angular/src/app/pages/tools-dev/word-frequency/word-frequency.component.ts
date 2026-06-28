@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -12,6 +12,7 @@ interface WordRow { word: string; count: number; pct: number; }
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './word-frequency.component.html',
   styleUrls: ['./word-frequency.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WordFrequencyComponent {
   input = '';
@@ -51,7 +52,7 @@ export class WordFrequencyComponent {
     const map = new Map<string, number>();
     for (const t of tokens) map.set(t, (map.get(t) ?? 0) + 1);
     const total = tokens.length;
-    let arr = Array.from(map.entries()).map(([word, count]) => ({ word, count, pct: Math.round((count / total) * 1000) / 10 }));
+    const arr = Array.from(map.entries()).map(([word, count]) => ({ word, count, pct: Math.round((count / total) * 1000) / 10 }));
     if (this.sortMode === 'count') arr.sort((a, b) => b.count - a.count || a.word.localeCompare(b.word));
     else arr.sort((a, b) => a.word.localeCompare(b.word));
     return arr.slice(0, Math.max(1, this.topN));

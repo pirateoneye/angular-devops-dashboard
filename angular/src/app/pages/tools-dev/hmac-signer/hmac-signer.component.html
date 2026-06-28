@@ -1,0 +1,59 @@
+<div class="container pt-3 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">HMAC Signer / Verifier</h2>
+    <h4 class="tool-sub">Hitung HMAC (MD5/SHA1/SHA256/SHA512) & verifikasi signature webhook (client-side, crypto-js).</h4>
+    <div class="tool-divider"></div>
+
+    <label class="tool-label">Message (raw body)</label>
+    <textarea class="tool-area" rows="5" [(ngModel)]="message" placeholder="Payload yang di-sign..."></textarea>
+
+    <label class="tool-label">Secret / Key</label>
+    <input class="tool-input-mono" [(ngModel)]="secret" placeholder="Shared secret" />
+
+    <div class="row-controls">
+      <div class="ctrl">
+        <label class="tool-label">Algoritma</label>
+        <select [(ngModel)]="algo">
+          <option value="HmacSHA256">HMAC-SHA256</option>
+          <option value="HmacSHA512">HMAC-SHA512</option>
+          <option value="HmacSHA1">HMAC-SHA1</option>
+          <option value="HmacMD5">HMAC-MD5</option>
+        </select>
+      </div>
+      <div class="ctrl">
+        <label class="tool-label">Encoding</label>
+        <select [(ngModel)]="encoding">
+          <option value="Hex">Hex</option>
+          <option value="Base64">Base64</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="tool-actions">
+      <button class="btn-primary" (click)="generate()">Generate signature</button>
+    </div>
+
+    @if (signature) {
+      <div class="sig-box">
+        <input class="sig-val" [value]="signature" readonly />
+        <button class="icon-btn" (click)="copy(signature)" title="Copy" aria-label="Copy signature"><mat-icon aria-hidden="true">file_copy</mat-icon></button>
+      </div>
+    }
+
+    <div class="tool-divider"></div>
+
+    <label class="tool-label">Expected signature (untuk verifikasi)</label>
+    <input class="tool-input-mono" [(ngModel)]="expected" placeholder="Signature dari header webhook, mis. X-Hub-Signature-256" />
+
+    <div class="tool-actions">
+      <button class="btn-secondary" (click)="verify()" [disabled]="!expected">Verify</button>
+    </div>
+
+    @if (verifyResult === 'match') {
+      <div class="verify-result match" role="status">✓ Signature cocok</div>
+    }
+    @if (verifyResult === 'mismatch') {
+      <div class="verify-result mismatch" role="alert">✗ Signature tidak cocok</div>
+    }
+  </mat-card>
+</div>

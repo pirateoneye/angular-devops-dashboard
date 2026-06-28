@@ -1,11 +1,11 @@
 .td-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .td-stats { color:#495057; font-size:12px; margin-left:auto; font-family:monospace; }
-.td-result { margin-top:10px; border:1px solid #e9ecef; border-radius:8px; max-height:380px; overflow:auto; font-family:monospace; font-size:12px; }
+.td-result { margin-top:10px; border:1px solid #ced4da; border-radius:8px; max-height:380px; overflow:auto; font-family:monospace; font-size:12px; }
 .td-line { display:flex; padding:1px 6px; white-space:pre-wrap; word-break:break-word; }
 .td-line.add { background:#e6f9e6; }
 .td-line.del { background:#fdecea; }
 .td-sign { width:16px; flex:0 0 auto; color:#999; user-select:none; }
 .td-text { white-space:pre-wrap; }
-.td-line.add .td-sign { color:#009649; }
+.td-line.add .td-sign { color:#137a43; }
 .td-line.del .td-sign { color:#cd1923; }
 @media (max-width:768px){ .td-grid { grid-template-columns:1fr; } }

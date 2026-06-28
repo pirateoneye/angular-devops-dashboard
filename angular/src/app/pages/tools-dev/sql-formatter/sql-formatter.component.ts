@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './sql-formatter.component.html',
   styleUrls: ['./sql-formatter.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SqlFormatterComponent {
   input = '';
@@ -141,7 +142,7 @@ export class SqlFormatterComponent {
 
   private tokenize(sql: string): string[] {
     // Preserve quoted strings & identifiers, split keywords/operators/punctuation.
-    const re = /('(?:[^']|'')*'|"(?:[^"]|"")*"|[(),]|<>|<=|>=|!=|=|<|>|\|\||\+|\-|\*|\/|%|;|\S+)/g;
+    const re = /('(?:[^']|'')*'|"(?:[^"]|"")*"|[(),]|<>|<=|>=|!=|=|<|>|\|\||\+|-|\*|\/|%|;|\S+)/g;
     return (sql.match(re) ?? []).filter((s) => s.length > 0);
   }
 

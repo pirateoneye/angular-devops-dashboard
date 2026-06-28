@@ -1,6 +1,7 @@
 ﻿import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { catchError, Observable } from 'rxjs';
+import { Component, inject, DestroyRef } from '@angular/core';
+import { catchError } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -27,6 +28,8 @@ export class PublishKafkaComponent {
     data: null
   };
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor(private http: HttpClient) { }
 
 
@@ -39,8 +42,9 @@ export class PublishKafkaComponent {
     });
 
     this.response = {status : "ON_PROCESS", message : "Sending to Broker", data: null}
-    let url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/utils/send/kafka/${this.principle}/${this.topic}`;
+    const url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/utils/send/kafka/${this.principle}/${this.topic}`;
     return this.http.post(url, this.requestBody, {headers : headers, observe: "response" }).pipe(
+      takeUntilDestroyed(this.destroyRef),
       catchError(error => {
         this.buildErrorReponse('Error Push Notification FCM', error);
         throw new Error(error);

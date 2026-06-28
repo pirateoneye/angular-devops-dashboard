@@ -7,33 +7,39 @@
     <div class="bc-input">
       <input class="bc-field" [(ngModel)]="input" (ngModelChange)="convert()" placeholder="Masukkan angka..." />
       <select [(ngModel)]="fromBase" (ngModelChange)="convert()" class="bc-select">
-        <option *ngFor="let b of bases" [value]="b.value">{{ b.label }}</option>
+        @for (b of bases; track b.value) {
+          <option [value]="b.value">{{ b.label }}</option>
+        }
       </select>
     </div>
 
-    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    @if (error) {
+      <div class="tool-error" role="alert">{{ error }}</div>
+    }
 
-    <div class="bc-out" *ngIf="!error">
-      <div class="bc-row">
-        <span class="bc-label">BIN</span>
-        <input class="bc-val" [value]="bin" readonly />
-        <button class="icon-btn" (click)="copy(bin)"><mat-icon>file_copy</mat-icon></button>
+    @if (!error) {
+      <div class="bc-out">
+        <div class="bc-row">
+          <span class="bc-label">BIN</span>
+          <input class="bc-val" [value]="bin" readonly />
+          <button class="icon-btn" (click)="copy(bin)" aria-label="Copy binary value"><mat-icon aria-hidden="true">file_copy</mat-icon></button>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">OCT</span>
+          <input class="bc-val" [value]="oct" readonly />
+          <button class="icon-btn" (click)="copy(oct)" aria-label="Copy octal value"><mat-icon aria-hidden="true">file_copy</mat-icon></button>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">DEC</span>
+          <input class="bc-val" [value]="dec" readonly />
+          <button class="icon-btn" (click)="copy(dec)" aria-label="Copy decimal value"><mat-icon aria-hidden="true">file_copy</mat-icon></button>
+        </div>
+        <div class="bc-row">
+          <span class="bc-label">HEX</span>
+          <input class="bc-val" [value]="hex" readonly />
+          <button class="icon-btn" (click)="copy(hex)" aria-label="Copy hex value"><mat-icon aria-hidden="true">file_copy</mat-icon></button>
+        </div>
       </div>
-      <div class="bc-row">
-        <span class="bc-label">OCT</span>
-        <input class="bc-val" [value]="oct" readonly />
-        <button class="icon-btn" (click)="copy(oct)"><mat-icon>file_copy</mat-icon></button>
-      </div>
-      <div class="bc-row">
-        <span class="bc-label">DEC</span>
-        <input class="bc-val" [value]="dec" readonly />
-        <button class="icon-btn" (click)="copy(dec)"><mat-icon>file_copy</mat-icon></button>
-      </div>
-      <div class="bc-row">
-        <span class="bc-label">HEX</span>
-        <input class="bc-val" [value]="hex" readonly />
-        <button class="icon-btn" (click)="copy(hex)"><mat-icon>file_copy</mat-icon></button>
-      </div>
-    </div>
+    }
   </mat-card>
 </div>

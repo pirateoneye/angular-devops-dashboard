@@ -1,13 +1,14 @@
-﻿import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+﻿import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ModalConfirmationComponent } from 'src/app/shared/component/modal/confirmation/modal-confirmation.component';
-import { BehaviorSubject, catchError, combineLatest, concatMap, from, mergeMap, Observable, of, skip, switchMap, takeUntil, tap, throwError, timeout, toArray } from 'rxjs';
+import { catchError, concatMap, from, of, skip, switchMap, takeUntil, tap, timeout, toArray } from 'rxjs';
 import { Router } from '@angular/router';
-import { log } from '@angular-devkit/build-angular/src/builders/ssr-dev-server';
 import { IndukCicilan } from 'src/app/shared/model/interface/indukcicilan.interface';
 import { UserMessi } from 'src/app/shared/model/interface/user-messi.interface';
+import { MESSI_GET_ACCESS_TOKEN, MESSI_GET_USER_BY_EMAIL, MESSI_EDIT_USER, MAGENTA_GET_INDUK_CICILAN, MAGENTA_GET_PEMILIK_BY_CIS } from 'src/app/core/constant/api.constant';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -40,13 +41,14 @@ export class FixDataUserComponent {
   logs : {date : Date, message: string, level: string, status: string | null }[] = [
   ]
   result : {date : Date, message: string,  status: string} | null = null;
-  setTimeout = 15000;
+  requestTimeoutMs = 15000;
 
-  constructor(private httpClient : HttpClient, 
+  private readonly destroyRef = inject(DestroyRef);
+
+  constructor(private httpClient : HttpClient,
                 private router: Router){}
 
   onClickSubmitButton(){
-      console.log("Submit")
       this.logs = [];
       this.result = null;
       this.data = {};
@@ -61,47 +63,44 @@ export class FixDataUserComponent {
         switchMap(() => this.getPemilik(this.data.outlet['user_attribute'].cis)),
         switchMap(() => this.comparingEmailPemilik()),
         switchMap(() => this.filterListMid()),
-        switchMap(() => this.putEditUser())
+        switchMap(() => this.putEditUser()),
+        takeUntilDestroyed(this.destroyRef)
       ).subscribe((response) => {
-        console.info("Final", response); 
-        let message =  "Success Fix Data User";
+        const message =  "Success Fix Data User";
         this.result = {date: new Date(), message: message,  status: "SUCCESS"};
         this.afterSubmit.emit(message);
         this.response.status =  "SUCCESS"
-      }, 
+      },
       (e) => {
-        console.error("Error",  e);  
-        this.result = {date: new Date(), message: (<Error>e).message,  status: "ERROR"}; 
+        console.error("Error",  e);
+        this.result = {date: new Date(), message: (<Error>e).message,  status: "ERROR"};
         this.afterSubmit.emit((<Error>e).message);
-        console.info("this.data", this.data); 
         this.response.status =  "ERROR"
       })
   }
 
   private getAuthMessi() {
-    let time = new Date().getTime().toString();
-    let body = new URLSearchParams();
+    const time = new Date().getTime().toString();
+    const body = new URLSearchParams();
     body.set('client_id',  'admin-cli');
     body.set('client_secret', '1db8b9d7-f851-4c89-9bba-79dbe751a255');
     body.set('grant_type',  'client_credentials');
-    body.set('scope',  'openid');;
-    let url = "https://asis.com/messi.api.gateway/v1/sso/auth/realms/bca/protocol/openid-connect/token";
-    let options : any =  {
+    body.set('scope',  'openid');
+    const url = MESSI_GET_ACCESS_TOKEN;
+    const options : any =  {
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded'),
       observe: "response"
     };
-    console.log("body: ",body)
-    console.log("options: ",options)
     return this.httpClient.post(url, body, options).pipe(
         takeUntil(this.router.events.pipe(skip(1))),
-        timeout(this.setTimeout));
+        timeout(this.requestTimeoutMs));
   }
 
   private getUser(){
     this.addLogs({date: new Date(), message: "GET User From Messi", level: "SERVICE", status: "NOSTATUS"})
     return this.getAuthMessi().pipe(switchMap((response : any) => {
-      let url = `https://asis.com/messi.api/v1/sso/f55e7b79-f6c2-41aa-bbc9-1f53788d04fd/user?email=${this.email}`;
-      let options : any =  {
+      const url = MESSI_GET_USER_BY_EMAIL.replace('{email}', this.email);
+      const options : any =  {
         headers: new HttpHeaders().set('Authorization', `Bearer ${response.body.access_token}`),
         observe: "response"
       };
@@ -112,15 +111,14 @@ export class FixDataUserComponent {
         }
         this.addLogs({date: new Date(), message: "User Found!", level: "MESSAGE", status: "SUCCESS"})
         this.data.user =response.body[0] as UserMessi;
-        console.log(this.data)
         return of(response.body);
     }))
   }
 
   private getIndukCicilan(mid : string, source : string){
-    let url = `https://asiss.com/api.merchant_v2.0.0/v1.0.0/Outlet/IndukCicilan/${mid}`;
+    const url = MAGENTA_GET_INDUK_CICILAN.replace('{mid}', mid);
     this.addLogs({date: new Date(), message: `GET Induk Cicilan From ${source}`, level: "SERVICE", status: "NOSTATUS"})
-    let options : any =  {
+    const options : any =  {
       observe: "response"
     };
     return this.httpClient.get(url, options).pipe(switchMap((response : any) => {
@@ -128,9 +126,8 @@ export class FixDataUserComponent {
         throw new Error(`Outlets From ${source} Not Found`);
       }
       this.addLogs({date: new Date(), message: `Outlets From ${source} Found!`, level: "MESSAGE", status: "SUCCESS"})
-      let content = response.body.content[0] as IndukCicilan;
+      const content = response.body.content[0] as IndukCicilan;
       this.data.outlet != null ? this.data.outlet[source] = content : this.data.outlet = { [source] : content};
-      console.log(this.data)
       return of(response.body);
     }));
   }
@@ -146,7 +143,7 @@ export class FixDataUserComponent {
 
   private checkRole(){
     this.addLogs({date: new Date(), message: "Checking Role User", level: "ACTION", status: "NOSTATUS"})
-    let user = this.data.user;
+    const user = this.data.user;
     if(user.clientRoles == null || !user.clientRoles["bca-mcb"] || user.clientRoles["bca-mcb"].length == 0){
       this.data.isRoleNotFound =true;
       this.addLogs({date: new Date(), message: "Role Not Found", level: "MESSAGE", status: "ERROR"})
@@ -164,19 +161,18 @@ export class FixDataUserComponent {
   private getPemilik(cis : string){
     if(this.data.isRoleNotFound)
     {
-      let url = `https://asiss.com/api.merchant_v2.0.0/v1.0.0/Pemilik/getPemilikMerchantByCis/${cis}`;
+      const url = MAGENTA_GET_PEMILIK_BY_CIS.replace('{cis}', cis);
       this.addLogs({date: new Date(), message: `GET Pemilik By CIS`, level: "SERVICE", status: "NOSTATUS"})
-      let options : any =  {
+      const options : any =  {
         observe: "response"
       };
       return this.httpClient.get(url, options).pipe(switchMap((response : any) => {
         if(response.status != 200){
           throw new Error(`GET Pemilik By CIS Magenta Error: ` + JSON.stringify(response));
         }
-        let content = response.body.content[0];
+        const content = response.body.content[0];
         this.data.emailPemilik = content.email;
         this.addLogs({date: new Date(), message: `Pemilik Found!`, level: "MESSAGE", status: "SUCCESS"})
-        console.log(this.data)
         return of("OK");
       }));
     }
@@ -203,11 +199,11 @@ export class FixDataUserComponent {
 
   private filterListMid(){
     this.addLogs({date: new Date(), message: `Filtering List MID`, level: "ACTION", status: "NOSTATUS"})
-    let indukCicilan : IndukCicilan = this.data.outlet["mid_target"];
-    let listNotRegisteredPTEN : string[] = [];
-    let listCicilan0 : string[] = [];
-    let listMid : string[] =[];
-    let listNotFilteredQrisStatis : string[] =[];
+    const indukCicilan : IndukCicilan = this.data.outlet["mid_target"];
+    const listNotRegisteredPTEN : string[] = [];
+    const listCicilan0 : string[] = [];
+    const listMid : string[] =[];
+    const listNotFilteredQrisStatis : string[] =[];
     let isQrisStatis : boolean = false;
     indukCicilan.outlet.forEach((o) =>{
       if(o.iscicilan0){
@@ -227,11 +223,10 @@ export class FixDataUserComponent {
       }
     })
 
-    console.log('listNotFilteredQrisStatis', listNotFilteredQrisStatis);
+    const options : any =  {observe : 'response', responseType: 'blob'};
 
-    let options : any =  {observe : 'response', responseType: 'blob'};
-    
-    return from(listNotFilteredQrisStatis).pipe(concatMap((mid) => 
+    return from(listNotFilteredQrisStatis).pipe(concatMap((mid) =>
+      // TODO: centralize this QRIS-static endpoint in api.constant.ts (no matching constant exists yet).
       this.httpClient.get(`https://auhau.com/v1/qris-static/detail/${mid}`, options).pipe(
       tap((response : any) => {
         if(response.status == 204){
@@ -258,15 +253,14 @@ export class FixDataUserComponent {
     ), 
     toArray(),
     switchMap(() => {
-      let other : any = {};
+      const other : any = {};
       if(listNotRegisteredPTEN.length != 0){
         other["listNotRegisteredPTEN"] = listNotRegisteredPTEN;
       }
       if(listCicilan0.length != 0){
         other["listCicilan0"] = listCicilan0;
       }
-      console.log(other)
-  
+
       if(listMid.length == 0){
         this.response.data = {other : other};
         throw new Error('List MID is Empty');
@@ -282,11 +276,11 @@ export class FixDataUserComponent {
 
   private putEditUser(){
     this.addLogs({date: new Date(), message: `PUT Edit User Messi`, level: "SERVICE", status: "NOSTATUS"})
-    let user : UserMessi = JSON.parse(JSON.stringify(this.data.user));
-    let indukCicilan : IndukCicilan = this.data.outlet["mid_target"];
+    const user : UserMessi = JSON.parse(JSON.stringify(this.data.user));
+    const indukCicilan : IndukCicilan = this.data.outlet["mid_target"];
 
     //Set Client Roles
-    let clientRoles : any = user.clientRoles != null && user.clientRoles["bca-mcb"] != null ? {"bca-mcb" : user.clientRoles["bca-mcb"]} : {"bca-mcb" : ["pemilik"]}
+    const clientRoles : any = user.clientRoles != null && user.clientRoles["bca-mcb"] != null ? {"bca-mcb" : user.clientRoles["bca-mcb"]} : {"bca-mcb" : ["pemilik"]}
     if(this.data.isQrisStatis ){
       clientRoles["bca-qrms"] = clientRoles["bca-mcb"];
     }
@@ -295,11 +289,9 @@ export class FixDataUserComponent {
     user.clientRoles = clientRoles;
     user.attributes.mid = this.data.listMid;
     user.attributes.cin = [indukCicilan.cis];
-    console.log(this.data);
-    console.log('result user', user);
     return this.getAuthMessi().pipe(switchMap((response : any) => {
-      let url = `https://asis.com/messi.api/v1/sso/8877ab1e-1881-402b-9f06-62f4db8c7829/users/${user.id}`;
-      let options : any =  {
+      const url = MESSI_EDIT_USER.replace('{userId}', user.id);
+      const options : any =  {
         headers: new HttpHeaders().set('Authorization', `Bearer ${response.body.access_token}`),
         observe: "response"
       };
@@ -309,13 +301,12 @@ export class FixDataUserComponent {
           throw new Error(`PUT Edit User Messi Error: ` + JSON.stringify(response));
         }
 
-        let responseData = {
+        const responseData = {
           before:this.data.user,
           after:user,
           other: this.data.other 
         }
         this.response.data =  responseData;
-        console.log(this.response);
         this.addLogs({date: new Date(), message: "Edit User Success", level: "MESSAGE", status: "SUCCESS"})
         return of("OK");
     }))

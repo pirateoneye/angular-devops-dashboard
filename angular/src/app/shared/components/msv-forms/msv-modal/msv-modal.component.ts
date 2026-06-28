@@ -1,11 +1,12 @@
 import { Component, Input, HostListener, ElementRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { MsvModalSize } from './msv-modal.types';
 import { MsvModalRef } from './msv-modal-ref';
+import { MsvModalService } from './msv-modal.service';
 
 @Component({
   selector: 'msv-modal',
   template: `
-<div class="msv-modal-backdrop">
+<div class="msv-modal-backdrop" (click)="onBackdropClick($event)">
   <div class="msv-modal-container" [ngClass]="getSizeClass()" (click)="$event.stopPropagation()">
     <!-- Header Slot -->
     <div class="msv-modal-header">
@@ -212,6 +213,71 @@ import { MsvModalRef } from './msv-modal-ref';
   display: none;
 }
 
+/* Confirmation dialog — built dynamically by MsvModalService.confirm()
+   and appended into .msv-modal-body. ::ng-deep is required because the
+   confirm nodes are inserted via DOM APIs (not rendered by Angular), so
+   they do not receive this component's emulated-encapsulation scoping
+   attributes. Colors use the CSS vars declared on :host above. */
+.msv-modal-body ::ng-deep .msv-confirm-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-family: var(--msv-font-family);
+}
+
+.msv-modal-body ::ng-deep .msv-confirm-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--msv-primary-color);
+  line-height: 1.4;
+}
+
+.msv-modal-body ::ng-deep .msv-confirm-message {
+  font-size: 14px;
+  color: #2d3748;
+  line-height: 1.6;
+}
+
+.msv-modal-body ::ng-deep .msv-confirm-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.msv-modal-body ::ng-deep .msv-confirm-cancel,
+.msv-modal-body ::ng-deep .msv-confirm-ok {
+  flex: 1;
+  height: 40px;
+  border-radius: 20px;
+  font-family: var(--msv-font-family);
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--msv-border-color);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.msv-modal-body ::ng-deep .msv-confirm-cancel {
+  background: #fff;
+  color: var(--msv-primary-color);
+}
+
+.msv-modal-body ::ng-deep .msv-confirm-cancel:hover {
+  background: #f6f6f6;
+}
+
+.msv-modal-body ::ng-deep .msv-confirm-ok {
+  background: var(--msv-focus-color);
+  color: #fff;
+  border-color: var(--msv-focus-color);
+}
+
+.msv-modal-body ::ng-deep .msv-confirm-ok:hover {
+  background: var(--msv-primary-color);
+  border-color: var(--msv-primary-color);
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .msv-modal-backdrop {
@@ -242,17 +308,21 @@ export class MsvModalComponent {
 
   constructor(private elementRef: ElementRef) {}
 
-  @HostListener('click', ['$event'])
   onBackdropClick(event: MouseEvent): void {
-    // Only close if clicking the backdrop itself, not the modal content
-    if (this.closable && event.target === this.elementRef.nativeElement) {
+    // Handler is bound to the .msv-modal-backdrop element in the template.
+    // event.currentTarget is that backdrop element, so we close only when the
+    // click lands directly on the backdrop — not on content bubbling up, which
+    // is stopped by the container's (click)="$event.stopPropagation()".
+    if (this.closable && event.target === event.currentTarget) {
       this.close();
     }
   }
 
   @HostListener('document:keydown.escape', ['$event'])
   onEscapeKey(event: KeyboardEvent): void {
-    if (this.closable) {
+    // Only the topmost modal should close on Escape; otherwise a single Escape
+    // press would dismiss every mounted modal at once.
+    if (this.closable && MsvModalService.isTopmost(this.modalRef)) {
       event.preventDefault();
       this.close();
     }

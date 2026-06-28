@@ -16,8 +16,10 @@ import { MsvMenuComponent } from './msv-menu.component';
 })
 export class MsvMenuTriggerDirective implements OnDestroy {
   @Input() msvMenuTriggerFor!: MsvMenuComponent;
-  
+
   private overlayRef: OverlayRef | null = null;
+  private menuOpen = false;
+  private clonedMenuElement: HTMLElement | null = null;
 
   constructor(
     private overlay: Overlay,
@@ -32,7 +34,7 @@ export class MsvMenuTriggerDirective implements OnDestroy {
   }
 
   private toggleMenu(): void {
-    if (this.overlayRef && this.overlayRef.hasAttached()) {
+    if (this.menuOpen) {
       this.closeMenu();
     } else {
       this.openMenu();
@@ -45,35 +47,50 @@ export class MsvMenuTriggerDirective implements OnDestroy {
       return;
     }
 
+    // Already open — nothing to do.
+    if (this.menuOpen) {
+      return;
+    }
+
     // Create overlay if it doesn't exist
     if (!this.overlayRef) {
       this.overlayRef = this.createOverlay();
     }
 
-    // Attach the menu element directly to overlay
-    if (!this.overlayRef.hasAttached()) {
-      const menuElement = (this.msvMenuTriggerFor as any).elementRef?.nativeElement;
-      if (menuElement) {
-        // Clone the menu element and attach it to the overlay
-        const clonedElement = menuElement.cloneNode(true) as HTMLElement;
-        const overlayPane = this.overlayRef.overlayElement;
-        overlayPane.appendChild(clonedElement);
-      }
-      
-      // Focus first item after menu opens
-      setTimeout(() => {
-        this.msvMenuTriggerFor.focusFirstEnabledItem();
-      }, 0);
-
-      // Set up outside click and escape key handlers
-      this.setupCloseHandlers();
+    // Attach the menu element directly to overlay (clone so the original stays in place)
+    const menuElement = (this.msvMenuTriggerFor as any).elementRef?.nativeElement;
+    if (menuElement) {
+      this.clonedMenuElement = menuElement.cloneNode(true) as HTMLElement;
+      this.overlayRef.overlayElement.appendChild(this.clonedMenuElement);
     }
+
+    this.menuOpen = true;
+
+    // Focus first item after menu opens
+    setTimeout(() => {
+      this.msvMenuTriggerFor.focusFirstEnabledItem();
+    }, 0);
+
+    // Set up outside click and escape key handlers
+    this.setupCloseHandlers();
   }
 
   closeMenu(): void {
-    if (this.overlayRef && this.overlayRef.hasAttached()) {
+    if (!this.menuOpen) {
+      return;
+    }
+
+    // Remove the cloned menu element from the overlay pane
+    if (this.clonedMenuElement && this.clonedMenuElement.parentNode) {
+      this.clonedMenuElement.parentNode.removeChild(this.clonedMenuElement);
+    }
+    this.clonedMenuElement = null;
+
+    if (this.overlayRef) {
       this.overlayRef.detach();
     }
+
+    this.menuOpen = false;
   }
 
   private createOverlay(): OverlayRef {
@@ -157,6 +174,8 @@ export class MsvMenuTriggerDirective implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.clonedMenuElement = null;
+    this.menuOpen = false;
     if (this.overlayRef) {
       this.overlayRef.dispose();
       this.overlayRef = null;

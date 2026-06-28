@@ -1,141 +1,152 @@
 
-
-
- 
   <div class="container pt-3 pb-3">
-    <ng-container *ngIf="statusMenu == statusAPI.LOADING">
-      <mat-card class="example-card mb-3 mat-elevation-z5 p-4" style="border-radius: 32px">
-        <h2 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
-          Batch Runner
-        </h2>
-        <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
-          Tools untuk menjalankan batch manual Merchant Service di environment UAT
-        </h4>
+    @if (statusMenu == statusAPI.LOADING) {
+      <div class="tool-card">
+        <h2 class="tool-title">Batch Runner</h2>
+        <p class="tool-sub">Tools untuk menjalankan batch manual Merchant Service di environment UAT</p>
+        <div class="tool-divider"></div>
         <div class="d-flex align-items-center flex-column"  style="width: fit-content; margin-left: auto; margin-right: auto;">
-          <img src="../assets/loading4.gif" alt="logo" style="width: 75px; margin-left: auto; margin-right: auto;">
-          <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
+          <img src="../assets/loading4.gif" alt="Memuat List Batch" style="width: 75px; margin-left: auto; margin-right: auto;">
+          <p class="tool-sub">
             Memuat List Batch
-          </h4>
-        </div>
-      </mat-card>
-    </ng-container>
-  
-    <ng-container *ngIf="statusMenu == statusAPI.SUCCESS">
-      <mat-card class="example-card mb-3 mat-elevation-z5 p-4" style="border-radius: 16px">
-        <h2 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
-          Batch Runner
-        </h2>
-        <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
-          Tools untuk menjalankan batch manual Merchant Service di environment UAT
-        </h4>
-  
-        <div style="width: 100%; height: 1px; background-color: #E9ECEF; padding: 0; margin: 0;"></div>
-  
-        <div class="batch-list-card" *ngFor="let batch of batchList">
-          <div class="d-flex row">
-            <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
-              {{batch.batch_name}}
-            </h3>
-            <div class="col d-flex justify-content-end">
-              
-              <div *ngIf="batch.available_status == 1" class="badge-available">
-                Ready to Run
-              </div>
-  
-              <div *ngIf="batch.available_status == 0" class="badge-unavailable">
-                On Running
-              </div>
-  
-            </div>
-          </div>
-          <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
-            {{batch.title}}
-          </h4>
-          <p style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
-            {{batch.description}}
           </p>
-          
-          <div class="d-flex flex-row gap-2 mb-3">
-            <div *ngFor="let feature of batch.feature" class="badge-info">
-              <span style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
-                {{feature}}
-              </span>
-            </div>
-          </div>
-  
-  
-          <div class="batch-information">
-            <div class="d-flex align-items-center">
-              <mat-icon style="color: #005CAA">
-                info
-              </mat-icon>
-              <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 600; margin: 0; margin-left: 10px;">
-                Batch Information
-              </h4>
-            </div>
-  
-            <div class="d-flex align-items-center mt-3">
-              <mat-icon style="color: #005CAA">
-                person
-              </mat-icon>
-              <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                Last Run By : {{batch.last_run_by || '-'}}
-              </h4>
-            </div>
-  
-            <div class="d-flex align-items-center mt-3">
-              <mat-icon style="color: #005CAA">
-                access_time
-              </mat-icon>
-              <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                Last Run Batch Started Time : {{getFormattedTime(batch.last_run_time_start) || '-'}}
-              </h4>
-            </div>
-            <div class="d-flex align-items-center mt-3">
-              <mat-icon style="color: #005CAA">
-                access_time
-              </mat-icon>
-              <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                Last Run Batch Finished Time : {{getFormattedTime(batch.last_run_time_end) || '-'}}
-              </h4>
-            </div>
-            <div class="d-flex align-items-center mt-3">
-              <mat-icon style="color: #005CAA">
-                batch_prediction
-              </mat-icon>
-              <div *ngIf="batch.last_run_status == 'Completed'" class="badge-available" style="margin-left: 10px;">
-                Batch Finished Successfully
-              </div>
-              <div *ngIf="batch.last_run_status == 'Failed'" class="badge-failed" style="margin-left: 10px;">
-                Batch Failed
-              </div>
-              <div *ngIf="batch.last_run_status == null" class="badge-notyet" style="margin-left: 10px;">
-                Batch Never Been Started
-              </div>
-              <div *ngIf="batch.available_status == 0" class="badge-unavailable" style="margin-left: 10px;">
-                On Running
-              </div>
-            </div>
-          </div>
-  
-          <div class="column d-flex align-items-center gap-3" style="width: 100%;">
-            <div (click)="runBatch(batch.id)" *ngIf="batch.available_status == 1" class="col button-primary mt-3">
-              <div class="uploader-status me-3" *ngIf="currentProcessing == batch.id">
-                <mat-progress-spinner diameter="20" mode="indeterminate" class="my-spinner"></mat-progress-spinner>
-              </div>
-              <span>
-                Execute Batch
-              </span>
-            </div>
-            <div *ngIf="batch.available_status == 0" class="col button-primary-disabled mt-3">
-              Batch Running
-            </div>
-            <div (click)="getData()" *ngIf="batch.available_status == 0" class="col button-secondary mt-3">
-              Refresh Status
-            </div>
-          </div>
         </div>
+      </div>
+    }
+
+    @if (statusMenu == statusAPI.SUCCESS) {
+      <div class="tool-card">
+        <h2 class="tool-title">Batch Runner</h2>
+        <p class="tool-sub">Tools untuk menjalankan batch manual Merchant Service di environment UAT</p>
+        <div class="tool-divider"></div>
+
+        @for (batch of batchList; track batch.id) {
+          <div class="batch-list-card">
+            <div class="d-flex row">
+              <h3 class="col-4 m-0 tool-title" style="font-size:15px;">
+                {{batch.batch_name}}
+              </h3>
+              <div class="col d-flex justify-content-end">
+
+                @if (batch.available_status == 1) {
+                  <div class="badge-available">
+                    Ready to Run
+                  </div>
+                }
+
+                @if (batch.available_status == 0) {
+                  <div class="badge-unavailable">
+                    On Running
+                  </div>
+                }
+
+              </div>
+            </div>
+            <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
+              {{batch.title}}
+            </h4>
+            <p style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
+              {{batch.description}}
+            </p>
+
+            <div class="d-flex flex-row gap-2 mb-3">
+              @for (feature of batch.feature; track $index) {
+                <div class="badge-info">
+                  <span style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
+                    {{feature}}
+                  </span>
+                </div>
+              }
+            </div>
+
+
+            <div class="batch-information">
+              <div class="d-flex align-items-center">
+                <mat-icon style="color: #005CAA" aria-hidden="true">
+                  info
+                </mat-icon>
+                <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 600; margin: 0; margin-left: 10px;">
+                  Batch Information
+                </h4>
+              </div>
+
+              <div class="d-flex align-items-center mt-3">
+                <mat-icon style="color: #005CAA" aria-hidden="true">
+                  person
+                </mat-icon>
+                <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
+                  Last Run By : {{batch.last_run_by || '-'}}
+                </h4>
+              </div>
+
+              <div class="d-flex align-items-center mt-3">
+                <mat-icon style="color: #005CAA" aria-hidden="true">
+                  access_time
+                </mat-icon>
+                <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
+                  Last Run Batch Started Time : {{getFormattedTime(batch.last_run_time_start) || '-'}}
+                </h4>
+              </div>
+              <div class="d-flex align-items-center mt-3">
+                <mat-icon style="color: #005CAA" aria-hidden="true">
+                  access_time
+                </mat-icon>
+                <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
+                  Last Run Batch Finished Time : {{getFormattedTime(batch.last_run_time_end) || '-'}}
+                </h4>
+              </div>
+              <div class="d-flex align-items-center mt-3">
+                <mat-icon style="color: #005CAA" aria-hidden="true">
+                  batch_prediction
+                </mat-icon>
+                @if (batch.last_run_status === 'Completed') {
+                  <div class="badge-available" style="margin-left: 10px;">
+                    Batch Finished Successfully
+                  </div>
+                }
+                @if (batch.last_run_status === 'Failed') {
+                  <div class="badge-failed" style="margin-left: 10px;">
+                    Batch Failed
+                  </div>
+                }
+                @if (batch.last_run_status == null) {
+                  <div class="badge-notyet" style="margin-left: 10px;">
+                    Batch Never Been Started
+                  </div>
+                }
+                @if (batch.available_status == 0) {
+                  <div class="badge-unavailable" style="margin-left: 10px;">
+                    On Running
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="column d-flex align-items-center gap-3" style="width: 100%;">
+              @if (batch.available_status == 1) {
+                <button type="button" (click)="runBatch(batch.id)" class="col btn-primary mt-3" style="display:flex; justify-content:center; align-items:center; width:100%;">
+                  @if (currentProcessing == batch.id) {
+                    <div class="uploader-status me-3" aria-hidden="true">
+                      <mat-progress-spinner diameter="20" mode="indeterminate" class="my-spinner" aria-hidden="true"></mat-progress-spinner>
+                    </div>
+                  }
+                  <span>
+                    Execute Batch
+                  </span>
+                </button>
+              }
+              @if (batch.available_status == 0) {
+                <div class="col btn-primary mt-3" style="display:flex; justify-content:center; width:100%;" aria-disabled="true">
+                  Batch Running
+                </div>
+                <button type="button" (click)="getData()" class="col btn-secondary mt-3" style="display:flex; justify-content:center; width:100%;">
+                  Refresh Status
+                </button>
+              }
+            </div>
+          </div>
+        }
         <div style="width: fit-content; margin-left: auto; margin-right: auto;"></div>
-      </mat-card>
-    </ng-container>
+      </div>
+    }
   </div>

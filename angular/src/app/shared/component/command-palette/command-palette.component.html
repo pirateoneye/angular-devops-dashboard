@@ -1,0 +1,42 @@
+<div class="palette">
+  <div class="palette-search">
+    <mat-icon class="palette-search-icon" aria-hidden="true">search</mat-icon>
+    <input
+      #searchInput
+      type="text"
+      [ngModel]="query()"
+      (ngModelChange)="query.set($event)"
+      class="palette-input"
+      placeholder="Search tools, dev pages, piket…  (↑↓ to move, ↵ to open, esc to close)"
+      autocomplete="off"
+      spellcheck="false"
+      aria-label="Command palette search"
+      role="combobox"
+      aria-expanded="true"
+      [attr.aria-activedescendant]="results().length ? 'pal-opt-' + activeIndex() : null"
+    />
+    <button type="button" class="palette-esc" (click)="close()" title="Close (Esc)" aria-label="Close command palette">esc</button>
+  </div>
+
+  <ul class="palette-list" role="listbox">
+    @for (row of results(); track row.kind + ':' + row.route + ':' + (row.queryParams?.t ?? ''); let i = $index) {
+      <li
+        [id]="'pal-opt-' + i"
+        role="option"
+        [class.active]="activeIndex() === i"
+        [attr.aria-selected]="activeIndex() === i"
+        (mouseenter)="activeIndex.set(i)"
+        (click)="choose(row)">
+        <mat-icon class="palette-row-icon" aria-hidden="true">{{ row.icon }}</mat-icon>
+        <span class="palette-row-label">{{ row.label }}</span>
+        @if (row.favorite) {
+          <mat-icon class="palette-row-fav" aria-hidden="true">star</mat-icon>
+        }
+        <span class="palette-row-tag" [class.tag-nav]="row.kind === 'nav'">{{ row.group }}</span>
+      </li>
+    }
+  </ul>
+  @if (results().length === 0) {
+    <div class="palette-empty" role="status">No matches.</div>
+  }
+</div>

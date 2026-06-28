@@ -4,7 +4,10 @@
   <!-- Toasts -->
   <div class="toasts">
     @for (t of toasts(); track t.id) {
-    <div class="toast" [class]="t.type" (click)="dismissToast(t.id)">
+    <div class="toast" [class]="t.type" role="button" tabindex="0"
+      [attr.aria-label]="'Dismiss notification: ' + t.msg"
+      (click)="dismissToast(t.id)" (keydown.enter)="dismissToast(t.id)"
+      (keydown.space)="dismissToast(t.id)">
       @if (t.type === 'ok') { ✓ } @else if (t.type === 'err') { ✕ } @else { ℹ }
       {{ t.msg }}
     </div>
@@ -24,19 +27,21 @@
     <div class="hdr-right">
       @if (loggedIn()) {
       <span class="badge">{{ username() }}</span>
-      <button class="icon-btn" (click)="showLogin.set(true)" title="Settings">⚙</button>
-      <button class="icon-btn" (click)="logout()" title="Logout">↪</button>
+      <button class="icon-btn" (click)="openLoginModal()" title="Settings" aria-label="Settings">⚙</button>
+      <button class="icon-btn" (click)="logout()" title="Logout" aria-label="Logout">↪</button>
       } @else {
-      <button class="btn primary" (click)="showLogin.set(true)">Login</button>
+      <button class="btn primary" (click)="openLoginModal()">Login</button>
       }
     </div>
   </header>
 
   <!-- Login Modal -->
   @if (showLogin()) {
-  <div class="overlay" (click)="loggedIn() && showLogin.set(false)">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <h2>Connect</h2>
+  <div class="overlay" (click)="loggedIn() && showLogin.set(false)"
+    (keydown.escape)="loggedIn() && showLogin.set(false)">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="paimon-login-title"
+      (click)="$event.stopPropagation()">
+      <h2 id="paimon-login-title">Connect</h2>
       <form [formGroup]="form" (ngSubmit)="login()">
         <label>Base URL<input formControlName="baseUrl" class="input" /></label>
         <label>Username<input formControlName="username" class="input" /></label>
@@ -96,9 +101,13 @@
       <div class="dns-list">
         @for (d of currentTaskDns(); track d.fqdn) {
         <div class="dns-card task-card">
-          <div class="dns-hdr" (click)="toggleExpand(d.fqdn, d.zone, 'task')">
+          <div class="dns-hdr" role="button" tabindex="0"
+            [attr.aria-expanded]="d.isExpanded"
+            (click)="toggleExpand(d.fqdn, d.zone, 'task')"
+            (keydown.enter)="toggleExpand(d.fqdn, d.zone, 'task')"
+            (keydown.space)="toggleExpand(d.fqdn, d.zone, 'task')">
             <div class="dns-left">
-              <span class="arrow">{{ d.isExpanded ? '▼' : '▶' }}</span>
+              <span class="arrow" aria-hidden="true">{{ d.isExpanded ? '▼' : '▶' }}</span>
               <h3>{{ d.fqdn }}</h3>
               <span class="zone-tag" [class]="d.zone">{{ d.zone }}</span>
               @if (countState(d, 'UP')) { <span class="pill up">{{ countState(d, 'UP') }}</span> }
@@ -109,11 +118,11 @@
             <div class="dns-right">
               @if (d.lastUpdated) { <span class="ts">{{ d.lastUpdated | date:'HH:mm:ss' }}</span> }
               <button class="icon-btn sm" (click)="$event.stopPropagation(); fetchStatus(d.fqdn, d.zone, 'task')"
-                [disabled]="d.isLoading">↻</button>
+                [disabled]="d.isLoading" aria-label="Refresh status">↻</button>
               <button class="icon-btn sm danger" (click)="$event.stopPropagation(); suspendDns(d.fqdn, d.zone)"
-                [disabled]="loading()">⏸</button>
+                [disabled]="loading() || d.isLoading || !d.services.length" aria-label="Suspend all services">⏸</button>
               <button class="icon-btn sm success" (click)="$event.stopPropagation(); unsuspendDns(d.fqdn, d.zone)"
-                [disabled]="loading()">▶</button>
+                [disabled]="loading() || d.isLoading || !d.services.length" aria-label="Unsuspend all services">▶</button>
             </div>
           </div>
 
@@ -128,15 +137,16 @@
             } @else {
             @for (s of d.services; track s.svc_name) {
             <div class="svc-row" [class]="stateClass(s.state)">
-              <label class="svc-chk"><input type="checkbox" [checked]="isSvcSelected(s.svc_name)"
-                  (change)="toggleSvc(s.svc_name)" /></label>
+              <label class="svc-chk"><input type="checkbox"
+                  [checked]="isSvcSelected(svcKey(d.fqdn, d.zone, s.svc_name))"
+                  (change)="toggleSvc(svcKey(d.fqdn, d.zone, s.svc_name))" /></label>
               <span class="svc-dot"></span>
               <span class="svc-name">{{ s.svc_name.split('/').pop() }}</span>
               <span class="svc-ip">{{ s.svr_ip }}:{{ s.svr_port }}</span>
               <span class="svc-state">{{ s.state }}</span>
               <div class="svc-acts">
-                <button class="micro danger" (click)="suspend(s, d.fqdn, d.zone)" [disabled]="loading()">⏸</button>
-                <button class="micro success" (click)="unsuspend(s, d.fqdn, d.zone)" [disabled]="loading()">▶</button>
+                <button class="micro danger" (click)="suspend(s, d.fqdn, d.zone)" [disabled]="loading()" aria-label="Suspend service">⏸</button>
+                <button class="micro success" (click)="unsuspend(s, d.fqdn, d.zone)" [disabled]="loading()" aria-label="Unsuspend service">▶</button>
               </div>
             </div>
             }
@@ -197,9 +207,13 @@
       <div class="dns-list">
         @for (d of monitoringDnsList(); track d.fqdn) {
         <div class="dns-card monitor-card">
-          <div class="dns-hdr" (click)="toggleExpand(d.fqdn, d.zone, 'monitor')">
+          <div class="dns-hdr" role="button" tabindex="0"
+            [attr.aria-expanded]="d.isExpanded"
+            (click)="toggleExpand(d.fqdn, d.zone, 'monitor')"
+            (keydown.enter)="toggleExpand(d.fqdn, d.zone, 'monitor')"
+            (keydown.space)="toggleExpand(d.fqdn, d.zone, 'monitor')">
             <div class="dns-left">
-              <span class="arrow">{{ d.isExpanded ? '▼' : '▶' }}</span>
+              <span class="arrow" aria-hidden="true">{{ d.isExpanded ? '▼' : '▶' }}</span>
               <h3>{{ d.fqdn }}</h3>
               <span class="zone-tag" [class]="d.zone">{{ d.zone }}</span>
               @if (countState(d, 'UP')) { <span class="pill up">{{ countState(d, 'UP') }}</span> }
@@ -210,9 +224,9 @@
             <div class="dns-right">
               @if (d.lastUpdated) { <span class="ts">{{ d.lastUpdated | date:'HH:mm:ss' }}</span> }
               <button class="icon-btn sm" (click)="$event.stopPropagation(); fetchStatus(d.fqdn, d.zone, 'monitor')"
-                [disabled]="d.isLoading">↻</button>
+                [disabled]="d.isLoading" aria-label="Refresh status">↻</button>
               <button class="icon-btn sm" (click)="$event.stopPropagation(); removeFromMonitoring(d.fqdn)"
-                title="Remove">✕</button>
+                title="Remove" aria-label="Remove from monitoring">✕</button>
             </div>
           </div>
 

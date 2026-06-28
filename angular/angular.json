@@ -27,9 +27,7 @@
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
-            "scripts": [
-              "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
-            ],
+            "scripts": [],
             "allowedCommonJsDependencies": [
               "crypto-js",
               "jsrsasign"
@@ -40,13 +38,18 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2.5mb",
-                  "maximumError": "3mb"
+                  "maximumWarning": "1mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "20kb",
-                  "maximumError": "100kb"
+                  "maximumWarning": "60kb",
+                  "maximumError": "150kb"
+                },
+                {
+                  "type": "any",
+                  "maximumWarning": "1.5mb",
+                  "maximumError": "4mb"
                 }
               ],
               "fileReplacements": [
@@ -56,7 +59,12 @@
                 }
               ],
               "outputHashing": "all",
-              "optimization": { "fonts": { "inline": false } }
+              "optimization": {
+                "scripts": true,
+                "styles": { "minify": true, "inlineCritical": false },
+                "fonts": { "inline": false }
+              },
+              "buildOptimizer": true
             },
             "development": {
               "buildOptimizer": false,
@@ -67,7 +75,7 @@
               "namedChunks": true
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -106,9 +114,7 @@
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
-            "scripts": [
-              "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
-            ]
+            "scripts": []
           }
         },
         "lint": {

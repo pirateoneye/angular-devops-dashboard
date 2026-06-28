@@ -1,4 +1,4 @@
 .hash-list { margin-top:10px; display:flex; flex-direction:column; gap:6px; }
 .hash-row { display:flex; align-items:center; gap:8px; }
 .hash-algo { width:80px; color:#144e83; font-weight:700; font-family:'Open Sans',sans-serif; font-size:12px; }
-.hash-val { flex:1; font-family:monospace; font-size:11px; border:1px solid #ddd; border-radius:6px; padding:6px; background:#fafafa; }
+.hash-val { flex:1; font-family:monospace; font-size:11px; border:1px solid #ced4da; border-radius:8px; padding:6px; background:#fafafa; }

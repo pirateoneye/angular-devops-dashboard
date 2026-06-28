@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './char-counter.component.html',
   styleUrls: ['./char-counter.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CharCounterComponent {
   input = '';

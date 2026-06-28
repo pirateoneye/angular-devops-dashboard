@@ -1,37 +1,13 @@
 <div class="container pt-3 pb-3">
-  <mat-card
-    class="example-card mb-3 mat-elevation-z5 p-4"
-    style="border-radius: 16px"
-  >
-    <h2
-      class="m-0"
-      style="
-        color: #144e83;
-        font-family: &quot;Open Sans&quot;;
-        font-weight: 700;
-      "
-    >
+  <mat-card class="tool-card">
+    <h2 class="tool-title">
       Check Data
     </h2>
-    <h4
-      style="
-        color: #495057;
-        font-family: &quot;Open Sans&quot;;
-        font-weight: 400;
-      "
-    >
+    <p class="tool-sub">
       Tools untuk check data di environment UAT
-    </h4>
+    </p>
 
-    <div
-      style="
-        width: 100%;
-        height: 1px;
-        background-color: #e9ecef;
-        padding: 0;
-        margin: 0;
-      "
-    ></div>
+    <div class="tool-divider"></div>
 
     <div class="batch-list-card">
       <!-- Jenis Data - Use msv-select -->
@@ -61,12 +37,11 @@
           <div class="input-group">
             <div class="input-group-prepend">
               <select class="select-target" [(ngModel)]="checkBy">
-                <option
-                  *ngFor="let opt of option[submissionType].checkBy"
-                  [value]="opt"
-                >
-                  {{ placeholder[opt] }}
-                </option>
+                @for (opt of option[submissionType].checkBy; track opt) {
+                  <option [value]="opt">
+                    {{ placeholder[opt] }}
+                  </option>
+                }
               </select>
             </div>
             <input
@@ -80,14 +55,15 @@
       </div>
 
       <!-- Response Section - Refactored with msv-response-panel -->
-      <div *ngIf="response.status != null">
+      @if (response.status != null) {
+        <div>
         <!-- Custom info header - keep this for app-specific context -->
         <div
           class="information-header mb-3"
           style="color: #005caa; font-family: &quot;Open Sans&quot;"
         >
           <div class="d-flex align-items-center">
-            <mat-icon style="color: #005caa"> info </mat-icon>
+            <mat-icon style="color: #005caa" aria-hidden="true"> info </mat-icon>
             <h4
               style="
                 color: #005caa;
@@ -110,15 +86,16 @@
           [response]="response"
           [showData]="true"
         ></msv-response-panel>
-      </div>
+        </div>
+      }
 
       <!-- Button - Use msv-button -->
       <div class="d-flex row mb-4" style="margin-top: 50px">
         <div class="col-12">
           <msv-button
             variant="primary"
-            [loading]="response.status == 'ON_PROCESS'"
-            [disabled]="response.status == 'ON_PROCESS'"
+            [loading]="response.status === 'ON_PROCESS'"
+            [disabled]="response.status === 'ON_PROCESS'"
             [fullWidth]="true"
             (clicked)="onClickCheckButton()"
           >

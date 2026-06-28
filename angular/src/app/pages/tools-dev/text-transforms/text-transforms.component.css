@@ -1,4 +1,4 @@
 .tt-stats { color:#495057; font-size:11px; margin-top:4px; }
 .tt-buttons { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
-.tt-btn { background:#fff; color:#005caa; border:1px solid #005caa; border-radius:16px; padding:4px 12px; font-size:12px; cursor:pointer; font-family:'Open Sans',sans-serif; }
+.tt-btn { background:#fff; color:#005caa; border:1px solid #005caa; border-radius:20px; padding:4px 12px; font-size:12px; cursor:pointer; font-family:'Open Sans',sans-serif; }
 .tt-btn:hover { background:#f8f9fa; }

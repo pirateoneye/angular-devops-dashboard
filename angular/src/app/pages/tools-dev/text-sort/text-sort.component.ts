@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +13,7 @@ type SortMode = 'asc' | 'desc' | 'natural-asc' | 'natural-desc' | 'length-asc' |
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './text-sort.component.html',
   styleUrls: ['./text-sort.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextSortComponent {
   input = '';

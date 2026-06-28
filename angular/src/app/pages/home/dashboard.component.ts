@@ -1,8 +1,10 @@
-﻿import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+import { ToolCatalogService, ToolEntry } from '../../core/service/tool-catalog.service';
 
 interface ToolTile {
   label: string;
@@ -16,11 +18,14 @@ interface ToolTile {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatCardModule, MatIconModule],
+  imports: [CommonModule, RouterModule, MatCardModule, MatIconModule, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
+  query = signal('');
+
   tiles: ToolTile[] = [
     { label: 'Batch Runner', description: 'Jalankan batch manual di UAT', icon: 'event_note', route: '/tools-dev/batch-runner', group: 'tools-dev' },
     { label: 'Crypto', description: 'Enkripsi / dekripsi / decode', icon: 'enhanced_encryption', route: '/tools-dev/crypto', group: 'tools-dev' },
@@ -32,10 +37,10 @@ export class DashboardComponent {
     { label: 'GitLab Tags Monitor', description: 'Monitor tag GitLab', icon: 'label', route: '/tools-dev/gitlab/tags-monitor', group: 'tools-dev' },
     { label: 'GitLab Task', description: 'Task GitLab', icon: 'task', route: '/tools-dev/gitlab/task', group: 'tools-dev' },
     { label: 'GitLab Bulk', description: 'Operasi bulk GitLab', icon: 'batch_prediction', route: '/tools-dev/gitlab/bulk', group: 'tools-dev' },
-    { label: 'Paimon Dupe', description: 'Cek duplikat Paimon', icon: 'content_copy', route: '/tools-dev/paimon-dupe', group: 'tools-dev' },
+    { label: 'DNS Monitor', description: 'Monitor & suspend/unsuspend GSLB DNS', icon: 'dns', route: '/tools-dev/paimon-dupe', group: 'tools-dev' },
     { label: 'MSV Test', description: 'Sandbox komponen MSV', icon: 'science', route: '/tools-dev/msv-test', group: 'tools-dev' },
     { label: 'MSV Docs', description: 'Dokumentasi komponen MSV', icon: 'menu_book', route: '/tools-dev/msv-docs', group: 'tools-dev' },
-    { label: 'Utilities', description: '27 tools: JSON, decoder, regex, UUID, hash, password, diff, color, transforms, base, URL, chmod, line-tools, random, word-freq & more', icon: 'build', route: '/utilities', group: 'utility' },
+    { label: 'Utilities', description: '30 tools: JSON, decoder, regex, UUID, hash, HMAC, JWT, SSL, password, diff, color, transforms, base, URL, chmod, line-tools, random, word-freq & more', icon: 'build', route: '/utilities', group: 'utility' },
     { label: 'List Keluhan', description: 'Daftar keluhan piket', icon: 'list_alt', route: '/piket/keluhan-list', group: 'piket' },
     { label: 'Fix Data User', description: 'Perbaiki data user', icon: 'edit', route: '/piket/fix-data-user', group: 'piket' },
     { label: 'Fix After Merge CIS', description: 'Perbaikan pasca merge CIS', icon: 'merge_type', route: '/piket/fix-after-merge-cis', group: 'piket' },
@@ -48,7 +53,53 @@ export class DashboardComponent {
     { key: 'piket', label: 'Piket' },
   ];
 
+  constructor(public catalog: ToolCatalogService) {}
+
+  get hasQuery(): boolean {
+    return this.query().trim().length > 0;
+  }
+
+  /** Recently used tools, resolved from the catalog. Memoized until recents change. */
+  readonly recentTools = computed<ToolEntry[]>(() =>
+    this.catalog
+      .recents()
+      .map((s) => this.catalog.bySlug(s))
+      .filter((t): t is ToolEntry => !!t),
+  );
+
+  /**
+   * Tiles grouped by group key, filtered by the current query. Memoized until
+   * the `query` signal changes, so the template no longer pays O(groups x tiles)
+   * on every change-detection pass.
+   */
+  readonly tilesByGroup = computed<Record<string, ToolTile[]>>(() => {
+    const q = this.query().trim().toLowerCase();
+    const map: Record<string, ToolTile[]> = {};
+    for (const g of this.groups) {
+      map[g.key] = this.tiles.filter((t) => {
+        if (t.group !== g.key) return false;
+        if (!q) return true;
+        return (
+          t.label.toLowerCase().includes(q) ||
+          t.description.toLowerCase().includes(q) ||
+          t.route.toLowerCase().includes(q)
+        );
+      });
+    }
+    return map;
+  });
+
+  /** Lookup helper for templates; reads from the memoized `tilesByGroup` map. */
   tilesFor(key: string): ToolTile[] {
-    return this.tiles.filter((t) => t.group === key);
+    return this.tilesByGroup()[key] ?? [];
+  }
+
+  /** True when a search is active but matched no tiles in any group. */
+  readonly noResults = computed<boolean>(
+    () => this.hasQuery && !this.groups.some((g) => this.tilesByGroup()[g.key].length > 0),
+  );
+
+  hasGroup(key: string): boolean {
+    return this.tiles.some((t) => t.group === key);
   }
 }

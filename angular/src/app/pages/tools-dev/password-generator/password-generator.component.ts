@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,9 +8,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-password-generator',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatSlideToggleModule],
+  imports: [FormsModule, MatCardModule, MatIconModule, MatSlideToggleModule],
   templateUrl: './password-generator.component.html',
   styleUrls: ['./password-generator.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PasswordGeneratorComponent {
   length = 20;

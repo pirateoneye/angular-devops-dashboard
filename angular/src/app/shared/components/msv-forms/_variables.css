@@ -1,11 +1,16 @@
+/* Legacy MSV form-component tokens. The color tokens now ALIAS the canonical
+   tokens defined in styles.css so the whole app shares one source of truth
+   (this fixes the forms=#144e83 vs shell=#005caa primary-color split).
+   Prefer the --msv-* tokens directly in new code; these aliases exist for
+   backward compatibility with the msv-forms components during consolidation. */
 :root {
-  --msv-primary-color: #144e83;
-  --msv-error-color: #dc3545;
-  --msv-success-color: #28a745;
+  --msv-primary-color: var(--msv-primary);
+  --msv-error-color: var(--msv-error);
+  --msv-success-color: var(--msv-success);
   --msv-warning-color: #ffc107;
-  --msv-border-color: #ced4da;
-  --msv-focus-color: #005caa;
-  --msv-font-family: 'Open Sans', sans-serif;
+  --msv-border-color: var(--msv-input-border);
+  --msv-focus-color: var(--msv-primary);
+  --msv-font-family: "Open Sans", sans-serif;
   --msv-border-radius: 5px;
   --msv-input-height: 45px;
   --msv-input-padding: 5px 10px;

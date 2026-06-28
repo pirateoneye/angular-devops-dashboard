@@ -6,7 +6,7 @@
 
     <label class="tool-label">Input</label>
     <textarea class="tool-area" rows="7" [(ngModel)]="input" (ngModelChange)="computeStats()" placeholder="Tempel teks..."></textarea>
-    <div class="tt-stats" *ngIf="stats">{{ stats }}</div>
+    @if (stats) { <div class="tt-stats">{{ stats }}</div> }
 
     <div class="tt-buttons">
       <button class="tt-btn" (click)="upper()">UPPERCASE</button>

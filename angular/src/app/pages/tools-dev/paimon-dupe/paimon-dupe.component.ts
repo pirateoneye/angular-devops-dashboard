@@ -1,13 +1,14 @@
-﻿import {
+import {
   Component,
   inject,
   OnInit,
+  OnDestroy,
   ChangeDetectionStrategy,
   computed,
   signal,
   PLATFORM_ID,
 } from '@angular/core';
-import { isPlatformBrowser, DatePipe } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -82,12 +83,13 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
   changeDetection: ChangeDetectionStrategy.OnPush
 
 })
-export class PaimonDupeComponent {
+export class PaimonDupeComponent implements OnInit, OnDestroy {
   private readonly http = inject(HttpClient);
   private readonly fb = inject(FormBuilder);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
   private toastCounter = 0;
+  private readonly toastTimers = new Set<number>();
 
   // Base DNS pool for MONITORING (view-only)
   readonly MONITORING_POOL: PoolItem[] = [
@@ -128,6 +130,18 @@ export class PaimonDupeComponent {
   // Computed
   readonly loggedIn = computed(() => this.token().length > 0 && this.username().length > 0);
 
+  /** Show the login/settings modal, pre-filling the form from the current
+   *  in-memory state so the Settings flow reflects the active Base URL /
+   *  username (and the post-logout modal starts clean). */
+  openLoginModal(): void {
+    this.form.patchValue({
+      token: this.token(),
+      username: this.username(),
+      baseUrl: this.baseUrl(),
+    });
+    this.showLogin.set(true);
+  }
+
   // Task DNS by zone
   readonly taskInternal = computed(() => this.taskDnsList().filter((d) => d.zone === 'internal'));
   readonly taskExternal = computed(() => this.taskDnsList().filter((d) => d.zone === 'external'));
@@ -140,12 +154,18 @@ export class PaimonDupeComponent {
 
   // Monitoring pool by zone (exclude already in task)
   readonly poolInternal = computed(() => {
-    const taskFqdns = new Set(this.taskDnsList().map((d) => d.fqdn));
-    return this.MONITORING_POOL.filter((p) => p.zone === 'internal' && !taskFqdns.has(p.fqdn));
+    const taken = new Set([
+      ...this.taskDnsList().map((d) => d.fqdn),
+      ...this.monitoringDnsList().map((d) => d.fqdn),
+    ]);
+    return this.MONITORING_POOL.filter((p) => p.zone === 'internal' && !taken.has(p.fqdn));
   });
   readonly poolExternal = computed(() => {
-    const taskFqdns = new Set(this.taskDnsList().map((d) => d.fqdn));
-    return this.MONITORING_POOL.filter((p) => p.zone === 'external' && !taskFqdns.has(p.fqdn));
+    const taken = new Set([
+      ...this.taskDnsList().map((d) => d.fqdn),
+      ...this.monitoringDnsList().map((d) => d.fqdn),
+    ]);
+    return this.MONITORING_POOL.filter((p) => p.zone === 'external' && !taken.has(p.fqdn));
   });
 
   // Stats for task DNS
@@ -161,7 +181,7 @@ export class PaimonDupeComponent {
     this.loadConfig();
     // Show login popup if not logged in (after loadConfig has run)
     if (!this.loggedIn()) {
-      this.showLogin.set(true);
+      this.openLoginModal();
     }
   }
 
@@ -172,7 +192,7 @@ export class PaimonDupeComponent {
   private loadConfig(): void {
     if (!this.isBrowser) {
       // On SSR, always show login popup
-      this.showLogin.set(true);
+      this.openLoginModal();
       return;
     }
     const t = localStorage.getItem('sus_token');
@@ -184,7 +204,7 @@ export class PaimonDupeComponent {
 
     // Show login popup if no saved credentials
     if (!t || !u) {
-      this.showLogin.set(true);
+      this.openLoginModal();
     } else {
       this.fetchTasks();
     }
@@ -196,6 +216,12 @@ export class PaimonDupeComponent {
     this.token.set(token!);
     this.username.set(username!);
     this.baseUrl.set(baseUrl!);
+    // SECURITY NOTE (SEC-06): The bearer token is persisted to localStorage only
+    // when the user opts in via the "remember" checkbox, so credentials survive
+    // across browser sessions. localStorage is accessible to any XSS payload on
+    // this origin. If cross-session persistence is not required, prefer leaving
+    // "remember" unchecked (the token then lives only in memory). A backend-set
+    // Secure httpOnly cookie would be a stronger alternative.
     if (remember && this.isBrowser) {
       localStorage.setItem('sus_token', token!);
       localStorage.setItem('sus_username', username!);
@@ -215,8 +241,9 @@ export class PaimonDupeComponent {
     if (this.isBrowser) {
       localStorage.removeItem('sus_token');
       localStorage.removeItem('sus_username');
+      localStorage.removeItem('sus_baseUrl');
     }
-    this.showLogin.set(true);
+    this.openLoginModal();
     this.notify('Logged out', 'info');
   }
 
@@ -235,10 +262,10 @@ export class PaimonDupeComponent {
       const url = `${this.baseUrl()}/obj/get_task/${this.username()}?show_expired=false`;
       const tasks = await firstValueFrom(this.http.get<UserTask[]>(url, { headers: h }));
       this.processTasks(tasks);
-      this.notify(`${tasks.length} tasks loaded`, 'ok');
+      this.notify(tasks.length ? `${tasks.length} tasks loaded` : 'No active tasks', tasks.length ? 'ok' : 'info');
     } catch {
       this.taskDnsList.set([]);
-      this.notify('No tasks found', 'info');
+      this.notify('Failed to load tasks - check credentials / Base URL', 'err');
     } finally {
       this.loading.set(false);
     }
@@ -297,6 +324,10 @@ export class PaimonDupeComponent {
       }
     }
 
+    if (!newEntries.length) {
+      this.notify('Select DNS to add', 'err');
+      return;
+    }
     this.monitoringDnsList.update((l) => [...l, ...newEntries]);
     this.selectedMonitoring.set(new Set());
 
@@ -328,6 +359,7 @@ export class PaimonDupeComponent {
       this.updateDns(fqdn, zone, { services: res.data || [], isLoading: false, lastUpdated: new Date() }, listType);
     } catch {
       this.updateDns(fqdn, zone, { isLoading: false }, listType);
+      this.notify('Failed to load status: ' + fqdn, 'err');
     }
   }
 
@@ -359,14 +391,33 @@ export class PaimonDupeComponent {
   // SERVICE SELECTION (Task DNS only)
   // ============================================================================
 
-  toggleSvc(name: string): void {
+  /**
+   * Unique selection key for a service. svc_name alone is NOT unique across
+   * different FQDNs (a pool name may be shared by several wide-IPs), so the
+   * key is scoped by zone + fqdn to keep bulk actions unambiguous.
+   * Layout: `zone|fqdn|name` - fqdn never contains '|'; name may (rare), and
+   * is recovered by rejoining everything after the 2nd separator.
+   */
+  svcKey(fqdn: string, zone: DnsZone, name: string): string {
+    return zone + '|' + fqdn + '|' + name;
+  }
+
+  private parseSvcKey(key: string): { fqdn: string; zone: DnsZone; name: string } {
+    const parts = key.split('|');
+    const zone = parts[0] as DnsZone;
+    const fqdn = parts[1];
+    const name = parts.slice(2).join('|');
+    return { fqdn, zone, name };
+  }
+
+  toggleSvc(key: string): void {
     const s = new Set(this.selectedSvc());
-    s.has(name) ? s.delete(name) : s.add(name);
+    s.has(key) ? s.delete(key) : s.add(key);
     this.selectedSvc.set(s);
   }
 
-  isSvcSelected(name: string): boolean {
-    return this.selectedSvc().has(name);
+  isSvcSelected(key: string): boolean {
+    return this.selectedSvc().has(key);
   }
 
   clearSvcSel(): void {
@@ -556,15 +607,16 @@ export class PaimonDupeComponent {
       // Group services by DNS entry for efficient refresh
       const byDns = new Map<string, { dns: DnsEntry; services: Service[] }>();
 
-      for (const name of selected) {
-        const dns = this.taskDnsList().find((d) => d.services.some((s) => s.svc_name === name));
+      for (const selKey of selected) {
+        const { fqdn, zone, name } = this.parseSvcKey(selKey);
+        const dns = this.taskDnsList().find((d) => d.fqdn === fqdn && d.zone === zone);
         const svc = dns?.services.find((s) => s.svc_name === name);
         if (dns && svc) {
-          const key = `${dns.fqdn}|${dns.zone}`;
-          if (!byDns.has(key)) {
-            byDns.set(key, { dns, services: [] });
+          const gKey = fqdn + '|' + zone;
+          if (!byDns.has(gKey)) {
+            byDns.set(gKey, { dns, services: [] });
           }
-          byDns.get(key)!.services.push(svc);
+          byDns.get(gKey)!.services.push(svc);
         }
       }
 
@@ -613,15 +665,16 @@ export class PaimonDupeComponent {
       // Group services by DNS entry for efficient refresh
       const byDns = new Map<string, { dns: DnsEntry; services: Service[] }>();
 
-      for (const name of selected) {
-        const dns = this.taskDnsList().find((d) => d.services.some((s) => s.svc_name === name));
+      for (const selKey of selected) {
+        const { fqdn, zone, name } = this.parseSvcKey(selKey);
+        const dns = this.taskDnsList().find((d) => d.fqdn === fqdn && d.zone === zone);
         const svc = dns?.services.find((s) => s.svc_name === name);
         if (dns && svc) {
-          const key = `${dns.fqdn}|${dns.zone}`;
-          if (!byDns.has(key)) {
-            byDns.set(key, { dns, services: [] });
+          const gKey = fqdn + '|' + zone;
+          if (!byDns.has(gKey)) {
+            byDns.set(gKey, { dns, services: [] });
           }
-          byDns.get(key)!.services.push(svc);
+          byDns.get(gKey)!.services.push(svc);
         }
       }
 
@@ -670,10 +723,19 @@ export class PaimonDupeComponent {
   notify(msg: string, type: 'ok' | 'err' | 'info'): void {
     const id = ++this.toastCounter;
     this.toasts.update((t) => [...t, { id, msg, type }]);
-    setTimeout(() => this.toasts.update((t) => t.filter((x) => x.id !== id)), 3500);
+    const timer = setTimeout(() => {
+      this.toasts.update((t) => t.filter((x) => x.id !== id));
+      this.toastTimers.delete(timer);
+    }, 3500);
+    this.toastTimers.add(timer);
   }
 
   dismissToast(id: number): void {
     this.toasts.update((t) => t.filter((x) => x.id !== id));
+  }
+
+  ngOnDestroy(): void {
+    this.toastTimers.forEach((id) => clearTimeout(id));
+    this.toastTimers.clear();
   }
 }

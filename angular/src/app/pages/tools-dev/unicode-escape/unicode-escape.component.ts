@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -7,9 +6,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-unicode-escape',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule],
+  imports: [FormsModule, MatCardModule],
   templateUrl: './unicode-escape.component.html',
   styleUrls: ['./unicode-escape.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UnicodeEscapeComponent {
   input = '';

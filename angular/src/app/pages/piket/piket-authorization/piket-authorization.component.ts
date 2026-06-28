@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { CommonModule } from '@angular/common';
@@ -15,18 +15,19 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule],
   selector: 'app-piket-authorization',
   templateUrl: './piket-authorization.component.html',
-  styleUrls: ['./piket-authorization.component.css']
+  styleUrls: ['./piket-authorization.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PiketAuthorizationComponent {
+export class PiketAuthorizationComponent implements OnInit {
 
   passwordInput: string = '';
   redirectPath: string = '';
+  loginError: string = '';
 
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.redirectPath = history.state ? history.state.redirectUrl : null;
-    console.log(this.redirectPath);
   }
 
   loginAction() {
@@ -35,7 +36,7 @@ export class PiketAuthorizationComponent {
       window.location.href = this.redirectPath;
     }
     else {
-      alert('Password salah');
+      this.loginError = 'Password salah';
     }
   }
 }

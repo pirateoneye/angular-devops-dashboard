@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, Inject, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Inject, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { MSV_FORMS_CONFIG, MsvFormsConfig } from '../msv-forms.config';
 import { MsvTableColumn, SortChangeEvent, SortDirection } from './msv-table.types';
 
@@ -332,7 +332,7 @@ import { MsvTableColumn, SortChangeEvent, SortDirection } from './msv-table.type
 }
   `],
 })
-export class MsvTableComponent implements OnChanges {
+export class MsvTableComponent implements OnChanges, OnInit {
   @Input() data: any[] = [];
   @Input() columns: MsvTableColumn[] = [];
   @Input() sortable: boolean = false;

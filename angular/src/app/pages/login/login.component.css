@@ -1,40 +1,102 @@
-
-.font-general {
-    font-family: 'Open Sans', sans-serif !important;
-}
-  
-.input-text-field {
-    width: 100%;
-    height: 40px;
-    border-radius: 0px;
-    border: 0;
-    border-bottom: 1px solid #ccc;
-    padding: 0;
+/* Login screen — uses the shared design tokens so it matches the rest of the
+   app (no inline styles, no Bootstrap width utilities). */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 48px 16px 32px;
 }
 
-.input-text-field:focus {
-    border: 0;
-    border-bottom: 1px solid #005caa;
-    outline: none;
-    box-shadow: none !important;
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 28px 28px 24px;
+  border-radius: var(--msv-radius-lg) !important;
+  background-color: var(--msv-surface);
+  color: var(--msv-text);
+  box-shadow: var(--msv-elev-3);
 }
 
-.input-text-field::placeholder {
-    color: #ccc;
-    font-size: 16px;
-    font-family: 'Open Sans', sans-serif;
+.login-head {
+  margin-bottom: 20px;
+}
+.login-title {
+  margin: 0;
+  color: var(--msv-primary);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+}
+.login-sub {
+  margin: 6px 0 0;
+  color: var(--msv-text-muted);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.login-label {
+  color: var(--msv-primary);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.login-input {
+  width: 100%;
+  height: 42px;
+  box-sizing: border-box;
+  border: 1px solid var(--msv-input-border);
+  border-radius: var(--msv-radius-sm);
+  background: var(--msv-surface);
+  color: var(--msv-text);
+  padding: 8px 12px;
+  font-family: "Open Sans", sans-serif;
+  font-size: 14px;
+}
+.login-input:focus {
+  border-color: var(--msv-primary);
+  outline: 2px solid var(--msv-primary);
+  outline-offset: 2px;
+}
+.login-input::placeholder {
+  color: var(--msv-text-muted);
+  opacity: 0.6;
 }
 
 .login-btn {
-  background-color: #005caa;
-  color: #fff;
+  width: 100%;
+  margin-top: 8px;
+  background-color: var(--msv-primary);
+  color: var(--msv-primary-contrast);
   border: none;
-  border-radius: 24px;
-  padding: 12px 48px;
-  font-family: 'Open Sans', sans-serif;
+  border-radius: var(--msv-radius-md);
+  padding: 12px 24px;
+  font-family: "Open Sans", sans-serif;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.2s ease;
 }
-.login-btn:hover { background-color: #144e83; }
+.login-btn:hover {
+  background-color: var(--msv-primary-hover);
+}
+.login-btn:focus-visible {
+  outline: 2px solid var(--msv-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: 24px 12px;
+  }
+  .login-card {
+    padding: 22px 18px 20px;
+  }
+}

@@ -20,25 +20,35 @@
 
     <div class="tool-actions">
       <button class="btn-primary" (click)="run()">Run</button>
-      <span class="tool-stats" *ngIf="matches.length">{{ matches.length }} match</span>
+      @if (matches.length) {
+        <span class="tool-stats">{{ matches.length }} match</span>
+      }
     </div>
 
-    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    @if (error) {
+      <div class="tool-error" role="alert">{{ error }}</div>
+    }
 
-    <div class="rt-highlight" *ngIf="!error && testString" [innerHTML]="highlighted"></div>
+    @if (!error && testString) {
+      <div class="rt-highlight" [innerHTML]="highlighted"></div>
+    }
 
-    <table class="rt-table" *ngIf="matches.length && !error">
-      <thead>
-        <tr><th>#</th><th>Index</th><th>Match</th><th>Groups</th></tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let m of matches; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ m.index }}</td>
-          <td class="rt-mono">{{ m.match }}</td>
-          <td class="rt-mono">{{ m.groups.join(' | ') }}</td>
-        </tr>
-      </tbody>
-    </table>
+    @if (matches.length && !error) {
+      <table class="rt-table">
+        <thead>
+          <tr><th>#</th><th>Index</th><th>Match</th><th>Groups</th></tr>
+        </thead>
+        <tbody>
+          @for (m of matches; track m.index; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ m.index }}</td>
+              <td class="rt-mono">{{ m.match }}</td>
+              <td class="rt-mono">{{ m.groups.join(' | ') }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
   </mat-card>
 </div>

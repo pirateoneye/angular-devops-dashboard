@@ -1,5 +1,5 @@
 ﻿.up-table { width:100%; border-collapse:collapse; font-size:12px; margin-top:4px; }
-.up-table th, .up-table td { border:1px solid #e9ecef; padding:6px 8px; text-align:left; vertical-align:top; }
+.up-table th, .up-table td { border:1px solid #ced4da; padding:6px 8px; text-align:left; vertical-align:top; }
 .up-table thead th { background:#f8f9fa; color:#144e83; font-family:'Open Sans',sans-serif; }
 .up-table th[scope=row] { background:#f8f9fa; color:#495057; font-weight:600; width:120px; }
 .up-table code { font-family:monospace; color:#144e83; word-break:break-all; }

@@ -12,35 +12,46 @@
       <button class="btn-secondary" (click)="clear()">Clear</button>
     </div>
 
-    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    @if (error) {
+      <div class="tool-error" role="alert">{{ error }}</div>
+    }
 
-    <ng-container *ngIf="parsed">
+    @if (parsed) {
       <label class="tool-label" style="margin-top:12px">Komponen</label>
       <table class="up-table">
         <tbody>
-          <tr *ngFor="let c of components">
-            <th>{{ c.label }}</th>
-            <td>
-              <code>{{ c.value }}</code>
-              <button class="icon-btn" *ngIf="c.value && c.value !== '-'" (click)="copyValue(c.value)" title="Salin">
-                <mat-icon>content_copy</mat-icon>
-              </button>
-            </td>
-          </tr>
+          @for (c of components; track c.label) {
+            <tr>
+              <th>{{ c.label }}</th>
+              <td>
+                <code>{{ c.value }}</code>
+                @if (c.value && c.value !== '-') {
+                  <button class="icon-btn" (click)="copyValue(c.value)" title="Salin" aria-label="Salin nilai">
+                    <mat-icon aria-hidden="true">content_copy</mat-icon>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
 
       <label class="tool-label" style="margin-top:12px">Query Parameter ({{ params.length }})</label>
-      <table class="up-table" *ngIf="params.length; else noParams">
-        <thead><tr><th>Key</th><th>Value</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let p of params">
-            <td><code>{{ p.key }}</code></td>
-            <td><code>{{ p.value }}</code></td>
-          </tr>
-        </tbody>
-      </table>
-      <ng-template #noParams><div class="ts-hint">Tidak ada query parameter.</div></ng-template>
-    </ng-container>
+      @if (params.length) {
+        <table class="up-table">
+          <thead><tr><th>Key</th><th>Value</th></tr></thead>
+          <tbody>
+            @for (p of params; track p.key) {
+              <tr>
+                <td><code>{{ p.key }}</code></td>
+                <td><code>{{ p.value }}</code></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="ts-hint">Tidak ada query parameter.</div>
+      }
+    }
   </mat-card>
 </div>

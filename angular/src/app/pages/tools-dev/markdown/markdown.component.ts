@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +10,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   imports: [CommonModule, FormsModule, MatCardModule],
   templateUrl: './markdown.component.html',
   styleUrls: ['./markdown.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MarkdownComponent {
   input = `# Markdown Preview
@@ -52,7 +53,34 @@ multi-line
       .replace(/`([^`]+)`/g, (_m, c) => '<code>' + c + '</code>')
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, text, url) => {
+        if (this.isSafeUrl(url)) {
+          const safeUrl = url.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+          return '<a href="' + safeUrl + '" target="_blank" rel="noopener">' + text + '</a>';
+        }
+        return text;
+      });
+  }
+
+  private isSafeUrl(url: string): boolean {
+    const u = (url || '').trim();
+    if (u === '') {
+      return false;
+    }
+    // Relative URLs only (reject protocol-relative "//host" which can target another origin).
+    if (u.startsWith('/') && !u.startsWith('//')) {
+      return true;
+    }
+    if (u.startsWith('#') || u.startsWith('./')) {
+      return true;
+    }
+    // Absolute URLs must use an allow-listed scheme.
+    const m = /^([a-zA-Z][a-zA-Z0-9+.\-]*):/.exec(u);
+    if (m) {
+      const scheme = m[1].toLowerCase();
+      return scheme === 'http' || scheme === 'https' || scheme === 'mailto' || scheme === 'tel';
+    }
+    return false;
   }
 
   private parse(src: string): string {

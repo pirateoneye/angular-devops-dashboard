@@ -13,7 +13,7 @@ export class PiketGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot,state: RouterStateSnapshot): any {
     const userLocalStorage = localStorage.getItem('authorized-piket');
     if (userLocalStorage != environment.piketPassword) {
-      let redirectUrl = {redirectUrl : state.url};
+      const redirectUrl = {redirectUrl : state.url};
       this.router.navigate(['/piket/login'], {state : redirectUrl});
       return false;
     }

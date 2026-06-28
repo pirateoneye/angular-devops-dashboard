@@ -6,7 +6,7 @@
 .cc-bars { display:flex; flex-direction:column; gap:4px; margin-top:6px; max-height:240px; overflow:auto; }
 .cc-bar { display:flex; align-items:center; gap:8px; font-size:12px; }
 .cc-bar-char { width:24px; text-align:center; font-family:monospace; background:#005caa; color:#fff; border-radius:4px; padding:1px 0; }
-.cc-bar-track { flex:1; background:#e9ecef; border-radius:4px; height:10px; overflow:hidden; }
+.cc-bar-track { flex:1; background:#ced4da; border-radius:4px; height:10px; overflow:hidden; }
 .cc-bar-fill { background:#005caa; height:100%; }
 .cc-bar-count { width:110px; color:#495057; font-size:11px; }
 @media (max-width:768px){ .cc-grid { grid-template-columns:repeat(2,1fr); } }

@@ -1,22 +1,28 @@
 <div class="container pt-3 pb-3">
-  <mat-card class="example-card mb-3 mat-elevation-z5 p-4" style="border-radius: 16px">
-    <h2 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
-      Crypto
-    </h2>
-    <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
-      Tools untuk melakukan enkripsi atau dekripsi data
-    </h4>
-
-    <div style="width: 100%; height: 1px; background-color: #E9ECEF; padding: 0; margin: 0;"></div>
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Crypto</h2>
+    <p class="tool-sub">Tools untuk melakukan enkripsi atau dekripsi data</p>
+    <div class="tool-divider"></div>
 
     <div class="batch-list-card">
       <div class="d-flex row">
-        <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+        <h3
+          class="col-4 m-0"
+          style="
+            color: var(--msv-primary);
+            font-family: &quot;Open Sans&quot;;
+            font-weight: 700;
+          "
+        >
           Key
         </h3>
-        <div class="d-flex row  mt-2 mb-2" style="padding-right: 0px;">
-          <div class="col-12" style="padding-right: 0px;">
-            <select [(ngModel)]="mode" class="select-key">
+        <div class="d-flex row mt-2 mb-2" style="padding-right: 0">
+          <div class="col-12" style="padding-right: 0">
+            <select
+              [(ngModel)]="mode"
+              class="select-key form-select"
+              aria-label="Encryption mode"
+            >
               <option value="messi">Messi</option>
               <option value="mcb">McB</option>
               <option value="mcb-v2">McB V2</option>
@@ -24,90 +30,214 @@
           </div>
         </div>
       </div>
-
     </div>
 
-    <div class="batch-list-card" *ngIf="mode == 'mcb-v2'">
-      <div class="d-flex row">
-        <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
-          Salt
-        </h3>
-      </div>
-      <div class="d-flex row  mt-2 mb-3">
-        <div class="col-12">
-          <input type="text" style="width: 100%;" class="form-control" placeholder="Kosongin aja jika tidak ada kebutuhan isi salt manual" [(ngModel)]="saltMcbV2">
+    @if (mode === "mcb-v2") {
+      <div class="batch-list-card">
+        <div class="d-flex row">
+          <h3
+            class="col-4 m-0"
+            style="
+              color: var(--msv-primary);
+              font-family: &quot;Open Sans&quot;;
+              font-weight: 700;
+            "
+          >
+            Salt
+          </h3>
+        </div>
+        <div class="d-flex row mt-2 mb-3">
+          <div class="col-12">
+            <input
+              type="text"
+              style="width: 100%"
+              class="form-control"
+              placeholder="Kosongin aja jika tidak ada kebutuhan isi salt manual"
+              [(ngModel)]="saltMcbV2"
+            />
+          </div>
         </div>
       </div>
-    </div>
-    
+    }
+
     <div class="batch-list-card">
       <div class="d-flex row">
-        <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+        <h3
+          class="col-4 m-0"
+          style="
+            color: var(--msv-primary);
+            font-family: &quot;Open Sans&quot;;
+            font-weight: 700;
+          "
+        >
           Encrypt
         </h3>
       </div>
-      <div class="d-flex row  mt-2 mb-3">
+      <div class="d-flex row mt-2 mb-3">
         <div class="col-6">
-          <textarea style="width: 100%;" class="form-control" placeholder="Input" rows="4" [(ngModel)]="inputEncrypt"></textarea> 
+          <textarea
+            style="width: 100%"
+            class="form-control"
+            placeholder="Input"
+            rows="4"
+            [(ngModel)]="inputEncrypt"
+          ></textarea>
         </div>
-        <div class="col-6">
-          <textarea style="width: 100%;" class="form-control" disabled  placeholder="Output" rows="4" [(ngModel)]="resultEncrypt"></textarea>
-          <div style="width: 100%; text-align: right; margin-top: -40px;"  data-toggle="tooltip" title="Copy to clipboard">
-            <button class="clipboard-button" (click)="copyText(resultEncrypt)"><mat-icon>file_copy</mat-icon></button>
-          </div> 
+        <div class="col-6" style="position: relative">
+          <textarea
+            style="width: 100%"
+            class="form-control"
+            disabled
+            placeholder="Output"
+            rows="4"
+            [(ngModel)]="resultEncrypt"
+          ></textarea>
+          <div
+            style="position: absolute; top: 8px; right: 8px"
+            data-toggle="tooltip"
+            title="Copy to clipboard"
+          >
+            <button
+              class="clipboard-button"
+              (click)="copyText(resultEncrypt)"
+              aria-label="Copy encrypted output"
+            >
+              <mat-icon aria-hidden="true">file_copy</mat-icon>
+            </button>
+          </div>
         </div>
       </div>
       <div class="d-flex row mt-2 mb-2">
         <div class="col-12">
-          <button style="width: 100%;" class="button-primary" (click)="encryptButton()">Encrypt</button> 
+          <button
+            style="width: 100%"
+            class="btn-primary"
+            (click)="encryptButton()"
+          >
+            Encrypt
+          </button>
         </div>
       </div>
     </div>
 
     <div class="batch-list-card">
       <div class="d-flex row">
-        <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+        <h3
+          class="col-4 m-0"
+          style="
+            color: var(--msv-primary);
+            font-family: &quot;Open Sans&quot;;
+            font-weight: 700;
+          "
+        >
           Decrypt
         </h3>
       </div>
-      <div class="d-flex row  mt-2 mb-3">
+      <div class="d-flex row mt-2 mb-3">
         <div class="col-6">
-          <textarea style="width: 100%;" class="form-control" placeholder="Input" rows="4" [(ngModel)]="inputDecrypt"></textarea> 
+          <textarea
+            style="width: 100%"
+            class="form-control"
+            placeholder="Input"
+            rows="4"
+            [(ngModel)]="inputDecrypt"
+          ></textarea>
         </div>
-        <div class="col-6">
-          <textarea style="width: 100%;" class="form-control" disabled  placeholder="Output" rows="4" [(ngModel)]="resultDecrypt" [class.text-danger]="isErrorDecrypt"></textarea> 
-          <div style="width: 100%; text-align: right; margin-top: -40px;"  data-toggle="tooltip" title="Copy to clipboard">
-            <button class="clipboard-button" (click)="copyText(resultDecrypt)"><mat-icon>file_copy</mat-icon></button>
+        <div class="col-6" style="position: relative">
+          <textarea
+            style="width: 100%"
+            class="form-control"
+            disabled
+            placeholder="Output"
+            rows="4"
+            [(ngModel)]="resultDecrypt"
+            [class.text-danger]="isErrorDecrypt"
+          ></textarea>
+          <div
+            style="position: absolute; top: 8px; right: 8px"
+            data-toggle="tooltip"
+            title="Copy to clipboard"
+          >
+            <button
+              class="clipboard-button"
+              (click)="copyText(resultDecrypt)"
+              aria-label="Copy decrypted output"
+            >
+              <mat-icon aria-hidden="true">file_copy</mat-icon>
+            </button>
           </div>
         </div>
       </div>
       <div class="d-flex row mt-2 mb-2">
         <div class="col-12">
-          <button style="width: 100%;" class="button-primary"  (click)="decryptButton()">Decrypt</button> 
+          <button
+            style="width: 100%"
+            class="btn-primary"
+            (click)="decryptButton()"
+          >
+            Decrypt
+          </button>
         </div>
       </div>
     </div>
 
     <div class="batch-list-card">
       <div class="d-flex row">
-        <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+        <h3
+          class="col-4 m-0"
+          style="
+            color: var(--msv-primary);
+            font-family: &quot;Open Sans&quot;;
+            font-weight: 700;
+          "
+        >
           Decode
         </h3>
       </div>
-      <div class="d-flex row  mt-2 mb-3">
+      <div class="d-flex row mt-2 mb-3">
         <div class="col-6">
-          <textarea style="width: 100%;" class="form-control" placeholder="Input" rows="4" [(ngModel)]="inputDecode"></textarea> 
+          <textarea
+            style="width: 100%"
+            class="form-control"
+            placeholder="Input"
+            rows="4"
+            [(ngModel)]="inputDecode"
+          ></textarea>
         </div>
-        <div class="col-6">
-          <textarea style="width: 100%;" class="form-control" disabled  placeholder="Output" rows="4" [(ngModel)]="resultDecode" [class.text-danger]="isErrorDecode"></textarea> 
-          <div style="width: 100%; text-align: right; margin-top: -40px;"  data-toggle="tooltip" title="Copy to clipboard">
-            <button class="clipboard-button" (click)="copyText(resultDecode)"><mat-icon>file_copy</mat-icon></button>
+        <div class="col-6" style="position: relative">
+          <textarea
+            style="width: 100%"
+            class="form-control"
+            disabled
+            placeholder="Output"
+            rows="4"
+            [(ngModel)]="resultDecode"
+            [class.text-danger]="isErrorDecode"
+          ></textarea>
+          <div
+            style="position: absolute; top: 8px; right: 8px"
+            data-toggle="tooltip"
+            title="Copy to clipboard"
+          >
+            <button
+              class="clipboard-button"
+              (click)="copyText(resultDecode)"
+              aria-label="Copy decoded output"
+            >
+              <mat-icon aria-hidden="true">file_copy</mat-icon>
+            </button>
           </div>
         </div>
       </div>
       <div class="d-flex row mt-2 mb-2">
         <div class="col-12">
-          <button style="width: 100%;" class="button-primary" (click)="decodeButton()">Decode</button> 
+          <button
+            style="width: 100%"
+            class="btn-primary"
+            (click)="decodeButton()"
+          >
+            Decode
+          </button>
         </div>
       </div>
     </div>

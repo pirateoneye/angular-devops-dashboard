@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   imports: [CommonModule, FormsModule, MatCardModule],
   templateUrl: './lorem-ipsum.component.html',
   styleUrls: ['./lorem-ipsum.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoremIpsumComponent {
   paragraphs = 3;
@@ -43,7 +44,7 @@ export class LoremIpsumComponent {
   private sentence(len: number): string {
     const w: string[] = [];
     for (let i = 0; i < len; i++) w.push(this.words[Math.floor(Math.random() * this.words.length)]);
-    let s = w.join(' ');
+    const s = w.join(' ');
     return s.charAt(0).toUpperCase() + s.slice(1) + '.';
   }
 
@@ -51,7 +52,7 @@ export class LoremIpsumComponent {
     const head = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
     const tail = [];
     for (let i = 0; i < Math.max(0, len - 8); i++) tail.push(this.words[Math.floor(Math.random() * this.words.length)]);
-    let s = head + (tail.length ? ' ' + tail.join(' ') : '');
+    const s = head + (tail.length ? ' ' + tail.join(' ') : '');
     return s + '.';
   }
 

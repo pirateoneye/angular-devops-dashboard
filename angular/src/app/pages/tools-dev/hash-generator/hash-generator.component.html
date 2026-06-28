@@ -11,12 +11,16 @@
       <button class="btn-primary" (click)="generate()">Generate semua hash</button>
     </div>
 
-    <div class="hash-list" *ngIf="results.length">
-      <div *ngFor="let r of results" class="hash-row">
-        <span class="hash-algo">{{ r.algo }}</span>
-        <input class="hash-val" [value]="r.hash" readonly />
-        <button class="icon-btn" (click)="copy(r.hash)" title="Copy"><mat-icon>file_copy</mat-icon></button>
+    @if (results.length) {
+      <div class="hash-list">
+        @for (r of results; track r.algo) {
+          <div class="hash-row">
+            <span class="hash-algo">{{ r.algo }}</span>
+            <input class="hash-val" [value]="r.hash" readonly />
+            <button class="icon-btn" (click)="copy(r.hash)" title="Copy" [attr.aria-label]="'Copy ' + r.algo + ' hash'"><mat-icon aria-hidden="true">file_copy</mat-icon></button>
+          </div>
+        }
       </div>
-    </div>
+    }
   </mat-card>
 </div>

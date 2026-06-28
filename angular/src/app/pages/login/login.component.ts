@@ -22,12 +22,12 @@ export class LoginComponent implements OnInit {
   passwordInput: string = '';
 
   redirectPath: string = '';
+  loginError: string = '';
 
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.redirectPath = this.route.snapshot.queryParams['redirect'];
-    console.log(this.redirectPath);
   }
 
   loginAction() {
@@ -36,11 +36,27 @@ export class LoginComponent implements OnInit {
       localStorage.setItem('user', 'GSIT MSE');
       localStorage.setItem('authorized', 'true');
 
-      window.location.href = this.redirectPath;
+      window.location.href = this.safeRedirectPath(this.redirectPath);
     }
     else {
-      alert('Username atau password salah');
+      this.loginError = 'Username atau password salah';
     }
+  }
+
+  private safeRedirectPath(path: string): string {
+    const p = (path || '').trim();
+    if (p === '') {
+      return '/dashboard';
+    }
+    // Reject anything that looks like an absolute URL or another origin.
+    if (p.startsWith('//') || /^https?:/i.test(p) || p.includes('@') || /^[a-zA-Z][a-zA-Z0-9+.\-]*:/.test(p)) {
+      return '/dashboard';
+    }
+    // Only allow relative in-app paths.
+    if (p.startsWith('/') || p.startsWith('./') || p.startsWith('#')) {
+      return p;
+    }
+    return '/dashboard';
   }
 
 

@@ -1,8 +1,9 @@
-﻿import { Component, inject, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MCB_TOOLS_FILE_SERVER_MANAGER_DELETE_FILE, MCB_TOOLS_FILE_SERVER_MANAGER_DOWNLOAD_FILE, MCB_TOOLS_FILE_SERVER_MANAGER_LIST_CATEGORY_FILE, MCB_TOOLS_FILE_SERVER_MANAGER_LIST_FILE_BY_CATEGORY, MCB_TOOLS_FILE_SERVER_MANAGER_WRITE_FILE } from 'src/app/core/constant/api.constant';
 import { ModalConfirmationComponent } from 'src/app/shared/component/modal/confirmation/modal-confirmation.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -32,6 +33,7 @@ export class FileServerManagerComponent implements OnInit {
   }
 
   readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(private httpClient : HttpClient){}
 
@@ -43,8 +45,7 @@ export class FileServerManagerComponent implements OnInit {
     this.response.status = "ON_PROCESS";
     this.response.message = "Loading Category";
     this.response.data = null;
-    this.httpClient.get(MCB_TOOLS_FILE_SERVER_MANAGER_LIST_CATEGORY_FILE).subscribe((response : any) =>{
-      console.log("success hit service: ", response)
+    this.httpClient.get(MCB_TOOLS_FILE_SERVER_MANAGER_LIST_CATEGORY_FILE).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((response : any) =>{
       this.response.status = "SUCCESS";
       this.response.message = "Get Category is Success";
       this.listCategory = response.output_schema;
@@ -61,10 +62,9 @@ export class FileServerManagerComponent implements OnInit {
     this.response.status = "ON_PROCESS";
     this.response.message = `Loading List File By Category ${this.category.category}`;
     this.response.data = null;
-    let cat = category ? category : this.category.category
-    let url = MCB_TOOLS_FILE_SERVER_MANAGER_LIST_FILE_BY_CATEGORY.replace('{category}', cat);
-    this.httpClient.get(url).subscribe((response : any) =>{
-      console.log("success hit service: ", response)
+    const cat = category ? category : this.category.category
+    const url = MCB_TOOLS_FILE_SERVER_MANAGER_LIST_FILE_BY_CATEGORY.replace('{category}', cat);
+    this.httpClient.get(url).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((response : any) =>{
       this.response.status = "SUCCESS";
       this.response.message = "Get List File is Success";
       this.response.data = {
@@ -81,30 +81,29 @@ export class FileServerManagerComponent implements OnInit {
 
 
   downloadFile(filename : string){
-    let url = MCB_TOOLS_FILE_SERVER_MANAGER_DOWNLOAD_FILE.replace("{category}", this.response.data.category.category).replace("{filename}", filename)
+    const url = MCB_TOOLS_FILE_SERVER_MANAGER_DOWNLOAD_FILE.replace("{category}", this.response.data.category.category).replace("{filename}", filename)
     window.open(url, "_blank");
   }
   
   deleteFile(filename : string){
-    let dialogConfig = {width: '500px',
+    const dialogConfig = {width: '500px',
         data: {
           title: `Delete Data`,
           message : `Apakah anda ingin menghapus file <b> ${filename} </b>?`
         }
     };
-    this.dialog.open(ModalConfirmationComponent, dialogConfig).afterClosed().subscribe((res) =>{
+    this.dialog.open(ModalConfirmationComponent, dialogConfig).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((res) =>{
       if(!res)
       {
         return;
       }
-      let user : any = localStorage.getItem('user');
-      let category  = this.response.data.category.category;
-      let url = MCB_TOOLS_FILE_SERVER_MANAGER_DELETE_FILE.replace("{category}", category).replace("{filename}", filename).replace("{user}", user)
+      const user : any = localStorage.getItem('user');
+      const category  = this.response.data.category.category;
+      const url = MCB_TOOLS_FILE_SERVER_MANAGER_DELETE_FILE.replace("{category}", category).replace("{filename}", filename).replace("{user}", user)
       this.response.status = "ON_PROCESS";
       this.response.message = `Deleting File ${filename}`;
       this.response.data = null;
-      this.httpClient.delete(url).subscribe((response : any) =>{
-        console.log("success hit service: ", response)
+      this.httpClient.delete(url).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((response : any) =>{
         this.response.status = "SUCCESS";
         this.response.message = `Deleting File ${filename} is Success`;
         this.onClickCheckButton(category);
@@ -118,13 +117,13 @@ export class FileServerManagerComponent implements OnInit {
   }
   
   uploadFile(file : File){
-    let dialogConfig = {width: '500px',
+    const dialogConfig = {width: '500px',
       data: {
         title: `Upload Data`,
         message : `Apakah anda ingin mengupload file <b> ${file.name} </b>?`
       }
     };
-    this.dialog.open(ModalConfirmationComponent, dialogConfig).afterClosed().subscribe((res) =>{
+    this.dialog.open(ModalConfirmationComponent, dialogConfig).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((res) =>{
       if(!res)
       {
         return;
@@ -132,15 +131,14 @@ export class FileServerManagerComponent implements OnInit {
 
       const formData = new FormData();
       formData.append('file', file);
-      let user : any = localStorage.getItem('user');
-      let category  = this.response.data.category.category;
-      let url = MCB_TOOLS_FILE_SERVER_MANAGER_WRITE_FILE.replace("{category}", category).replace("{user}", user)
+      const user : any = localStorage.getItem('user');
+      const category  = this.response.data.category.category;
+      const url = MCB_TOOLS_FILE_SERVER_MANAGER_WRITE_FILE.replace("{category}", category).replace("{user}", user)
       this.response.status = "ON_PROCESS";
       this.response.message = `Uploading File ${file.name}`;
       this.response.data = null;
-      this.httpClient.post(url, formData, {reportProgress: true,observe: 'events'}).subscribe((event: HttpEvent<any>) => {
+      this.httpClient.post(url, formData, {reportProgress: true,observe: 'events'}).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event: HttpEvent<any>) => {
         if (event.type === HttpEventType.UploadProgress) {
-          console.log('event: ', event);
           if (event.total) {
             this.response.progress = Math.round((event.loaded / event.total) * 100);
           }

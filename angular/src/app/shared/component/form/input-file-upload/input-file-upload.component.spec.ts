@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { InputFileUploadComponent } from './input-file-upload.component';
 
@@ -8,7 +9,7 @@ describe('InputFileUploadComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [InputFileUploadComponent]
+      imports: [InputFileUploadComponent, HttpClientTestingModule]
     });
     fixture = TestBed.createComponent(InputFileUploadComponent);
     component = fixture.componentInstance;

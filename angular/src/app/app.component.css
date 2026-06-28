@@ -1,5 +1,5 @@
 :host {
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 .app-container {
@@ -12,25 +12,71 @@
   overflow: auto;
 }
 
+/* ===== Top bar: sticky, theme-aware, single consolidated rule ===== */
 .bg-layout {
-  background: #005caa;
-  height: 5rem;
+  position: sticky !important;
+  top: 0;
+  z-index: 900;
+  background-color: var(--msv-primary);
+  background-image: url("../assets/bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-blend-mode: overlay;
+  /* height grows with content so the nav can never overflow/clip the bar. */
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
 }
 
-.icon-overlay {
-  position: relative;
-  background-color: transparent;
+.top-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 12px;
+  width: 100%;
 }
 
-.icon-overlay:before {
-  content: " ";
-  width: calc(100% + 15rem);
-  height: 11rem;
-  position: absolute;
-  left: -15rem;
-  /* background-image: url(clove-ornament.139a2d89f497d64c.svg);
-  */
-  background-position: -10rem -27rem;
+.brand {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  text-decoration: none;
+}
+
+.brand-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Desktop link row (hidden on mobile via the media query below). */
+.top-bar-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 4px;
+}
+
+/* Action cluster (search / theme / user / hamburger) — pinned to the right. */
+.top-bar-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.menu-trigger mat-icon {
+  margin-left: -2px;
 }
 
 .on-process-background {
@@ -45,168 +91,241 @@
   background-color: #f8d7da !important;
 }
 
-
 .example-card {
-  /* max-width: 400px;
-  */
-  background-color: #fff;
-  color: black;
+  background-color: var(--msv-surface);
+  color: var(--msv-text);
 }
 
 .example-header-image {
-  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg");
   background-size: cover;
 }
 
-
 ::ng-deep .mat-progress-bar-fill::after {
-  background-color: #1E457C;
+  background-color: var(--msv-primary);
 }
 
-::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
-  stroke: #1E457C;
-  }
+::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+  stroke: var(--msv-primary);
+}
 
 ::ng-deep .mat-progress-bar-buffer {
-  background: #E4E8EB;
+  background: var(--msv-surface-2);
 }
 
 ::ng-deep .mat-progress-bar {
   border-radius: 2px;
 }
 
-.log-box
-{
+.log-box {
   white-space: pre-wrap;
-    background-color: rgb(227 227 227);
-    padding: 10px;
-    border: 2px solid rgb(184 184 184);
-    border-radius: 10px;
-    overflow-wrap: break-word;
+  background-color: rgb(227 227 227);
+  padding: 10px;
+  border: 2px solid rgb(184 184 184);
+  border-radius: var(--msv-radius-md);
+  overflow-wrap: break-word;
+}
+
+/* Icon buttons (palette + theme toggle) in the top bar */
+.nav-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin-left: 6px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--msv-primary-contrast);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.nav-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+.nav-icon-btn mat-icon {
+  color: var(--msv-primary-contrast);
+}
+.nav-icon-btn:focus-visible {
+  outline: 2px solid var(--msv-primary-contrast);
+  outline-offset: 2px;
+}
+
+/* Ctrl+K hint pill that advertises the command-palette shortcut */
+.ctrl-k-hint {
+  font-family: "Open Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--msv-primary-contrast);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--msv-radius-pill);
+  padding: 3px 7px;
+  margin-left: 2px;
+  white-space: nowrap;
+}
+
+/* Command palette dialog: transparent surface so the inner .palette box shows */
+::ng-deep .msv-command-palette mat-dialog-container,
+::ng-deep .msv-command-palette .mat-mdc-dialog-surface {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
 }
 
 .link-button {
-  color: #e6f3ff;
-  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  color: var(--msv-primary-contrast);
+  font-size: 14px;
   font-weight: 600;
+  white-space: nowrap;
   text-decoration: none;
-  font-family: 'Open Sans', sans-serif;
-  transition: all 0.3s;
-  animation: fadeIn 0.3s;
-}
-
-.link-button-disabled {
-  color: #868e96;
-  font-size: 16px;
-  font-weight: 600;
-  text-decoration: none;
-  font-family: 'Open Sans', sans-serif;
-  cursor: not-allowed;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+  border-radius: var(--msv-radius-sm);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .link-button:hover {
-  color: #F4F8FC;
-  text-decoration: underline;
-  transition: all 0.3s;
-  animation: fadeIn 0.3s;
+  color: var(--msv-primary-contrast);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* Active-route indicator for the top nav links */
+.link-button.active {
+  color: var(--msv-primary-contrast);
+  box-shadow: inset 0 -2px 0 var(--msv-primary-contrast);
+}
+
+.menu-trigger {
+  background: transparent;
+}
+.menu-trigger mat-icon {
+  color: var(--msv-primary-contrast);
 }
 
 .user-chip {
-  background-color: #e6f3ff;
-  border-radius: 40px;
+  display: inline-flex;
+  align-items: center;
   width: fit-content;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   padding-left: 1rem;
   padding-right: 1rem;
+  background-color: var(--msv-accent-bg);
+  border: none;
+  border-radius: var(--msv-radius-pill);
+  color: var(--msv-accent-text);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
   transition: all 0.3s;
+}
+
+.user-chip mat-icon,
+.user-chip span {
+  color: var(--msv-accent-text);
 }
 
 .user-chip:hover {
-  background-color: #f1ffff;
+  background-color: var(--msv-surface-2);
   transition: all 0.3s;
-  cursor: pointer;
+}
+
+.user-chip:focus-visible {
+  outline: 2px solid var(--msv-accent-text);
+  outline-offset: 2px;
 }
 
 .batch-list-card {
-  border-bottom: 1px solid #e9ecef;
-  padding: 1rem; 
+  border-bottom: 1px solid var(--msv-border);
+  padding: 1rem;
 }
 
 .batch-list-card:hover {
-  background-color: #f8f9fa;
+  background-color: var(--msv-surface-2);
   transition: all 0.3s;
 }
 
 .badge-available {
   width: fit-content;
-  background-color: #C2FFC5;
-  color: #009649;
-  font-family: 'Open Sans', sans-serif;
+  background-color: var(--msv-success-bg);
+  color: var(--msv-success);
+  font-family: "Open Sans", sans-serif;
   font-weight: 600;
-  border-radius: 24px;
+  border-radius: var(--msv-radius-pill);
   padding: 5px 15px;
 }
 
 .badge-info {
   width: fit-content;
-  background-color: #e6f3ff;
-  color: #005caa;
-  font-family: 'Open Sans', sans-serif;
+  background-color: var(--msv-accent-bg);
+  color: var(--msv-accent-text);
+  font-family: "Open Sans", sans-serif;
   font-weight: 600;
-  border-radius: 24px;
+  border-radius: var(--msv-radius-pill);
   padding: 5px 15px;
 }
 
 .badge-unavailable {
   width: fit-content;
-  background-color: #FFE592;
-  color: #885403;
-  font-family: 'Open Sans', sans-serif;
+  background-color: var(--msv-warning-bg);
+  color: var(--msv-warning);
+  font-family: "Open Sans", sans-serif;
   font-weight: 600;
-  border-radius: 24px;
+  border-radius: var(--msv-radius-pill);
   padding: 5px 15px;
 }
 
 .badge-failed {
   width: fit-content;
-  background-color: #FFD9D3;
-  color: #CD1923;
-  font-family: 'Open Sans', sans-serif;
+  background-color: var(--msv-error-bg);
+  color: var(--msv-error);
+  font-family: "Open Sans", sans-serif;
   font-weight: 600;
-  border-radius: 24px;
+  border-radius: var(--msv-radius-pill);
   padding: 5px 15px;
 }
 
 .badge-notyet {
   width: fit-content;
-  background-color: #CFCFCF;
-  color: #495057;
-  font-family: 'Open Sans', sans-serif;
+  background-color: var(--msv-surface-2);
+  color: var(--msv-text-muted);
+  font-family: "Open Sans", sans-serif;
   font-weight: 600;
-  border-radius: 24px;
+  border-radius: var(--msv-radius-pill);
   padding: 5px 15px;
 }
 
 .batch-information {
   width: 100%;
-  background-color: #E6F3FF;
-  color: #885403;
-  font-family: 'Open Sans', sans-serif;
+  background-color: var(--msv-accent-bg);
+  color: var(--msv-warning);
+  font-family: "Open Sans", sans-serif;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: var(--msv-radius-md);
   padding: 12px;
 }
 
 .button-primary {
   display: flex;
   justify-content: center;
-  border-radius: 24px;
-  background-color: #005CAA;
-  color: #FFFFFF;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  padding-left: 24px;
-  padding-right: 24px;
-  font-family: 'Open Sans', sans-serif;
+  border-radius: var(--msv-radius-md);
+  background-color: var(--msv-primary);
+  color: var(--msv-primary-contrast);
+  padding: 12px 24px;
+  font-family: "Open Sans", sans-serif;
   font-weight: 600;
   transition: all 0.3s;
 }
@@ -214,57 +333,60 @@
 .button-primary-disabled {
   display: flex;
   justify-content: center;
-  border-radius: 24px;
-  background-color: #CFCFCF;
-  color: #FFFFFF;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  padding-left: 24px;
-  padding-right: 24px;
-  font-family: 'Open Sans', sans-serif;
+  border-radius: var(--msv-radius-md);
+  background-color: var(--msv-border);
+  color: var(--msv-text-muted);
+  padding: 12px 24px;
+  font-family: "Open Sans", sans-serif;
   font-weight: 600;
   transition: all 0.3s;
   cursor: not-allowed;
 }
 
-
 .button-primary:hover {
-  background-color: #144e83;
+  background-color: var(--msv-primary-hover);
   transition: all 0.3s;
   cursor: pointer;
 }
 
+.button-primary:focus-visible {
+  outline: 2px solid var(--msv-primary);
+  outline-offset: 2px;
+}
+
 .button-secondary {
   display: flex;
-  border: 1px solid #005CAA;
+  border: 1px solid var(--msv-primary);
   justify-content: center;
-  border-radius: 24px;
-  background-color: #FFFFFF;
-  color: #005CAA;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  padding-left: 24px;
-  padding-right: 24px;
-  font-family: 'Open Sans', sans-serif;
+  border-radius: var(--msv-radius-md);
+  background-color: var(--msv-surface);
+  color: var(--msv-primary);
+  padding: 12px 24px;
+  font-family: "Open Sans", sans-serif;
   font-weight: 600;
   transition: all 0.3s;
 }
 
 .button-secondary:hover {
-  background-color: #f8f9fa;
+  background-color: var(--msv-surface-2);
   transition: all 0.3s;
   cursor: pointer;
 }
 
-.uploader-status ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+.button-secondary:focus-visible {
+  outline: 2px solid var(--msv-primary);
+  outline-offset: 2px;
+}
+
+.uploader-status ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
   stroke: #ffffff;
-  
 }
 
 ::ng-deep .custom-modalbox mat-dialog-container {
   /* padding: 40px; */
   background-color: transparent;
-  border-radius: 20px;
+  border-radius: var(--msv-radius-lg);
   box-shadow: none;
 }
 
@@ -275,4 +397,119 @@
 
 ::ng-deep .custom-modalbox mat-dialog-container .dialog-content {
   box-shadow: none;
+}
+
+/* ===== Mobile nav: hamburger toggles an overlay panel ===== */
+/* Hamburger button is hidden on desktop, revealed on narrow screens. */
+.nav-menu-btn {
+  display: none;
+}
+
+.mobile-nav-backdrop {
+  position: fixed;
+  inset: 60px 0 0 0;
+  background: var(--msv-overlay);
+  z-index: 898;
+}
+
+.mobile-nav {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  /* Cap height so a strip of the backdrop stays exposed at the bottom for
+     click-outside-to-close; the panel scrolls internally when it overflows. */
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  background: var(--msv-surface);
+  border-bottom: 1px solid var(--msv-border);
+  box-shadow: var(--msv-elev-3);
+  padding: 8px 12px 14px;
+  z-index: 901;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mobile-nav-link,
+.mobile-nav-sublink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--msv-text);
+  font-family: "Open Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  padding: 10px 10px;
+  border-radius: var(--msv-radius-sm);
+  cursor: pointer;
+}
+.mobile-nav-sublink {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--msv-text-muted);
+  padding-left: 22px;
+}
+.mobile-nav-link mat-icon,
+.mobile-nav-sublink mat-icon {
+  color: var(--msv-primary);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+.mobile-nav-link:hover,
+.mobile-nav-sublink:hover {
+  background: var(--msv-surface-2);
+}
+.mobile-nav-link.active {
+  background: var(--msv-accent-bg);
+  color: var(--msv-accent-text);
+}
+.mobile-nav-link.active mat-icon {
+  color: var(--msv-accent-text);
+}
+.mobile-nav-group {
+  font-family: "Open Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--msv-text-muted);
+  padding: 12px 10px 4px;
+}
+.mobile-nav-divider {
+  height: 1px;
+  background: var(--msv-border);
+  margin: 8px 4px;
+}
+
+/* ===== Responsive: collapse the top bar on narrow screens ===== */
+/* Below 992px the Bootstrap container is ≤720px, which can't hold the full
+   nav (~775px) without overflow — so switch to the hamburger panel. */
+@media (max-width: 991px) {
+  .bg-layout {
+    min-height: 60px;
+  }
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+  }
+  /* Hide the desktop link row + hint + user chip; they live in the mobile panel. */
+  .top-bar-links,
+  .ctrl-k-hint,
+  .user-chip {
+    display: none;
+  }
+  .nav-menu-btn {
+    display: inline-flex;
+  }
+  .top-bar-actions {
+    gap: 4px;
+  }
 }

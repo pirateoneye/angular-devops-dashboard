@@ -18,14 +18,20 @@
     <div class="tool-actions">
       <button class="btn-primary" (click)="compare()">Bandingkan</button>
       <button class="btn-secondary" (click)="clear()">Clear</button>
-      <span class="td-stats" *ngIf="diff.length">+{{ added }} &minus;{{ removed }} ={{ unchanged }}</span>
+      @if (diff.length) {
+        <span class="td-stats">+{{ added }} &minus;{{ removed }} ={{ unchanged }}</span>
+      }
     </div>
 
-    <div class="td-result" *ngIf="diff.length">
-      <div *ngFor="let line of diff" class="td-line" [class.add]="line.type === 'add'" [class.del]="line.type === 'del'">
-        <span class="td-sign">{{ line.type === 'add' ? '+' : line.type === 'del' ? '-' : ' ' }}</span>
-        <span class="td-text">{{ line.text }}</span>
+    @if (diff.length) {
+      <div class="td-result">
+        @for (line of diff; track $index) {
+          <div class="td-line" [class.add]="line.type === 'add'" [class.del]="line.type === 'del'">
+            <span class="td-sign">{{ line.type === 'add' ? '+' : line.type === 'del' ? '-' : ' ' }}</span>
+            <span class="td-text">{{ line.text }}</span>
+          </div>
+        }
       </div>
-    </div>
+    }
   </mat-card>
 </div>

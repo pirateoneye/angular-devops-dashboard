@@ -1,11 +1,11 @@
-﻿<div class="container pt-3 pb-3">
+<div class="container pt-3 pb-3">
   <mat-card class="tool-card">
     <h2 class="tool-title">Random Picker &amp; Shuffler</h2>
     <h4 class="tool-sub">Pilih item acak (unik/berulang) atau kocok urutan list dengan Fisher-Yates.</h4>
     <div class="tool-divider"></div>
 
-    <label class="tool-label">Daftar item (satu per baris)</label>
-    <textarea class="tool-area" rows="6" [(ngModel)]="input" placeholder="Apel
+    <label class="tool-label" for="rp-input">Daftar item (satu per baris)</label>
+    <textarea id="rp-input" class="tool-area" rows="6" [(ngModel)]="input" placeholder="Apel
 Mangga
 Jeruk"></textarea>
 
@@ -22,25 +22,29 @@ Jeruk"></textarea>
       <button class="btn-secondary" (click)="clear()">Clear</button>
     </div>
 
-    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    @if (error) {
+      <div class="tool-error" role="alert">{{ error }}</div>
+    }
     <div class="tool-stats">{{ items.length }} item</div>
 
-    <ng-container *ngIf="picks.length">
+    @if (picks.length) {
       <label class="tool-label" style="margin-top:10px">Hasil pilihan ({{ picks.length }})</label>
       <div class="rp-list">
-        <div class="rp-item" *ngFor="let p of picks; let i = index">
-          <span class="rp-no">{{ i + 1 }}</span>
-          <code>{{ p.value }}</code>
-          <span class="rp-idx">#{{ p.index + 1 }}</span>
-        </div>
+        @for (p of picks; track p; let i = $index) {
+          <div class="rp-item">
+            <span class="rp-no">{{ i + 1 }}</span>
+            <code>{{ p.value }}</code>
+            <span class="rp-idx">#{{ p.index + 1 }}</span>
+          </div>
+        }
       </div>
       <button class="btn-secondary" (click)="copy(picksText)">Copy hasil</button>
-    </ng-container>
+    }
 
-    <ng-container *ngIf="shuffled.length">
+    @if (shuffled.length) {
       <label class="tool-label" style="margin-top:10px">Hasil shuffle</label>
       <textarea class="tool-area" rows="6" [value]="shuffledText" readonly></textarea>
       <button class="btn-secondary" (click)="copy(shuffledText)">Copy</button>
-    </ng-container>
+    }
   </mat-card>
 </div>

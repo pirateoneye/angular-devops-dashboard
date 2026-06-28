@@ -5,11 +5,11 @@
     <div class="tool-divider"></div>
     <div class="jf-grid">
       <div>
-        <label class="tool-label">Markdown</label>
-        <textarea class="tool-area" rows="14" [(ngModel)]="input" (ngModelChange)="render()"></textarea>
+        <label class="tool-label" for="md-input">Markdown</label>
+        <textarea id="md-input" class="tool-area" rows="14" [(ngModel)]="input" (ngModelChange)="render()"></textarea>
       </div>
       <div>
-        <label class="tool-label">Preview</label>
+        <span class="tool-label">Preview</span>
         <div class="md-preview" [innerHTML]="html"></div>
       </div>
     </div>

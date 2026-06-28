@@ -8,93 +8,49 @@ select{
       width: 100%;
       cursor: pointer;
       height: 45px;
-      border-radius: 5px;
+      border-radius: 8px;
       padding: 5px;
     }
-  
+
     .select-key option{
       transition: all 0.3s;
       background-color: #ffffff;
       cursor: pointer;
     }
-  
+
     .select-key:hover{
       transition: all 0.3s;
-      background-color: #e2e2e2;
+      background-color: #ced4da;
     }
-  
+
     .select-target{
       transition: all 0.3s;
       width: 100%;
       cursor: pointer;
       font-weight: 600;
       height: 45px;
-      border-radius: 5px 0px 0px 5px;
+      border-radius: 8px 0px 0px 8px;
       padding: 5px;
       border: none;
-      background-color: #e9ecef;
+      background-color: #ced4da;
     }
-  
+
     .select-target option{
       transition: all 0.3s;
       background-color: #ffffff;
       cursor: pointer;
     }
-  
+
     .select-target:hover{
       transition: all 0.3s;
-      background-color: #cfcfcf;
+      background-color: #ced4da;
     }
-    
+
     .batch-list-card {
-      border-bottom: 3px solid #e9ecef;
+      border-bottom: 3px solid #ced4da;
       padding: 1rem;
     }
-  
-    .button-primary {
-      display: flex;
-      justify-content: center;
-      border-radius: 24px;
-      background-color: #005CAA;
-      color: #FFFFFF;
-      padding-top: 12px;
-      padding-bottom: 12px;
-      padding-left: 24px;
-      padding-right: 24px;
-      font-family: 'Open Sans', sans-serif;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    
-    .button-primary-disabled {
-      display: flex;
-      justify-content: center;
-      border-radius: 24px;
-      background-color: #CFCFCF;
-      color: #FFFFFF;
-      padding-top: 12px;
-      padding-bottom: 12px;
-      padding-left: 24px;
-      padding-right: 24px;
-      font-family: 'Open Sans', sans-serif;
-      font-weight: 600;
-      transition: all 0.3s;
-      cursor: not-allowed;
-    }
-    
-    
-    .button-primary:hover {
-      background-color: #144e83;
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-  
-    .button-primary-disabled:hover {
-      background-color: #CFCFCF!important;
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-  
+
     .form-control{
       height: 45px;
     }
@@ -152,7 +108,7 @@ select{
     
     .badge-notyet {
       width: fit-content;
-      background-color: #CFCFCF;
+      background-color: #ced4da;
       color: #495057;
       font-family: 'Open Sans', sans-serif;
       font-weight: 600;
@@ -169,8 +125,8 @@ select{
   .response-data{
     padding: 5px;
     background: #f7f7f7;
-    border-radius: 15px;
-    border-color: #afafaf;
+    border-radius: 12px;
+    border-color: #ced4da;
     color: #030273;
     font-family: monospace;
   }

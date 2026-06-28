@@ -4,5 +4,5 @@
 .copy-btn mat-icon { font-size:18px; width:18px; height:18px; }
 .cj-row { display:flex; gap:14px; align-items:center; margin-bottom:10px; flex-wrap:wrap; font-size:13px; }
 .cj-row label { display:inline-flex; align-items:center; gap:4px; cursor:pointer; color:#495057; }
-.cj-row select { border:1px solid #ddd; border-radius:6px; padding:3px 6px; font-size:12px; }
+.cj-row select { border:1px solid #ced4da; border-radius:8px; padding:3px 6px; font-size:12px; }
 @media (max-width:768px){ .jf-grid { grid-template-columns:1fr; } }

@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,11 +7,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-base-converter',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
+  imports: [FormsModule, MatCardModule, MatIconModule],
   templateUrl: './base-converter.component.html',
   styleUrls: ['./base-converter.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BaseConverterComponent {
+export class BaseConverterComponent implements OnInit {
   input = '255';
   fromBase = 10;
   bin = '';

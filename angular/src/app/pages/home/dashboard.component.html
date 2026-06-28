@@ -1,19 +1,53 @@
 <div class="container pt-2 pb-3">
   <div class="dash-hero">
-    <h1 class="dash-hero-title">MSV Tools</h1>
-    <p class="dash-hero-sub">Pusat kontrol tools dev &amp; piket Merchant Services.</p>
+    <div class="dash-hero-row">
+      <div>
+        <h1 class="dash-hero-title">MSV Tools</h1>
+        <p class="dash-hero-sub">Pusat kontrol tools dev &amp; piket Merchant Services.</p>
+      </div>
+      <div class="dash-hero-search">
+        <mat-icon aria-hidden="true">search</mat-icon>
+        <input type="text" [ngModel]="query()" (ngModelChange)="query.set($event)" placeholder="Cari tool…" autocomplete="off" aria-label="Search tools" />
+      </div>
+    </div>
   </div>
 
-  <ng-container *ngFor="let g of groups">
-    <h2 class="dash-section-title">{{ g.label }}</h2>
-    <div class="dash-grid">
-      <a *ngFor="let t of tilesFor(g.key)" class="dash-tile" [routerLink]="t.route" [queryParams]="t.queryParams || null">
-        <mat-icon class="dash-tile-icon" aria-hidden="true">{{ t.icon }}</mat-icon>
-        <div class="dash-tile-body">
-          <div class="dash-tile-title">{{ t.label }}</div>
-          <div class="dash-tile-desc">{{ t.description }}</div>
-        </div>
-      </a>
+  <!-- Recently used (only when not searching) -->
+  @if (!hasQuery && recentTools().length) {
+    <h2 class="dash-section-title">Recent</h2>
+    <div class="dash-chips">
+      @for (t of recentTools(); track t.slug) {
+        <a class="dash-chip" [routerLink]="t.route" [queryParams]="t.queryParams || null">
+          <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
+          <span>{{ t.label }}</span>
+        </a>
+      }
     </div>
-  </ng-container>
+  } @else if (!hasQuery) {
+    <h2 class="dash-section-title">Recent</h2>
+    <p class="dash-hint">Belum ada tool yang dibuka. Buka sebuah tool untuk muncul di sini.</p>
+  }
+
+  @for (g of groups; track g.key) {
+    @if (tilesByGroup()[g.key].length) {
+      <h2 class="dash-section-title">{{ g.label }}</h2>
+      <div class="dash-grid">
+        @for (t of tilesByGroup()[g.key]; track t.route) {
+          <a class="dash-tile" [routerLink]="t.route" [queryParams]="t.queryParams || null">
+            <mat-icon class="dash-tile-icon" aria-hidden="true">{{ t.icon }}</mat-icon>
+            <div class="dash-tile-body">
+              <div class="dash-tile-title">{{ t.label }}</div>
+              <div class="dash-tile-desc">{{ t.description }}</div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  }
+
+  @if (noResults()) {
+    <div class="dash-empty">
+      Tidak ada tool yang cocok dengan “{{ query() }}”.
+    </div>
+  }
 </div>

@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,9 +10,10 @@ type Mode = 'base64' | 'url' | 'jwt';
 @Component({
   selector: 'app-decoder',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatButtonModule],
+  imports: [FormsModule, MatCardModule, MatIconModule, MatButtonModule],
   templateUrl: './decoder.component.html',
   styleUrls: ['./decoder.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DecoderComponent {
   mode: Mode = 'base64';

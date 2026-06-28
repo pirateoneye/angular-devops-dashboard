@@ -58,41 +58,42 @@ describe('MsvModalComponent', () => {
 
   it('should close modal on backdrop click when closable is true', () => {
     component.closable = true;
+    // The handler closes only when the click lands directly on the backdrop,
+    // i.e. event.target === event.currentTarget (the bound .msv-modal-backdrop).
+    const backdrop = document.createElement('div');
     const event = new MouseEvent('click');
-    Object.defineProperty(event, 'target', {
-      value: fixture.nativeElement,
-      writable: false
-    });
-    
+    Object.defineProperty(event, 'target', { value: backdrop, writable: false });
+    Object.defineProperty(event, 'currentTarget', { value: backdrop, writable: false });
+
     component.onBackdropClick(event);
-    
+
     expect(mockModalRef.close).toHaveBeenCalled();
   });
 
   it('should not close modal on backdrop click when closable is false', () => {
     component.closable = false;
+    const backdrop = document.createElement('div');
     const event = new MouseEvent('click');
-    Object.defineProperty(event, 'target', {
-      value: fixture.nativeElement,
-      writable: false
-    });
-    
+    Object.defineProperty(event, 'target', { value: backdrop, writable: false });
+    Object.defineProperty(event, 'currentTarget', { value: backdrop, writable: false });
+
     component.onBackdropClick(event);
-    
+
     expect(mockModalRef.close).not.toHaveBeenCalled();
   });
 
   it('should not close modal on content click', () => {
     component.closable = true;
+    // A click on inner content bubbles up but target !== currentTarget (backdrop),
+    // so the modal must stay open.
+    const backdrop = document.createElement('div');
     const contentElement = document.createElement('div');
     const event = new MouseEvent('click');
-    Object.defineProperty(event, 'target', {
-      value: contentElement,
-      writable: false
-    });
-    
+    Object.defineProperty(event, 'target', { value: contentElement, writable: false });
+    Object.defineProperty(event, 'currentTarget', { value: backdrop, writable: false });
+
     component.onBackdropClick(event);
-    
+
     expect(mockModalRef.close).not.toHaveBeenCalled();
   });
 

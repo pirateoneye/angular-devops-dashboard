@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +13,7 @@ interface Param { key: string; value: string; }
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './url-parser.component.html',
   styleUrls: ['./url-parser.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UrlParserComponent {
   input = 'https://user:pass@example.com:8443/path/to/page?foo=bar&baz=42&q=hello+world#section-1';

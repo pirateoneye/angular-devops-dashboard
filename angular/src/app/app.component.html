@@ -1,126 +1,265 @@
-<div class="app-container">
-  <div>
-    <section class="bg-layout d-flex flex-column justify-content-center" style="background-image: url('../assets/bg.png'); background-size: cover; background-position: center; background-repeat: no-repeat; height: 10vh; position: relative;">
-      <div class="container d-flex justify-content-between">
-        <div>
-          <img src="../assets/logo.png" alt="logo" style="width: 55px; margin-left: auto; margin-right: auto;">
-        </div>
-        <div class="d-flex align-items-center w-100 justify-content-end">
-          <a class="link-button d-flex align-items-center me-3" routerLink="/dashboard"><mat-icon>home</mat-icon><span class="ms-1">Home</span></a>
-          <a class="link-button d-flex align-items-center me-3" routerLink="/utilities"><mat-icon>build</mat-icon><span class="ms-1">Utilities</span></a>
-          <a class="link-button d-flex align-items-center me-3" routerLink="/demo"><mat-icon>extension</mat-icon><span class="ms-1">Demo</span></a>
-          <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle link-button" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
-              UAT/DEV Stuff
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center" routerLink="tools-dev/batch-runner">
-                  <mat-icon>
-                    event_note
-                  </mat-icon>
-                  Batch Runner
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center" routerLink="tools-dev/crypto">
-                  <mat-icon>
-                    enhanced_encryption
-                  </mat-icon>
-                  Crypto
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="tools-dev/delete-data">
-                  <mat-icon>
-                    delete
-                  </mat-icon>
-                  Delete Data
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="tools-dev/check-data">
-                  <mat-icon>
-                    search
-                  </mat-icon>
-                  Check Data
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="tools-dev/file-server-manager">
-                  <mat-icon>
-                    folder
-                  </mat-icon>
-                  File Server Manager
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="tools-dev/push-notif-fcm">
-                  <mat-icon>
-                    notifications
-                  </mat-icon>
-                  Push Notif FCM
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="tools-dev/publish-kafka">
-                  <mat-icon>
-                    send
-                  </mat-icon>
-                  Publish Kafka
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center" routerLink="tools-dev/gitlab/tags-monitor">
-                  <mat-icon>
-                    label
-                  </mat-icon>
-                  GitLab Tags Monitor
-                </a>
-              </li>
-            </ul>
-          </div>
+<div class="app-container" [class.menu-open]="menuOpen()">
+  <header class="bg-layout">
+    <div class="container top-bar-inner">
+      <a class="brand" routerLink="/dashboard" aria-label="MSV Tools home">
+        <img src="../assets/logo.png" alt="MSV Tools" class="brand-logo" />
+      </a>
 
-          <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle link-button" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: transparent; border: none;">
-              Piket
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center" routerLink="piket/keluhan-list">
-                  <mat-icon>
-                    list_alt
-                  </mat-icon>
-                  List Keluhan
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="piket/fix-data-user">
-                  <mat-icon>
-                    edit
-                  </mat-icon>
-                  Fix Data User
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item d-flex flex-row gap-2 align-items-center"  routerLink="piket/fix-after-merge-cis">
-                  <mat-icon>
-                    edit
-                  </mat-icon>
-                  Fix After Merge CIS
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div class="user-chip ms-3 pt-2 pb-2 align-items-center d-flex" (click)="editUsername()">
-            <mat-icon class="" style="color: #005CAA;">person</mat-icon>
-            <span class="ms-2" style="color: #005CAA;">{{user}}</span>
-          </div>
-        </div>
+      <!-- Desktop links + group menus (hidden on mobile) -->
+      <nav aria-label="Utama" class="top-bar-links">
+        <a class="link-button" routerLink="/dashboard" routerLinkActive="active"
+          ><mat-icon aria-hidden="true">home</mat-icon
+          ><span class="ms-1">Home</span></a
+        >
+        <a class="link-button" routerLink="/utilities" routerLinkActive="active"
+          ><mat-icon aria-hidden="true">build</mat-icon
+          ><span class="ms-1">Utilities</span></a
+        >
+        <a class="link-button" routerLink="/demo" routerLinkActive="active"
+          ><mat-icon aria-hidden="true">extension</mat-icon
+          ><span class="ms-1">Demo</span></a
+        >
+
+        <button
+          type="button"
+          class="link-button menu-trigger"
+          [matMenuTriggerFor]="uatMenu"
+          aria-haspopup="true"
+        >
+          <span>UAT/DEV Stuff</span>
+          <mat-icon aria-hidden="true">arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #uatMenu="matMenu">
+          <a mat-menu-item routerLink="/tools-dev/batch-runner"
+            ><mat-icon>event_note</mat-icon><span>Batch Runner</span></a
+          >
+          <a mat-menu-item routerLink="/tools-dev/crypto"
+            ><mat-icon>enhanced_encryption</mat-icon><span>Crypto</span></a
+          >
+          <a mat-menu-item routerLink="/tools-dev/delete-data"
+            ><mat-icon>delete</mat-icon><span>Delete Data</span></a
+          >
+          <a mat-menu-item routerLink="/tools-dev/check-data"
+            ><mat-icon>search</mat-icon><span>Check Data</span></a
+          >
+          <a mat-menu-item routerLink="/tools-dev/file-server-manager"
+            ><mat-icon>folder</mat-icon><span>File Server Manager</span></a
+          >
+          <a mat-menu-item routerLink="/tools-dev/push-notif-fcm"
+            ><mat-icon>notifications</mat-icon><span>Push Notif FCM</span></a
+          >
+          <a mat-menu-item routerLink="/tools-dev/publish-kafka"
+            ><mat-icon>send</mat-icon><span>Publish Kafka</span></a
+          >
+          <a mat-menu-item routerLink="/tools-dev/gitlab/tags-monitor"
+            ><mat-icon>label</mat-icon><span>GitLab Tags Monitor</span></a
+          >
+        </mat-menu>
+
+        <button
+          type="button"
+          class="link-button menu-trigger"
+          [matMenuTriggerFor]="piketMenu"
+          aria-haspopup="true"
+        >
+          <span>Piket</span>
+          <mat-icon aria-hidden="true">arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #piketMenu="matMenu">
+          <a mat-menu-item routerLink="/piket/keluhan-list"
+            ><mat-icon>list_alt</mat-icon><span>List Keluhan</span></a
+          >
+          <a mat-menu-item routerLink="/piket/fix-data-user"
+            ><mat-icon>edit</mat-icon><span>Fix Data User</span></a
+          >
+          <a mat-menu-item routerLink="/piket/fix-after-merge-cis"
+            ><mat-icon>edit</mat-icon><span>Fix After Merge CIS</span></a
+          >
+        </mat-menu>
+      </nav>
+
+      <!-- Actions: always visible -->
+      <div class="top-bar-actions">
+        <button
+          type="button"
+          class="nav-icon-btn"
+          (click)="openPalette()"
+          title="Command palette (Ctrl+K)"
+          aria-label="Open command palette"
+        >
+          <mat-icon aria-hidden="true">search</mat-icon>
+        </button>
+        <kbd class="ctrl-k-hint" aria-hidden="true">Ctrl+K</kbd>
+        <button
+          type="button"
+          class="nav-icon-btn"
+          (click)="toggleTheme()"
+          [attr.aria-label]="
+            theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'
+          "
+          [title]="
+            theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'
+          "
+        >
+          <mat-icon aria-hidden="true">{{
+            theme.isDark() ? "light_mode" : "dark_mode"
+          }}</mat-icon>
+        </button>
+        <button
+          type="button"
+          class="user-chip"
+          (click)="editUsername()"
+          [attr.aria-label]="'Edit username: ' + user()"
+        >
+          <mat-icon aria-hidden="true">person</mat-icon>
+          <span class="ms-2">{{ user() }}</span>
+        </button>
+        <button
+          type="button"
+          class="nav-icon-btn nav-menu-btn"
+          (click)="toggleMenu()"
+          [attr.aria-expanded]="menuOpen()"
+          aria-label="Toggle navigation menu"
+        >
+          <mat-icon aria-hidden="true">{{
+            menuOpen() ? "close" : "menu"
+          }}</mat-icon>
+        </button>
       </div>
-    </section>
-  </div>
+    </div>
+  </header>
 
+  @if (menuOpen()) {
+    <div
+      class="mobile-nav-backdrop"
+      (click)="closeMenu()"
+      aria-hidden="true"
+    ></div>
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <a
+        class="mobile-nav-link"
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">home</mat-icon><span>Home</span></a
+      >
+      <a
+        class="mobile-nav-link"
+        routerLink="/utilities"
+        routerLinkActive="active"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">build</mat-icon><span>Utilities</span></a
+      >
+      <a
+        class="mobile-nav-link"
+        routerLink="/demo"
+        routerLinkActive="active"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">extension</mat-icon><span>Demo</span></a
+      >
+
+      <div class="mobile-nav-group">UAT/DEV Stuff</div>
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/tools-dev/batch-runner"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">event_note</mat-icon
+        ><span>Batch Runner</span></a
+      >
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/tools-dev/crypto"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">enhanced_encryption</mat-icon
+        ><span>Crypto</span></a
+      >
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/tools-dev/delete-data"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">delete</mat-icon
+        ><span>Delete Data</span></a
+      >
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/tools-dev/check-data"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">search</mat-icon
+        ><span>Check Data</span></a
+      >
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/tools-dev/file-server-manager"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">folder</mat-icon
+        ><span>File Server Manager</span></a
+      >
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/tools-dev/push-notif-fcm"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">notifications</mat-icon
+        ><span>Push Notif FCM</span></a
+      >
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/tools-dev/publish-kafka"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">send</mat-icon
+        ><span>Publish Kafka</span></a
+      >
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/tools-dev/gitlab/tags-monitor"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">label</mat-icon
+        ><span>GitLab Tags Monitor</span></a
+      >
+
+      <div class="mobile-nav-group">Piket</div>
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/piket/keluhan-list"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">list_alt</mat-icon
+        ><span>List Keluhan</span></a
+      >
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/piket/fix-data-user"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">edit</mat-icon
+        ><span>Fix Data User</span></a
+      >
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/piket/fix-after-merge-cis"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">edit</mat-icon
+        ><span>Fix After Merge CIS</span></a
+      >
+
+      <div class="mobile-nav-divider"></div>
+      <button
+        type="button"
+        class="mobile-nav-link"
+        (click)="editUsername(); closeMenu()"
+      >
+        <mat-icon aria-hidden="true">person</mat-icon
+        ><span>Signed in as {{ user() }}</span>
+      </button>
+      <button
+        type="button"
+        class="mobile-nav-link"
+        (click)="toggleTheme(); closeMenu()"
+      >
+        <mat-icon aria-hidden="true">{{
+          theme.isDark() ? "light_mode" : "dark_mode"
+        }}</mat-icon>
+        <span>{{ theme.isDark() ? "Light theme" : "Dark theme" }}</span>
+      </button>
+    </nav>
+  }
 
   <router-outlet></router-outlet>
 </div>

@@ -1,9 +1,10 @@
 ﻿import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ModalConfirmationComponent } from 'src/app/shared/component/modal/confirmation/modal-confirmation.component';
 import { UserService } from 'src/app/shared/service/user-service/user.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -60,6 +61,7 @@ export class DeleteDataComponent {
   }
 
   readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(private httpClient : HttpClient,
     private userService : UserService
@@ -77,13 +79,13 @@ export class DeleteDataComponent {
       this.isDeleteValuePristine = false;
       return;
     }
-    let dialogConfig = {width: '500px',
+    const dialogConfig = {width: '500px',
         data: {
           title: `Delete Data`,
           message : "Apakah anda ingin menghapus data <b>" + this.placeholder[this.submissionType] + "</b> dengan <b>" + this.placeholder[this.deleteBy] + " " + this.deleteValue + "</b>?"
         }
     };
-    this.dialog.open(ModalConfirmationComponent, dialogConfig).afterClosed().subscribe((res) =>{
+    this.dialog.open(ModalConfirmationComponent, dialogConfig).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((res) =>{
       if(!res)
       {
         return;
@@ -92,11 +94,9 @@ export class DeleteDataComponent {
       this.response.submissionType = this.submissionType;
       this.response.deleteBy = this.deleteBy;
       this.response.deleteValue = this.deleteValue;
-      let user = localStorage.getItem('user');
-      let url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/data/pengajuan/${this.submissionType}/${this.deleteBy}/${this.deleteValue}?audittrailUser=${user}`
-      console.log(url);
-      this.httpClient.delete(url).subscribe((response : any) =>{
-        console.log("success hit service: ", response)
+      const user = localStorage.getItem('user');
+      const url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/data/pengajuan/${this.submissionType}/${this.deleteBy}/${this.deleteValue}?audittrailUser=${user}`
+      this.httpClient.delete(url).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((response : any) =>{
         this.response.status = "SUCCESS";
         this.response.message = response.error_message.english;
       }, (error) =>{

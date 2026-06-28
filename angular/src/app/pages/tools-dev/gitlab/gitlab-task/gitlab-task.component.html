@@ -10,26 +10,26 @@
             <div class="hdr-right">
                 @if (isAuth()) {
                 <code class="token-badge">{{ maskedToken() }}</code>
-                <button class="icon-btn" (click)="showLogin.set(true)" title="Change Token">S</button>
-                <button class="icon-btn" (click)="logout()" title="Logout">X</button>
+                <button class="icon-btn" (click)="showLogin.set(true)" title="Change Token" aria-label="Change Token">S</button>
+                <button class="icon-btn" (click)="logout()" title="Logout" aria-label="Logout">X</button>
                 } @else {
-                <button class="btn primary" (click)="showLogin.set(true)">Login</button>
+                <button class="btn-primary" (click)="showLogin.set(true)">Login</button>
                 }
             </div>
         </header>
 
         <!-- Login Modal -->
         @if (showLogin()) {
-        <div class="overlay" (click)="isAuth() && showLogin.set(false)">
-            <div class="modal" (click)="$event.stopPropagation()">
-                <h2>GitLab Token</h2>
+        <div class="overlay" (click)="isAuth() && showLogin.set(false)" (keydown.escape)="isAuth() && showLogin.set(false)">
+            <div class="modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="gt-task-token-title">
+                <h2 id="gt-task-token-title">GitLab Token</h2>
                 <p class="hint">Enter your Personal Access Token with <code>api</code> scope</p>
                 <p class="hint warning">Token is stored in memory only - you'll need to re-enter it each session</p>
                 <form [formGroup]="loginForm" (ngSubmit)="login()">
                     <label>Token<input type="password" formControlName="token" class="input"
                             placeholder="glpat-xxxx" /></label>
                     <div class="modal-btns">
-                        <button type="submit" class="btn primary" [disabled]="!loginForm.valid || loading()">
+                        <button type="submit" class="btn-primary" [disabled]="!loginForm.valid || loading()">
                             @if (loading()) { Validating... } @else { Connect }
                         </button>
 
@@ -50,17 +50,17 @@
 
         <!-- Results Popup -->
         @if (showResultsPopup()) {
-        <div class="overlay" (click)="closeResultsPopup()">
-            <div class="results-modal" (click)="$event.stopPropagation()">
+        <div class="overlay" (click)="closeResultsPopup()" (keydown.escape)="closeResultsPopup()">
+            <div class="results-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="gt-task-results-title">
                 <div class="results-header">
-                    <h2>
+                    <h2 id="gt-task-results-title">
                         @if (failedResults().length === 0) {
                         Execution Complete
                         } @else {
                         Execution Complete ({{ failedResults().length }} failed)
                         }
                     </h2>
-                    <button class="icon-btn" (click)="closeResultsPopup()">X</button>
+                    <button class="icon-btn" (click)="closeResultsPopup()" aria-label="Close results">X</button>
                 </div>
 
                 <div class="results-summary">
@@ -91,7 +91,7 @@
                 </div>
 
                 <div class="results-footer">
-                    <button class="btn primary" (click)="copyAllLinks()" [disabled]="successfulResults().length === 0">
+                    <button class="btn-primary" (click)="copyAllLinks()" [disabled]="successfulResults().length === 0">
                         Copy All Links ({{ successfulResults().length }})
                     </button>
                     <button class="btn ghost" (click)="closeResultsPopup()">Close</button>
@@ -337,7 +337,8 @@
                         <h4>Reviewers <span class="count">({{ selectedReviewers().size }})</span></h4>
                         <div class="dropdown-container">
                             <button class="dropdown-toggle"
-                                (click)="showReviewersDropdown.set(!showReviewersDropdown())">
+                                (click)="showReviewersDropdown.set(!showReviewersDropdown())"
+                                [attr.aria-expanded]="showReviewersDropdown()">
                                 @if (selectedReviewers().size === 0) { Select reviewers... }
                                 @else { {{ selectedReviewers().size }} selected }
                             </button>
@@ -363,7 +364,8 @@
                         <h4>Assignees <span class="count">({{ selectedAssignees().size }})</span></h4>
                         <div class="dropdown-container">
                             <button class="dropdown-toggle"
-                                (click)="showAssigneesDropdown.set(!showAssigneesDropdown())">
+                                (click)="showAssigneesDropdown.set(!showAssigneesDropdown())"
+                                [attr.aria-expanded]="showAssigneesDropdown()">
                                 @if (selectedAssignees().size === 0) { Select assignees... }
                                 @else { {{ selectedAssignees().size }} selected }
                             </button>
@@ -388,7 +390,8 @@
                     <div class="metadata-card">
                         <h4>Labels <span class="count">({{ selectedLabels().size }})</span></h4>
                         <div class="dropdown-container">
-                            <button class="dropdown-toggle" (click)="showLabelsDropdown.set(!showLabelsDropdown())">
+                            <button class="dropdown-toggle" (click)="showLabelsDropdown.set(!showLabelsDropdown())"
+                                [attr.aria-expanded]="showLabelsDropdown()">
                                 @if (selectedLabels().size === 0) { Select labels... }
                                 @else { {{ selectedLabels().size }} selected }
                             </button>
@@ -477,7 +480,7 @@
                 </h2>
 
                 <div class="validation-section">
-                    <button class="btn primary" (click)="validateBranches()" [disabled]="validatingBranches()">
+                    <button class="btn-primary" (click)="validateBranches()" [disabled]="validatingBranches()">
                         @if (validatingBranches()) { Validating... } @else { Verify Branches }
                     </button>
 

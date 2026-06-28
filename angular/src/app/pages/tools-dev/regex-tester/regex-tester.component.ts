@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -17,6 +17,7 @@ interface MatchRow {
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './regex-tester.component.html',
   styleUrls: ['./regex-tester.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegexTesterComponent {
   pattern = '';
@@ -65,22 +66,30 @@ export class RegexTesterComponent {
         });
       }
     }
-    this.buildHighlight(re);
+    this.buildHighlight();
   }
 
   private escapeHtml(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  private buildHighlight(re: RegExp): void {
-    const escaped = this.escapeHtml(this.testString);
-    let html: string;
-    if (this.flags.includes('g')) {
-      const global = new RegExp(this.pattern, this.flags.includes('g') ? this.flags : this.flags + 'g');
-      html = escaped.replace(global, (match) => `<mark>${match}</mark>`);
-    } else {
-      html = escaped.replace(re, (match) => `<mark>${match}</mark>`);
+  private buildHighlight(): void {
+    // Splice <mark>/</mark> around the match ranges already computed on the
+    // RAW testString (this.matches holds m.index + m[0].length). Escaping each
+    // slice independently avoids re-running the user pattern against the
+    // HTML-escaped string, which would mismatch on &lt;/&gt;/&amp; entities.
+    let html = '';
+    let lastEnd = 0;
+    for (const m of this.matches) {
+      const start = m.index;
+      const end = m.index + m.match.length;
+      html += this.escapeHtml(this.testString.slice(lastEnd, start));
+      html += '<mark>';
+      html += this.escapeHtml(this.testString.slice(start, end));
+      html += '</mark>';
+      lastEnd = end;
     }
+    html += this.escapeHtml(this.testString.slice(lastEnd));
     this.highlighted = this.sanitizer.bypassSecurityTrustHtml(html);
   }
 

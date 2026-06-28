@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, signal } from '@angular/core';
 import { StatusAPI } from 'src/app/shared/model/enum/status-api.enum';
 
 interface ScheduleEntry {
@@ -28,15 +28,18 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule],
   selector: 'app-calendar-piket',
   templateUrl: './calendar-piket.component.html',
-  styleUrls: ['./calendar-piket.component.css']
+  styleUrls: ['./calendar-piket.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CalendarPiketComponent implements OnInit {
-  statusMenu: StatusAPI = StatusAPI.IDLE;
+export class CalendarPiketComponent {
+  statusMenu = signal<StatusAPI>(StatusAPI.IDLE);
   statusAPI = StatusAPI;
 
-  currentDate = new Date();
-  currentMonth = this.currentDate.getMonth();
-  currentYear = this.currentDate.getFullYear();
+  readonly today = new Date();
+  readonly currentMonth = signal(this.today.getMonth());
+  readonly currentYear = signal(this.today.getFullYear());
+  readonly scheduleMap = signal<Map<string, ScheduleEntry>>(new Map());
+  readonly fileName = signal('');
 
   monthNames = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -44,25 +47,21 @@ export class CalendarPiketComponent implements OnInit {
   ];
   dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
-  calendarDays: CalendarDay[] = [];
-  scheduleMap: Map<string, ScheduleEntry> = new Map();
-  fileName = '';
+  readonly calendarDays = computed<CalendarDay[]>(() =>
+    this.buildCalendar(this.currentMonth(), this.currentYear(), this.scheduleMap())
+  );
 
-  ngOnInit(): void {
-    this.generateCalendar();
-  }
-
-  generateCalendar(): void {
-    this.calendarDays = [];
-    const firstDayOfMonth = new Date(this.currentYear, this.currentMonth, 1);
-    const lastDayOfMonth = new Date(this.currentYear, this.currentMonth + 1, 0);
+  private buildCalendar(month: number, year: number, scheduleMap: Map<string, ScheduleEntry>): CalendarDay[] {
+    const days: CalendarDay[] = [];
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
     const daysInMonth = lastDayOfMonth.getDate();
     const startDayOfWeek = firstDayOfMonth.getDay();
 
     // Previous month padding
-    const prevMonthLastDay = new Date(this.currentYear, this.currentMonth, 0).getDate();
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
     for (let i = startDayOfWeek - 1; i >= 0; i--) {
-      this.calendarDays.push({
+      days.push({
         day: prevMonthLastDay - i,
         isCurrentMonth: false,
         isToday: false
@@ -72,28 +71,29 @@ export class CalendarPiketComponent implements OnInit {
     // Current month days
     const today = new Date();
     for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = this.formatDateStr(day, this.currentMonth, this.currentYear);
+      const dateStr = this.formatDateStr(day, month, year);
       const isToday = day === today.getDate() &&
-        this.currentMonth === today.getMonth() &&
-        this.currentYear === today.getFullYear();
+        month === today.getMonth() &&
+        year === today.getFullYear();
 
-      this.calendarDays.push({
+      days.push({
         day,
         isCurrentMonth: true,
-        schedule: this.scheduleMap.get(dateStr),
+        schedule: scheduleMap.get(dateStr),
         isToday
       });
     }
 
     // Next month padding to fill 6 rows (42 cells)
-    const remainingCells = 42 - this.calendarDays.length;
+    const remainingCells = 42 - days.length;
     for (let day = 1; day <= remainingCells; day++) {
-      this.calendarDays.push({
+      days.push({
         day,
         isCurrentMonth: false,
         isToday: false
       });
     }
+    return days;
   }
 
   formatDateStr(day: number, month: number, year: number): string {
@@ -103,28 +103,29 @@ export class CalendarPiketComponent implements OnInit {
   }
 
   prevMonth(): void {
-    this.currentMonth--;
-    if (this.currentMonth < 0) {
-      this.currentMonth = 11;
-      this.currentYear--;
+    const month = this.currentMonth() - 1;
+    if (month < 0) {
+      this.currentMonth.set(11);
+      this.currentYear.update(y => y - 1);
+    } else {
+      this.currentMonth.set(month);
     }
-    this.generateCalendar();
   }
 
   nextMonth(): void {
-    this.currentMonth++;
-    if (this.currentMonth > 11) {
-      this.currentMonth = 0;
-      this.currentYear++;
+    const month = this.currentMonth() + 1;
+    if (month > 11) {
+      this.currentMonth.set(0);
+      this.currentYear.update(y => y + 1);
+    } else {
+      this.currentMonth.set(month);
     }
-    this.generateCalendar();
   }
 
   goToToday(): void {
     const today = new Date();
-    this.currentMonth = today.getMonth();
-    this.currentYear = today.getFullYear();
-    this.generateCalendar();
+    this.currentMonth.set(today.getMonth());
+    this.currentYear.set(today.getFullYear());
   }
 
   onFileSelected(event: Event): void {
@@ -134,29 +135,28 @@ export class CalendarPiketComponent implements OnInit {
     }
 
     const file = input.files[0];
-    this.fileName = file.name;
-    this.statusMenu = StatusAPI.LOADING;
+    this.fileName.set(file.name);
+    this.statusMenu.set(StatusAPI.LOADING);
 
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
         this.parseSchedule(content);
-        this.generateCalendar();
-        this.statusMenu = StatusAPI.SUCCESS;
+        this.statusMenu.set(StatusAPI.SUCCESS);
       } catch (err) {
         console.error('Error parsing file:', err);
-        this.statusMenu = StatusAPI.FAILED;
+        this.statusMenu.set(StatusAPI.FAILED);
       }
     };
     reader.onerror = () => {
-      this.statusMenu = StatusAPI.FAILED;
+      this.statusMenu.set(StatusAPI.FAILED);
     };
     reader.readAsText(file);
   }
 
   parseSchedule(content: string): void {
-    this.scheduleMap.clear();
+    const map = new Map<string, ScheduleEntry>();
     const lines = content.split(/\r?\n/).filter(line => line.trim() !== '');
 
     // Skip header if first line contains non-date words
@@ -176,15 +176,16 @@ export class CalendarPiketComponent implements OnInit {
           pic2: parts[2] || '-',
           pic3: parts[3] || '-'
         };
-        this.scheduleMap.set(dateStr, entry);
+        map.set(dateStr, entry);
 
         // Also store with normalized format if input uses yyyy-mm-dd
         const normalized = this.normalizeDateStr(dateStr);
         if (normalized && normalized !== dateStr) {
-          this.scheduleMap.set(normalized, entry);
+          map.set(normalized, entry);
         }
       }
     }
+    this.scheduleMap.set(map);
   }
 
   normalizeDateStr(dateStr: string): string | null {

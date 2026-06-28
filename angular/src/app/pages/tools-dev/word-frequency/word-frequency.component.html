@@ -25,19 +25,25 @@
       <button class="btn-secondary" (click)="clear()">Clear</button>
     </div>
 
-    <div class="tool-stats" *ngIf="input">{{ totalWords }} kata · {{ uniqueWords }} unik</div>
+    @if (input) {
+      <div class="tool-stats">{{ totalWords }} kata · {{ uniqueWords }} unik</div>
+    }
 
-    <ng-container *ngIf="input && rows().length">
+    @if (input && rows().length) {
       <label class="tool-label" style="margin-top:10px">Frekuensi (top {{ rows().length }})</label>
       <div class="wf-list">
-        <div class="wf-row" *ngFor="let r of rows()">
-          <span class="wf-word"><code>{{ r.word }}</code></span>
-          <div class="wf-bar-track"><div class="wf-bar" [style.width.%]="barWidth(r)"></div></div>
-          <span class="wf-count">{{ r.count }}</span>
-          <span class="wf-pct">{{ r.pct }}%</span>
-        </div>
+        @for (r of rows(); track r.word) {
+          <div class="wf-row">
+            <span class="wf-word"><code>{{ r.word }}</code></span>
+            <div class="wf-bar-track"><div class="wf-bar" [style.width.%]="barWidth(r)"></div></div>
+            <span class="wf-count">{{ r.count }}</span>
+            <span class="wf-pct">{{ r.pct }}%</span>
+          </div>
+        }
       </div>
-    </ng-container>
-    <div class="ts-hint" *ngIf="input && !rows().length">Tidak ada kata yang cocok dengan filter.</div>
+    }
+    @if (input && !rows().length) {
+      <div class="ts-hint">Tidak ada kata yang cocok dengan filter.</div>
+    }
   </mat-card>
 </div>

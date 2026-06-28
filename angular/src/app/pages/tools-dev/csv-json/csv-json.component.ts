@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +13,7 @@ type Direction = 'csv2json' | 'json2csv';
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './csv-json.component.html',
   styleUrls: ['./csv-json.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CsvJsonComponent {
   direction: Direction = 'csv2json';

@@ -1,39 +1,145 @@
-﻿<div class="container toolbox-wrap">
-  <aside class="toolbox-tabs">
-    <button *ngFor="let t of tools" class="toolbox-tab" [class.active]="active === t.slug" (click)="select(t.slug)">
-      <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
-      <span>{{ t.label }}</span>
+<div class="container toolbox-wrap">
+  <aside class="toolbox-tabs" [class.mobile-tabs-open]="mobileTabsOpen()">
+    <button
+      type="button"
+      class="toolbox-mobile-bar"
+      (click)="toggleMobileTabs()"
+      [attr.aria-expanded]="mobileTabsOpen()"
+      aria-label="Toggle tool list"
+    >
+      <mat-icon aria-hidden="true">construction</mat-icon>
+      <span class="toolbox-mobile-label">{{ activeLabel() }}</span>
+      <mat-icon aria-hidden="true" class="toolbox-mobile-chevron">{{
+        mobileTabsOpen() ? "expand_less" : "expand_more"
+      }}</mat-icon>
     </button>
+    <div class="toolbox-search">
+      <mat-icon aria-hidden="true" class="toolbox-search-icon">search</mat-icon>
+      <input
+        type="text"
+        class="toolbox-search-input"
+        [ngModel]="query()"
+        (ngModelChange)="query.set($event)"
+        placeholder="Filter tools…  (press /)"
+        autocomplete="off"
+        aria-label="Filter tools"
+      />
+      @if (hasQuery()) {
+        <button
+          type="button"
+          class="toolbox-search-clear"
+          (click)="query.set('')"
+          aria-label="Clear filter"
+        >
+          ×
+        </button>
+      }
+    </div>
+
+    <div class="toolbox-scroll">
+      <!-- Pinned: favorites -->
+      @if (favoriteTools().length) {
+        <div class="toolbox-group-title">
+          <mat-icon aria-hidden="true">star</mat-icon>Favorites
+        </div>
+        @for (t of favoriteTools(); track t.slug) {
+          <div class="toolbox-tab-row" [class.active]="active() === t.slug">
+            <button type="button" class="toolbox-tab" (click)="select(t.slug)">
+              <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
+              <span class="toolbox-tab-label">{{ t.label }}</span>
+            </button>
+            <button
+              type="button"
+              class="toolbox-star-btn"
+              [attr.aria-pressed]="isFav(t.slug)"
+              [attr.aria-label]="'Unpin ' + t.label + ' as favorite'"
+              (click)="toggleFav($event, t.slug)"
+            >
+              <mat-icon class="toolbox-star on" aria-hidden="true"
+                >star</mat-icon
+              >
+            </button>
+          </div>
+        }
+      }
+
+      <!-- Pinned: recents -->
+      @if (recentTools().length) {
+        <div class="toolbox-group-title">
+          <mat-icon aria-hidden="true">history</mat-icon>Recent
+        </div>
+        @for (t of recentTools(); track t.slug) {
+          <div class="toolbox-tab-row" [class.active]="active() === t.slug">
+            <button type="button" class="toolbox-tab" (click)="select(t.slug)">
+              <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
+              <span class="toolbox-tab-label">{{ t.label }}</span>
+            </button>
+            <button
+              type="button"
+              class="toolbox-star-btn"
+              [attr.aria-pressed]="isFav(t.slug)"
+              [attr.aria-label]="
+                (isFav(t.slug) ? 'Unpin ' : 'Pin ') + t.label + ' as favorite'
+              "
+              (click)="toggleFav($event, t.slug)"
+            >
+              <mat-icon
+                class="toolbox-star"
+                [class.on]="isFav(t.slug)"
+                aria-hidden="true"
+                >{{ isFav(t.slug) ? "star" : "star_border" }}</mat-icon
+              >
+            </button>
+          </div>
+        }
+      }
+
+      <!-- Category groups -->
+      @for (ge of groupEntries(); track ge.group) {
+        @if (ge.tools.length) {
+          <div class="toolbox-group-title">{{ ge.group }}</div>
+          @for (t of ge.tools; track t.slug) {
+            <div class="toolbox-tab-row" [class.active]="active() === t.slug">
+              <button
+                type="button"
+                class="toolbox-tab"
+                (click)="select(t.slug)"
+              >
+                <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
+                <span class="toolbox-tab-label">{{ t.label }}</span>
+              </button>
+              <button
+                type="button"
+                class="toolbox-star-btn"
+                [attr.aria-pressed]="isFav(t.slug)"
+                [attr.aria-label]="
+                  (isFav(t.slug) ? 'Unpin ' : 'Pin ') + t.label + ' as favorite'
+                "
+                (click)="toggleFav($event, t.slug)"
+              >
+                <mat-icon
+                  class="toolbox-star"
+                  [class.on]="isFav(t.slug)"
+                  aria-hidden="true"
+                  >{{ isFav(t.slug) ? "star" : "star_border" }}</mat-icon
+                >
+              </button>
+            </div>
+          }
+        }
+      }
+
+      @if (!hasAnyTool()) {
+        <div class="toolbox-empty">No tools match “{{ query() }}”.</div>
+      }
+    </div>
   </aside>
+
   <section class="toolbox-content">
-    <ng-container [ngSwitch]="active">
-      <app-json-formatter *ngSwitchCase="'json-formatter'"></app-json-formatter>
-      <app-decoder *ngSwitchCase="'decoder'"></app-decoder>
-      <app-regex-tester *ngSwitchCase="'regex-tester'"></app-regex-tester>
-      <app-id-generator *ngSwitchCase="'id-generator'"></app-id-generator>
-      <app-hash-generator *ngSwitchCase="'hash-generator'"></app-hash-generator>
-      <app-password-generator *ngSwitchCase="'password-generator'"></app-password-generator>
-      <app-text-diff *ngSwitchCase="'text-diff'"></app-text-diff>
-      <app-color-converter *ngSwitchCase="'color-converter'"></app-color-converter>
-      <app-text-transforms *ngSwitchCase="'text-transforms'"></app-text-transforms>
-      <app-base-converter *ngSwitchCase="'base-converter'"></app-base-converter>
-      <app-http-status *ngSwitchCase="'http-status'"></app-http-status>
-      <app-unicode-escape *ngSwitchCase="'unicode-escape'"></app-unicode-escape>
-      <app-markdown *ngSwitchCase="'markdown'"></app-markdown>
-      <app-cron-explainer *ngSwitchCase="'cron-explainer'"></app-cron-explainer>
-      <app-image-base64 *ngSwitchCase="'image-base64'"></app-image-base64>
-      <app-lorem-ipsum *ngSwitchCase="'lorem-ipsum'"></app-lorem-ipsum>
-      <app-timestamp-converter *ngSwitchCase="'timestamp-converter'"></app-timestamp-converter>
-      <app-csv-json *ngSwitchCase="'csv-json'"></app-csv-json>
-      <app-sql-formatter *ngSwitchCase="'sql-formatter'"></app-sql-formatter>
-      <app-text-sort *ngSwitchCase="'text-sort'"></app-text-sort>
-      <app-char-counter *ngSwitchCase="'char-counter'"></app-char-counter>
-      <app-slug-generator *ngSwitchCase="'slug-generator'"></app-slug-generator>
-      <app-url-parser *ngSwitchCase="'url-parser'"></app-url-parser>
-      <app-chmod-calc *ngSwitchCase="'chmod-calc'"></app-chmod-calc>
-      <app-line-tools *ngSwitchCase="'line-tools'"></app-line-tools>
-      <app-random-picker *ngSwitchCase="'random-picker'"></app-random-picker>
-      <app-word-frequency *ngSwitchCase="'word-frequency'"></app-word-frequency>
-    </ng-container>
+    @if (toolCmp()) {
+      <ng-container *ngComponentOutlet="toolCmp()"></ng-container>
+    } @else {
+      <div class="toolbox-loading">Loading…</div>
+    }
   </section>
 </div>

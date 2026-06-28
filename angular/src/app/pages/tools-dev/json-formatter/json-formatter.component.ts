@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,9 +7,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-json-formatter',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
+  imports: [FormsModule, MatCardModule, MatIconModule],
   templateUrl: './json-formatter.component.html',
   styleUrls: ['./json-formatter.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JsonFormatterComponent {
   input = '';

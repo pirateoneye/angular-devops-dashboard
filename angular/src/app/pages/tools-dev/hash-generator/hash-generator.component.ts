@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,9 +8,10 @@ import * as CryptoJS from 'crypto-js';
 @Component({
   selector: 'app-hash-generator',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
+  imports: [FormsModule, MatCardModule, MatIconModule],
   templateUrl: './hash-generator.component.html',
   styleUrls: ['./hash-generator.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HashGeneratorComponent {
   input = '';

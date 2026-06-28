@@ -3,7 +3,7 @@
 .cj-dir label { display:inline-flex; align-items:center; gap:4px; cursor:pointer; color:#144e83; font-weight:600; }
 .cj-row { display:flex; gap:14px; align-items:center; margin-top:8px; flex-wrap:wrap; font-size:13px; }
 .cj-row label { display:inline-flex; align-items:center; gap:4px; cursor:pointer; color:#495057; }
-.cj-row select { border:1px solid #ddd; border-radius:6px; padding:3px 6px; font-size:12px; }
+.cj-row select { border:1px solid #ced4da; border-radius:8px; padding:3px 6px; font-size:12px; }
 .cj-swap { padding:4px 10px; }
 .jf-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .jf-grid > div { position:relative; }

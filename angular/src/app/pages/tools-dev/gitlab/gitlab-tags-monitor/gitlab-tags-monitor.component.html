@@ -10,19 +10,19 @@
             <div class="hdr-right">
                 @if (isAuth()) {
                 <code class="token-badge">{{ maskedToken() }}</code>
-                <button class="icon-btn" (click)="showTokenPopup.set(true)" title="Change Token">S</button>
-                <button class="icon-btn" (click)="logout()" title="Logout">X</button>
+                <button class="icon-btn" (click)="showTokenPopup.set(true)" title="Change Token" aria-label="Change Token">S</button>
+                <button class="icon-btn" (click)="logout()" title="Logout" aria-label="Logout">X</button>
                 } @else {
-                <button class="btn primary" (click)="showTokenPopup.set(true)">Login</button>
+                <button class="btn-primary" (click)="showTokenPopup.set(true)">Login</button>
                 }
             </div>
         </header>
 
         <!-- Login Modal -->
         @if (showTokenPopup()) {
-        <div class="overlay" (click)="isAuth() && showTokenPopup.set(false)">
-            <div class="modal" (click)="$event.stopPropagation()">
-                <h2>GitLab Token</h2>
+        <div class="overlay" (click)="isAuth() && showTokenPopup.set(false)" (keydown.escape)="isAuth() && showTokenPopup.set(false)">
+            <div class="modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="gtm-token-title">
+                <h2 id="gtm-token-title">GitLab Token</h2>
                 <p class="hint">Enter your Personal Access Token with <code>api</code> scope</p>
                 <p class="hint warning">Token is stored in memory only - re-enter each session</p>
                 <form [formGroup]="loginForm" (ngSubmit)="login()">
@@ -30,7 +30,7 @@
                         <input type="password" formControlName="token" class="input" placeholder="glpat-xxxx" />
                     </label>
                     <div class="modal-btns">
-                        <button type="submit" class="btn primary" [disabled]="!loginForm.valid || loading()">
+                        <button type="submit" class="btn-primary" [disabled]="!loginForm.valid || loading()">
                             @if (loading()) { Validating... } @else { Connect }
                         </button>
                         @if (isAuth()) {
@@ -70,7 +70,7 @@
 
                 <div class="ctrl">
                     <span class="lbl">Auto Refresh</span>
-                    <button class="btn" [class.primary]="autoRefresh()" (click)="toggleAutoRefresh()">
+                    <button class="btn" [class.btn-primary]="autoRefresh()" (click)="toggleAutoRefresh()">
                         {{ autoRefresh() ? 'ON' : 'OFF' }}
                     </button>
                 </div>
@@ -86,7 +86,7 @@
                     </select>
                 </div>
 
-                <button class="btn primary" (click)="fetchAllTags()" [disabled]="loadingProjects() || loading()">
+                <button class="btn-primary" (click)="fetchAllTags()" [disabled]="loadingProjects() || loading()">
                     @if (loadingProjects()) { Loading... } @else { Refresh Tags }
                 </button>
             </div>
@@ -127,17 +127,26 @@
             <table class="tags-table">
                 <thead>
                     <tr>
-                        <th class="sortable" (click)="setSort('projectName')">
+                        <th class="sortable" role="button" tabindex="0"
+                            (click)="setSort('projectName')"
+                            (keydown.enter)="setSort('projectName')"
+                            (keydown.space)="setSort('projectName')">
                             Project
-                            @if (sortKey() === 'projectName') { <span class="arrow">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span> }
+                            @if (sortKey() === 'projectName') { <span class="arrow" aria-hidden="true">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span> }
                         </th>
-                        <th class="sortable" (click)="setSort('latestTag')">
+                        <th class="sortable" role="button" tabindex="0"
+                            (click)="setSort('latestTag')"
+                            (keydown.enter)="setSort('latestTag')"
+                            (keydown.space)="setSort('latestTag')">
                             Latest Tag
-                            @if (sortKey() === 'latestTag') { <span class="arrow">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span> }
+                            @if (sortKey() === 'latestTag') { <span class="arrow" aria-hidden="true">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span> }
                         </th>
-                        <th class="sortable" (click)="setSort('tagDate')">
+                        <th class="sortable" role="button" tabindex="0"
+                            (click)="setSort('tagDate')"
+                            (keydown.enter)="setSort('tagDate')"
+                            (keydown.space)="setSort('tagDate')">
                             Tagged
-                            @if (sortKey() === 'tagDate') { <span class="arrow">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span> }
+                            @if (sortKey() === 'tagDate') { <span class="arrow" aria-hidden="true">{{ sortDir() === 'asc' ? '↑' : '↓' }}</span> }
                         </th>
                         <th>Author</th>
                         <th class="col-actions">Actions</th>
@@ -177,9 +186,12 @@
                         </td>
                         <td class="col-actions">
                             <button class="btn ghost sm" (click)="refreshSingle(p.projectId)" title="Refresh"
+                                [attr.aria-label]="'Refresh tags for ' + p.projectName"
                                 [disabled]="p.status === 'loading'">↻</button>
                             @if (p.tags.length > 0) {
-                            <button class="btn ghost sm" (click)="toggleExpand(p.projectId)">
+                            <button class="btn ghost sm" (click)="toggleExpand(p.projectId)"
+                                [attr.aria-expanded]="isExpanded(p.projectId)"
+                                [attr.aria-label]="'Toggle tags for ' + p.projectName">
                                 {{ isExpanded(p.projectId) ? '-' : '+' }} {{ p.tags.length }}
                             </button>
                             }

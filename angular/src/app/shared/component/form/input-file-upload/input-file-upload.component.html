@@ -1,8 +1,8 @@
 <!-- Area drop zone; klik area ini untuk memicu file input -->
-<div class="drop-zone"(dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"(drop)="onDrop($event)"(click)="fileInput.click()" [class.drag-over]="event == 'onDragOver'">
-    <p *ngIf="event != 'onDragOver' && file == null">Drag dan drop file disini atau klik untuk memilih file</p>
-    <p *ngIf="event != 'onDragOver' && file != null" style="font-weight: 700;">{{file.name}}</p>
-    <p *ngIf="event == 'onDragOver'">Drop file disini</p>
+<div class="drop-zone"(dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"(drop)="onDrop($event)"(click)="fileInput.click()" [class.drag-over]="event === 'onDragOver'">
+    <p *ngIf="event !== 'onDragOver' && file == null">Drag dan drop file disini atau klik untuk memilih file</p>
+    <p *ngIf="event !== 'onDragOver' && file != null" style="font-weight: 700;">{{file.name}}</p>
+    <p *ngIf="event === 'onDragOver'">Drop file disini</p>
     <!-- <div>
         <progress [value]="progress" max="100"></progress>
         <span>{{ progress }}%</span>

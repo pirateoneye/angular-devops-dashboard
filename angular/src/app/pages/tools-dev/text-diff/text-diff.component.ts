@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -14,6 +14,7 @@ interface DiffLine {
   imports: [CommonModule, FormsModule, MatCardModule],
   templateUrl: './text-diff.component.html',
   styleUrls: ['./text-diff.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextDiffComponent {
   left = '';

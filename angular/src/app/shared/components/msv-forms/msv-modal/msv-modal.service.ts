@@ -14,6 +14,36 @@ import { MsvModalRef } from './msv-modal-ref';
   providedIn: 'root'
 })
 export class MsvModalService {
+  /**
+   * Stack of currently open modals, ordered from oldest to newest.
+   * Used to determine which modal is topmost (for Escape-key handling).
+   */
+  private static openStack: MsvModalRef<any, any>[] = [];
+
+  /**
+   * Returns true if the given modalRef is the topmost open modal.
+   * Used by MsvModalComponent to ensure only the topmost modal closes on Escape.
+   */
+  static isTopmost(modalRef: MsvModalRef<any, any> | undefined): boolean {
+    if (!modalRef) {
+      return true;
+    }
+    const stack = MsvModalService.openStack;
+    return stack.length === 0 || stack[stack.length - 1] === modalRef;
+  }
+
+  private pushOpen(modalRef: MsvModalRef<any, any>): void {
+    MsvModalService.openStack.push(modalRef);
+  }
+
+  private popOpen(modalRef: MsvModalRef<any, any>): void {
+    const stack = MsvModalService.openStack;
+    const idx = stack.lastIndexOf(modalRef);
+    if (idx !== -1) {
+      stack.splice(idx, 1);
+    }
+  }
+
   constructor(
     private overlay: Overlay,
     private injector: Injector,
@@ -74,12 +104,20 @@ export class MsvModalService {
     // Attach modal to overlay
     overlayRef.hostElement.appendChild(modalElement);
 
+    // Track this modal on the open stack (for topmost Escape-key handling)
+    this.pushOpen(modalRef);
+
     // Clean up when modal closes
     modalRef.afterClosed$.subscribe(() => {
-      this.appRef.detachView(contentComponentRef.hostView);
-      this.appRef.detachView(modalComponentRef.hostView);
-      contentComponentRef.destroy();
-      modalComponentRef.destroy();
+      try {
+        this.appRef.detachView(contentComponentRef.hostView);
+        this.appRef.detachView(modalComponentRef.hostView);
+        contentComponentRef.destroy();
+        modalComponentRef.destroy();
+      } finally {
+        this.popOpen(modalRef);
+        overlayRef.dispose();
+      }
     });
 
     return modalRef;
@@ -129,10 +167,18 @@ export class MsvModalService {
     // Attach to overlay
     overlayRef.hostElement.appendChild(modalElement);
 
-    // Clean up on close
+    // Track this modal on the open stack (for topmost Escape-key handling)
+    this.pushOpen(modalRef);
+
+    // Clean up on close — ensure overlay is disposed on every close path
     modalRef.afterClosed$.subscribe(() => {
-      this.appRef.detachView(modalComponentRef.hostView);
-      modalComponentRef.destroy();
+      try {
+        this.appRef.detachView(modalComponentRef.hostView);
+        modalComponentRef.destroy();
+      } finally {
+        this.popOpen(modalRef);
+        overlayRef.dispose();
+      }
     });
 
     // Return observable that emits the result
@@ -158,7 +204,11 @@ export class MsvModalService {
   }
 
   /**
-   * Creates the HTML content for confirmation dialog
+   * Creates the HTML content for confirmation dialog.
+   * Builds the DOM with createElement + textContent (no innerHTML interpolation)
+   * so caller-supplied title/message are treated as plain text, preventing XSS.
+   * The visual styling lives in MsvModalComponent's encapsulated styles and is
+   * applied via CSS variables (var(--msv-primary-color) etc.).
    */
   private createConfirmationContent(
     title: string,
@@ -167,78 +217,37 @@ export class MsvModalService {
   ): HTMLElement {
     const container = document.createElement('div');
     container.className = 'msv-confirm-dialog';
-    
-    container.innerHTML = `
-      <div class="msv-confirm-title">${title}</div>
-      <div class="msv-confirm-message">${message}</div>
-      <div class="msv-confirm-actions">
-        <button class="msv-confirm-cancel" type="button">Tidak</button>
-        <button class="msv-confirm-ok" type="button">Iya</button>
-      </div>
-    `;
 
-    // Add styles
-    const style = document.createElement('style');
-    style.textContent = `
-      .msv-confirm-dialog {
-        font-family: 'Open Sans', sans-serif;
-      }
-      .msv-confirm-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: #144E83;
-        margin-bottom: 16px;
-      }
-      .msv-confirm-message {
-        font-size: 14px;
-        color: #2d3748;
-        line-height: 1.6;
-        margin-bottom: 24px;
-      }
-      .msv-confirm-actions {
-        display: flex;
-        gap: 0;
-        border-top: 1px solid #c3c3c3;
-        margin-top: 24px;
-        padding-top: 0;
-      }
-      .msv-confirm-cancel,
-      .msv-confirm-ok {
-        flex: 1;
-        height: 40px;
-        font-family: 'Open Sans', sans-serif;
-        font-weight: 700;
-        outline: none;
-        border: none;
-        background-color: white;
-        color: rgb(65, 65, 65);
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-      .msv-confirm-cancel {
-        border-radius: 0 0 0 5px;
-      }
-      .msv-confirm-cancel:hover {
-        color: white;
-        background-color: #aa0039;
-      }
-      .msv-confirm-ok {
-        border-radius: 0 0 5px 0;
-        border-left: 1px solid #c3c3c3;
-      }
-      .msv-confirm-ok:hover {
-        color: white;
-        background-color: #005CAA;
-      }
-    `;
-    container.appendChild(style);
+    const titleEl = document.createElement('div');
+    titleEl.className = 'msv-confirm-title';
+    titleEl.textContent = title;
+
+    const messageEl = document.createElement('div');
+    messageEl.className = 'msv-confirm-message';
+    messageEl.textContent = message;
+
+    const actionsEl = document.createElement('div');
+    actionsEl.className = 'msv-confirm-actions';
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'msv-confirm-cancel';
+    cancelBtn.type = 'button';
+    cancelBtn.textContent = 'Tidak';
+
+    const okBtn = document.createElement('button');
+    okBtn.className = 'msv-confirm-ok';
+    okBtn.type = 'button';
+    okBtn.textContent = 'Iya';
+
+    actionsEl.appendChild(cancelBtn);
+    actionsEl.appendChild(okBtn);
+    container.appendChild(titleEl);
+    container.appendChild(messageEl);
+    container.appendChild(actionsEl);
 
     // Add event listeners
-    const cancelBtn = container.querySelector('.msv-confirm-cancel') as HTMLButtonElement;
-    const okBtn = container.querySelector('.msv-confirm-ok') as HTMLButtonElement;
-
-    cancelBtn?.addEventListener('click', () => modalRef.close(false));
-    okBtn?.addEventListener('click', () => modalRef.close(true));
+    cancelBtn.addEventListener('click', () => modalRef.close(false));
+    okBtn.addEventListener('click', () => modalRef.close(true));
 
     return container;
   }

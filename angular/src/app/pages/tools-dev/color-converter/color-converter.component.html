@@ -5,38 +5,40 @@
     <div class="tool-divider"></div>
 
     <div class="cc-top">
-      <div class="cc-swatch" [style.background]="hex"></div>
-      <input type="color" [value]="hex" (input)="onPicker($event)" class="cc-picker" />
+      <div class="cc-swatch" [style.background]="hex" aria-hidden="true"></div>
+      <input type="color" id="cc-picker" [value]="hex" (input)="onPicker($event)" class="cc-picker" aria-label="Color preview picker" />
     </div>
 
     <div class="cc-row">
-      <label class="tool-label">HEX</label>
+      <label class="tool-label" for="cc-hex">HEX</label>
       <div class="cc-line">
-        <input class="cc-input-mono" [(ngModel)]="hex" (ngModelChange)="fromHex()" />
-        <button class="icon-btn" (click)="copy(hex)"><mat-icon>file_copy</mat-icon></button>
+        <input id="cc-hex" class="cc-input-mono" [(ngModel)]="hex" (ngModelChange)="fromHex()" />
+        <button class="icon-btn" (click)="copy(hex)" aria-label="Copy HEX value"><mat-icon aria-hidden="true">file_copy</mat-icon></button>
       </div>
     </div>
 
     <div class="cc-row">
-      <label class="tool-label">RGB</label>
+      <label class="tool-label" for="cc-r">RGB</label>
       <div class="cc-rgb">
-        <input type="number" [(ngModel)]="r" (ngModelChange)="fromRgb()" min="0" max="255" class="cc-num" /> 
-        <input type="number" [(ngModel)]="g" (ngModelChange)="fromRgb()" min="0" max="255" class="cc-num" /> 
-        <input type="number" [(ngModel)]="b" (ngModelChange)="fromRgb()" min="0" max="255" class="cc-num" />
-        <button class="icon-btn" (click)="copy(rgbStr)"><mat-icon>file_copy</mat-icon></button>
+        <input id="cc-r" type="number" [(ngModel)]="r" (ngModelChange)="fromRgb()" min="0" max="255" class="cc-num" aria-label="Red" />
+        <input id="cc-g" type="number" [(ngModel)]="g" (ngModelChange)="fromRgb()" min="0" max="255" class="cc-num" aria-label="Green" />
+        <input id="cc-b" type="number" [(ngModel)]="b" (ngModelChange)="fromRgb()" min="0" max="255" class="cc-num" aria-label="Blue" />
+        <button class="icon-btn" (click)="copy(rgbStr)" aria-label="Copy RGB value"><mat-icon aria-hidden="true">file_copy</mat-icon></button>
       </div>
     </div>
 
     <div class="cc-row">
-      <label class="tool-label">HSL</label>
+      <label class="tool-label" for="cc-h">HSL</label>
       <div class="cc-rgb">
-        <input type="number" [(ngModel)]="h" (ngModelChange)="fromHsl()" min="0" max="360" class="cc-num" />
-        <input type="number" [(ngModel)]="s" (ngModelChange)="fromHsl()" min="0" max="100" class="cc-num" />
-        <input type="number" [(ngModel)]="l" (ngModelChange)="fromHsl()" min="0" max="100" class="cc-num" />
-        <button class="icon-btn" (click)="copy(hslStr)"><mat-icon>file_copy</mat-icon></button>
+        <input id="cc-h" type="number" [(ngModel)]="h" (ngModelChange)="fromHsl()" min="0" max="360" class="cc-num" aria-label="Hue" />
+        <input id="cc-s" type="number" [(ngModel)]="s" (ngModelChange)="fromHsl()" min="0" max="100" class="cc-num" aria-label="Saturation" />
+        <input id="cc-l" type="number" [(ngModel)]="l" (ngModelChange)="fromHsl()" min="0" max="100" class="cc-num" aria-label="Lightness" />
+        <button class="icon-btn" (click)="copy(hslStr)" aria-label="Copy HSL value"><mat-icon aria-hidden="true">file_copy</mat-icon></button>
       </div>
     </div>
 
-    <div class="tool-error" *ngIf="error">{{ error }}</div>
+    @if (error) {
+      <div class="tool-error" role="alert">{{ error }}</div>
+    }
   </mat-card>
 </div>

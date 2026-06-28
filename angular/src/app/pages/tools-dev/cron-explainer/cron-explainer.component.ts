@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -12,6 +12,7 @@ interface FieldResult { values: number[] | null; desc: string; }
   imports: [CommonModule, FormsModule, MatCardModule],
   templateUrl: './cron-explainer.component.html',
   styleUrls: ['./cron-explainer.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CronExplainerComponent {
   expr = '*/5 * * * *';

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -11,9 +11,10 @@ interface StatusRow { code: number; text: string; cat: '1xx' | '2xx' | '3xx' | '
   imports: [CommonModule, FormsModule, MatCardModule],
   templateUrl: './http-status.component.html',
   styleUrls: ['./http-status.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HttpStatusComponent {
-  query = '';
+  query = signal('');
   statuses: StatusRow[] = [
     { code: 100, text: 'Continue', cat: '1xx', desc: 'Lanjutkan request.' },
     { code: 101, text: 'Switching Protocols', cat: '1xx', desc: 'Protokol switch.' },
@@ -44,13 +45,13 @@ export class HttpStatusComponent {
     { code: 504, text: 'Gateway Timeout', cat: '5xx', desc: 'Upstream timeout.' },
   ];
 
-  filtered(): StatusRow[] {
-    const q = this.query.trim().toLowerCase();
+  filtered = computed<StatusRow[]>(() => {
+    const q = this.query().trim().toLowerCase();
     if (!q) return this.statuses;
     return this.statuses.filter((s) =>
       String(s.code).includes(q) || s.text.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q),
     );
-  }
+  });
 
   catClass(c: StatusRow['cat']): string {
     return 'hs-badge hs-' + c.charAt(0);

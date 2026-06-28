@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +13,7 @@ interface PickResult { value: string; index: number; }
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './random-picker.component.html',
   styleUrls: ['./random-picker.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RandomPickerComponent {
   input = '';

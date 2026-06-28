@@ -1,6 +1,10 @@
 ﻿import { Component, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as CryptoJS from 'crypto-js';
+
+// crypto-js types do not expose `lib` as a type namespace through the module
+// import, so derive the WordArray type from the runtime factory.
+type CryptoWordArray = ReturnType<typeof CryptoJS.lib.WordArray.random>;
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -22,13 +26,19 @@ export class CryptoComponent {
   salt = CryptoJS.lib.WordArray.random(128 / 16).toString();
   mode = "mcb-v2";
 
-  key: any = {
+  // SECURITY NOTE: These passphrases are intentional shared secrets used for
+  // compatibility with the existing MCB/messi protocol. They are NOT a security
+  // boundary: anyone who downloads this app can decrypt or forge payloads
+  // encrypted with them (especially V1 CBC mode). Only the V2 (mcb-v2) path
+  // should be used for new encryption. Do not treat ciphertext produced here as
+  // confidentiality-protected. (See audit findings SEC-05.)
+  key: Record<string, string> = {
     "messi": "9C0XAVRJ6PQB86TVTAD6SK6XD01PSCIK",
     "mcb": "tK5UTui+DPh8lIlBxya5XVsmeDCoUl6vHhdIESMB6sQ=",
     "mcb-v2": "kob98nxO/Y/oAVIBrIyn5E/zG0TNIVUiPE8XFV2/IrQ="
   }
 
-  saltMcbV2 : any;
+  saltMcbV2 : Uint8Array | string | undefined;
 
   inputEncrypt: string = "";
   inputDecrypt: string = "";
@@ -79,23 +89,20 @@ export class CryptoComponent {
   }
 
   copyText(value: string) {
-    const selBox = document.createElement('textarea');
-    selBox.style.position = 'fixed';
-    selBox.style.left = '0';
-    selBox.style.top = '0';
-    selBox.style.opacity = '0';
-    selBox.value = value;
-    document.body.appendChild(selBox);
-    selBox.focus();
-    selBox.select();
-    document.execCommand('copy');
-    let matConfig = { "duration": 2000 }
-    this.snackBar.open("Copy to Clipboard Success", "Close", matConfig);
+    if (!value) return;
+    navigator.clipboard.writeText(value).then(() => {
+      const matConfig = { "duration": 2000 }
+      this.snackBar.open("Copy to Clipboard Success", "Close", matConfig);
+    });
   }
 
 
   //Private
-  private encryptV1(): any {
+  // LEGACY (SEC-07): V1 uses PBKDF2-SHA1 with only 1000 iterations, well below
+  // modern guidance (>=100k). Combined with the hardcoded passphrase (SEC-05),
+  // V1 ciphertexts are weak. Prefer encryptMcbV2() for new encryption; V1 is
+  // retained only for decrypting legacy payloads.
+  private encryptV1(): void {
     const value = CryptoJS.enc.Utf8.parse(this.inputEncrypt);
     const valueB64 = CryptoJS.enc.Base64.stringify(value);
 
@@ -105,24 +112,23 @@ export class CryptoComponent {
     const salt = CryptoJS.enc.Utf8.parse(this.salt);
     const saltB64 = CryptoJS.enc.Base64.stringify(salt);
 
-    var key = this.generateKey(salt, this.key[this.mode]);
-    var encrypted = CryptoJS.AES.encrypt(valueB64, key, {
+    const key = this.generateKey(salt, this.key[this.mode]);
+    const encrypted = CryptoJS.AES.encrypt(valueB64, key, {
       iv: iv,
       padding: CryptoJS.pad.Pkcs7,
       mode: CryptoJS.mode.CBC
     });
-    var ciphertext = encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+    const ciphertext = encrypted.ciphertext.toString(CryptoJS.enc.Base64);
 
     const gabungan = ivB64 + "::" + saltB64 + "::" + ciphertext;
     const gabunganByteArray = CryptoJS.enc.Utf8.parse(gabungan);
     const gabunganB64 = CryptoJS.enc.Base64.stringify(gabunganByteArray);
 
     this.resultEncrypt = gabunganB64
-    console.log(gabungan, gabunganByteArray, gabunganB64)
   }
 
 
-  private decryptV1(): any {
+  private decryptV1(): void {
     try {
       this.isErrorDecrypt = false;
       const gabunganDec = this.decode(this.inputDecrypt)
@@ -138,23 +144,21 @@ export class CryptoComponent {
       const chiperText = CryptoJS.enc.Base64.parse(chiperTextB64);
 
 
-      var key = this.generateKey(salt, this.key[this.mode]);
-      var cipherParams = CryptoJS.lib.CipherParams.create({ ciphertext: chiperText });
-      var decrypted = CryptoJS.AES.decrypt(cipherParams, key, {
+      const key = this.generateKey(salt, this.key[this.mode]);
+      const cipherParams = CryptoJS.lib.CipherParams.create({ ciphertext: chiperText });
+      const decrypted = CryptoJS.AES.decrypt(cipherParams, key, {
         iv: iv,
         padding: CryptoJS.pad.Pkcs7,
         mode: CryptoJS.mode.CBC
       });
-      var decodeUTF8 = CryptoJS.enc.Utf8.stringify(decrypted);
+      const decodeUTF8 = CryptoJS.enc.Utf8.stringify(decrypted);
       if (this.mode == "mcb") {
         this.resultDecrypt = decodeUTF8;
       }
       else {
-        console.log(decodeUTF8);
-        var decode = this.decode(decodeUTF8);
+        const decode = this.decode(decodeUTF8);
 
         this.resultDecrypt = decode;
-        console.log(decode);
       }
     } catch (e) {
       this.resultDecrypt = "Failed to Decrypt: " + e;
@@ -164,11 +168,10 @@ export class CryptoComponent {
 
   private decode(value: string) {
     const base64 = CryptoJS.enc.Base64.parse(value);
-    console.log(base64);
     return CryptoJS.enc.Utf8.stringify(base64)
   }
 
-  private generateKey(salt: any, passPhrase: any) {
+  private generateKey(salt: CryptoWordArray, passPhrase: string): CryptoWordArray {
     return CryptoJS.PBKDF2(passPhrase, salt, { keySize: 256 / 32, iterations: 1000, hasher: CryptoJS.algo.SHA1 });
   }
 
@@ -178,12 +181,15 @@ export class CryptoComponent {
       this.resultEncrypt = '';
     }
 
-    let salt;
+    let salt: Uint8Array;
     if(!this.saltMcbV2){
       salt = crypto.getRandomValues(new Uint8Array(this.SALT_LENGTH));
       this.saltMcbV2 = salt;
     }else{
-      salt = this.saltMcbV2;
+      // Manual salt entered via the text input arrives as a string; the field
+      // is typed loosely to accommodate ngModel. We treat it as a Uint8Array
+      // here to match the original runtime behavior.
+      salt = this.saltMcbV2 as Uint8Array;
     }
     const iv = crypto.getRandomValues(new Uint8Array(this.GCM_IV_LENGTH));
     const timestampAAD = new Uint8Array(this.AAD_LENGTH);
@@ -271,7 +277,7 @@ export class CryptoComponent {
     }
   }
 
-  private async generateKeyMcbV2(salt: any): Promise<any> {
+  private async generateKeyMcbV2(salt: Uint8Array): Promise<CryptoKey> {
     // Derive the key using PBKDF2
     const keyMaterial = await window.crypto.subtle.importKey(
       'raw',

@@ -18,12 +18,22 @@ cherry"></textarea>
           <option value="join">Gabung (join)</option>
         </select>
       </label>
-      <label *ngIf="mode === 'join'">Separator <input class="lt-in" [(ngModel)]="separator" placeholder=", " /></label>
+      @if (mode === 'join') {
+        <label>Separator <input class="lt-in" [(ngModel)]="separator" placeholder=", " /></label>
+      }
       <label><input type="checkbox" [(ngModel)]="numbering" /> Penomoran</label>
-      <label *ngIf="numbering">Mulai <input type="number" class="lt-in lt-sm" [(ngModel)]="startAt" /></label>
-      <label *ngIf="numbering">Step <input type="number" class="lt-in lt-sm" [(ngModel)]="step" /></label>
-      <label *ngIf="numbering">Pad <input type="number" class="lt-in lt-sm" [(ngModel)]="pad" /></label>
-      <label *ngIf="numbering">Pad char <input class="lt-in lt-sm" [(ngModel)]="padChar" maxlength="1" /></label>
+      @if (numbering) {
+        <label>Mulai <input type="number" class="lt-in lt-sm" [(ngModel)]="startAt" /></label>
+      }
+      @if (numbering) {
+        <label>Step <input type="number" class="lt-in lt-sm" [(ngModel)]="step" /></label>
+      }
+      @if (numbering) {
+        <label>Pad <input type="number" class="lt-in lt-sm" [(ngModel)]="pad" /></label>
+      }
+      @if (numbering) {
+        <label>Pad char <input class="lt-in lt-sm" [(ngModel)]="padChar" maxlength="1" /></label>
+      }
       <label><input type="checkbox" [(ngModel)]="trimFirst" /> Trim tiap baris</label>
       <label><input type="checkbox" [(ngModel)]="skipBlank" /> Buang baris kosong</label>
     </div>

@@ -1,4 +1,4 @@
-import { Injectable, ApplicationRef, createComponent, EnvironmentInjector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -18,22 +18,25 @@ export interface ToastConfig {
   position?: ToastPosition;
 }
 
+/**
+ * Service for showing toast notifications.
+ *
+ * Note on a11y: the live region is handled in the view layer —
+ * `MsvToastContainerComponent` renders the toasts and `MsvToastComponent`
+ * sets role="alert" and aria-live (assertive for errors, polite otherwise)
+ * on each toast element. This service only manages toast state; it does not
+ * own a live region itself.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class MsvToastService {
   private toasts$ = new Subject<Toast[]>();
   private activeToasts: Toast[] = [];
-  private containerRef: any = null;
   private nextId = 1;
-  
+
   public position: ToastPosition = 'top-right';
   public defaultDuration = 5000;
-
-  constructor(
-    private appRef: ApplicationRef,
-    private injector: EnvironmentInjector
-  ) {}
 
   /**
    * Get observable of active toasts

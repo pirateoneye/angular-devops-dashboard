@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MsvTableComponent } from './msv-table.component';
 import { MSV_FORMS_CONFIG } from '../msv-forms.config';
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, TemplateRef, ViewChild, SimpleChange } from '@angular/core';
 import { MsvTableColumn } from './msv-table.types';
 
 describe('MsvTableComponent', () => {
@@ -76,6 +76,10 @@ describe('MsvTableComponent', () => {
       { name: 'John', age: 30 },
       { name: 'Jane', age: 25 }
     ];
+    // Direct @Input assignment doesn't fire ngOnChanges in a unit test, so the
+    // component's displayedData (populated by ngOnChanges -> updateDisplayedData)
+    // would stay empty. Trigger it explicitly so rows render.
+    component.ngOnChanges({ data: new SimpleChange([], component.data, false) } as any);
     fixture.detectChanges();
 
     const rows = fixture.nativeElement.querySelectorAll('tbody tr');
@@ -86,6 +90,7 @@ describe('MsvTableComponent', () => {
     spyOn(component.rowClick, 'emit');
     component.columns = [{ key: 'name', header: 'Name' }];
     component.data = [{ name: 'John' }];
+    component.ngOnChanges({ data: new SimpleChange([], component.data, false) } as any);
     fixture.detectChanges();
 
     const row = fixture.nativeElement.querySelector('tbody tr');

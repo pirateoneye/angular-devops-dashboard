@@ -1,202 +1,280 @@
-.bg-layout {
-    background: #005caa;
-    height: 5rem;
-  }
-  
-  
-  .icon-overlay {
-    position: relative;
-    background-color: transparent;
-  }
-  
-  .icon-overlay:before {
-    content: " ";
-    width: calc(100% + 15rem);
-    height: 11rem;
-    position: absolute;
-    left: -15rem;
-    /* background-image: url(clove-ornament.139a2d89f497d64c.svg);
-    */
-    background-position: -10rem -27rem;
-  }
-  
-  .idle-background {}
-  
-  .on-process-background {
-    background-color: beige !important;
-  }
-  
-  .success-background {
-    background-color: #d4edda !important;
-  }
-  
-  .failed-background {
-    background-color: #f8d7da !important;
-  }
-  
-  
-  .example-card {
-    /* max-width: 400px;
-    */
-    background-color: #fff;
-    color: black;
-  }
-  
-  .example-header-image {
-    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-    background-size: cover;
-  }
-  
-  
-  ::ng-deep .mat-progress-bar-fill::after {
-    background-color: #144e83;
-  }
+.badge-available {
+  width: fit-content;
+  background-color: var(--msv-success-bg);
+  color: var(--msv-success);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
 
-  ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
-    stroke: #144e83;
-    }
-  
-  ::ng-deep .mat-progress-bar-buffer {
-    background: #E4E8EB;
+.badge-info {
+  width: fit-content;
+  background-color: var(--msv-accent-bg);
+  color: var(--msv-accent-text);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.badge-unavailable {
+  width: fit-content;
+  background-color: var(--msv-warning-bg);
+  color: var(--msv-warning);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.badge-failed {
+  width: fit-content;
+  background-color: var(--msv-error-bg);
+  color: var(--msv-error);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.badge-notyet {
+  width: fit-content;
+  background-color: var(--msv-border);
+  color: var(--msv-text-muted);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.badge-ml {
+  margin-left: 10px;
+}
+
+.bg-layout {
+  background: var(--msv-primary);
+  height: 5rem;
+}
+
+.icon-overlay {
+  position: relative;
+  background-color: transparent;
+}
+
+.icon-overlay:before {
+  content: " ";
+  width: calc(100% + 15rem);
+  height: 11rem;
+  position: absolute;
+  left: -15rem;
+  background-position: -10rem -27rem;
+}
+
+.idle-background {
+}
+
+.on-process-background {
+  background-color: beige !important;
+}
+
+.success-background {
+  background-color: var(--msv-success-bg) !important;
+}
+
+.failed-background {
+  background-color: var(--msv-error-bg) !important;
+}
+
+.example-card {
+  background-color: var(--msv-surface);
+  color: black;
+}
+
+.example-header-image {
+  background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg");
+  background-size: cover;
+}
+
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: var(--msv-primary-hover);
+}
+
+::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+  stroke: var(--msv-primary-hover);
+}
+
+::ng-deep .mat-progress-bar-buffer {
+  background: var(--msv-border);
+}
+
+::ng-deep .mat-progress-bar {
+  border-radius: 2px;
+}
+
+.log-box {
+  white-space: pre-wrap;
+  background-color: var(--msv-surface-2);
+  padding: 10px;
+  border: 2px solid var(--msv-input-border);
+  border-radius: 10px;
+  overflow-wrap: break-word;
+}
+
+.link-button {
+  color: var(--msv-accent-bg);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: "Open Sans", sans-serif;
+  transition: all 0.3s;
+  animation: fadeIn 0.3s;
+}
+
+.link-button-disabled {
+  color: var(--msv-text-muted);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: "Open Sans", sans-serif;
+  cursor: not-allowed;
+}
+
+.link-button:hover {
+  color: var(--msv-primary-contrast);
+  text-decoration: underline;
+  transition: all 0.3s;
+  animation: fadeIn 0.3s;
+}
+
+.user-chip {
+  background-color: var(--msv-accent-bg);
+  border-radius: 40px;
+  width: fit-content;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  transition: all 0.3s;
+}
+
+.user-chip:hover {
+  filter: brightness(0.95);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.batch-list-card {
+  border-bottom: 1px solid var(--msv-border);
+  padding: 1rem;
+}
+
+.batch-list-card:hover {
+  background-color: var(--msv-surface-2);
+  transition: all 0.3s;
+}
+
+.batch-information {
+  width: 100%;
+  background-color: var(--msv-accent-bg);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: var(--msv-radius-md);
+  padding: 12px;
+}
+
+.uploader-status ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+  stroke: var(--msv-primary-contrast);
+}
+
+::ng-deep .custom-modalbox {
+  mat-dialog-container {
+    padding: 40;
+    background-color: white;
+    border-radius: 20px;
   }
-  
-  ::ng-deep .mat-progress-bar {
-    border-radius: 2px;
+}
+
+/* Batch name heading (replaces inline style) */
+.batch-name {
+  font-size: 15px;
+}
+
+/* Batch subtitle/description (replaces inline color: #495057) */
+.batch-subtitle {
+  color: var(--msv-text-muted);
+  font-family: "Open Sans";
+  font-weight: 400;
+}
+
+/* Feature tag text (replaces inline color: #495057) */
+.batch-feature-text {
+  color: var(--msv-text-muted);
+  font-family: "Open Sans";
+  font-weight: 400;
+}
+
+/* Result icons (replaces inline color: #005caa) */
+.result-icon {
+  color: var(--msv-accent-text);
+}
+
+/* Result heading (replaces inline color: #005caa, font-weight: 600) */
+.result-heading {
+  color: var(--msv-accent-text);
+  font-family: "Open Sans";
+  font-weight: 600;
+  margin: 0;
+  margin-left: 10px;
+}
+
+/* Result text (replaces inline color: #005caa, font-weight: 500) */
+.result-text {
+  color: var(--msv-accent-text);
+  font-family: "Open Sans";
+  font-weight: 500;
+  margin: 0;
+  margin-left: 10px;
+}
+
+/* Batch action buttons */
+.batch-actions {
+  width: 100%;
+}
+
+.batch-execute-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.batch-refresh-btn {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Loading container */
+.loading-container {
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Spinner (replaces loading GIF) */
+.spinner {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--msv-border);
+  border-top-color: var(--msv-primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .log-box
-  {
-    white-space: pre-wrap;
-      background-color: rgb(227 227 227);
-      padding: 10px;
-      border: 2px solid rgb(184 184 184);
-      border-radius: 10px;
-      overflow-wrap: break-word;
-  }
-  
-  .link-button {
-    color: #e6f3ff;
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    font-family: 'Open Sans', sans-serif;
-    transition: all 0.3s;
-    animation: fadeIn 0.3s;
-  }
-  
-  .link-button-disabled {
-    color: #868e96;
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    font-family: 'Open Sans', sans-serif;
-    cursor: not-allowed;
-  }
-  
-  .link-button:hover {
-    color: #F4F8FC;
-    text-decoration: underline;
-    transition: all 0.3s;
-    animation: fadeIn 0.3s;
-  }
-  
-  .user-chip {
-    background-color: #e6f3ff;
-    border-radius: 40px;
-    width: fit-content;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    transition: all 0.3s;
-  }
-  
-  .user-chip:hover {
-    background-color: #f1ffff;
-    transition: all 0.3s;
-    cursor: pointer;
-  }
-  
-  .batch-list-card {
-    border-bottom: 1px solid #e9ecef;
-    padding: 1rem; 
-  }
-  
-  .batch-list-card:hover {
-    background-color: #f8f9fa;
-    transition: all 0.3s;
-  }
-  
-  .badge-available {
-    width: fit-content;
-    background-color: #C2FFC5;
-    color: #009649;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 24px;
-    padding: 5px 15px;
-  }
-  
-  .badge-info {
-    width: fit-content;
-    background-color: #e6f3ff;
-    color: #005caa;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 24px;
-    padding: 5px 15px;
-  }
-  
-  .badge-unavailable {
-    width: fit-content;
-    background-color: #FFE592;
-    color: #885403;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 24px;
-    padding: 5px 15px;
-  }
-  
-  .badge-failed {
-    width: fit-content;
-    background-color: #FFD9D3;
-    color: #CD1923;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 24px;
-    padding: 5px 15px;
-  }
-  
-  .badge-notyet {
-    width: fit-content;
-    background-color: #ced4da;
-    color: #495057;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 24px;
-    padding: 5px 15px;
-  }
-  
-  .batch-information {
-    width: 100%;
-    background-color: #E6F3FF;
-    color: #885403;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 12px;
-    padding: 12px;
-  }
-  
-  .uploader-status ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
-    stroke: #ffffff;
-    
-  }
-  
-  ::ng-deep .custom-modalbox {
-    mat-dialog-container {
-        padding: 40;
-        background-color: white;
-        border-radius: 20px;
-        
-    }
-  }
-  
-  
+}

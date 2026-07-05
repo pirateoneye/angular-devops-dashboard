@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MsvBreadcrumbComponent } from './msv-breadcrumb.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { DebugElement } from '@angular/core';
-import { By } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
 
 describe('MsvBreadcrumbComponent', () => {
   let component: MsvBreadcrumbComponent;
@@ -10,7 +8,8 @@ describe('MsvBreadcrumbComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MsvBreadcrumbComponent, RouterTestingModule],
+      imports: [MsvBreadcrumbComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvBreadcrumbComponent);
@@ -26,11 +25,12 @@ describe('MsvBreadcrumbComponent', () => {
     component.items = [
       { label: 'Home', route: '/home' },
       { label: 'Products', route: '/products' },
-      { label: 'Details' }
+      { label: 'Details' },
     ];
     fixture.detectChanges();
 
-    const breadcrumbItems = fixture.nativeElement.querySelectorAll('.breadcrumb-item');
+    const breadcrumbItems =
+      fixture.nativeElement.querySelectorAll('.breadcrumb-item');
     expect(breadcrumbItems.length).toBe(3);
   });
 
@@ -38,7 +38,7 @@ describe('MsvBreadcrumbComponent', () => {
     component.items = [
       { label: 'Home', route: '/home' },
       { label: 'Products', route: '/products' },
-      { label: 'Details' }
+      { label: 'Details' },
     ];
     fixture.detectChanges();
 
@@ -49,13 +49,12 @@ describe('MsvBreadcrumbComponent', () => {
   });
 
   it('should render last item as plain text with breadcrumb-current class', () => {
-    component.items = [
-      { label: 'Home', route: '/home' },
-      { label: 'Details' }
-    ];
+    component.items = [{ label: 'Home', route: '/home' }, { label: 'Details' }];
     fixture.detectChanges();
 
-    const currentItem = fixture.nativeElement.querySelector('.breadcrumb-current');
+    const currentItem = fixture.nativeElement.querySelector(
+      '.breadcrumb-current',
+    );
     expect(currentItem).toBeTruthy();
     expect(currentItem.textContent.trim()).toBe('Details');
   });
@@ -63,11 +62,13 @@ describe('MsvBreadcrumbComponent', () => {
   it('should use default separator "/"', () => {
     component.items = [
       { label: 'Home', route: '/home' },
-      { label: 'Products' }
+      { label: 'Products' },
     ];
     fixture.detectChanges();
 
-    const separator = fixture.nativeElement.querySelector('.breadcrumb-separator');
+    const separator = fixture.nativeElement.querySelector(
+      '.breadcrumb-separator',
+    );
     expect(separator).toBeTruthy();
     expect(separator.textContent.trim()).toBe('/');
   });
@@ -75,12 +76,14 @@ describe('MsvBreadcrumbComponent', () => {
   it('should use custom separator when provided', () => {
     component.items = [
       { label: 'Home', route: '/home' },
-      { label: 'Products' }
+      { label: 'Products' },
     ];
     component.separator = '>';
     fixture.detectChanges();
 
-    const separator = fixture.nativeElement.querySelector('.breadcrumb-separator');
+    const separator = fixture.nativeElement.querySelector(
+      '.breadcrumb-separator',
+    );
     expect(separator).toBeTruthy();
     expect(separator.textContent.trim()).toBe('>');
   });
@@ -89,11 +92,13 @@ describe('MsvBreadcrumbComponent', () => {
     component.items = [
       { label: 'Home', route: '/home' },
       { label: 'Products', route: '/products' },
-      { label: 'Details' }
+      { label: 'Details' },
     ];
     fixture.detectChanges();
 
-    const separators = fixture.nativeElement.querySelectorAll('.breadcrumb-separator');
+    const separators = fixture.nativeElement.querySelectorAll(
+      '.breadcrumb-separator',
+    );
     expect(separators.length).toBe(2); // Only 2 separators for 3 items
   });
 
@@ -101,21 +106,26 @@ describe('MsvBreadcrumbComponent', () => {
     component.items = [
       { label: 'Home', route: '/home' },
       { label: 'Products', route: '/products' },
-      { label: 'Details' }
+      { label: 'Details' },
     ];
     fixture.detectChanges();
 
-    const linkElements = fixture.nativeElement.querySelectorAll('.breadcrumb-link');
+    const linkElements =
+      fixture.nativeElement.querySelectorAll('.breadcrumb-link');
     expect(linkElements.length).toBe(2);
-    expect(linkElements[0].getAttribute('ng-reflect-router-link')).toBe('/home');
-    expect(linkElements[1].getAttribute('ng-reflect-router-link')).toBe('/products');
+    expect(linkElements[0].getAttribute('ng-reflect-router-link')).toBe(
+      '/home',
+    );
+    expect(linkElements[1].getAttribute('ng-reflect-router-link')).toBe(
+      '/products',
+    );
   });
 
   it('should identify last item correctly', () => {
     component.items = [
       { label: 'Home', route: '/home' },
       { label: 'Products', route: '/products' },
-      { label: 'Details' }
+      { label: 'Details' },
     ];
 
     expect(component.isLastItem(0)).toBe(false);
@@ -127,34 +137,37 @@ describe('MsvBreadcrumbComponent', () => {
     component.items = [{ label: 'Home' }];
     fixture.detectChanges();
 
-    const breadcrumbItems = fixture.nativeElement.querySelectorAll('.breadcrumb-item');
-    const separators = fixture.nativeElement.querySelectorAll('.breadcrumb-separator');
-    
+    const breadcrumbItems =
+      fixture.nativeElement.querySelectorAll('.breadcrumb-item');
+    const separators = fixture.nativeElement.querySelectorAll(
+      '.breadcrumb-separator',
+    );
+
     expect(breadcrumbItems.length).toBe(1);
     expect(separators.length).toBe(0);
   });
 
   it('should render items without routes as plain text (not last item)', () => {
-    component.items = [
-      { label: 'Home' },
-      { label: 'Products' }
-    ];
+    component.items = [{ label: 'Home' }, { label: 'Products' }];
     fixture.detectChanges();
 
-    const textElements = fixture.nativeElement.querySelectorAll('.breadcrumb-text');
+    const textElements =
+      fixture.nativeElement.querySelectorAll('.breadcrumb-text');
     expect(textElements.length).toBe(1);
     expect(textElements[0].textContent.trim()).toBe('Home');
   });
 
   it('should apply breadcrumb-item-active class to last item', () => {
-    component.items = [
-      { label: 'Home', route: '/home' },
-      { label: 'Details' }
-    ];
+    component.items = [{ label: 'Home', route: '/home' }, { label: 'Details' }];
     fixture.detectChanges();
 
-    const breadcrumbItems = fixture.nativeElement.querySelectorAll('.breadcrumb-item');
-    expect(breadcrumbItems[0].classList.contains('breadcrumb-item-active')).toBe(false);
-    expect(breadcrumbItems[1].classList.contains('breadcrumb-item-active')).toBe(true);
+    const breadcrumbItems =
+      fixture.nativeElement.querySelectorAll('.breadcrumb-item');
+    expect(
+      breadcrumbItems[0].classList.contains('breadcrumb-item-active'),
+    ).toBe(false);
+    expect(
+      breadcrumbItems[1].classList.contains('breadcrumb-item-active'),
+    ).toBe(true);
   });
 });

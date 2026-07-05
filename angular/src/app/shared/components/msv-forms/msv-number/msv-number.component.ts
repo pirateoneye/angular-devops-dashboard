@@ -1,4 +1,11 @@
-import { Component, Input, forwardRef, OnInit, TemplateRef, Inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  forwardRef,
+  OnInit,
+  TemplateRef,
+  Inject,
+} from '@angular/core';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
@@ -51,7 +58,7 @@ export class MsvNumberComponent
 
   constructor(
     private validatorHelper: MsvValidatorHelper,
-    @Inject(MSV_FORMS_CONFIG) private config: MsvFormsConfig
+    @Inject(MSV_FORMS_CONFIG) private config: MsvFormsConfig,
   ) {}
 
   ngOnInit(): void {
@@ -67,7 +74,8 @@ export class MsvNumberComponent
   // ControlValueAccessor methods
   writeValue(value: number | null): void {
     this.value = value;
-    this.displayValue = value !== null && value !== undefined ? String(value) : '';
+    this.displayValue =
+      value !== null && value !== undefined ? String(value) : '';
   }
 
   registerOnChange(fn: (value: number | null) => void): void {
@@ -83,7 +91,7 @@ export class MsvNumberComponent
   }
 
   // Validator implementation
-  validate(control: AbstractControl): ValidationErrors | null {
+  validate(_control: AbstractControl): ValidationErrors | null {
     this.runValidation();
     return this.errors.length > 0 ? { msvError: this.errors[0] } : null;
   }
@@ -92,7 +100,7 @@ export class MsvNumberComponent
   onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const inputValue = input.value;
-    
+
     // Allow empty string
     if (inputValue === '' || inputValue === '-') {
       this.displayValue = inputValue;
@@ -112,7 +120,7 @@ export class MsvNumberComponent
 
     this.displayValue = inputValue;
     const numValue = parseFloat(inputValue);
-    
+
     if (!isNaN(numValue)) {
       this.value = numValue;
       this.onChange(numValue);
@@ -120,19 +128,19 @@ export class MsvNumberComponent
       this.value = null;
       this.onChange(null);
     }
-    
+
     this.runValidation();
   }
 
   onBlur(): void {
     this.touched = true;
     this.onTouched();
-    
+
     // Clean up display value on blur
     if (this.value !== null) {
       this.displayValue = String(this.value);
     }
-    
+
     this.runValidation();
   }
 
@@ -144,7 +152,7 @@ export class MsvNumberComponent
 
     const currentValue = this.value ?? 0;
     let newValue = currentValue + this.step;
-    
+
     // Respect max constraint
     if (this.max !== undefined && newValue > this.max) {
       newValue = this.max;
@@ -163,7 +171,7 @@ export class MsvNumberComponent
 
     const currentValue = this.value ?? 0;
     let newValue = currentValue - this.step;
-    
+
     // Respect min constraint
     if (this.min !== undefined && newValue < this.min) {
       newValue = this.min;
@@ -177,7 +185,11 @@ export class MsvNumberComponent
 
   // Validation logic
   private runValidation(): void {
-    this.errors = this.validatorHelper.runValidation(this.value, this.validators, this.config);
+    this.errors = this.validatorHelper.runValidation(
+      this.value,
+      this.validators,
+      this.config,
+    );
   }
 
   get showError(): boolean {
@@ -185,10 +197,14 @@ export class MsvNumberComponent
   }
 
   get atMin(): boolean {
-    return this.min !== undefined && this.value !== null && this.value <= this.min;
+    return (
+      this.min !== undefined && this.value !== null && this.value <= this.min
+    );
   }
 
   get atMax(): boolean {
-    return this.max !== undefined && this.value !== null && this.value >= this.max;
+    return (
+      this.max !== undefined && this.value !== null && this.value >= this.max
+    );
   }
 }

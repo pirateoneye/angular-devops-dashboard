@@ -1,6 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { MsvValidatorHelper } from './msv-validator.helper';
-import { MSV_FORMS_CONFIG, MsvFormsConfig, DEFAULT_MSV_FORMS_CONFIG } from './msv-forms.config';
+import {
+  MSV_FORMS_CONFIG,
+  MsvFormsConfig,
+  DEFAULT_MSV_FORMS_CONFIG,
+} from './msv-forms.config';
 import { ValidatorType, CustomValidatorFn } from './interfaces';
 
 describe('MsvValidatorHelper', () => {
@@ -11,8 +15,8 @@ describe('MsvValidatorHelper', () => {
     TestBed.configureTestingModule({
       providers: [
         MsvValidatorHelper,
-        { provide: MSV_FORMS_CONFIG, useValue: DEFAULT_MSV_FORMS_CONFIG }
-      ]
+        { provide: MSV_FORMS_CONFIG, useValue: DEFAULT_MSV_FORMS_CONFIG },
+      ],
     });
     service = TestBed.inject(MsvValidatorHelper);
     config = TestBed.inject(MSV_FORMS_CONFIG);
@@ -58,13 +62,21 @@ describe('MsvValidatorHelper', () => {
     describe('email validator', () => {
       it('should return error for invalid email', () => {
         const validators: ValidatorType[] = ['email'];
-        const errors = service.runValidation('invalid-email', validators, config);
+        const errors = service.runValidation(
+          'invalid-email',
+          validators,
+          config,
+        );
         expect(errors).toEqual(['Format email tidak valid']);
       });
 
       it('should pass for valid email', () => {
         const validators: ValidatorType[] = ['email'];
-        const errors = service.runValidation('test@example.com', validators, config);
+        const errors = service.runValidation(
+          'test@example.com',
+          validators,
+          config,
+        );
         expect(errors).toEqual([]);
       });
 
@@ -76,7 +88,11 @@ describe('MsvValidatorHelper', () => {
 
       it('should return error for email without @', () => {
         const validators: ValidatorType[] = ['email'];
-        const errors = service.runValidation('testexample.com', validators, config);
+        const errors = service.runValidation(
+          'testexample.com',
+          validators,
+          config,
+        );
         expect(errors).toEqual(['Format email tidak valid']);
       });
 
@@ -173,16 +189,14 @@ describe('MsvValidatorHelper', () => {
     describe('required validator with custom message', () => {
       it('should use custom message when provided', () => {
         const validators: ValidatorType[] = [
-          { type: 'required', message: 'This is required!' }
+          { type: 'required', message: 'This is required!' },
         ];
         const errors = service.runValidation('', validators, config);
         expect(errors).toEqual(['This is required!']);
       });
 
       it('should use config default message when not provided', () => {
-        const validators: ValidatorType[] = [
-          { type: 'required' }
-        ];
+        const validators: ValidatorType[] = [{ type: 'required' }];
         const errors = service.runValidation('', validators, config);
         expect(errors).toEqual(['Field ini wajib diisi']);
       });
@@ -191,16 +205,14 @@ describe('MsvValidatorHelper', () => {
     describe('email validator with custom message', () => {
       it('should use custom message when provided', () => {
         const validators: ValidatorType[] = [
-          { type: 'email', message: 'Email must be valid!' }
+          { type: 'email', message: 'Email must be valid!' },
         ];
         const errors = service.runValidation('invalid', validators, config);
         expect(errors).toEqual(['Email must be valid!']);
       });
 
       it('should use config default message when not provided', () => {
-        const validators: ValidatorType[] = [
-          { type: 'email' }
-        ];
+        const validators: ValidatorType[] = [{ type: 'email' }];
         const errors = service.runValidation('invalid', validators, config);
         expect(errors).toEqual(['Format email tidak valid']);
       });
@@ -208,16 +220,14 @@ describe('MsvValidatorHelper', () => {
 
     describe('minLength validator with object config', () => {
       it('should validate using value property', () => {
-        const validators: ValidatorType[] = [
-          { type: 'minLength', value: 5 }
-        ];
+        const validators: ValidatorType[] = [{ type: 'minLength', value: 5 }];
         const errors = service.runValidation('abc', validators, config);
         expect(errors).toEqual(['Minimal 5 karakter']);
       });
 
       it('should use custom message when provided', () => {
         const validators: ValidatorType[] = [
-          { type: 'minLength', value: 5, message: 'Too short!' }
+          { type: 'minLength', value: 5, message: 'Too short!' },
         ];
         const errors = service.runValidation('abc', validators, config);
         expect(errors).toEqual(['Too short!']);
@@ -226,16 +236,14 @@ describe('MsvValidatorHelper', () => {
 
     describe('maxLength validator with object config', () => {
       it('should validate using value property', () => {
-        const validators: ValidatorType[] = [
-          { type: 'maxLength', value: 5 }
-        ];
+        const validators: ValidatorType[] = [{ type: 'maxLength', value: 5 }];
         const errors = service.runValidation('abcdef', validators, config);
         expect(errors).toEqual(['Maksimal 5 karakter']);
       });
 
       it('should use custom message when provided', () => {
         const validators: ValidatorType[] = [
-          { type: 'maxLength', value: 5, message: 'Too long!' }
+          { type: 'maxLength', value: 5, message: 'Too long!' },
         ];
         const errors = service.runValidation('abcdef', validators, config);
         expect(errors).toEqual(['Too long!']);
@@ -245,7 +253,7 @@ describe('MsvValidatorHelper', () => {
     describe('pattern validator with object config', () => {
       it('should validate using value property as pattern', () => {
         const validators: ValidatorType[] = [
-          { type: 'pattern', value: '^[0-9]+$' }
+          { type: 'pattern', value: '^[0-9]+$' },
         ];
         const errors = service.runValidation('abc', validators, config);
         expect(errors).toEqual(['Format tidak valid']);
@@ -253,7 +261,11 @@ describe('MsvValidatorHelper', () => {
 
       it('should use custom message when provided', () => {
         const validators: ValidatorType[] = [
-          { type: 'pattern', value: '^[0-9]+$', message: 'Only numbers allowed!' }
+          {
+            type: 'pattern',
+            value: '^[0-9]+$',
+            message: 'Only numbers allowed!',
+          },
         ];
         const errors = service.runValidation('abc', validators, config);
         expect(errors).toEqual(['Only numbers allowed!']);
@@ -265,10 +277,8 @@ describe('MsvValidatorHelper', () => {
         const customFn: CustomValidatorFn = (value: any) => {
           return value === 'secret' ? null : 'Invalid secret code';
         };
-        const validators: ValidatorType[] = [
-          { type: 'custom', fn: customFn }
-        ];
-        
+        const validators: ValidatorType[] = [{ type: 'custom', fn: customFn }];
+
         const errors1 = service.runValidation('wrong', validators, config);
         expect(errors1).toEqual(['Invalid secret code']);
 
@@ -282,20 +292,16 @@ describe('MsvValidatorHelper', () => {
           if (value.length < 3) return 'Too short';
           return null;
         };
-        const validators: ValidatorType[] = [
-          { type: 'custom', fn: customFn }
-        ];
-        
+        const validators: ValidatorType[] = [{ type: 'custom', fn: customFn }];
+
         const errors = service.runValidation('ab', validators, config);
         expect(errors).toEqual(['Too short']);
       });
 
       it('should handle custom validator returning null', () => {
-        const customFn: CustomValidatorFn = (value: any) => null;
-        const validators: ValidatorType[] = [
-          { type: 'custom', fn: customFn }
-        ];
-        
+        const customFn: CustomValidatorFn = (_value: any) => null;
+        const validators: ValidatorType[] = [{ type: 'custom', fn: customFn }];
+
         const errors = service.runValidation('anything', validators, config);
         expect(errors).toEqual([]);
       });
@@ -304,22 +310,14 @@ describe('MsvValidatorHelper', () => {
 
   describe('Multiple validators', () => {
     it('should accumulate all errors from multiple validators', () => {
-      const validators: ValidatorType[] = [
-        'required',
-        'email',
-        'minLength:5'
-      ];
+      const validators: ValidatorType[] = ['required', 'email', 'minLength:5'];
       const errors = service.runValidation('', validators, config);
       expect(errors.length).toBe(1); // Only required fails
       expect(errors).toEqual(['Field ini wajib diisi']);
     });
 
     it('should validate all validators when value is present', () => {
-      const validators: ValidatorType[] = [
-        'required',
-        'email',
-        'minLength:10'
-      ];
+      const validators: ValidatorType[] = ['required', 'email', 'minLength:10'];
       const errors = service.runValidation('abc', validators, config);
       expect(errors.length).toBe(2); // email and minLength fail
       expect(errors).toContain('Format email tidak valid');
@@ -330,7 +328,7 @@ describe('MsvValidatorHelper', () => {
       const validators: ValidatorType[] = [
         'required',
         { type: 'minLength', value: 5, message: 'Min 5 chars' },
-        'email'
+        'email',
       ];
       const errors = service.runValidation('abc', validators, config);
       expect(errors).toContain('Min 5 chars');

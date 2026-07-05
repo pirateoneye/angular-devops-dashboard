@@ -1,66 +1,136 @@
-<div class="container pt-3 pb-3">
-  <mat-card class="tool-card">
-    <h2 class="tool-title">JWT Debugger / Verifier</h2>
-    <h4 class="tool-sub">Decode header & payload, cek kadaluarsa, verifikasi signature (HS* / RS* / ES* / PS*) via jsrsasign.</h4>
-    <div class="tool-divider"></div>
+<h2 class="tool-title">JWT Debugger / Verifier</h2>
+<h4 class="tool-sub">
+  Decode header & payload, cek kadaluarsa, verifikasi signature (HS* / RS* / ES*
+  / PS*) via jsrsasign.
+</h4>
+<div class="tool-divider"></div>
 
-    <label class="tool-label">JWT</label>
-    <textarea class="tool-area" rows="5" [(ngModel)]="token" placeholder="paste eyJhbGciOi..."></textarea>
+<label class="tool-label">JWT</label>
+<textarea
+  class="tool-area"
+  rows="5"
+  [(ngModel)]="token"
+  (input)="onTokenChange()"
+  (paste)="onTokenPaste()"
+  placeholder="paste eyJhbGciOi..."
+></textarea>
 
-    <div class="tool-actions">
-      <button class="btn-primary" (click)="decode()">Decode</button>
-    </div>
-
-    @if (error) {
-      <div class="tool-error" role="alert">{{ error }}</div>
-    }
-
-    @if (decoded) {
-      <div class="exp-badge" [class.valid]="expiry?.status === 'valid'"
-           [class.expired]="expiry?.status === 'expired'"
-           [class.nbf]="expiry?.status === 'not-yet-valid'"
-           [class.noexp]="expiry?.status === 'no-expiry'">
-        alg: {{ decoded.alg }} · {{ expiry?.statusLabel }}
-      </div>
-
-      @if (expiry) {
-        <div class="claims-grid">
-          @if (expiry.iat) {
-            <div class="claim"><span>iat</span>{{ expiry.iat }}</div>
-          }
-          @if (expiry.nbf) {
-            <div class="claim"><span>nbf</span>{{ expiry.nbf }}</div>
-          }
-          @if (expiry.exp) {
-            <div class="claim"><span>exp</span>{{ expiry.exp }}</div>
-          }
-        </div>
-      }
-
-      <label class="tool-label">Header</label>
-      <pre class="code-block">{{ decoded.headerJson }}</pre>
-
-      <label class="tool-label">Payload</label>
-      <pre class="code-block">{{ decoded.payloadJson }}</pre>
-
-      <div class="tool-divider"></div>
-
-      <label class="tool-label">Verify key (secret untuk HS*, PEM pubkey untuk RS*/ES*/PS*)</label>
-      <textarea class="tool-area" rows="4" [(ngModel)]="verifyKey" placeholder="shared secret atau -----BEGIN PUBLIC KEY-----..."></textarea>
-
-      <div class="tool-actions">
-        <button class="btn-secondary" (click)="verify()" [disabled]="!verifyKey">Verify signature</button>
-      </div>
-
-      @if (verified === 'ok') {
-        <div class="verify-result ok" role="status">✓ Signature valid</div>
-      }
-      @if (verified === 'fail') {
-        <div class="verify-result fail" role="alert">✗ Signature tidak valid</div>
-      }
-      @if (verifyError) {
-        <div class="tool-error" role="alert">{{ verifyError }}</div>
-      }
-    }
-  </mat-card>
+<div class="tool-actions">
+  <button class="btn-primary" (click)="decode()">Decode</button>
+  <button class="btn-secondary" (click)="tryExample()">Try example</button>
+  <label class="auto-toggle">
+    <input type="checkbox" [(ngModel)]="autoMode" />
+    <span>Auto</span>
+  </label>
 </div>
+
+@if (error) {
+  <div class="tool-error" role="alert">{{ error }}</div>
+}
+
+@if (!decoded && !error) {
+  <div class="icon-empty">
+    <mat-icon class="empty-icon">key</mat-icon>
+    <h3>Paste a JWT token to decode</h3>
+    <p class="tool-sub">Decode header, payload, and verify signatures.</p>
+  </div>
+}
+
+@if (decoded) {
+  <!-- JWT segment separator -->
+  @if (token.trim()) {
+    <div class="jwt-segments">
+      @for (part of segmentParts(); track part; let i = $index) {
+        <div
+          class="jwt-seg"
+          [style.background-color]="
+            i === 0 ? headerColor : i === 1 ? payloadColor : sigColor
+          "
+        >
+          {{ i === 0 ? "HEADER" : i === 1 ? "PAYLOAD" : "SIGNATURE" }}
+        </div>
+        @if (i < segmentParts().length - 1) {
+          <span class="jwt-seg-dot">.</span>
+        }
+      }
+    </div>
+  }
+
+  <div
+    class="exp-badge"
+    [class.valid]="expiry?.status === 'valid'"
+    [class.expired]="expiry?.status === 'expired'"
+    [class.nbf]="expiry?.status === 'not-yet-valid'"
+    [class.noexp]="expiry?.status === 'no-expiry'"
+  >
+    alg: {{ decoded.alg }} · {{ expiry?.statusLabel }}
+  </div>
+
+  @if (expiry) {
+    <div class="claims-grid result-enter">
+      @if (expiry.iat) {
+        <div class="claim"><span>iat</span>{{ expiry.iat }}</div>
+      }
+      @if (expiry.nbf) {
+        <div class="claim"><span>nbf</span>{{ expiry.nbf }}</div>
+      }
+      @if (expiry.exp) {
+        <div class="claim"><span>exp</span>{{ expiry.exp }}</div>
+      }
+    </div>
+  }
+
+  <div class="jwt-section-header">
+    <label class="tool-label">Header</label>
+    <button
+      class="icon-btn"
+      (click)="copy(decoded.headerJson)"
+      title="Copy header"
+      aria-label="Copy header"
+    >
+      <mat-icon aria-hidden="true">file_copy</mat-icon>
+    </button>
+  </div>
+  <pre class="code-block result-enter" [innerHTML]="headerHtml"></pre>
+
+  <div class="jwt-section-header">
+    <label class="tool-label">Payload</label>
+    <button
+      class="icon-btn"
+      (click)="copy(decoded.payloadJson)"
+      title="Copy payload"
+      aria-label="Copy payload"
+    >
+      <mat-icon aria-hidden="true">file_copy</mat-icon>
+    </button>
+  </div>
+  <pre class="code-block result-enter" [innerHTML]="payloadHtml"></pre>
+
+  <div class="tool-divider"></div>
+
+  <label class="tool-label"
+    >Verify key (secret untuk HS*, PEM pubkey untuk RS*/ES*/PS*)</label
+  >
+  <textarea
+    class="tool-area"
+    rows="4"
+    [(ngModel)]="verifyKey"
+    placeholder="shared secret atau -----BEGIN PUBLIC KEY-----..."
+  ></textarea>
+
+  <div class="tool-actions">
+    <button class="btn-secondary" (click)="verify()" [disabled]="!verifyKey">
+      Verify signature
+    </button>
+  </div>
+
+  @if (verified === "ok") {
+    <div class="verify-result ok" role="status">✓ Signature valid</div>
+  }
+  @if (verified === "fail") {
+    <div class="verify-result fail" role="alert">✗ Signature tidak valid</div>
+  }
+  @if (verifyError) {
+    <div class="tool-error" role="alert">{{ verifyError }}</div>
+  }
+}

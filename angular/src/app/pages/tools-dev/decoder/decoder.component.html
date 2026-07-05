@@ -1,41 +1,72 @@
-<div class="container pt-3 pb-3">
-  <mat-card class="tool-card">
-    <h2 class="tool-title">Decoder</h2>
-    <h4 class="tool-sub">Encode / decode Base64, URL, dan decode JWT.</h4>
-    <div class="tool-divider"></div>
+<h2 class="tool-title">Decoder</h2>
+<h4 class="tool-sub">Encode / decode Base64, URL, dan decode JWT.</h4>
+<div class="tool-divider"></div>
 
-    <div class="dec-modes">
-      @for (m of modes; track m.key) {
-        <button class="dec-mode" [class.active]="mode === m.key" (click)="mode = m.key; clear()">
-          {{ m.label }}
-        </button>
-      }
-    </div>
-
-    <div class="jf-grid">
-      <div>
-        <label class="tool-label">Input</label>
-        <textarea class="tool-area" rows="10" [(ngModel)]="input" placeholder="Tempel teks atau token..."></textarea>
-      </div>
-      <div>
-        <label class="tool-label">Output</label>
-        <textarea class="tool-area" rows="10" [value]="output" readonly placeholder="Hasil..."></textarea>
-        @if (output) {
-          <button class="copy-btn icon-btn" (click)="copyOutput()" title="Copy" aria-label="Copy output">
-            <mat-icon aria-hidden="true">file_copy</mat-icon>
-          </button>
-        }
-      </div>
-    </div>
-
-    <div class="tool-actions">
-      <button class="btn-primary" (click)="encode()" [disabled]="mode === 'jwt'">Encode</button>
-      <button class="btn-primary" (click)="decode()">Decode</button>
-      <button class="btn-secondary" (click)="clear()">Clear</button>
-    </div>
-
-    @if (error) {
-      <div class="tool-error" role="alert">{{ error }}</div>
-    }
-  </mat-card>
+<div class="dec-modes">
+  @for (m of modes; track m.key) {
+    <button
+      class="dec-mode"
+      [class.active]="mode === m.key"
+      (click)="mode = m.key; clear()"
+    >
+      {{ m.label }}
+    </button>
+  }
 </div>
+
+<div class="jf-grid">
+  <div>
+    <label class="tool-label">Input</label>
+    <textarea
+      class="tool-area"
+      rows="10"
+      [(ngModel)]="input"
+      placeholder="Tempel teks atau token..."
+    ></textarea>
+  </div>
+  <div>
+    <label class="tool-label">Output</label>
+    <textarea
+      class="tool-area result-enter"
+      rows="10"
+      [value]="output"
+      readonly
+      placeholder="Hasil..."
+    ></textarea>
+    @if (output) {
+      <button
+        class="copy-btn icon-btn"
+        (click)="copyOutput()"
+        title="Copy"
+        aria-label="Copy output"
+      >
+        @if (copied) {
+          <span class="dec-copied-feedback">Copied!</span>
+        } @else {
+          <mat-icon aria-hidden="true">file_copy</mat-icon>
+        }
+      </button>
+    }
+  </div>
+</div>
+
+<div class="tool-actions">
+  <button class="btn-primary" (click)="encode()" [disabled]="mode === 'jwt'">
+    Encode
+  </button>
+  <button class="btn-primary" (click)="decode()">Decode</button>
+  <button class="btn-secondary" (click)="trySample()">Try sample</button>
+  <button class="btn-secondary" (click)="clear()">Clear</button>
+</div>
+
+@if (error) {
+  <div class="tool-error" role="alert">{{ error }}</div>
+}
+
+@if (!output && !error && !input.trim()) {
+  <div class="icon-empty">
+    <mat-icon class="empty-icon">lock_open</mat-icon>
+    <h3>Enter text to decode</h3>
+    <p class="tool-sub">Base64, URL encode, Hex, and more.</p>
+  </div>
+}

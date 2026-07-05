@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { MsvToastComponent } from './msv-toast.component';
 import { Toast } from './msv-toast.service';
@@ -7,19 +12,23 @@ describe('MsvToastComponent', () => {
   let component: MsvToastComponent;
   let fixture: ComponentFixture<MsvToastComponent>;
 
-  const createMockToast = (type: 'success' | 'error' | 'warning' | 'info', message: string, title?: string): Toast => ({
+  const createMockToast = (
+    type: 'success' | 'error' | 'warning' | 'info',
+    message: string,
+    title?: string,
+  ): Toast => ({
     id: 'test-toast-1',
     type,
     message,
     title,
     duration: 5000,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [MsvToastComponent],
-      imports: [CommonModule]
+      imports: [CommonModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvToastComponent);
@@ -125,8 +134,10 @@ describe('MsvToastComponent', () => {
       fixture.detectChanges();
 
       let emittedId: string | undefined;
-      component.dismissed.subscribe(id => {
-        emittedId = id;
+      component.dismissed.subscribe({
+        next: (id: string) => {
+          emittedId = id;
+        },
       });
 
       const closeButton = fixture.nativeElement.querySelector('.toast-close');
@@ -139,7 +150,7 @@ describe('MsvToastComponent', () => {
     it('should set visible to false on dismiss', () => {
       component.toast = createMockToast('info', 'Test message');
       fixture.detectChanges();
-      
+
       component.visible = true;
       component.onDismiss();
 
@@ -151,9 +162,9 @@ describe('MsvToastComponent', () => {
     it('should set visible to true after initialization', fakeAsync(() => {
       component.toast = createMockToast('info', 'Test message');
       component.ngOnInit();
-      
+
       expect(component.visible).toBe(false);
-      
+
       tick(10);
       expect(component.visible).toBe(true);
     }));

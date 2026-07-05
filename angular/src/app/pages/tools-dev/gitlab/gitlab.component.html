@@ -1,0 +1,1431 @@
+<div class="gl-page">
+  <header class="gl-header">
+    <div class="gl-brand">
+      <mat-icon class="gl-logo" aria-hidden="true">merge_type</mat-icon>
+      <div>
+        <h1>GitLab Tools</h1>
+        <p>Monitor tags &amp; run bulk operations across projects</p>
+      </div>
+    </div>
+    <div class="gl-head-right">
+      @if (isAuth()) {
+        <code class="gl-token" [title]="maskedToken()">{{
+          maskedToken()
+        }}</code>
+        <button
+          class="gl-icon-btn"
+          (click)="openLogin()"
+          title="Change token"
+          aria-label="Change token"
+        >
+          <mat-icon aria-hidden="true">key</mat-icon>
+        </button>
+        <button
+          class="gl-icon-btn"
+          (click)="showAccounts.set(!showAccounts())"
+          title="Accounts"
+          aria-label="Accounts"
+        >
+          <mat-icon aria-hidden="true">manage_accounts</mat-icon>
+        </button>
+        <button
+          class="gl-icon-btn"
+          (click)="activityOpen.set(!activityOpen())"
+          title="Activity log"
+          aria-label="Activity log"
+        >
+          <mat-icon>terminal</mat-icon>
+          @if (logs().length) {
+            <span class="gl-badge mute">{{ logs().length }}</span>
+          }
+        </button>
+        <button
+          class="gl-icon-btn"
+          (click)="logout()"
+          title="Logout"
+          aria-label="Logout"
+        >
+          <mat-icon aria-hidden="true">logout</mat-icon>
+        </button>
+      } @else {
+        <button class="gl-btn-primary" (click)="openLogin()">Connect</button>
+      }
+    </div>
+  </header>
+
+  @if (showAccounts() && isAuth()) {
+    <div class="gl-accounts-panel" role="menu">
+      <div class="gl-accounts-head">
+        <span>Saved accounts (this session)</span>
+        <button class="gl-link" (click)="showAccounts.set(false)">close</button>
+      </div>
+      @for (a of accounts(); track a.id) {
+        <div
+          class="gl-account-row"
+          [class.active]="currentAccount()?.id === a.id"
+        >
+          <button class="gl-account-name" (click)="switchAccount(a.id)">
+            <strong>{{ a.name }}</strong>
+            <span class="gl-mute">{{ a.url }}</span>
+          </button>
+          <button
+            class="gl-icon-btn sm"
+            (click)="deleteAccount(a.id)"
+            title="Delete"
+            aria-label="Delete account"
+          >
+            <mat-icon aria-hidden="true">delete</mat-icon>
+          </button>
+        </div>
+      } @empty {
+        <div class="gl-mute gl-pad">
+          No saved accounts. Use "Save account" in the connect dialog.
+        </div>
+      }
+    </div>
+  }
+
+  @if (showLogin()) {
+    <!-- Focus trap: clicking outside or pressing Escape closes the modal;
+         focus is trapped inside .gl-modal via aria-modal + auto-focus. -->
+    <div
+      class="gl-overlay"
+      (click)="isAuth() && showLogin.set(false)"
+      (keydown.escape)="isAuth() && showLogin.set(false)"
+    >
+      <div
+        class="gl-modal"
+        (click)="$event.stopPropagation()"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gl-login-title"
+        cdkTrapFocus
+        cdkTrapFocusAutoCapture
+      >
+        <div class="gl-modal-head">
+          <h2 id="gl-login-title">Connect to GitLab</h2>
+          <button
+            class="gl-icon-btn"
+            (click)="showLogin.set(false)"
+            aria-label="Close"
+            [hidden]="!isAuth()"
+          >
+            <mat-icon aria-hidden="true">close</mat-icon>
+          </button>
+        </div>
+        <p class="gl-hint">
+          Enter a Personal Access Token with <code>api</code> scope.
+        </p>
+        <p class="gl-hint warn">
+          Token is kept in memory only — re-enter it each session.
+        </p>
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+          <label class="gl-field" for="gl-login-name"
+            >Label (optional, for saved accounts)
+            <input
+              id="gl-login-name"
+              class="gl-input"
+              formControlName="name"
+              placeholder="e.g. UAT GitLab"
+            />
+          </label>
+          <label class="gl-field" for="gl-login-url"
+            >GitLab API URL
+            <input
+              id="gl-login-url"
+              class="gl-input"
+              formControlName="url"
+              placeholder="https://gitlab.com/api/v4"
+            />
+          </label>
+          <label class="gl-field" for="gl-login-token"
+            >Token
+            <input
+              id="gl-login-token"
+              class="gl-input"
+              type="password"
+              formControlName="token"
+              placeholder="glpat-xxxx"
+            />
+          </label>
+          <div class="gl-modal-btns">
+            <button
+              type="submit"
+              class="gl-btn-primary"
+              [disabled]="!loginForm.valid"
+            >
+              <mat-icon aria-hidden="true">login</mat-icon> Connect
+            </button>
+            <button
+              type="button"
+              class="gl-btn-ghost"
+              (click)="saveAccount()"
+              [disabled]="!loginForm.valid"
+            >
+              <mat-icon aria-hidden="true">save</mat-icon> Save account
+            </button>
+            @if (isAuth()) {
+              <button
+                type="button"
+                class="gl-btn-ghost"
+                (click)="showLogin.set(false)"
+              >
+                Cancel
+              </button>
+            }
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  @if (!isAuth()) {
+    <div class="gl-gate">
+      <div class="gl-gate-card">
+        <div class="gl-gate-icon-wrap">
+          <mat-icon class="gl-gate-icon" aria-hidden="true">lock</mat-icon>
+        </div>
+        <h2>Connect to GitLab</h2>
+        <p class="gl-gate-desc">
+          Enter a Personal Access Token to access your GitLab projects, tags,
+          and branches.
+        </p>
+        <p class="gl-gate-hint">
+          Your token stays in this browser tab only — never stored on disk.
+        </p>
+        <button class="gl-btn-primary gl-gate-btn" (click)="openLogin()">
+          <mat-icon aria-hidden="true">key</mat-icon> Connect
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (isAuth()) {
+    <div class="gl-subbar">
+      <label class="gl-group-select" for="gl-group-select">
+        <span class="gl-mute">Group</span>
+        <select
+          id="gl-group-select"
+          class="gl-input"
+          [value]="groupId()"
+          (change)="onGroupChange(+$any($event.target).value)"
+        >
+          @for (g of GROUPS; track g.id) {
+            <option [value]="g.id">{{ g.name }}</option>
+          }
+        </select>
+      </label>
+      <button
+        class="gl-icon-btn"
+        (click)="refreshProjects()"
+        title="Refresh projects"
+        aria-label="Refresh projects"
+        [disabled]="loadingProjects()"
+      >
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+      </button>
+
+      <nav class="gl-tabs" role="tablist" aria-label="GitLab tool view">
+        <button
+          role="tab"
+          class="gl-tab"
+          [class.active]="tab() === 'tags'"
+          (click)="setTab('tags')"
+          [attr.aria-selected]="tab() === 'tags'"
+        >
+          <mat-icon aria-hidden="true">label</mat-icon> Tags Monitor
+        </button>
+        <button
+          role="tab"
+          class="gl-tab"
+          [class.active]="tab() === 'bulk'"
+          (click)="setTab('bulk')"
+          [attr.aria-selected]="tab() === 'bulk'"
+        >
+          <mat-icon aria-hidden="true">batch_prediction</mat-icon> Bulk Actions
+          @if (selectedCount() > 0) {
+            <span class="gl-badge">{{ selectedCount() }}</span>
+          }
+        </button>
+      </nav>
+    </div>
+
+    @if (tab() === "tags") {
+      <section class="gl-tab-pane" aria-label="Tags monitor">
+        <div class="gl-kpis">
+          <div
+            class="gl-kpi clickable"
+            tabindex="0"
+            role="button"
+            (click)="quickFilter('')"
+            (keydown.enter)="quickFilter('')"
+            (keydown.space)="quickFilter('')"
+            aria-label="Show all projects"
+          >
+            <span class="gl-kpi-num">{{ tagStats().total }}</span
+            ><span class="gl-kpi-lbl">Projects</span>
+          </div>
+          <div
+            class="gl-kpi ok clickable"
+            tabindex="0"
+            role="button"
+            (click)="quickFilter('withtags')"
+            (keydown.enter)="quickFilter('withtags')"
+            (keydown.space)="quickFilter('withtags')"
+            aria-label="Filter projects with tags"
+          >
+            <span class="gl-kpi-num">{{ tagStats().withTags }}</span
+            ><span class="gl-kpi-lbl">With tags</span>
+          </div>
+          <div
+            class="gl-kpi warn clickable"
+            tabindex="0"
+            role="button"
+            (click)="quickFilter('notags')"
+            (keydown.enter)="quickFilter('notags')"
+            (keydown.space)="quickFilter('notags')"
+            aria-label="Filter projects with no tags"
+          >
+            <span class="gl-kpi-num">{{ tagStats().noTags }}</span
+            ><span class="gl-kpi-lbl">No tags</span>
+          </div>
+          <div
+            class="gl-kpi err clickable"
+            tabindex="0"
+            role="button"
+            (click)="quickFilter('errors')"
+            (keydown.enter)="quickFilter('errors')"
+            (keydown.space)="quickFilter('errors')"
+            aria-label="Filter projects with errors"
+          >
+            <span class="gl-kpi-num">{{ tagStats().errors }}</span
+            ><span class="gl-kpi-lbl">Errors</span>
+          </div>
+          @if (latestOverall(); as latest) {
+            <div class="gl-kpi highlight">
+              <span class="gl-kpi-lbl"
+                >Latest overall · {{ latest.project }}</span
+              >
+              <span class="gl-kpi-num sm">{{ latest.tag.name }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="gl-controls">
+          <label for="gl-tags-search" class="gl-sr-only">Filter projects</label>
+          <input
+            id="gl-tags-search"
+            class="gl-input gl-grow"
+            type="text"
+            placeholder="Filter by project, path or tag…"
+            [value]="tagsSearch()"
+            (input)="tagsSearch.set($any($event.target).value)"
+          />
+          <button
+            class="gl-btn-ghost"
+            [class.on]="autoRefresh()"
+            (click)="toggleAutoRefresh()"
+          >
+            <mat-icon aria-hidden="true">{{
+              autoRefresh() ? "sync" : "sync_disabled"
+            }}</mat-icon>
+            Auto {{ autoRefresh() ? "ON" : "OFF" }}
+          </button>
+          <select
+            class="gl-input sm"
+            [value]="refreshIntervalSec()"
+            (change)="onIntervalChange(+$any($event.target).value)"
+            [disabled]="!autoRefresh()"
+            [attr.aria-label]="'Auto-refresh interval'"
+          >
+            <option value="30">30s</option>
+            <option value="60">60s</option>
+            <option value="120">2m</option>
+            <option value="300">5m</option>
+          </select>
+          <button
+            class="gl-btn-primary"
+            (click)="fetchAllTags()"
+            [disabled]="tagsLoading() || loadingProjects()"
+          >
+            <mat-icon aria-hidden="true">refresh</mat-icon> Fetch tags
+          </button>
+        </div>
+        @if (lastUpdated()) {
+          <p class="gl-last-updated">
+            Last updated {{ formatDate(lastUpdated()?.toISOString() ?? null) }}
+          </p>
+        }
+
+        <div class="gl-table-wrap">
+          <table class="gl-table">
+            <thead>
+              <tr>
+                <th
+                  class="sortable"
+                  role="button"
+                  tabindex="0"
+                  (click)="setSort('projectName')"
+                  (keydown.enter)="setSort('projectName')"
+                  (keydown.space)="setSort('projectName')"
+                  [attr.aria-sort]="
+                    sortKey() === 'projectName'
+                      ? sortDir() === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  "
+                >
+                  Project
+                  @if (sortKey() === "projectName") {
+                    <span class="gl-arrow">{{
+                      sortDir() === "asc" ? "↑" : "↓"
+                    }}</span>
+                  }
+                </th>
+                <th
+                  class="sortable"
+                  role="button"
+                  tabindex="0"
+                  (click)="setSort('latestTag')"
+                  (keydown.enter)="setSort('latestTag')"
+                  (keydown.space)="setSort('latestTag')"
+                  [attr.aria-sort]="
+                    sortKey() === 'latestTag'
+                      ? sortDir() === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  "
+                >
+                  Latest tag
+                  @if (sortKey() === "latestTag") {
+                    <span class="gl-arrow">{{
+                      sortDir() === "asc" ? "↑" : "↓"
+                    }}</span>
+                  }
+                </th>
+                <th
+                  class="sortable"
+                  role="button"
+                  tabindex="0"
+                  (click)="setSort('tagDate')"
+                  (keydown.enter)="setSort('tagDate')"
+                  (keydown.space)="setSort('tagDate')"
+                  [attr.aria-sort]="
+                    sortKey() === 'tagDate'
+                      ? sortDir() === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  "
+                >
+                  Tagged
+                  @if (sortKey() === "tagDate") {
+                    <span class="gl-arrow">{{
+                      sortDir() === "asc" ? "↑" : "↓"
+                    }}</span>
+                  }
+                </th>
+                <th>Author</th>
+                <th class="gl-actions-col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of filteredTags(); track p.projectId) {
+                <tr
+                  [class.row-loading]="p.status === 'loading'"
+                  [class.row-error]="p.status === 'error'"
+                >
+                  <td>
+                    <div class="gl-proj">
+                      <a
+                        [href]="p.webUrl"
+                        target="_blank"
+                        rel="noopener"
+                        class="gl-proj-name"
+                        >{{ p.projectName }}</a
+                      >
+                      <span class="gl-proj-path">{{ p.path }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    @if (p.status === "loading") {
+                      <span class="gl-spin" aria-label="Loading tags"
+                        ><span class="spinner"></span
+                      ></span>
+                    } @else if (p.status === "error") {
+                      <span class="gl-err" [title]="p.error">error</span>
+                    } @else if (p.latestTag) {
+                      <code
+                        class="gl-tag"
+                        [class]="'gl-tag ' + tagClass(p.latestTag.name)"
+                        (click)="copyText(p.latestTag.name)"
+                        >{{ p.latestTag.name }}</code
+                      >
+                    } @else {
+                      <span class="gl-mute">—</span>
+                    }
+                  </td>
+                  <td>
+                    @if (p.latestTag) {
+                      <span
+                        [title]="
+                          formatDate(
+                            p.latestTag.commit.committed_date ??
+                              p.latestTag.created_at
+                          )
+                        "
+                      >
+                        {{
+                          timeAgo(
+                            p.latestTag.commit.committed_date ??
+                              p.latestTag.created_at
+                          )
+                        }}
+                      </span>
+                    } @else {
+                      <span class="gl-mute">—</span>
+                    }
+                  </td>
+                  <td>
+                    <span class="gl-author">{{
+                      p.latestTag?.commit?.author_name || "—"
+                    }}</span>
+                  </td>
+                  <td class="gl-actions-col">
+                    <button
+                      class="gl-icon-btn sm"
+                      (click)="refreshSingleTag(p.projectId)"
+                      [attr.aria-label]="'Refresh tags for ' + p.projectName"
+                      [disabled]="p.status === 'loading'"
+                      title="Refresh"
+                    >
+                      <mat-icon aria-hidden="true">refresh</mat-icon>
+                    </button>
+                    @if (p.tags.length > 0) {
+                      <button
+                        class="gl-icon-btn sm"
+                        (click)="toggleExpand(p.projectId)"
+                        [attr.aria-expanded]="isExpanded(p.projectId)"
+                        [attr.aria-label]="
+                          'Toggle tag history for ' + p.projectName
+                        "
+                      >
+                        <mat-icon aria-hidden="true">{{
+                          isExpanded(p.projectId)
+                            ? "expand_less"
+                            : "expand_more"
+                        }}</mat-icon>
+                        {{ p.tags.length }}
+                      </button>
+                    }
+                  </td>
+                </tr>
+                @if (isExpanded(p.projectId) && p.tags.length > 0) {
+                  <tr class="gl-sub-row">
+                    <td colspan="5">
+                      <div class="gl-tag-history">
+                        @for (t of p.tags; track t.name) {
+                          <div class="gl-tag-chip" (click)="copyText(t.name)">
+                            <code>{{ t.name }}</code>
+                            <span class="gl-mute">{{
+                              timeAgo(t.commit.committed_date ?? t.created_at)
+                            }}</span>
+                            <span class="gl-author">{{
+                              t.commit.author_name
+                            }}</span>
+                          </div>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              } @empty {
+                <tr>
+                  <td colspan="5" class="gl-empty">
+                    @if (tagsLoading() || loadingProjects()) {
+                      <span class="gl-spin"><mat-icon>sync</mat-icon></span>
+                      <p>
+                        Loading projects for <strong>{{ groupName() }}</strong
+                        >&hellip;
+                      </p>
+                    } @else if (!tagData().length) {
+                      <mat-icon>folder_open</mat-icon>
+                      <p>
+                        No projects found in <strong>{{ groupName() }}</strong
+                        >.
+                      </p>
+                      <p class="gl-mute">
+                        Try selecting a different group from the dropdown above.
+                      </p>
+                    } @else {
+                      No projects — pick a group and fetch tags.
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    @if (tab() === "bulk") {
+      <section class="gl-bulk" aria-label="Bulk actions">
+        <div class="gl-pane gl-left">
+          <h2 class="gl-pane-title"><span class="gl-step">1</span> Action</h2>
+          <div class="gl-action-grid">
+            @for (a of ACTIONS; track a.id) {
+              <button
+                class="gl-action-card"
+                [class.active]="selectedAction() === a.id"
+                [class.danger]="a.danger"
+                (click)="setAction(a.id)"
+                [attr.aria-pressed]="selectedAction() === a.id"
+              >
+                <mat-icon aria-hidden="true">{{ a.icon }}</mat-icon>
+                <span class="gl-ac-name">{{ a.name }}</span>
+                <span class="gl-ac-desc">{{ a.desc }}</span>
+              </button>
+            }
+          </div>
+
+          <h2 class="gl-pane-title">
+            <span class="gl-step">2</span> Configure
+          </h2>
+          <form [formGroup]="actionForm" class="gl-config">
+            @if (selectedAction() === "merge") {
+              <div class="gl-seg">
+                <button
+                  type="button"
+                  [class.active]="mrMode() === 'single'"
+                  (click)="setMrMode('single')"
+                >
+                  Single MR
+                </button>
+                <button
+                  type="button"
+                  [class.active]="mrMode() === 'chained'"
+                  (click)="setMrMode('chained')"
+                >
+                  Chained
+                </button>
+              </div>
+              @if (mrMode() === "single") {
+                <div class="gl-seg">
+                  <button
+                    type="button"
+                    [class.active]="branchMode() === 'same'"
+                    (click)="setBranchMode('same')"
+                  >
+                    Same for all
+                  </button>
+                  <button
+                    type="button"
+                    [class.active]="branchMode() === 'per-project'"
+                    (click)="setBranchMode('per-project')"
+                  >
+                    Per project
+                  </button>
+                </div>
+                @if (branchMode() === "same") {
+                  <div class="gl-row">
+                    <label class="gl-field"
+                      >Source<input
+                        class="gl-input"
+                        formControlName="source"
+                        placeholder="develop"
+                    /></label>
+                    <label class="gl-field"
+                      >Target<input
+                        class="gl-input"
+                        formControlName="target"
+                        placeholder="main"
+                    /></label>
+                  </div>
+                } @else {
+                  <p class="gl-hint">
+                    Set source/target per project in the right-hand list under
+                    each selected project.
+                  </p>
+                }
+              } @else {
+                <div class="gl-chain-templates">
+                  @for (t of CHAIN_TEMPLATES; track t.name) {
+                    <button
+                      type="button"
+                      class="gl-chip-btn"
+                      (click)="applyTemplate(t)"
+                    >
+                      {{ t.name }}
+                    </button>
+                  }
+                </div>
+                <div class="gl-chain">
+                  @for (s of chainSteps(); track $index) {
+                    <input
+                      class="gl-input gl-chain-step"
+                      [value]="s"
+                      (input)="
+                        updateChainStep($index, $any($event.target).value)
+                      "
+                    />
+                    @if ($last) {
+                    } @else {
+                      <mat-icon class="gl-chain-arrow" aria-hidden="true"
+                        >arrow_forward</mat-icon
+                      >
+                    }
+                  }
+                  <button
+                    type="button"
+                    class="gl-icon-btn"
+                    (click)="removeLastChainStep()"
+                    [disabled]="chainSteps().length <= 2"
+                    title="Remove last"
+                  >
+                    <mat-icon aria-hidden="true"
+                      >remove_circle_outline</mat-icon
+                    >
+                  </button>
+                </div>
+                <div class="gl-chain-add">
+                  <input
+                    class="gl-input gl-grow"
+                    placeholder="Add branch to chain…"
+                    [value]="newChainStep()"
+                    (input)="newChainStep.set($any($event.target).value)"
+                    (keyup.enter)="addChainStep()"
+                  />
+                  <button
+                    type="button"
+                    class="gl-btn-ghost"
+                    (click)="addChainStep()"
+                  >
+                    <mat-icon aria-hidden="true">add</mat-icon> Add
+                  </button>
+                </div>
+              }
+              <label class="gl-field"
+                >Title (optional)<input
+                  class="gl-input"
+                  formControlName="title"
+                  placeholder="Auto: Merge source into target"
+              /></label>
+              <label class="gl-field"
+                >Description<textarea
+                  class="gl-input"
+                  formControlName="desc"
+                  rows="2"
+                  placeholder="MR description…"
+                ></textarea>
+              </label>
+            }
+
+            @if (selectedAction() === "tag") {
+              <div class="gl-row">
+                <label class="gl-field"
+                  >Tag name<input
+                    class="gl-input"
+                    formControlName="tagName"
+                    placeholder="v1.0.0"
+                /></label>
+                <label class="gl-field"
+                  >From branch<input
+                    class="gl-input"
+                    formControlName="source"
+                    placeholder="main"
+                /></label>
+              </div>
+              <label class="gl-field"
+                >Message<input
+                  class="gl-input"
+                  formControlName="tagMsg"
+                  placeholder="Release notes…"
+              /></label>
+            }
+
+            @if (selectedAction() === "branch") {
+              <div class="gl-row">
+                <label class="gl-field"
+                  >Branch name<input
+                    class="gl-input"
+                    formControlName="branchName"
+                    placeholder="feature/x"
+                /></label>
+                <label class="gl-field"
+                  >From ref<input
+                    class="gl-input"
+                    formControlName="source"
+                    placeholder="main"
+                /></label>
+              </div>
+            }
+
+            @if (selectedAction() === "delete-branch") {
+              @if (isSingleProject() && branches().length > 0) {
+                <label class="gl-field"
+                  >Branch to delete
+                  <select class="gl-input" formControlName="deleteBranchName">
+                    <option value="">— select —</option>
+                    @for (b of branches(); track b.name) {
+                      <option [value]="b.name">
+                        {{ b.name }}
+                        @if (b.protected) {
+                          (protected)
+                        }
+                      </option>
+                    }
+                  </select>
+                </label>
+              } @else {
+                <label class="gl-field"
+                  >Branch to delete<input
+                    class="gl-input"
+                    formControlName="deleteBranchName"
+                    placeholder="branch-name"
+                /></label>
+              }
+            }
+
+            @if (
+              selectedAction() === "protect" || selectedAction() === "unprotect"
+            ) {
+              @if (isSingleProject() && branches().length > 0) {
+                <label class="gl-field"
+                  >Branch
+                  <select class="gl-input" formControlName="protectName">
+                    <option value="">— select —</option>
+                    @for (b of branches(); track b.name) {
+                      <option [value]="b.name">
+                        {{ b.name }}
+                        @if (b.protected) {
+                          (protected)
+                        }
+                      </option>
+                    }
+                  </select>
+                </label>
+              } @else {
+                <label class="gl-field"
+                  >Branch<input
+                    class="gl-input"
+                    formControlName="protectName"
+                    placeholder="main"
+                /></label>
+              }
+              @if (selectedAction() === "protect") {
+                <label class="gl-check"
+                  ><input type="checkbox" formControlName="allowForcePush" />
+                  Allow force push</label
+                >
+              }
+            }
+
+            @if (selectedAction() === "pipeline") {
+              <label class="gl-field"
+                >Ref to run<input
+                  class="gl-input"
+                  formControlName="pipelineRef"
+                  placeholder="main"
+              /></label>
+            }
+
+            @if (selectedAction() === "release") {
+              <div class="gl-row">
+                <label class="gl-field"
+                  >Tag name<input
+                    class="gl-input"
+                    formControlName="tagName"
+                    placeholder="v1.0.0"
+                /></label>
+                <label class="gl-field"
+                  >Release name<input
+                    class="gl-input"
+                    formControlName="releaseName"
+                    placeholder="Release 1.0.0"
+                /></label>
+              </div>
+              <label class="gl-field"
+                >Ref (optional, to create the tag)<input
+                  class="gl-input"
+                  formControlName="releaseRef"
+                  placeholder="main"
+              /></label>
+              <label class="gl-field"
+                >Description<textarea
+                  class="gl-input"
+                  formControlName="releaseDesc"
+                  rows="2"
+                  placeholder="Release notes…"
+                ></textarea>
+              </label>
+            }
+
+            @if (selectedAction() === "close-mr") {
+              @if (isSingleProject() && openMRs().length > 0) {
+                <label class="gl-field"
+                  >MR
+                  <select class="gl-input" formControlName="mrIid">
+                    <option [ngValue]="null">— select MR —</option>
+                    @for (m of openMRs(); track m.iid) {
+                      <option [ngValue]="m.iid">
+                        !{{ m.iid }} — {{ m.title }}
+                      </option>
+                    }
+                  </select>
+                </label>
+              } @else {
+                <label class="gl-field"
+                  >MR IID<input
+                    class="gl-input"
+                    type="number"
+                    formControlName="mrIid"
+                    placeholder="123"
+                /></label>
+              }
+              <div class="gl-seg">
+                <button
+                  type="button"
+                  [class.active]="actionForm.value.mrAction === 'merge'"
+                  (click)="actionForm.patchValue({ mrAction: 'merge' })"
+                >
+                  Merge
+                </button>
+                <button
+                  type="button"
+                  [class.active]="actionForm.value.mrAction === 'close'"
+                  (click)="actionForm.patchValue({ mrAction: 'close' })"
+                >
+                  Close
+                </button>
+              </div>
+            }
+
+            @if (selectedAction() === "update-labels") {
+              @if (isSingleProject() && openMRs().length > 0) {
+                <label class="gl-field"
+                  >MR
+                  <select class="gl-input" formControlName="mrIid">
+                    <option [ngValue]="null">— select MR —</option>
+                    @for (m of openMRs(); track m.iid) {
+                      <option [ngValue]="m.iid">
+                        !{{ m.iid }} — {{ m.title }}
+                      </option>
+                    }
+                  </select>
+                </label>
+              } @else {
+                <label class="gl-field"
+                  >MR IID<input
+                    class="gl-input"
+                    type="number"
+                    formControlName="mrIid"
+                    placeholder="123"
+                /></label>
+              }
+              <div class="gl-seg">
+                <button
+                  type="button"
+                  [class.active]="actionForm.value.labelAction === 'add'"
+                  (click)="actionForm.patchValue({ labelAction: 'add' })"
+                >
+                  Add labels
+                </button>
+                <button
+                  type="button"
+                  [class.active]="actionForm.value.labelAction === 'remove'"
+                  (click)="actionForm.patchValue({ labelAction: 'remove' })"
+                >
+                  Remove labels
+                </button>
+              </div>
+              @if (isSingleProject() && labels().length > 0) {
+                <div class="gl-label-picker">
+                  @for (l of labels(); track l.id) {
+                    <button
+                      type="button"
+                      class="gl-label-chip"
+                      [class.on]="selectedLabels().has(l.name)"
+                      (click)="toggleLabel(l.name)"
+                    >
+                      <span class="gl-dot" [style.background]="l.color"></span
+                      >{{ l.name }}
+                    </button>
+                  }
+                </div>
+              }
+            }
+          </form>
+
+          @if (isSingleProject() && selectedAction() === "merge") {
+            <details class="gl-mr-options">
+              <summary>
+                MR options
+                @if (loadingMetadata()) {
+                  <span class="gl-spin"
+                    ><mat-icon aria-hidden="true"
+                      >progress_activity</mat-icon
+                    ></span
+                  >
+                }
+              </summary>
+              <div class="gl-meta-grid">
+                <div class="gl-meta">
+                  <h4>Reviewers ({{ selectedReviewers().size }})</h4>
+                  <div class="gl-check-list">
+                    @for (m of members(); track m.id) {
+                      <label class="gl-check"
+                        ><input
+                          type="checkbox"
+                          [checked]="selectedReviewers().has(m.id)"
+                          (change)="toggleReviewer(m.id)"
+                        />
+                        {{ m.username }}</label
+                      >
+                    } @empty {
+                      <span class="gl-mute">none</span>
+                    }
+                  </div>
+                </div>
+                <div class="gl-meta">
+                  <h4>Assignees ({{ selectedAssignees().size }})</h4>
+                  <div class="gl-check-list">
+                    @for (m of members(); track m.id) {
+                      <label class="gl-check"
+                        ><input
+                          type="checkbox"
+                          [checked]="selectedAssignees().has(m.id)"
+                          (change)="toggleAssignee(m.id)"
+                        />
+                        {{ m.username }}</label
+                      >
+                    } @empty {
+                      <span class="gl-mute">none</span>
+                    }
+                  </div>
+                </div>
+                <div class="gl-meta">
+                  <h4>Labels ({{ selectedLabels().size }})</h4>
+                  <div class="gl-check-list">
+                    @for (l of labels(); track l.id) {
+                      <label class="gl-check"
+                        ><input
+                          type="checkbox"
+                          [checked]="selectedLabels().has(l.name)"
+                          (change)="toggleLabel(l.name)"
+                        />
+                        <span class="gl-dot" [style.background]="l.color"></span
+                        >{{ l.name }}
+                      </label>
+                    } @empty {
+                      <span class="gl-mute">none</span>
+                    }
+                  </div>
+                </div>
+                <div class="gl-meta">
+                  <h4>Milestone</h4>
+                  <select
+                    class="gl-input"
+                    [value]="selectedMilestone() ?? ''"
+                    (change)="setMilestone($any($event.target).value)"
+                  >
+                    <option value="">— none —</option>
+                    @for (m of milestones(); track m.id) {
+                      <option [value]="m.id">{{ m.title }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+            </details>
+          }
+
+          <div class="gl-exec">
+            <button
+              class="gl-btn-ghost"
+              (click)="runPreview()"
+              [disabled]="selectedCount() === 0 || previewing()"
+            >
+              <mat-icon aria-hidden="true">{{
+                previewing() ? "progress_activity" : "visibility"
+              }}</mat-icon>
+              Preview
+            </button>
+            <button
+              class="gl-btn-primary gl-execute"
+              (click)="execute()"
+              [disabled]="!canExecute()"
+            >
+              <mat-icon aria-hidden="true">{{
+                executing() ? "progress_activity" : "play_arrow"
+              }}</mat-icon>
+              @if (executing()) {
+                Processing…
+              } @else {
+                {{ selectedActionName() }} · {{ selectedCount() }} project(s)
+              }
+            </button>
+          </div>
+          @if (previewResults().size > 0) {
+            <p class="gl-hint">
+              {{ previewReady() }} ready · {{ previewIssue() }} with issues
+            </p>
+          }
+        </div>
+
+        <div class="gl-pane gl-right">
+          <div class="gl-list-toolbar">
+            <label for="gl-bulk-search" class="gl-sr-only"
+              >Search projects</label
+            >
+            <input
+              id="gl-bulk-search"
+              class="gl-input gl-grow"
+              placeholder="Search projects…"
+              [value]="bulkSearch()"
+              (input)="bulkSearch.set($any($event.target).value)"
+            />
+            <button class="gl-btn-ghost sm" (click)="toggleHeaderSelect()">
+              {{ headerState() === "all" ? "Clear visible" : "Select visible" }}
+            </button>
+            <button
+              class="gl-btn-ghost sm"
+              (click)="clearSelection()"
+              [disabled]="selectedCount() === 0"
+            >
+              Clear
+            </button>
+          </div>
+
+          <div class="gl-kpis gl-kpis-sm">
+            <div class="gl-kpi">
+              <span class="gl-kpi-num">{{ selectedCount() }}</span
+              ><span class="gl-kpi-lbl">Selected</span>
+            </div>
+            <div class="gl-kpi ok">
+              <span class="gl-kpi-num">{{ previewReady() }}</span
+              ><span class="gl-kpi-lbl">Ready</span>
+            </div>
+            <div class="gl-kpi warn">
+              <span class="gl-kpi-num">{{ previewIssue() }}</span
+              ><span class="gl-kpi-lbl">Issues</span>
+            </div>
+            @if (executing() || progress().done > 0) {
+              <div class="gl-kpi">
+                <span class="gl-kpi-num"
+                  >{{ progress().done }}/{{ progress().total }}</span
+                ><span class="gl-kpi-lbl">Done</span>
+              </div>
+              <div class="gl-kpi err">
+                <span class="gl-kpi-num">{{ progress().failed }}</span
+                ><span class="gl-kpi-lbl">Failed</span>
+              </div>
+            }
+          </div>
+
+          @if (executing()) {
+            <div
+              class="gl-progress"
+              role="progressbar"
+              [attr.aria-valuemin]="0"
+              [attr.aria-valuemax]="progress().total"
+              [attr.aria-valuenow]="progress().done"
+            >
+              <mat-progress-bar
+                mode="determinate"
+                [value]="progress().pct"
+              ></mat-progress-bar>
+            </div>
+            <span class="gl-mute gl-progress-txt" aria-live="polite"
+              >{{ progress().done }}/{{ progress().total }} done ·
+              {{ progress().failed }} failed</span
+            >
+          }
+
+          <div class="gl-list-wrap">
+            @if (loadingProjects()) {
+              <div class="gl-list-msg">
+                <span class="gl-spin"
+                  ><mat-icon aria-hidden="true"
+                    >progress_activity</mat-icon
+                  ></span
+                >
+                Loading projects…
+              </div>
+            } @else if (filteredProjects().length === 0) {
+              <div class="gl-list-msg">No projects — pick a group above.</div>
+            } @else {
+              <table class="gl-table gl-compact">
+                <thead>
+                  <tr>
+                    <th class="gl-check-col">
+                      <input
+                        type="checkbox"
+                        [checked]="headerState() === 'all'"
+                        [indeterminate]="headerState() === 'some'"
+                        (change)="toggleHeaderSelect()"
+                        [attr.aria-label]="'Select all visible projects'"
+                      />
+                    </th>
+                    <th>Project</th>
+                    <th class="gl-status-col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (p of filteredProjects(); track p.id) {
+                    <tr [class.selected]="isProjectSelected(p.id)">
+                      <td class="gl-check-col">
+                        <input
+                          type="checkbox"
+                          [checked]="isProjectSelected(p.id)"
+                          (change)="toggleProject(p.id)"
+                          [attr.aria-label]="'Select ' + p.name"
+                        />
+                      </td>
+                      <td>
+                        <div class="gl-proj">
+                          <span class="gl-proj-name">{{ p.name }}</span>
+                          <span class="gl-proj-path">{{
+                            p.path_with_namespace
+                          }}</span>
+                        </div>
+                        @if (
+                          isProjectSelected(p.id) &&
+                          selectedAction() === "merge" &&
+                          mrMode() === "single" &&
+                          branchMode() === "per-project"
+                        ) {
+                          <div class="gl-pp-config">
+                            <input
+                              class="gl-input sm"
+                              placeholder="source"
+                              [value]="
+                                perProjectConfig().get(p.id)?.source ?? ''
+                              "
+                              (input)="
+                                setPerProject(
+                                  p.id,
+                                  'source',
+                                  $any($event.target).value
+                                )
+                              "
+                            />
+                            <mat-icon aria-hidden="true"
+                              >arrow_forward</mat-icon
+                            >
+                            <input
+                              class="gl-input sm"
+                              placeholder="target"
+                              [value]="
+                                perProjectConfig().get(p.id)?.target ?? ''
+                              "
+                              (input)="
+                                setPerProject(
+                                  p.id,
+                                  'target',
+                                  $any($event.target).value
+                                )
+                              "
+                            />
+                          </div>
+                        }
+                      </td>
+                      <td class="gl-status-col">
+                        @if (liveResultFor(p.id); as r) {
+                          <span
+                            class="gl-status {{ r.status }}"
+                            [title]="r.error || ''"
+                          >
+                            @if (r.status === "running") {
+                              <span class="gl-spin"
+                                ><mat-icon aria-hidden="true"
+                                  >progress_activity</mat-icon
+                                ></span
+                              >
+                            } @else if (r.success) {
+                              <mat-icon aria-hidden="true"
+                                >check_circle</mat-icon
+                              >
+                            } @else {
+                              <mat-icon aria-hidden="true">cancel</mat-icon>
+                            }
+                          </span>
+                        } @else {
+                          @if (previewFor(p.id); as pv) {
+                            <span
+                              class="gl-status {{ pv.ok ? 'ready' : 'issue' }}"
+                              [title]="pv.reasons.join('; ')"
+                            >
+                              @if (pv.ok) {
+                                <mat-icon aria-hidden="true">check</mat-icon>
+                              } @else {
+                                <mat-icon aria-hidden="true">warning</mat-icon>
+                              }
+                            </span>
+                          } @else {
+                            <span class="gl-mute">—</span>
+                          }
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
+    @if (showResults()) {
+      <div
+        class="gl-overlay"
+        (click)="closeResults()"
+        (keydown.escape)="closeResults()"
+      >
+        <div
+          class="gl-modal gl-results"
+          (click)="$event.stopPropagation()"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="gl-results-title"
+        >
+          <div class="gl-modal-head">
+            <h2 id="gl-results-title">
+              @if (resultSummary().fail === 0) {
+                Execution complete
+              } @else {
+                Execution complete ({{ resultSummary().fail }} failed)
+              }
+            </h2>
+            <button
+              class="gl-icon-btn"
+              (click)="closeResults()"
+              aria-label="Close"
+            >
+              <mat-icon aria-hidden="true">close</mat-icon>
+            </button>
+          </div>
+          <div class="gl-results-summary">
+            <span class="gl-ok">{{ resultSummary().ok }} succeeded</span>
+            @if (resultSummary().fail > 0) {
+              <span class="gl-err">{{ resultSummary().fail }} failed</span>
+            }
+            @if (resultSummary().elapsed) {
+              <span class="gl-mute">in {{ resultSummary().elapsed }}s</span>
+            }
+          </div>
+          <div class="gl-results-list">
+            @for (r of liveResults(); track r.projectId; let i = $index) {
+              <div
+                class="gl-result-row result-enter"
+                [class.ok]="r.success && r.status === 'done'"
+                [class.fail]="!r.success && r.status === 'done'"
+                [class.pending]="r.status !== 'done'"
+                [style.animation-delay]="getAnimDelay(i)"
+              >
+                <span class="gl-r-icon">
+                  @if (r.status === "running") {
+                    <span class="gl-spin"
+                      ><mat-icon aria-hidden="true"
+                        >progress_activity</mat-icon
+                      ></span
+                    >
+                  } @else if (r.status === "done" && r.success) {
+                    <mat-icon aria-hidden="true">check_circle</mat-icon>
+                  } @else if (r.status === "done") {
+                    <mat-icon aria-hidden="true">cancel</mat-icon>
+                  } @else {
+                    <mat-icon aria-hidden="true">schedule</mat-icon>
+                  }
+                </span>
+                <span class="gl-r-name">{{ r.projectName }}</span>
+                @if (r.source) {
+                  <span class="gl-r-branch"
+                    >{{ r.source }} → {{ r.target }}</span
+                  >
+                }
+                @if (r.detail) {
+                  <span class="gl-mute">{{ r.detail }}</span>
+                }
+                @if (r.error) {
+                  <span class="gl-err">{{ r.error }}</span>
+                }
+                @if (r.success && r.mrUrl) {
+                  <span class="gl-r-actions">
+                    <a
+                      [href]="r.mrUrl"
+                      target="_blank"
+                      rel="noopener"
+                      class="gl-link"
+                      >Open</a
+                    >
+                    <button class="gl-link" (click)="copyLink(r.mrUrl!)">
+                      Copy
+                    </button>
+                  </span>
+                }
+              </div>
+            }
+          </div>
+          <div class="gl-results-footer">
+            <button
+              class="gl-btn-ghost"
+              (click)="retryFailed()"
+              [disabled]="resultSummary().fail === 0"
+            >
+              <mat-icon aria-hidden="true">replay</mat-icon> Retry failed
+            </button>
+            <button
+              class="gl-btn-primary"
+              (click)="copyAllLinks()"
+              [disabled]="resultSummary().ok === 0"
+            >
+              <mat-icon aria-hidden="true">content_copy</mat-icon> Copy all MR
+              links
+            </button>
+            <button class="gl-btn-primary" (click)="closeResults()">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (activityOpen()) {
+      <div
+        class="gl-log-overlay"
+        (click)="activityOpen.set(false)"
+        (keydown.escape)="activityOpen.set(false)"
+      ></div>
+      <aside
+        class="gl-log-panel"
+        role="complementary"
+        aria-label="Activity log"
+      >
+        <div class="gl-log-panel-head">
+          <span>Activity log</span>
+          <div>
+            @if (logs().length) {
+              <button class="gl-link sm" (click)="logs.set([])">clear</button>
+            }
+            <button class="gl-link sm" (click)="activityOpen.set(false)">
+              ✕
+            </button>
+          </div>
+        </div>
+        <div class="gl-log-panel-body" aria-live="polite" role="status">
+          @for (l of logs(); track l.id) {
+            <div class="gl-log-row" [class]="l.type">
+              <span class="gl-log-time">{{ l.time | date: "HH:mm:ss" }}</span>
+              <span class="gl-log-msg">{{ l.msg }}</span>
+            </div>
+          } @empty {
+            <div class="gl-mute gl-pad">No activity yet.</div>
+          }
+        </div>
+      </aside>
+    }
+  }
+</div>

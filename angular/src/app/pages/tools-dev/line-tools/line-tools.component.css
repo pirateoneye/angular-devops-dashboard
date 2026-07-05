@@ -1,5 +1,0 @@
-﻿.lt-grid { display:flex; gap:12px; align-items:center; margin:10px 0; flex-wrap:wrap; font-size:13px; }
-.lt-grid label { display:inline-flex; align-items:center; gap:4px; color:#495057; }
-.lt-in { border:1px solid #ced4da; border-radius:8px; padding:4px 6px; font-size:12px; font-family:monospace; }
-.lt-sm { width:64px; }
-.lt-grid select { border:1px solid #ced4da; border-radius:8px; padding:4px 6px; font-size:12px; }

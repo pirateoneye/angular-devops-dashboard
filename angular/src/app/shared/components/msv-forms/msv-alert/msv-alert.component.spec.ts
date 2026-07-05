@@ -1,7 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MsvAlertComponent } from './msv-alert.component';
-import { DebugElement } from '@angular/core';
-import { By } from '@angular/platform-browser';
 
 describe('MsvAlertComponent', () => {
   let component: MsvAlertComponent;
@@ -69,9 +67,10 @@ describe('MsvAlertComponent', () => {
   it('should project content into alert body', () => {
     const testHostFixture = TestBed.createComponent(MsvAlertComponent);
     testHostFixture.componentInstance.type = 'info';
-    testHostFixture.nativeElement.innerHTML = '<msv-alert><p>Test message content</p></msv-alert>';
+    testHostFixture.nativeElement.innerHTML =
+      '<msv-alert><p>Test message content</p></msv-alert>';
     testHostFixture.detectChanges();
-    
+
     // Alternative approach - test the component directly
     const alertBody = fixture.nativeElement.querySelector('.alert-body');
     expect(alertBody).toBeTruthy();
@@ -94,12 +93,12 @@ describe('MsvAlertComponent', () => {
   it('should emit dismissed event when close button is clicked', () => {
     component.dismissible = true;
     fixture.detectChanges();
-    
+
     spyOn(component.dismissed, 'emit');
-    
+
     const closeButton = fixture.nativeElement.querySelector('.alert-close');
     closeButton.click();
-    
+
     expect(component.dismissed.emit).toHaveBeenCalled();
   });
 
@@ -124,10 +123,10 @@ describe('MsvAlertComponent', () => {
       { type: 'info', expectedIcon: 'ℹ' },
       { type: 'success', expectedIcon: '✓' },
       { type: 'warning', expectedIcon: '⚠' },
-      { type: 'error', expectedIcon: '✕' }
+      { type: 'error', expectedIcon: '✕' },
     ];
 
-    iconTests.forEach(test => {
+    iconTests.forEach((test) => {
       component.type = test.type as 'info' | 'success' | 'warning' | 'error';
       component.icon = true;
       fixture.detectChanges();

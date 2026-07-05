@@ -10,7 +10,7 @@ describe('MsvAccordionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvAccordionComponent, MsvAccordionItemComponent]
+      declarations: [MsvAccordionComponent, MsvAccordionItemComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvAccordionComponent);
@@ -36,11 +36,17 @@ describe('MsvAccordionComponent with items', () => {
   @Component({
     template: `
       <msv-accordion [multi]="multi">
-        <msv-accordion-item title="Item 1" [expanded]="item1Expanded">Content 1</msv-accordion-item>
-        <msv-accordion-item title="Item 2" [expanded]="item2Expanded">Content 2</msv-accordion-item>
-        <msv-accordion-item title="Item 3" [expanded]="item3Expanded">Content 3</msv-accordion-item>
+        <msv-accordion-item title="Item 1" [expanded]="item1Expanded"
+          >Content 1</msv-accordion-item
+        >
+        <msv-accordion-item title="Item 2" [expanded]="item2Expanded"
+          >Content 2</msv-accordion-item
+        >
+        <msv-accordion-item title="Item 3" [expanded]="item3Expanded"
+          >Content 3</msv-accordion-item
+        >
       </msv-accordion>
-    `
+    `,
   })
   class TestHostComponent {
     multi = false;
@@ -51,21 +57,24 @@ describe('MsvAccordionComponent with items', () => {
 
   let hostComponent: TestHostComponent;
   let fixture: ComponentFixture<TestHostComponent>;
-  let accordionComponent: MsvAccordionComponent;
   let accordionItems: DebugElement[];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvAccordionComponent, MsvAccordionItemComponent, TestHostComponent]
+      declarations: [
+        MsvAccordionComponent,
+        MsvAccordionItemComponent,
+        TestHostComponent,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestHostComponent);
     hostComponent = fixture.componentInstance;
     fixture.detectChanges();
 
-    const accordionDebugElement = fixture.debugElement.query(By.directive(MsvAccordionComponent));
-    accordionComponent = accordionDebugElement.componentInstance;
-    accordionItems = fixture.debugElement.queryAll(By.directive(MsvAccordionItemComponent));
+    accordionItems = fixture.debugElement.queryAll(
+      By.directive(MsvAccordionItemComponent),
+    );
   });
 
   it('should contain accordion items', () => {
@@ -78,7 +87,9 @@ describe('MsvAccordionComponent with items', () => {
     await fixture.whenStable();
 
     // Open first item
-    const firstHeader = accordionItems[0].query(By.css('.msv-accordion-header'));
+    const firstHeader = accordionItems[0].query(
+      By.css('.msv-accordion-header'),
+    );
     firstHeader.nativeElement.click();
     fixture.detectChanges();
     await fixture.whenStable();
@@ -88,7 +99,9 @@ describe('MsvAccordionComponent with items', () => {
     expect(accordionItems[2].componentInstance.expanded).toBe(false);
 
     // Open second item - should close first
-    const secondHeader = accordionItems[1].query(By.css('.msv-accordion-header'));
+    const secondHeader = accordionItems[1].query(
+      By.css('.msv-accordion-header'),
+    );
     secondHeader.nativeElement.click();
     fixture.detectChanges();
     await fixture.whenStable();
@@ -104,13 +117,17 @@ describe('MsvAccordionComponent with items', () => {
     await fixture.whenStable();
 
     // Open first item
-    const firstHeader = accordionItems[0].query(By.css('.msv-accordion-header'));
+    const firstHeader = accordionItems[0].query(
+      By.css('.msv-accordion-header'),
+    );
     firstHeader.nativeElement.click();
     fixture.detectChanges();
     await fixture.whenStable();
 
     // Open second item
-    const secondHeader = accordionItems[1].query(By.css('.msv-accordion-header'));
+    const secondHeader = accordionItems[1].query(
+      By.css('.msv-accordion-header'),
+    );
     secondHeader.nativeElement.click();
     fixture.detectChanges();
     await fixture.whenStable();
@@ -137,7 +154,7 @@ describe('MsvAccordionItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvAccordionItemComponent]
+      declarations: [MsvAccordionItemComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvAccordionItemComponent);
@@ -165,7 +182,9 @@ describe('MsvAccordionItemComponent', () => {
   });
 
   it('should toggle expanded state on click', () => {
-    const button = compiled.querySelector('.msv-accordion-header') as HTMLButtonElement;
+    const button = compiled.querySelector(
+      '.msv-accordion-header',
+    ) as HTMLButtonElement;
     expect(component.expanded).toBe(false);
 
     button.click();
@@ -226,24 +245,32 @@ describe('MsvAccordionItemComponent', () => {
   it('should set aria-expanded attribute correctly', () => {
     component.expanded = false;
     fixture.detectChanges();
-    let button = compiled.querySelector('.msv-accordion-header') as HTMLButtonElement;
+    let button = compiled.querySelector(
+      '.msv-accordion-header',
+    ) as HTMLButtonElement;
     expect(button.getAttribute('aria-expanded')).toBe('false');
 
     component.expanded = true;
     fixture.detectChanges();
-    button = compiled.querySelector('.msv-accordion-header') as HTMLButtonElement;
+    button = compiled.querySelector(
+      '.msv-accordion-header',
+    ) as HTMLButtonElement;
     expect(button.getAttribute('aria-expanded')).toBe('true');
   });
 
   it('should set aria-disabled attribute correctly', () => {
     component.disabled = false;
     fixture.detectChanges();
-    let button = compiled.querySelector('.msv-accordion-header') as HTMLButtonElement;
+    let button = compiled.querySelector(
+      '.msv-accordion-header',
+    ) as HTMLButtonElement;
     expect(button.getAttribute('aria-disabled')).toBe('false');
 
     component.disabled = true;
     fixture.detectChanges();
-    button = compiled.querySelector('.msv-accordion-header') as HTMLButtonElement;
+    button = compiled.querySelector(
+      '.msv-accordion-header',
+    ) as HTMLButtonElement;
     expect(button.getAttribute('aria-disabled')).toBe('true');
   });
 
@@ -262,7 +289,7 @@ describe('MsvAccordionItemComponent with content', () => {
       <msv-accordion-item title="Test" [expanded]="true">
         <p>Test Content</p>
       </msv-accordion-item>
-    `
+    `,
   })
   class TestContentComponent {}
 
@@ -270,7 +297,7 @@ describe('MsvAccordionItemComponent with content', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvAccordionItemComponent, TestContentComponent]
+      declarations: [MsvAccordionItemComponent, TestContentComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestContentComponent);
@@ -278,7 +305,9 @@ describe('MsvAccordionItemComponent with content', () => {
   });
 
   it('should render content in expanded state', () => {
-    const content = fixture.nativeElement.querySelector('.msv-accordion-content');
+    const content = fixture.nativeElement.querySelector(
+      '.msv-accordion-content',
+    );
     expect(content?.textContent).toContain('Test Content');
   });
 });

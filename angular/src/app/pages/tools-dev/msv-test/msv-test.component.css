@@ -1,1 +1,43 @@
 /* MSV Test Component Styles */
+
+.msv-test-section-heading {
+  color: var(--msv-primary);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 700;
+}
+
+.btn-row {
+  flex-wrap: wrap;
+}
+
+/* Copy button helper */
+.copy-value-btn {
+  background: none;
+  border: 1px solid var(--msv-border);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 12px;
+  color: var(--msv-text-muted);
+  transition: all 0.2s;
+}
+.copy-value-btn:hover {
+  border-color: var(--msv-primary);
+  color: var(--msv-primary);
+}
+
+/* Spinner for test execution */
+.test-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--msv-border);
+  border-top-color: var(--msv-primary);
+  border-radius: 50%;
+  animation: test-spin 0.6s linear infinite;
+}
+@keyframes test-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

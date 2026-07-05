@@ -1,6 +1,11 @@
-import { Injectable, Injector, ComponentRef, Type, ApplicationRef, createComponent } from '@angular/core';
+import {
+  Injectable,
+  Injector,
+  Type,
+  ApplicationRef,
+  createComponent,
+} from '@angular/core';
 import { Overlay, OverlayConfig } from '@angular/cdk/overlay';
-import { ComponentPortal } from '@angular/cdk/portal';
 import { Observable } from 'rxjs';
 import { MsvModalComponent } from './msv-modal.component';
 import { MsvModalConfig } from './msv-modal.types';
@@ -11,7 +16,7 @@ import { MsvModalRef } from './msv-modal-ref';
  * Uses Angular CDK Overlay for rendering modals.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MsvModalService {
   /**
@@ -47,7 +52,7 @@ export class MsvModalService {
   constructor(
     private overlay: Overlay,
     private injector: Injector,
-    private appRef: ApplicationRef
+    private appRef: ApplicationRef,
   ) {}
 
   /**
@@ -56,31 +61,39 @@ export class MsvModalService {
    * @param config Modal configuration
    * @returns MsvModalRef for controlling the modal
    */
-  open<T, R = any>(component: Type<T>, config?: MsvModalConfig): MsvModalRef<T, R> {
+  open<T, R = any>(
+    component: Type<T>,
+    config?: MsvModalConfig,
+  ): MsvModalRef<T, R> {
     const defaultConfig: MsvModalConfig = {
       closable: true,
       size: 'medium',
       hasBackdrop: true,
-      ...config
+      ...config,
     };
 
     // Create overlay with backdrop
-    const overlayRef = this.overlay.create(this.getOverlayConfig(defaultConfig));
+    const overlayRef = this.overlay.create(
+      this.getOverlayConfig(defaultConfig),
+    );
 
     // Create modal wrapper component
     const modalComponentRef = createComponent(MsvModalComponent, {
       environmentInjector: this.appRef.injector,
-      elementInjector: this.injector
+      elementInjector: this.injector,
     });
 
     // Create the user's content component
     const contentComponentRef = createComponent(component, {
       environmentInjector: this.appRef.injector,
-      elementInjector: this.injector
+      elementInjector: this.injector,
     });
 
     // Create modal reference
-    const modalRef = new MsvModalRef<T, R>(overlayRef, contentComponentRef.instance);
+    const modalRef = new MsvModalRef<T, R>(
+      overlayRef,
+      contentComponentRef.instance,
+    );
 
     // Configure modal component
     modalComponentRef.instance.closable = defaultConfig.closable ?? true;
@@ -94,7 +107,7 @@ export class MsvModalService {
     // Get the modal content container and append the content component
     const modalElement = modalComponentRef.location.nativeElement;
     const contentElement = contentComponentRef.location.nativeElement;
-    
+
     // Find the modal body and append content
     const modalBody = modalElement.querySelector('.msv-modal-body');
     if (modalBody) {
@@ -108,16 +121,18 @@ export class MsvModalService {
     this.pushOpen(modalRef);
 
     // Clean up when modal closes
-    modalRef.afterClosed$.subscribe(() => {
-      try {
-        this.appRef.detachView(contentComponentRef.hostView);
-        this.appRef.detachView(modalComponentRef.hostView);
-        contentComponentRef.destroy();
-        modalComponentRef.destroy();
-      } finally {
-        this.popOpen(modalRef);
-        overlayRef.dispose();
-      }
+    modalRef.afterClosed$.subscribe({
+      next: () => {
+        try {
+          this.appRef.detachView(contentComponentRef.hostView);
+          this.appRef.detachView(modalComponentRef.hostView);
+          contentComponentRef.destroy();
+          modalComponentRef.destroy();
+        } finally {
+          this.popOpen(modalRef);
+          overlayRef.dispose();
+        }
+      },
     });
 
     return modalRef;
@@ -130,21 +145,23 @@ export class MsvModalService {
    * @returns Observable that emits true if confirmed, false if cancelled
    */
   confirm(title: string, message: string): Observable<boolean> {
-    const overlayRef = this.overlay.create(this.getOverlayConfig({
-      closable: true,
-      size: 'small',
-      hasBackdrop: true
-    }));
+    const overlayRef = this.overlay.create(
+      this.getOverlayConfig({
+        closable: true,
+        size: 'small',
+        hasBackdrop: true,
+      }),
+    );
 
     // Create confirmation modal using MsvModalComponent
     const modalComponentRef = createComponent(MsvModalComponent, {
       environmentInjector: this.appRef.injector,
-      elementInjector: this.injector
+      elementInjector: this.injector,
     });
 
     const modalRef = new MsvModalRef<MsvModalComponent, boolean>(
       overlayRef,
-      modalComponentRef.instance
+      modalComponentRef.instance,
     );
 
     // Configure modal
@@ -157,7 +174,11 @@ export class MsvModalService {
     const modalElement = modalComponentRef.location.nativeElement;
 
     // Create confirmation content
-    const confirmContent = this.createConfirmationContent(title, message, modalRef);
+    const confirmContent = this.createConfirmationContent(
+      title,
+      message,
+      modalRef,
+    );
     const modalBody = modalElement.querySelector('.msv-modal-body');
     if (modalBody) {
       modalBody.innerHTML = '';
@@ -171,21 +192,25 @@ export class MsvModalService {
     this.pushOpen(modalRef);
 
     // Clean up on close — ensure overlay is disposed on every close path
-    modalRef.afterClosed$.subscribe(() => {
-      try {
-        this.appRef.detachView(modalComponentRef.hostView);
-        modalComponentRef.destroy();
-      } finally {
-        this.popOpen(modalRef);
-        overlayRef.dispose();
-      }
+    modalRef.afterClosed$.subscribe({
+      next: () => {
+        try {
+          this.appRef.detachView(modalComponentRef.hostView);
+          modalComponentRef.destroy();
+        } finally {
+          this.popOpen(modalRef);
+          overlayRef.dispose();
+        }
+      },
     });
 
     // Return observable that emits the result
-    return new Observable<boolean>(observer => {
-      modalRef.afterClosed$.subscribe(result => {
-        observer.next(result ?? false);
-        observer.complete();
+    return new Observable<boolean>((observer) => {
+      modalRef.afterClosed$.subscribe({
+        next: (result) => {
+          observer.next(result ?? false);
+          observer.complete();
+        },
       });
     });
   }
@@ -198,8 +223,12 @@ export class MsvModalService {
       hasBackdrop: config.hasBackdrop ?? true,
       backdropClass: config.backdropClass || '',
       panelClass: config.panelClass || '',
-      positionStrategy: this.overlay.position().global().centerHorizontally().centerVertically(),
-      scrollStrategy: this.overlay.scrollStrategies.block()
+      positionStrategy: this.overlay
+        .position()
+        .global()
+        .centerHorizontally()
+        .centerVertically(),
+      scrollStrategy: this.overlay.scrollStrategies.block(),
     };
   }
 
@@ -213,7 +242,7 @@ export class MsvModalService {
   private createConfirmationContent(
     title: string,
     message: string,
-    modalRef: MsvModalRef<any, boolean>
+    modalRef: MsvModalRef<any, boolean>,
   ): HTMLElement {
     const container = document.createElement('div');
     container.className = 'msv-confirm-dialog';

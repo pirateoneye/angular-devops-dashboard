@@ -1,5 +1,5 @@
 <div class="app-container" [class.menu-open]="menuOpen()">
-  <header class="bg-layout">
+  <header class="bg-layout" [class.scrolled]="isScrolled()">
     <div class="container top-bar-inner">
       <a class="brand" routerLink="/dashboard" aria-label="MSV Tools home">
         <img src="../assets/logo.png" alt="MSV Tools" class="brand-logo" />
@@ -27,7 +27,7 @@
           aria-haspopup="true"
         >
           <span>UAT/DEV Stuff</span>
-          <mat-icon aria-hidden="true">arrow_drop_down</mat-icon>
+          <mat-icon aria-hidden="true">keyboard_arrow_down</mat-icon>
         </button>
         <mat-menu #uatMenu="matMenu">
           <a mat-menu-item routerLink="/tools-dev/batch-runner"
@@ -51,8 +51,11 @@
           <a mat-menu-item routerLink="/tools-dev/publish-kafka"
             ><mat-icon>send</mat-icon><span>Publish Kafka</span></a
           >
-          <a mat-menu-item routerLink="/tools-dev/gitlab/tags-monitor"
-            ><mat-icon>label</mat-icon><span>GitLab Tags Monitor</span></a
+          <a mat-menu-item routerLink="/tools-dev/gslb"
+            ><mat-icon>dns</mat-icon><span>GSLB</span></a
+          >
+          <a mat-menu-item routerLink="/tools-dev/gitlab"
+            ><mat-icon>merge_type</mat-icon><span>GitLab Tools</span></a
           >
         </mat-menu>
 
@@ -63,7 +66,7 @@
           aria-haspopup="true"
         >
           <span>Piket</span>
-          <mat-icon aria-hidden="true">arrow_drop_down</mat-icon>
+          <mat-icon aria-hidden="true">keyboard_arrow_down</mat-icon>
         </button>
         <mat-menu #piketMenu="matMenu">
           <a mat-menu-item routerLink="/piket/keluhan-list"
@@ -92,7 +95,7 @@
         <kbd class="ctrl-k-hint" aria-hidden="true">Ctrl+K</kbd>
         <button
           type="button"
-          class="nav-icon-btn"
+          class="nav-icon-btn theme-btn"
           (click)="toggleTheme()"
           [attr.aria-label]="
             theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'
@@ -101,9 +104,12 @@
             theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'
           "
         >
-          <mat-icon aria-hidden="true">{{
-            theme.isDark() ? "light_mode" : "dark_mode"
-          }}</mat-icon>
+          <mat-icon
+            aria-hidden="true"
+            class="rotating"
+            [class.spun]="themeSpun()"
+            >{{ theme.isDark() ? "light_mode" : "dark_mode" }}</mat-icon
+          >
         </button>
         <button
           type="button"
@@ -210,10 +216,16 @@
       >
       <a
         class="mobile-nav-sublink"
-        routerLink="/tools-dev/gitlab/tags-monitor"
+        routerLink="/tools-dev/gslb"
         (click)="closeMenu()"
-        ><mat-icon aria-hidden="true">label</mat-icon
-        ><span>GitLab Tags Monitor</span></a
+        ><mat-icon aria-hidden="true">dns</mat-icon><span>GSLB</span></a
+      >
+      <a
+        class="mobile-nav-sublink"
+        routerLink="/tools-dev/gitlab"
+        (click)="closeMenu()"
+        ><mat-icon aria-hidden="true">merge_type</mat-icon
+        ><span>GitLab Tools</span></a
       >
 
       <div class="mobile-nav-group">Piket</div>
@@ -258,6 +270,12 @@
         }}</mat-icon>
         <span>{{ theme.isDark() ? "Light theme" : "Dark theme" }}</span>
       </button>
+
+      <div class="mobile-nav-divider"></div>
+      <a class="mobile-nav-link" routerLink="/utilities" (click)="closeMenu()">
+        <mat-icon aria-hidden="true">apps</mat-icon>
+        <span>Browse all tools →</span>
+      </a>
     </nav>
   }
 

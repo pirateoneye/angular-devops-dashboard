@@ -1,11 +1,7 @@
 <div class="container pt-3 pb-3">
   <mat-card class="tool-card">
-    <h2 class="tool-title">
-      Check Data
-    </h2>
-    <p class="tool-sub">
-      Tools untuk check data di environment UAT
-    </p>
+    <h2 class="tool-title">Check Data</h2>
+    <p class="tool-sub">Tools untuk check data di environment UAT</p>
 
     <div class="tool-divider"></div>
 
@@ -24,7 +20,7 @@
         <h3
           class="col-4 m-0"
           style="
-            color: #144e83;
+            color: var(--msv-primary-hover);
             font-family: &quot;Open Sans&quot;;
             font-weight: 700;
           "
@@ -55,37 +51,42 @@
       </div>
 
       <!-- Response Section - Refactored with msv-response-panel -->
-      @if (response.status != null) {
+      @if (response.status !== null) {
         <div>
-        <!-- Custom info header - keep this for app-specific context -->
-        <div
-          class="information-header mb-3"
-          style="color: #005caa; font-family: &quot;Open Sans&quot;"
-        >
-          <div class="d-flex align-items-center">
-            <mat-icon style="color: #005caa" aria-hidden="true"> info </mat-icon>
-            <h4
-              style="
-                color: #005caa;
-                font-family: &quot;Open Sans&quot;;
-                margin: 0;
-                margin-left: 10px;
-              "
-            >
-              Check Data <b>{{ placeholder[response.submissionType] }}</b> By
-              <b
-                >{{ placeholder[response.checkBy] }}
-                {{ response.checkValue }}</b
+          <!-- Custom info header - keep this for app-specific context -->
+          <div
+            class="information-header mb-3"
+            style="
+              color: var(--msv-primary);
+              font-family: &quot;Open Sans&quot;;
+            "
+          >
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: var(--msv-primary)" aria-hidden="true">
+                info
+              </mat-icon>
+              <h4
+                style="
+                  color: var(--msv-primary);
+                  font-family: &quot;Open Sans&quot;;
+                  margin: 0;
+                  margin-left: 10px;
+                "
               >
-            </h4>
+                Check Data <b>{{ placeholder[response.submissionType] }}</b> By
+                <b
+                  >{{ placeholder[response.checkBy] }}
+                  {{ response.checkValue }}</b
+                >
+              </h4>
+            </div>
           </div>
-        </div>
 
-        <!-- Response panel - replaces the rest -->
-        <msv-response-panel
-          [response]="response"
-          [showData]="true"
-        ></msv-response-panel>
+          <!-- Response panel - replaces the rest -->
+          <msv-response-panel
+            [response]="response"
+            [showData]="true"
+          ></msv-response-panel>
         </div>
       }
 

@@ -1,0 +1,53 @@
+<div class="gslb-auth">
+  <div class="auth-card">
+    <div class="auth-ico"><mat-icon>dns</mat-icon></div>
+    <h1>GSLB / DNS Console</h1>
+    <p class="muted">Masukkan username &amp; password gege.com Anda.</p>
+
+    <div class="field">
+      <label for="gslbUser">Username</label>
+      <input
+        [(ngModel)]="username"
+        name="username"
+        type="text"
+        id="gslbUser"
+        placeholder="Masukkan username"
+        autocomplete="username"
+        aria-label="Username"
+        (keydown.enter)="loginAction()"
+      />
+    </div>
+
+    <div class="field">
+      <label for="gslbPass">Password</label>
+      <input
+        [(ngModel)]="password"
+        name="password"
+        type="password"
+        id="gslbPass"
+        placeholder="Masukkan password"
+        autocomplete="current-password"
+        aria-label="Password"
+        (keydown.enter)="loginAction()"
+      />
+    </div>
+
+    <label class="chk">
+      <input type="checkbox" name="remember" [(ngModel)]="remember" />
+      Remember on this device
+    </label>
+
+    @if (loginError) {
+      <div class="err" role="alert">{{ loginError }}</div>
+    }
+
+    <button
+      class="btn-primary"
+      (click)="loginAction()"
+      [disabled]="submitting"
+      aria-label="Masuk"
+    >
+      {{ submitting ? "Memeriksa…" : "Masuk" }}
+    </button>
+  </div>
+</div>

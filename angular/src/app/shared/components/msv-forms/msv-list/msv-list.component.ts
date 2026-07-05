@@ -1,11 +1,11 @@
-import { 
-  Component, 
-  Input, 
-  Output, 
-  EventEmitter, 
-  ContentChildren, 
-  QueryList, 
-  AfterContentInit 
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ContentChildren,
+  QueryList,
+  AfterContentInit,
 } from '@angular/core';
 import { MsvListItemComponent } from './msv-list-item.component';
 
@@ -16,42 +16,47 @@ import { MsvListItemComponent } from './msv-list-item.component';
       <ng-content></ng-content>
     </div>
   `,
-  styles: [`
-    .msv-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-family: var(--msv-font-family, 'Open Sans', sans-serif);
-      border: 1px solid var(--msv-border-color, #ced4da);
-      border-radius: var(--msv-border-radius, 5px);
-      padding: 8px;
-      background-color: #fff;
-      max-height: 400px;
-      overflow-y: auto;
-    }
+  styles: [
+    `
+      .msv-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+        border: 1px solid var(--msv-border-color, #ced4da);
+        border-radius: var(--msv-border-radius, 5px);
+        padding: 8px;
+        background-color: #fff;
+        max-height: 400px;
+        overflow-y: auto;
+      }
 
-    .msv-list.selectable {
-      cursor: pointer;
-    }
-  `],
-  standalone: false
+      .msv-list.selectable {
+        cursor: pointer;
+      }
+    `,
+  ],
+  standalone: false,
 })
 export class MsvListComponent implements AfterContentInit {
   @Input() selectable: boolean = false;
   @Input() multiple: boolean = false;
   @Output() selectionChange = new EventEmitter<any[]>();
-  
-  @ContentChildren(MsvListItemComponent) items!: QueryList<MsvListItemComponent>;
-  
+
+  @ContentChildren(MsvListItemComponent)
+  items!: QueryList<MsvListItemComponent>;
+
   private selectedItems: Set<MsvListItemComponent> = new Set();
 
   ngAfterContentInit(): void {
     // Subscribe to item clicks
-    this.items.forEach(item => {
-      item.itemClick.subscribe(() => {
-        if (this.selectable) {
-          this.handleItemSelection(item);
-        }
+    this.items.forEach((item) => {
+      item.itemClick.subscribe({
+        next: () => {
+          if (this.selectable) {
+            this.handleItemSelection(item);
+          }
+        },
       });
     });
   }
@@ -74,7 +79,7 @@ export class MsvListComponent implements AfterContentInit {
         item.setSelected(false);
       } else {
         // Deselect all others and select this one
-        this.selectedItems.forEach(selectedItem => {
+        this.selectedItems.forEach((selectedItem) => {
           selectedItem.setSelected(false);
         });
         this.selectedItems.clear();
@@ -87,12 +92,12 @@ export class MsvListComponent implements AfterContentInit {
   }
 
   private emitSelectionChange(): void {
-    const values = Array.from(this.selectedItems).map(item => item.value);
+    const values = Array.from(this.selectedItems).map((item) => item.value);
     this.selectionChange.emit(values);
   }
 
   clearSelection(): void {
-    this.selectedItems.forEach(item => {
+    this.selectedItems.forEach((item) => {
       item.setSelected(false);
     });
     this.selectedItems.clear();
@@ -100,6 +105,6 @@ export class MsvListComponent implements AfterContentInit {
   }
 
   getSelectedValues(): any[] {
-    return Array.from(this.selectedItems).map(item => item.value);
+    return Array.from(this.selectedItems).map((item) => item.value);
   }
 }

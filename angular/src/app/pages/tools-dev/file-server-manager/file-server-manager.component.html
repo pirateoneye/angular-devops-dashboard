@@ -1,154 +1,150 @@
 <div class="container pt-3 pb-3">
-    <mat-card class="tool-card">
-        <h2 class="tool-title">
-            File Server Manager
-        </h2>
-        <p class="tool-sub">
-            Tools untuk melakukan mangement file server di environment UAT
-        </p>
+  <mat-card class="tool-card">
+    <h2 class="tool-title">File Server Manager</h2>
+    <p class="tool-sub">
+      Tools untuk melakukan mangement file server di environment UAT
+    </p>
 
-        <div class="tool-divider"></div>
+    <div class="tool-divider"></div>
 
-        <div class="batch-list-card">
-            <div class="d-flex row">
-                <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
-                    Kategori
-                </h3>
-            </div>
-            <div class="d-flex row  mt-2 mb-4" style="padding-right: 0px;">
-                <div class="col-12" style="padding-right: 0px;">
-                    <select class="select-key" [(ngModel)]="category" [disabled]="listCategory.length == 0" [class.disabled]="listCategory.length == 0">
-                        @for (cat of listCategory; track cat.category) {
-                            <option [ngValue]="cat">{{cat.placeholder}}</option>
-                        }
-                    </select>
-                </div>
-            </div>
+    <div class="batch-list-card">
+      <label for="fsm-category-select" class="tool-label">Kategori</label>
+      <div class="mb-3">
+        <select
+          id="fsm-category-select"
+          class="select-key"
+          [(ngModel)]="category"
+          [disabled]="listCategory.length === 0"
+        >
+          @for (cat of listCategory; track cat.category) {
+            <option [ngValue]="cat">{{ cat.placeholder }}</option>
+          }
+        </select>
+      </div>
 
-            @if (response.status != null) {
-                <div class="information">
-
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            message
-                        </mat-icon>
-                        <h4 style="color: #005CAA; font-family: 'Open Sans';  margin: 0; margin-left: 10px;">
-                            Response Status :
-                        </h4>
-                        @if (response.status === 'SUCCESS') {
-                            <div class="badge-available" style="margin-left: 10px;">
-                                Success
-                            </div>
-                        }
-                        @if (response.status === 'ERROR') {
-                            <div class="badge-failed" style="margin-left: 10px;">
-                                Error
-                            </div>
-                        }
-                        @if (response.status === 'ON_PROCESS') {
-                            <div class="badge-unavailable" style="margin-left: 10px;">
-                                On Running
-                            </div>
-                        }
-                    </div>
-
-                    <div class="d-flex align-items-center mt-3">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            message
-                        </mat-icon>
-                        <h4 style="color: #005CAA; font-family: 'Open Sans';  margin: 0; margin-left: 10px;">
-                            Response Message : {{response.message}}
-                        </h4>
-                    </div>
-
-                    @if (response.progress > 0 && response.progress < 100) {
-                        <div class="d-flex align-items-center mt-3">
-                            <mat-icon style="color: #005CAA" aria-hidden="true">
-                                message
-                            </mat-icon>
-                            <h4 style="color: #005CAA; font-family: 'Open Sans';  margin: 0; margin-left: 10px;">
-                                Response Progress : {{response.progress}}%
-                            </h4>
-                        </div>
-                    }
-
-                    @if(response.data != null){
-                        <div class="d-flex align-items-center mt-3 mb-3">
-                            <mat-icon style="color: #005CAA" aria-hidden="true">
-                                notes
-                            </mat-icon>
-                            <h4 style="color: #005CAA; font-family: 'Open Sans';  margin: 0; margin-left: 10px;">
-                                Response Data:
-                            </h4>
-                        </div>
-                        <div class="d-flex align-items-center response-data" >
-                            @if (response.status === 'ERROR') {
-                                <pre>
-                                    {{response.data | json }}
-                                </pre>
-                            }
-                            <div style="overflow-y: scroll; height: 600px; width: 100%;">
-                                @if (response.status === 'SUCCESS') {
-                                    <table class="table table-striped text-center" >
-                                        <thead>
-                                            <tr>
-                                                <th>File Name</th>
-                                                <th>Size</th>
-                                                <th>Date</th>
-                                                @if (response.data.category.isRemovable || response.data.category.isReadable) {
-                                                    <th colspan="2">Action</th>
-                                                }
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @for(data of response.data.listFile; track data.date){
-                                                <tr>
-                                                    <td class="text-start">{{data.filename}}</td>
-                                                    <td>{{data.size/1000}} KB </td>
-                                                    <td>{{data.date * 1000 | date:'short'}}</td>
-                                                    @if (data.isRemovable) {
-                                                        <td>
-                                                            <button class="btn-danger btn" [disabled]="response.status === 'ON_PROCESS'"  (click)="deleteFile(data.filename)" aria-label="Delete file">
-                                                                <mat-icon aria-hidden="true">delete</mat-icon>
-                                                            </button>
-                                                        </td>
-                                                    }
-                                                    @if (data.isReadable) {
-                                                        <td>
-                                                            <button class="btn-success btn" [disabled]="response.status === 'ON_PROCESS'" (click)="downloadFile(data.filename)" aria-label="Download file">
-                                                                <mat-icon aria-hidden="true">download</mat-icon>
-                                                            </button>
-                                                        </td>
-                                                    }
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                }
-                            </div>
-                        </div>
-                        @if(response.data.category.isWritable){
-                            <div class="d-flex align-items-center mt-5" style="font-weight: 700;">
-                                <mat-icon style="color: #005CAA" aria-hidden="true">
-                                    upload
-                                </mat-icon>
-                                <h3 style="color: #005CAA; font-family: 'Open Sans';  margin: 0; margin-left: 10px;">
-                                    Upload File
-                                </h3>
-                            </div>
-                            <div class="mt-3 mb-3">
-                                <input-file-upload (eventUploadFile)="uploadFile($event)"></input-file-upload>
-                            </div>
-                        }
-                    }
-                </div>
+      @if (response.status !== null) {
+        <div class="information" aria-live="polite" role="status">
+          <!-- Status badge -->
+          <div class="d-flex align-items-center">
+            @if (response.status === "ON_PROCESS") {
+              <span class="spinner" aria-label="Loading"></span>
+              <span class="badge-notyet ms-2">Running…</span>
             }
+            @if (response.status === "SUCCESS") {
+              <mat-icon
+                class="me-2"
+                aria-hidden="true"
+                style="color: var(--msv-success)"
+                >check_circle</mat-icon
+              >
+              <span class="badge-available">Success</span>
+            }
+            @if (response.status === "ERROR") {
+              <mat-icon
+                class="me-2"
+                aria-hidden="true"
+                style="color: var(--msv-error)"
+                >error</mat-icon
+              >
+              <span class="badge-failed">Error</span>
+            }
+          </div>
 
-            <div class="d-flex row mb-4" style="margin-top: 50px;">
-                <div class="col-12">
-                    <button style="width: 100%;" class="btn-primary" [disabled]="response.status === 'ON_PROCESS'" (click)="onClickCheckButton()">Check</button>
-                </div>
+          <p
+            class="mt-2 mb-0"
+            style="font-size: 13px; color: var(--msv-text-muted)"
+          >
+            {{ response.message }}
+          </p>
+
+          @if (response.progress > 0 && response.progress < 100) {
+            <p class="mt-2 mb-0" style="font-size: 13px">
+              Progress: {{ response.progress }}%
+            </p>
+          }
+
+          @if (response.data !== null) {
+            <div class="mt-3">
+              <h4 class="tool-title mb-2">Response Data</h4>
+              <div class="response-data">
+                @if (response.status === "ERROR") {
+                  <pre>{{ response.data | json }}</pre>
+                }
+                @if (response.status === "SUCCESS") {
+                  <div class="table-responsive">
+                    <table class="table table-striped text-center mb-0">
+                      <thead>
+                        <tr>
+                          <th>File Name</th>
+                          <th>Size</th>
+                          <th>Date</th>
+                          @if (
+                            response.data.category.isRemovable ||
+                            response.data.category.isReadable
+                          ) {
+                            <th colspan="2">Action</th>
+                          }
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (data of response.data.listFile; track data.date) {
+                          <tr>
+                            <td class="text-start">{{ data.filename }}</td>
+                            <td>{{ data.size / 1000 }} KB</td>
+                            <td>{{ data.date * 1000 | date: "short" }}</td>
+                            @if (data.isRemovable) {
+                              <td>
+                                <button
+                                  class="btn-danger btn"
+                                  [disabled]="response.status === 'ON_PROCESS'"
+                                  (click)="deleteFile(data.filename)"
+                                  aria-label="Delete file"
+                                >
+                                  <mat-icon aria-hidden="true">delete</mat-icon>
+                                </button>
+                              </td>
+                            }
+                            @if (data.isReadable) {
+                              <td>
+                                <button
+                                  class="btn-success btn"
+                                  [disabled]="response.status === 'ON_PROCESS'"
+                                  (click)="downloadFile(data.filename)"
+                                  aria-label="Download file"
+                                >
+                                  <mat-icon aria-hidden="true"
+                                    >download</mat-icon
+                                  >
+                                </button>
+                              </td>
+                            }
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+              </div>
+              @if (response.data.category.isWritable) {
+                <h3 class="tool-title mt-4 mb-2">Upload File</h3>
+                <input-file-upload
+                  (eventUploadFile)="uploadFile($event)"
+                ></input-file-upload>
+              }
             </div>
+          }
         </div>
-    </mat-card>
+      }
+
+      <div class="mt-4">
+        <button
+          class="btn-primary w-100"
+          [disabled]="response.status === 'ON_PROCESS'"
+          (click)="onClickCheckButton()"
+        >
+          Check
+        </button>
+      </div>
+    </div>
+  </mat-card>
 </div>

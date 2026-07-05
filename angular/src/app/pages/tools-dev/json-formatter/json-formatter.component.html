@@ -1,37 +1,83 @@
-<div class="container pt-3 pb-3">
-  <mat-card class="tool-card">
-    <h2 class="tool-title">JSON Formatter</h2>
-    <h4 class="tool-sub">Format, minify, dan validasi JSON.</h4>
-    <div class="tool-divider"></div>
+<h2 class="tool-title">JSON Formatter</h2>
+<h4 class="tool-sub">Format, minify, dan validasi JSON.</h4>
+<div class="tool-divider"></div>
 
-    <div class="jf-grid">
-      <div>
-        <label class="tool-label">Input</label>
-        <textarea class="tool-area" rows="14" [(ngModel)]="input" placeholder='{"hello":"world"}'></textarea>
-      </div>
-      <div>
-        <label class="tool-label">Output</label>
-        <textarea class="tool-area" rows="14" [value]="output" readonly placeholder="Hasil..."></textarea>
-        @if (output) {
-          <button class="copy-btn icon-btn" (click)="copyOutput()" title="Copy" aria-label="Copy output">
-            <mat-icon aria-hidden="true">file_copy</mat-icon>
-          </button>
-        }
-      </div>
-    </div>
-
-    <div class="tool-actions">
-      <button class="btn-primary" (click)="format()">Format</button>
-      <button class="btn-primary" (click)="minify()">Minify</button>
-      <button class="btn-secondary" (click)="validate()">Validate</button>
-      <button class="btn-secondary" (click)="clear()">Clear</button>
-      @if (stats) {
-        <span class="tool-stats">{{ stats }}</span>
-      }
-    </div>
-
-    @if (error) {
-      <div class="tool-error" role="alert">{{ error }}</div>
+<div class="jf-grid">
+  <div>
+    <label class="tool-label">Input</label>
+    <textarea
+      class="tool-area"
+      rows="14"
+      [(ngModel)]="input"
+      (input)="onInputChange()"
+      placeholder='{"hello":"world"}'
+    ></textarea>
+  </div>
+  <div>
+    <label class="tool-label">Output</label>
+    <textarea
+      class="tool-area result-enter"
+      rows="14"
+      [value]="output"
+      readonly
+      placeholder="Hasil..."
+    ></textarea>
+    @if (output) {
+      <button
+        class="copy-btn icon-btn"
+        (click)="copyOutput()"
+        title="Copy"
+        aria-label="Copy output"
+      >
+        <mat-icon aria-hidden="true">file_copy</mat-icon>
+      </button>
     }
-  </mat-card>
+  </div>
 </div>
+
+<div class="jf-controls">
+  <label class="tool-label-sm">Indent</label>
+  <select class="jf-select" [(ngModel)]="indentSize" (ngModelChange)="format()">
+    <option [value]="2">2 spaces</option>
+    <option [value]="4">4 spaces</option>
+  </select>
+  <label class="jf-check">
+    <input type="checkbox" [(ngModel)]="sortKeys" (ngModelChange)="format()" />
+    Sort keys
+  </label>
+</div>
+
+<div class="tool-actions">
+  <button class="btn-primary" (click)="format()">Format</button>
+  <button class="btn-primary" (click)="minify()">Minify</button>
+  <button class="btn-secondary" (click)="validate()">Validate</button>
+  <button class="btn-secondary" (click)="clear()">Clear</button>
+  <label class="auto-toggle">
+    <input type="checkbox" [(ngModel)]="autoMode" />
+    <span>Auto</span>
+  </label>
+  @if (stats) {
+    <span class="tool-stats">
+      {{ stats.keyCount }} keys · depth {{ stats.maxDepth }} ·
+      {{ stats.lineCount }} lines · {{ stats.byteCount }} bytes
+    </span>
+  }
+</div>
+
+@if (error) {
+  <div class="tool-error" role="alert">{{ error }}</div>
+}
+
+@if (outputHtml) {
+  <label class="tool-label">Formatted (colored)</label>
+  <pre
+    class="code-block colored-block result-enter"
+    [innerHTML]="outputHtml"
+  ></pre>
+} @else if (!output && !error) {
+  <div class="icon-empty">
+    <mat-icon class="empty-icon">data_object</mat-icon>
+    <h3>Paste your JSON to get started</h3>
+    <p class="tool-sub">Format, validate, or minify any JSON object.</p>
+  </div>
+}

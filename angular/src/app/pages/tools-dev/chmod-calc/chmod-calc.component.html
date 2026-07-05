@@ -1,51 +1,109 @@
-<div class="container pt-3 pb-3">
-  <mat-card class="tool-card">
-    <h2 class="tool-title">Chmod Calculator</h2>
-    <h4 class="tool-sub">Hitung permission Unix: rwx ↔ oktal ↔ simbolik, lengkap dengan setuid/setgid/sticky-bit.</h4>
-    <div class="tool-divider"></div>
+<h2 class="tool-title">Chmod Calculator</h2>
+<h4 class="tool-sub">
+  Hitung permission Unix: rwx &harr; oktal &harr; simbolik, lengkap dengan
+  setuid/setgid/sticky-bit.
+</h4>
+<div class="tool-divider"></div>
 
-    <div class="cm-grid">
-      @for (g of groups; track g.key) {
-        <div class="cm-group">
-          <div class="cm-group-head">{{ g.label }} ({{ g.letter }})</div>
-          <label><input type="checkbox" [(ngModel)]="perms[g.key].read" /> read (4)</label>
-          <label><input type="checkbox" [(ngModel)]="perms[g.key].write" /> write (2)</label>
-          <label><input type="checkbox" [(ngModel)]="perms[g.key].execute" /> execute (1)</label>
-          <button class="cm-mini" (click)="toggleAll(g.key, true)">All</button>
-          <button class="cm-mini" (click)="toggleAll(g.key, false)">None</button>
-        </div>
+<div class="cm-help">r = Read (4), w = Write (2), x = Execute (1)</div>
+
+<div class="cm-grid">
+  @for (g of groups; track g.key) {
+    <div class="cm-group">
+      <div class="cm-group-head">{{ g.label }} ({{ g.letter }})</div>
+      <label title="Read permission — octal value 4"
+        ><input type="checkbox" [(ngModel)]="perms[g.key].read" /> read
+        (4)</label
+      >
+      <label title="Write permission — octal value 2"
+        ><input type="checkbox" [(ngModel)]="perms[g.key].write" /> write
+        (2)</label
+      >
+      <label title="Execute permission — octal value 1"
+        ><input type="checkbox" [(ngModel)]="perms[g.key].execute" /> execute
+        (1)</label
+      >
+      <button class="cm-mini" (click)="toggleAll(g.key, true)">All</button>
+      <button class="cm-mini" (click)="toggleAll(g.key, false)">None</button>
+    </div>
+  }
+</div>
+
+<div class="cm-special">
+  <label><input type="checkbox" [(ngModel)]="setuid" /> setuid (4)</label>
+  <label><input type="checkbox" [(ngModel)]="setgid" /> setgid (2)</label>
+  <label><input type="checkbox" [(ngModel)]="sticky" /> sticky (1)</label>
+</div>
+
+<div class="cm-result">
+  <div class="cm-box">
+    <span class="cm-lbl">Oktal</span><code class="cm-val">{{ octal }}</code
+    ><button
+      class="icon-btn"
+      (click)="copy(octal, 'octal')"
+      [title]="copiedType === 'octal' ? 'Copied!' : 'Salin oktal'"
+      [attr.aria-label]="copiedType === 'octal' ? 'Copied!' : 'Salin oktal'"
+    >
+      @if (copiedType === "octal") {
+        <span class="cm-copied">Copied!</span>
+      } @else {
+        <mat-icon aria-hidden="true">content_copy</mat-icon>
       }
-    </div>
-
-    <div class="cm-special">
-      <label><input type="checkbox" [(ngModel)]="setuid" /> setuid (4)</label>
-      <label><input type="checkbox" [(ngModel)]="setgid" /> setgid (2)</label>
-      <label><input type="checkbox" [(ngModel)]="sticky" /> sticky (1)</label>
-    </div>
-
-    <div class="cm-result">
-      <div class="cm-box"><span class="cm-lbl">Oktal</span><code class="cm-val">{{ octal }}</code><button class="icon-btn" (click)="copy(octal)" aria-label="Salin oktal"><mat-icon aria-hidden="true">content_copy</mat-icon></button></div>
-      <div class="cm-box"><span class="cm-lbl">Simbolik</span><code class="cm-val">{{ symbolic }}</code><button class="icon-btn" (click)="copy(symbolic)" aria-label="Salin simbolik"><mat-icon aria-hidden="true">content_copy</mat-icon></button></div>
-      <div class="cm-box"><span class="cm-lbl">chmod</span><code class="cm-val">chmod {{ octalNoSpecial.length === 3 && !setuid && !setgid && !sticky ? octalNoSpecial : octal }} file</code></div>
-    </div>
-
-    <div class="cm-summary tool-stats">{{ summary }}</div>
-
-    <div class="tool-divider"></div>
-    <label class="tool-label" for="cm-input">Terapkan dari input</label>
-    <div class="cj-row">
-      <input id="cm-input" class="tool-input-mono" style="flex:1" [(ngModel)]="inputStr" placeholder="755 atau rwxr-xr-x" />
-      <button class="btn-primary" (click)="parseInput()">Apply</button>
-    </div>
-    @if (parseError) {
-      <div class="tool-error" role="alert">{{ parseError }}</div>
-    }
-
-    <label class="tool-label" style="margin-top:10px">Preset</label>
-    <div class="cm-presets">
-      @for (p of presets; track p) {
-        <button class="cm-chip" (click)="applyPreset(p)">{{ p }}</button>
+    </button>
+  </div>
+  <div class="cm-box">
+    <span class="cm-lbl">Simbolik</span
+    ><code class="cm-val">{{ symbolic }}</code
+    ><button
+      class="icon-btn"
+      (click)="copy(symbolic, 'symbolic')"
+      [title]="copiedType === 'symbolic' ? 'Copied!' : 'Salin simbolik'"
+      [attr.aria-label]="
+        copiedType === 'symbolic' ? 'Copied!' : 'Salin simbolik'
+      "
+    >
+      @if (copiedType === "symbolic") {
+        <span class="cm-copied">Copied!</span>
+      } @else {
+        <mat-icon aria-hidden="true">content_copy</mat-icon>
       }
-    </div>
-  </mat-card>
+    </button>
+  </div>
+  <div class="cm-box">
+    <span class="cm-lbl">chmod</span
+    ><code class="cm-val"
+      >chmod
+      {{
+        octalNoSpecial.length === 3 && !setuid && !setgid && !sticky
+          ? octalNoSpecial
+          : octal
+      }}
+      file</code
+    >
+  </div>
+</div>
+
+<div class="cm-summary tool-stats">{{ summary }}</div>
+
+<div class="tool-divider"></div>
+<label class="tool-label" for="cm-input">Terapkan dari input</label>
+<div class="cj-row">
+  <input
+    id="cm-input"
+    class="tool-input-mono"
+    style="flex: 1"
+    [(ngModel)]="inputStr"
+    placeholder="755 atau rwxr-xr-x"
+  />
+  <button class="btn-primary" (click)="parseInput()">Apply</button>
+</div>
+@if (parseError) {
+  <div class="tool-error" role="alert">{{ parseError }}</div>
+}
+
+<label class="tool-label" style="margin-top: 10px">Preset</label>
+<div class="cm-presets">
+  @for (p of presets; track p) {
+    <button class="cm-chip" (click)="applyPreset(p)">{{ p }}</button>
+  }
 </div>

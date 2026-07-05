@@ -27,6 +27,12 @@ export class AppComponent implements OnInit {
   /** Current username, exposed as a signal so OnPush tracks changes. */
   readonly user = toSignal(this.userService.user, { initialValue: '-' });
 
+  /** Whether the header has scrolled past 10px (for glass shadow). */
+  readonly isScrolled = signal(false);
+
+  /** Theme icon spin state. */
+  readonly themeSpun = signal(false);
+
   /** Mobile nav panel open state (desktop nav is always inline). */
   readonly menuOpen = signal(false);
 
@@ -58,7 +64,14 @@ export class AppComponent implements OnInit {
     });
   }
 
+  @HostListener('window:scroll')
+  onScroll(): void {
+    this.isScrolled.set(window.scrollY > 10);
+  }
+
   toggleTheme(): void {
+    this.themeSpun.set(true);
+    setTimeout(() => this.themeSpun.set(false), 500);
     this.theme.toggle();
   }
 

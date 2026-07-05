@@ -1,7 +1,0 @@
-.bc-input { display:flex; gap:8px; margin-bottom:10px; }
-.bc-field { flex:1; font-family:monospace; font-size:13px; border:1px solid #ced4da; border-radius:8px; padding:8px; }
-.bc-select { border:1px solid #ced4da; border-radius:8px; padding:0 10px; font-family:'Open Sans',sans-serif; }
-.bc-out { display:flex; flex-direction:column; gap:6px; }
-.bc-row { display:flex; align-items:center; gap:8px; }
-.bc-label { width:40px; color:#144e83; font-weight:700; font-family:'Open Sans',sans-serif; font-size:12px; }
-.bc-val { flex:1; font-family:monospace; font-size:12px; border:1px solid #ced4da; border-radius:8px; padding:6px; background:#fafafa; }

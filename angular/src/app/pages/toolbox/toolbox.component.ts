@@ -46,45 +46,17 @@ const TOOL_LOADERS = {
     import('../tools-dev/regex-tester/regex-tester.component').then(
       (m) => m.RegexTesterComponent,
     ),
-  'id-generator': () =>
-    import('../tools-dev/id-generator/id-generator.component').then(
-      (m) => m.IdGeneratorComponent,
-    ),
   'hash-generator': () =>
     import('../tools-dev/hash-generator/hash-generator.component').then(
       (m) => m.HashGeneratorComponent,
-    ),
-  'password-generator': () =>
-    import('../tools-dev/password-generator/password-generator.component').then(
-      (m) => m.PasswordGeneratorComponent,
     ),
   'text-diff': () =>
     import('../tools-dev/text-diff/text-diff.component').then(
       (m) => m.TextDiffComponent,
     ),
-  'color-converter': () =>
-    import('../tools-dev/color-converter/color-converter.component').then(
-      (m) => m.ColorConverterComponent,
-    ),
   'text-transforms': () =>
     import('../tools-dev/text-transforms/text-transforms.component').then(
       (m) => m.TextTransformsComponent,
-    ),
-  'base-converter': () =>
-    import('../tools-dev/base-converter/base-converter.component').then(
-      (m) => m.BaseConverterComponent,
-    ),
-  'http-status': () =>
-    import('../tools-dev/http-status/http-status.component').then(
-      (m) => m.HttpStatusComponent,
-    ),
-  'unicode-escape': () =>
-    import('../tools-dev/unicode-escape/unicode-escape.component').then(
-      (m) => m.UnicodeEscapeComponent,
-    ),
-  markdown: () =>
-    import('../tools-dev/markdown/markdown.component').then(
-      (m) => m.MarkdownComponent,
     ),
   'cron-explainer': () =>
     import('../tools-dev/cron-explainer/cron-explainer.component').then(
@@ -94,21 +66,9 @@ const TOOL_LOADERS = {
     import('../tools-dev/image-base64/image-base64.component').then(
       (m) => m.ImageBase64Component,
     ),
-  'lorem-ipsum': () =>
-    import('../tools-dev/lorem-ipsum/lorem-ipsum.component').then(
-      (m) => m.LoremIpsumComponent,
-    ),
   'timestamp-converter': () =>
     import('../tools-dev/timestamp-converter/timestamp-converter.component').then(
       (m) => m.TimestampConverterComponent,
-    ),
-  'csv-json': () =>
-    import('../tools-dev/csv-json/csv-json.component').then(
-      (m) => m.CsvJsonComponent,
-    ),
-  'sql-formatter': () =>
-    import('../tools-dev/sql-formatter/sql-formatter.component').then(
-      (m) => m.SqlFormatterComponent,
     ),
   'text-sort': () =>
     import('../tools-dev/text-sort/text-sort.component').then(
@@ -118,33 +78,13 @@ const TOOL_LOADERS = {
     import('../tools-dev/char-counter/char-counter.component').then(
       (m) => m.CharCounterComponent,
     ),
-  'slug-generator': () =>
-    import('../tools-dev/slug-generator/slug-generator.component').then(
-      (m) => m.SlugGeneratorComponent,
-    ),
-  'url-parser': () =>
-    import('../tools-dev/url-parser/url-parser.component').then(
-      (m) => m.UrlParserComponent,
-    ),
   'chmod-calc': () =>
     import('../tools-dev/chmod-calc/chmod-calc.component').then(
       (m) => m.ChmodCalcComponent,
     ),
-  'line-tools': () =>
-    import('../tools-dev/line-tools/line-tools.component').then(
-      (m) => m.LineToolsComponent,
-    ),
   'random-picker': () =>
     import('../tools-dev/random-picker/random-picker.component').then(
       (m) => m.RandomPickerComponent,
-    ),
-  'word-frequency': () =>
-    import('../tools-dev/word-frequency/word-frequency.component').then(
-      (m) => m.WordFrequencyComponent,
-    ),
-  'hmac-signer': () =>
-    import('../tools-dev/hmac-signer/hmac-signer.component').then(
-      (m) => m.HmacSignerComponent,
     ),
   'jwt-debugger': () =>
     import('../tools-dev/jwt-debugger/jwt-debugger.component').then(
@@ -190,6 +130,15 @@ export class ToolboxComponent implements OnInit {
     () => this.catalog.bySlug(this.active())?.label ?? this.active(),
   );
 
+  /** Error message when chunk load fails. */
+  readonly loadError = signal<string | null>(null);
+
+  /** Keyboard navigation focus index into visibleTools. */
+  readonly focusIdx = signal(-1);
+
+  /** Prefetch cache: slug -> import promise. */
+  private prefetched = new Map<string, Promise<unknown>>();
+
   /** Pinned favorites, filtered by the current query. */
   readonly favoriteTools = computed<ToolEntry[]>(() =>
     this.catalog
@@ -199,14 +148,16 @@ export class ToolboxComponent implements OnInit {
       .filter((t) => this.matchesQuery(t)),
   );
 
-  /** Recently used tools, filtered by the current query. */
-  readonly recentTools = computed<ToolEntry[]>(() =>
-    this.catalog
+  /** Recently used tools, filtered by the current query and excluding favorites. */
+  readonly recentTools = computed<ToolEntry[]>(() => {
+    const favs = new Set(this.catalog.favorites());
+    return this.catalog
       .recents()
       .map((s) => this.catalog.bySlug(s))
       .filter((t): t is ToolEntry => !!t)
-      .filter((t) => this.matchesQuery(t)),
-  );
+      .filter((t) => !favs.has(t.slug))
+      .filter((t) => this.matchesQuery(t));
+  });
 
   /** Category groups with their filtered tool lists (memoized per query). */
   readonly groupEntries = computed<GroupEntry[]>(() =>
@@ -225,6 +176,24 @@ export class ToolboxComponent implements OnInit {
       this.recentTools().length > 0 ||
       this.groupEntries().some((ge) => ge.tools.length > 0),
   );
+
+  /** Flat list of every visible tool row in display order. */
+  readonly visibleTools = computed<ToolEntry[]>(() => {
+    const result: ToolEntry[] = [];
+    for (const t of this.recentTools()) result.push(t);
+    for (const t of this.favoriteTools()) result.push(t);
+    for (const ge of this.groupEntries()) {
+      for (const t of ge.tools) result.push(t);
+    }
+    return result;
+  });
+
+  /** Match count: "X of Y" where Y is total tools, X is visible. */
+  readonly matchCount = computed(() => {
+    const total = this.catalog.tools.length;
+    const visible = this.visibleTools().length;
+    return `${visible} of ${total}`;
+  });
 
   private readonly destroyRef = inject(DestroyRef);
 
@@ -250,12 +219,14 @@ export class ToolboxComponent implements OnInit {
     // a duplicate fetch when the navigation it triggers echoes back here.
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((p) => {
-        const t = p.get('t') as ToolSlug | null;
-        if (t && t !== this.active() && this.catalog.bySlug(t)) {
-          this.active.set(t);
-          this.loadTool(t);
-        }
+      .subscribe({
+        next: (p) => {
+          const t = p.get('t') as ToolSlug | null;
+          if (t && t !== this.active() && this.catalog.bySlug(t)) {
+            this.active.set(t);
+            this.loadTool(t);
+          }
+        },
       });
   }
 
@@ -264,6 +235,7 @@ export class ToolboxComponent implements OnInit {
     this.active.set(tool);
     this.catalog.recordUse(slug);
     this.loadTool(tool);
+    this.focusIdx.set(-1);
     // Collapse the mobile tab list once a tool is chosen.
     this.mobileTabsOpen.set(false);
     // Only sync the URL when hosted on the /utilities route; embedded usage stays in-memory.
@@ -289,36 +261,126 @@ export class ToolboxComponent implements OnInit {
     this.catalog.toggleFavorite(slug);
   }
 
-  /** Focus the search box with `/` (GitHub-style); Esc clears it. */
+  /** Number of tools in groups before the given group, for keyboard nav indexing. */
+  prevGroupToolCount(group: ToolGroup): number {
+    const ge = this.groupEntries();
+    let count = 0;
+    for (const entry of ge) {
+      if (entry.group === group) break;
+      count += entry.tools.length;
+    }
+    return count;
+  }
+
+  /** Prefetch a tool's chunk on hover so it's ready when clicked. */
+  prefetch(slug: string): void {
+    if (this.prefetched.has(slug)) return;
+    const factory = (TOOL_LOADERS as Record<string, () => Promise<unknown>>)[
+      slug
+    ];
+    if (!factory) return;
+    this.prefetched.set(slug, factory());
+  }
+
+  /** Focus the search box with `/` (GitHub-style); Esc clears it.
+   *  Arrow keys navigate the tool list; Enter activates the focused tool. */
   @HostListener('window:keydown', ['$event'])
   onKey(event: KeyboardEvent): void {
     const target = event.target as HTMLElement | null;
     const typing =
       (target && ['INPUT', 'TEXTAREA'].includes(target.tagName)) ||
       !!target?.isContentEditable;
+
     if (event.key === '/' && !typing) {
       event.preventDefault();
       this.hostRef.nativeElement
         .querySelector<HTMLInputElement>('.toolbox-search-input')
         ?.focus();
-    } else if (
+      return;
+    }
+
+    if (
       event.key === 'Escape' &&
       target?.classList.contains('toolbox-search-input')
     ) {
       this.query.set('');
       (target as HTMLInputElement).blur();
+      return;
+    }
+
+    if (target?.classList.contains('toolbox-search-input')) {
+      const visible = this.visibleTools();
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        this.focusIdx.update((i) => Math.min(i + 1, visible.length - 1));
+        return;
+      }
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        this.focusIdx.update((i) => Math.max(i - 1, -1));
+        return;
+      }
+      if (event.key === 'Enter' && this.focusIdx() >= 0) {
+        event.preventDefault();
+        const tool = this.visibleTools()[this.focusIdx()];
+        if (tool) this.select(tool.slug);
+        return;
+      }
+      // Ctrl+Enter → dispatch execute to active tool
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === 'Enter' &&
+        !typing
+      ) {
+        event.preventDefault();
+        const section =
+          this.hostRef.nativeElement.querySelector('.toolbox-content');
+        if (section) {
+          const tool = section.firstElementChild;
+          if (tool)
+            tool.dispatchEvent(new CustomEvent('execute', { bubbles: true }));
+        }
+        return;
+      }
+    } else {
+      // Keydown outside search: ArrowUp/Down with no typing target starts keyboard nav.
+      if (event.key === 'ArrowDown' && !typing) {
+        event.preventDefault();
+        const el = this.hostRef.nativeElement.querySelector<HTMLInputElement>(
+          '.toolbox-search-input',
+        );
+        el?.focus();
+        this.focusIdx.set(0);
+        return;
+      }
+      if (event.key === 'ArrowUp' && !typing) {
+        event.preventDefault();
+        const visible = this.visibleTools();
+        const el = this.hostRef.nativeElement.querySelector<HTMLInputElement>(
+          '.toolbox-search-input',
+        );
+        el?.focus();
+        this.focusIdx.set(Math.max(visible.length - 1, 0));
+        return;
+      }
     }
   }
 
-  private async loadTool(slug: string): Promise<void> {
+  async loadTool(slug: string): Promise<void> {
+    this.loadError.set(null);
     const factory = (
       TOOL_LOADERS as Record<string, () => Promise<Type<unknown>>>
     )[slug];
     if (!factory) return;
-    const cmp = await factory();
-    // Guard against a stale load completing after the user switched tools.
-    if (this.active() !== slug) return;
-    this.toolCmp.set(cmp);
+    try {
+      const cmp = await factory();
+      // Guard against a stale load completing after the user switched tools.
+      if (this.active() !== slug) return;
+      this.toolCmp.set(cmp);
+    } catch {
+      if (this.active() !== slug) return;
+      this.loadError.set(`Failed to load tool: ${slug}`);
+    }
   }
 
   private matchesQuery(t: ToolEntry): boolean {

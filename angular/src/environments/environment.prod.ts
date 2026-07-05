@@ -1,9 +1,9 @@
 export const environment = {
   production: true,
-  piketPassword: "HanyaITYangBolehTau",
+  piketPassword: 'HanyaITYangBolehTau',
   hostToolsMcb: 'https://asil.com',
-  hostMessiProd: "https://asis.com",
-  hostMagentaProd: "https://asiss.com",
-  hostBatchRunner: 'https://api-tools.apps.ocpdevgra.dti.co.id'
+  hostMessiProd: 'https://asis.com',
+  hostMagentaProd: 'https://asiss.com',
+  hostBatchRunner: 'https://api-tools.apps.ocpdevgra.dti.co.id',
+  hostGslb: 'https://gege.com',
 };
-

@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  HostListener,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +25,7 @@ export class DecoderComponent {
   input = '';
   output = '';
   error = '';
+  copied = false;
 
   modes: { key: Mode; label: string }[] = [
     { key: 'base64', label: 'Base64' },
@@ -27,7 +33,18 @@ export class DecoderComponent {
     { key: 'jwt', label: 'JWT' },
   ];
 
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  @HostListener('execute') onExecute(): void {
+    this.decode();
+  }
+
+  trySample(): void {
+    this.input = 'SGVsbG8gV29ybGQhIFRoaXMgaXMgYSB0ZXN0IHN0cmluZw==';
+  }
 
   encode(): void {
     this.error = '';
@@ -71,7 +88,10 @@ export class DecoderComponent {
 
   private decodeJwt(token: string): string {
     const parts = token.split('.');
-    if (parts.length < 2) throw new Error('Format JWT tidak valid (butuh header.payload.signature).');
+    if (parts.length < 2)
+      throw new Error(
+        'Format JWT tidak valid (butuh header.payload.signature).',
+      );
     const decodeB64Url = (s: string) => {
       const pad = s.length % 4 === 0 ? s : s + '='.repeat(4 - (s.length % 4));
       const b64 = pad.replace(/-/g, '+').replace(/_/g, '/');
@@ -93,9 +113,14 @@ export class DecoderComponent {
 
   copyOutput(): void {
     if (!this.output) return;
-    navigator.clipboard.writeText(this.output).then(() =>
-      this.snackBar.open('Disalin ke clipboard', 'Close', { duration: 1500 }),
-    );
+    navigator.clipboard.writeText(this.output).then(() => {
+      this.copied = true;
+      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.copied = false;
+        this.cdr.markForCheck();
+      }, 1500);
+    });
   }
 
   clear(): void {

@@ -1,18 +1,15 @@
-import { 
-  Directive, 
-  Input, 
-  HostListener, 
-  ViewContainerRef,
+import {
+  Directive,
+  Input,
+  HostListener,
   ElementRef,
   OnDestroy,
-  TemplateRef
 } from '@angular/core';
 import { Overlay, OverlayRef, ConnectedPosition } from '@angular/cdk/overlay';
-import { ComponentPortal } from '@angular/cdk/portal';
 import { MsvMenuComponent } from './msv-menu.component';
 
 @Directive({
-  selector: '[msvMenuTriggerFor]'
+  selector: '[msvMenuTriggerFor]',
 })
 export class MsvMenuTriggerDirective implements OnDestroy {
   @Input() msvMenuTriggerFor!: MsvMenuComponent;
@@ -24,7 +21,6 @@ export class MsvMenuTriggerDirective implements OnDestroy {
   constructor(
     private overlay: Overlay,
     private elementRef: ElementRef,
-    private viewContainerRef: ViewContainerRef
   ) {}
 
   @HostListener('click', ['$event'])
@@ -58,7 +54,8 @@ export class MsvMenuTriggerDirective implements OnDestroy {
     }
 
     // Attach the menu element directly to overlay (clone so the original stays in place)
-    const menuElement = (this.msvMenuTriggerFor as any).elementRef?.nativeElement;
+    const menuElement = (this.msvMenuTriggerFor as any).elementRef
+      ?.nativeElement;
     if (menuElement) {
       this.clonedMenuElement = menuElement.cloneNode(true) as HTMLElement;
       this.overlayRef.overlayElement.appendChild(this.clonedMenuElement);
@@ -100,29 +97,29 @@ export class MsvMenuTriggerDirective implements OnDestroy {
         originY: 'bottom',
         overlayX: 'start',
         overlayY: 'top',
-        offsetY: 4
+        offsetY: 4,
       },
       {
         originX: 'start',
         originY: 'top',
         overlayX: 'start',
         overlayY: 'bottom',
-        offsetY: -4
+        offsetY: -4,
       },
       {
         originX: 'end',
         originY: 'bottom',
         overlayX: 'end',
         overlayY: 'top',
-        offsetY: 4
+        offsetY: 4,
       },
       {
         originX: 'end',
         originY: 'top',
         overlayX: 'end',
         overlayY: 'bottom',
-        offsetY: -4
-      }
+        offsetY: -4,
+      },
     ];
 
     const positionStrategy = this.overlay
@@ -136,7 +133,7 @@ export class MsvMenuTriggerDirective implements OnDestroy {
       positionStrategy,
       scrollStrategy: this.overlay.scrollStrategies.reposition(),
       hasBackdrop: true,
-      backdropClass: 'cdk-overlay-transparent-backdrop'
+      backdropClass: 'cdk-overlay-transparent-backdrop',
     });
   }
 
@@ -144,30 +141,38 @@ export class MsvMenuTriggerDirective implements OnDestroy {
     if (!this.overlayRef) return;
 
     // Close on backdrop click (outside click)
-    this.overlayRef.backdropClick().subscribe(() => {
-      this.closeMenu();
+    this.overlayRef.backdropClick().subscribe({
+      next: () => {
+        this.closeMenu();
+      },
     });
 
     // Close on escape key
-    this.overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        this.closeMenu();
-        // Return focus to trigger element
-        this.elementRef.nativeElement.focus();
-      }
+    this.overlayRef.keydownEvents().subscribe({
+      next: (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          this.closeMenu();
+          // Return focus to trigger element
+          this.elementRef.nativeElement.focus();
+        }
+      },
     });
 
     // Close when menu item is clicked
     const menuItems = this.msvMenuTriggerFor.menuItems;
     if (menuItems) {
-      menuItems.forEach(item => {
-        const subscription = item.triggered.subscribe(() => {
-          this.closeMenu();
+      menuItems.forEach((item) => {
+        const subscription = item.triggered.subscribe({
+          next: () => {
+            this.closeMenu();
+          },
         });
         // Store subscription for cleanup
-        this.overlayRef?.detachments().subscribe(() => {
-          subscription.unsubscribe();
+        this.overlayRef?.detachments().subscribe({
+          next: () => {
+            subscription.unsubscribe();
+          },
         });
       });
     }

@@ -1,152 +1,153 @@
-
-  <div class="container pt-3 pb-3">
-    @if (statusMenu == statusAPI.LOADING) {
-      <div class="tool-card">
-        <h2 class="tool-title">Batch Runner</h2>
-        <p class="tool-sub">Tools untuk menjalankan batch manual Merchant Service di environment UAT</p>
-        <div class="tool-divider"></div>
-        <div class="d-flex align-items-center flex-column"  style="width: fit-content; margin-left: auto; margin-right: auto;">
-          <img src="../assets/loading4.gif" alt="Memuat List Batch" style="width: 75px; margin-left: auto; margin-right: auto;">
-          <p class="tool-sub">
-            Memuat List Batch
-          </p>
-        </div>
+<div class="container pt-3 pb-3">
+  @if (statusMenu === statusAPI.LOADING) {
+    <div class="tool-card">
+      <h2 class="tool-title">Batch Runner</h2>
+      <p class="tool-sub">
+        Tools untuk menjalankan batch manual Merchant Service di environment UAT
+      </p>
+      <div class="tool-divider"></div>
+      <div class="d-flex align-items-center flex-column loading-container">
+        <div class="spinner" aria-hidden="true"></div>
+        <p class="tool-sub">Memuat List Batch</p>
       </div>
-    }
+    </div>
+  }
 
-    @if (statusMenu == statusAPI.SUCCESS) {
-      <div class="tool-card">
-        <h2 class="tool-title">Batch Runner</h2>
-        <p class="tool-sub">Tools untuk menjalankan batch manual Merchant Service di environment UAT</p>
-        <div class="tool-divider"></div>
+  @if (statusMenu === statusAPI.SUCCESS) {
+    <div class="tool-card">
+      <h2 class="tool-title">Batch Runner</h2>
+      <p class="tool-sub">
+        Tools untuk menjalankan batch manual Merchant Service di environment UAT
+      </p>
+      <div class="tool-divider"></div>
 
+      <div aria-live="polite" role="status">
         @for (batch of batchList; track batch.id) {
           <div class="batch-list-card">
             <div class="d-flex row">
-              <h3 class="col-4 m-0 tool-title" style="font-size:15px;">
-                {{batch.batch_name}}
+              <h3 class="col-4 m-0 tool-title batch-name">
+                {{ batch.batch_name }}
               </h3>
               <div class="col d-flex justify-content-end">
-
-                @if (batch.available_status == 1) {
-                  <div class="badge-available">
-                    Ready to Run
-                  </div>
+                @if (batch.available_status === 1) {
+                  <div class="badge-available">Ready to Run</div>
                 }
 
-                @if (batch.available_status == 0) {
-                  <div class="badge-unavailable">
-                    On Running
-                  </div>
+                @if (batch.available_status === 0) {
+                  <div class="badge-unavailable">On Running</div>
                 }
-
               </div>
             </div>
-            <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
-              {{batch.title}}
-            </h4>
-            <p style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
-              {{batch.description}}
-            </p>
+            <h4 class="batch-subtitle">{{ batch.title }}</h4>
+            <p class="batch-subtitle">{{ batch.description }}</p>
 
             <div class="d-flex flex-row gap-2 mb-3">
               @for (feature of batch.feature; track $index) {
                 <div class="badge-info">
-                  <span style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
-                    {{feature}}
-                  </span>
+                  <span class="batch-feature-text">{{ feature }}</span>
                 </div>
               }
             </div>
-
 
             <div class="batch-information">
               <div class="d-flex align-items-center">
-                <mat-icon style="color: #005CAA" aria-hidden="true">
-                  info
-                </mat-icon>
-                <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 600; margin: 0; margin-left: 10px;">
-                  Batch Information
+                <mat-icon class="result-icon" aria-hidden="true">info</mat-icon>
+                <h4 class="result-heading">Batch Information</h4>
+              </div>
+
+              <div class="d-flex align-items-center mt-3">
+                <mat-icon class="result-icon" aria-hidden="true"
+                  >person</mat-icon
+                >
+                <h4 class="result-text">
+                  Last Run By : {{ batch.last_run_by || "-" }}
                 </h4>
               </div>
 
               <div class="d-flex align-items-center mt-3">
-                <mat-icon style="color: #005CAA" aria-hidden="true">
-                  person
-                </mat-icon>
-                <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                  Last Run By : {{batch.last_run_by || '-'}}
-                </h4>
-              </div>
-
-              <div class="d-flex align-items-center mt-3">
-                <mat-icon style="color: #005CAA" aria-hidden="true">
-                  access_time
-                </mat-icon>
-                <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                  Last Run Batch Started Time : {{getFormattedTime(batch.last_run_time_start) || '-'}}
+                <mat-icon class="result-icon" aria-hidden="true"
+                  >access_time</mat-icon
+                >
+                <h4 class="result-text">
+                  Last Run Batch Started Time :
+                  {{ getFormattedTime(batch.last_run_time_start) || "-" }}
                 </h4>
               </div>
               <div class="d-flex align-items-center mt-3">
-                <mat-icon style="color: #005CAA" aria-hidden="true">
-                  access_time
-                </mat-icon>
-                <h4 style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                  Last Run Batch Finished Time : {{getFormattedTime(batch.last_run_time_end) || '-'}}
+                <mat-icon class="result-icon" aria-hidden="true"
+                  >access_time</mat-icon
+                >
+                <h4 class="result-text">
+                  Last Run Batch Finished Time :
+                  {{ getFormattedTime(batch.last_run_time_end) || "-" }}
                 </h4>
               </div>
               <div class="d-flex align-items-center mt-3">
-                <mat-icon style="color: #005CAA" aria-hidden="true">
-                  batch_prediction
-                </mat-icon>
-                @if (batch.last_run_status === 'Completed') {
-                  <div class="badge-available" style="margin-left: 10px;">
+                <mat-icon class="result-icon" aria-hidden="true"
+                  >batch_prediction</mat-icon
+                >
+                @if (batch.last_run_status === "Completed") {
+                  <div class="badge-available badge-ml">
                     Batch Finished Successfully
                   </div>
                 }
-                @if (batch.last_run_status === 'Failed') {
-                  <div class="badge-failed" style="margin-left: 10px;">
-                    Batch Failed
-                  </div>
+                @if (batch.last_run_status === "Failed") {
+                  <div class="badge-failed badge-ml">Batch Failed</div>
                 }
-                @if (batch.last_run_status == null) {
-                  <div class="badge-notyet" style="margin-left: 10px;">
+                @if (batch.last_run_status === null) {
+                  <div class="badge-notyet badge-ml">
                     Batch Never Been Started
                   </div>
                 }
-                @if (batch.available_status == 0) {
-                  <div class="badge-unavailable" style="margin-left: 10px;">
-                    On Running
-                  </div>
+                @if (batch.available_status === 0) {
+                  <div class="badge-unavailable badge-ml">On Running</div>
                 }
               </div>
             </div>
 
-            <div class="column d-flex align-items-center gap-3" style="width: 100%;">
-              @if (batch.available_status == 1) {
-                <button type="button" (click)="runBatch(batch.id)" class="col btn-primary mt-3" style="display:flex; justify-content:center; align-items:center; width:100%;">
-                  @if (currentProcessing == batch.id) {
+            <div class="column d-flex align-items-center gap-3 batch-actions">
+              @if (batch.available_status === 1) {
+                <button
+                  type="button"
+                  (click)="runBatch(batch.id)"
+                  class="col btn-primary mt-3 batch-execute-btn"
+                >
+                  @if (currentProcessing === batch.id) {
                     <div class="uploader-status me-3" aria-hidden="true">
-                      <mat-progress-spinner diameter="20" mode="indeterminate" class="my-spinner" aria-hidden="true"></mat-progress-spinner>
+                      <mat-progress-spinner
+                        diameter="20"
+                        mode="indeterminate"
+                        class="my-spinner"
+                        aria-hidden="true"
+                      ></mat-progress-spinner>
                     </div>
                   }
-                  <span>
-                    Execute Batch
-                  </span>
+                  <span> Execute Batch </span>
                 </button>
               }
-              @if (batch.available_status == 0) {
-                <div class="col btn-primary mt-3" style="display:flex; justify-content:center; width:100%;" aria-disabled="true">
+              @if (batch.available_status === 0) {
+                <div
+                  class="col btn-primary mt-3 batch-execute-btn"
+                  aria-disabled="true"
+                >
                   Batch Running
                 </div>
-                <button type="button" (click)="getData()" class="col btn-secondary mt-3" style="display:flex; justify-content:center; width:100%;">
+                <button
+                  type="button"
+                  (click)="getData()"
+                  class="col btn-secondary mt-3 batch-refresh-btn"
+                >
                   Refresh Status
                 </button>
               }
             </div>
           </div>
         }
-        <div style="width: fit-content; margin-left: auto; margin-right: auto;"></div>
       </div>
-    }
-  </div>
+      <!-- ponytail: result count badge after batch list -->
+      <div class="d-flex justify-content-end mt-3" aria-live="polite">
+        <span class="badge-info">{{ batchList.length }} batch(es) loaded</span>
+      </div>
+    </div>
+  }
+</div>

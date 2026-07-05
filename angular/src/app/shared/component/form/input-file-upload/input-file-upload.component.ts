@@ -1,5 +1,4 @@
-﻿import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -7,22 +6,20 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   selector: 'input-file-upload',
   templateUrl: './input-file-upload.component.html',
-  styleUrls: ['./input-file-upload.component.css']
+  styleUrls: ['./input-file-upload.component.css'],
 })
 export class InputFileUploadComponent {
   file: File | null = null;
   progress: number = 0;
-  event : string = "idle";
-  @Input() url : string;
+  event: string = 'idle';
+  @Input() url: string;
   @Output() eventUploadFile = new EventEmitter<any>();
-
-  constructor(private httpClient: HttpClient) { }
 
   // Menangani event drag over agar file dapat di-drop
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
-    this.event = "onDragOver"
+    this.event = 'onDragOver';
     // Anda dapat menambahkan kelas CSS untuk styling saat drag over
   }
 
@@ -30,7 +27,7 @@ export class InputFileUploadComponent {
   onDragLeave(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
-    this.event = "onDragLeave"
+    this.event = 'onDragLeave';
     // Hapus kelas CSS jika diperlukan
   }
 
@@ -38,7 +35,7 @@ export class InputFileUploadComponent {
   onDrop(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
-    this.event = "onDrop"
+    this.event = 'onDrop';
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
       this.file = event.dataTransfer.files[0];
       event.dataTransfer.clearData();
@@ -47,7 +44,7 @@ export class InputFileUploadComponent {
 
   // Menangani pemilihan file melalui input
   onFileSelected(event: any) {
-    this.event = "onFileSelected"
+    this.event = 'onFileSelected';
     if (event.target.files && event.target.files.length > 0) {
       this.file = event.target.files[0];
     }
@@ -59,6 +56,6 @@ export class InputFileUploadComponent {
       alert('Pilih file terlebih dahulu!');
       return;
     }
-    this.eventUploadFile.emit(this.file)
+    this.eventUploadFile.emit(this.file);
   }
 }

@@ -1,5 +1,5 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { MsvToastService, Toast, ToastType } from './msv-toast.service';
+import { MsvToastService } from './msv-toast.service';
 
 describe('MsvToastService', () => {
   let service: MsvToastService;
@@ -19,7 +19,7 @@ describe('MsvToastService', () => {
 
   describe('Toast Creation', () => {
     it('should create success toast', (done) => {
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length > 0) {
           expect(toasts[0].type).toBe('success');
           expect(toasts[0].message).toBe('Success message');
@@ -32,7 +32,7 @@ describe('MsvToastService', () => {
     });
 
     it('should create error toast', (done) => {
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length > 0) {
           expect(toasts[0].type).toBe('error');
           expect(toasts[0].message).toBe('Error message');
@@ -45,7 +45,7 @@ describe('MsvToastService', () => {
     });
 
     it('should create warning toast', (done) => {
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length > 0) {
           expect(toasts[0].type).toBe('warning');
           expect(toasts[0].message).toBe('Warning message');
@@ -58,7 +58,7 @@ describe('MsvToastService', () => {
     });
 
     it('should create info toast', (done) => {
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length > 0) {
           expect(toasts[0].type).toBe('info');
           expect(toasts[0].message).toBe('Info message');
@@ -71,7 +71,7 @@ describe('MsvToastService', () => {
     });
 
     it('should create toast without title', (done) => {
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length > 0) {
           expect(toasts[0].title).toBeUndefined();
           expect(toasts[0].message).toBe('Message only');
@@ -84,10 +84,10 @@ describe('MsvToastService', () => {
 
     it('should assign unique IDs to toasts', (done) => {
       const ids = new Set<string>();
-      
-      service.getToasts().subscribe(toasts => {
+
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length === 3) {
-          toasts.forEach(toast => ids.add(toast.id));
+          toasts.forEach((toast) => ids.add(toast.id));
           expect(ids.size).toBe(3);
           done();
         }
@@ -102,8 +102,8 @@ describe('MsvToastService', () => {
   describe('Toast Auto-Dismiss', () => {
     it('should auto-dismiss toast after default duration', fakeAsync(() => {
       let toastCount = 0;
-      
-      service.getToasts().subscribe(toasts => {
+
+      service.getToasts().subscribe((toasts) => {
         toastCount = toasts.length;
       });
 
@@ -117,8 +117,8 @@ describe('MsvToastService', () => {
 
     it('should auto-dismiss toast after custom duration', fakeAsync(() => {
       let toastCount = 0;
-      
-      service.getToasts().subscribe(toasts => {
+
+      service.getToasts().subscribe((toasts) => {
         toastCount = toasts.length;
       });
 
@@ -132,8 +132,8 @@ describe('MsvToastService', () => {
 
     it('should not auto-dismiss when duration is 0', fakeAsync(() => {
       let toastCount = 0;
-      
-      service.getToasts().subscribe(toasts => {
+
+      service.getToasts().subscribe((toasts) => {
         toastCount = toasts.length;
       });
 
@@ -151,7 +151,7 @@ describe('MsvToastService', () => {
       let toastId: string;
       let doneCalled = false;
 
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length === 1) {
           toastId = toasts[0].id;
           service.dismiss(toastId);
@@ -168,7 +168,7 @@ describe('MsvToastService', () => {
     it('should handle multiple toasts correctly', (done) => {
       let maxCount = 0;
 
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length > maxCount) {
           maxCount = toasts.length;
         }
@@ -189,7 +189,7 @@ describe('MsvToastService', () => {
     it('should clear all toasts', (done) => {
       let doneCalled = false;
 
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length === 3) {
           service.clear();
         } else if (toasts.length === 0 && !doneCalled) {
@@ -216,7 +216,7 @@ describe('MsvToastService', () => {
       service.configure({ duration: 3000 });
       let toastCount = 0;
 
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         toastCount = toasts.length;
       });
 
@@ -233,7 +233,7 @@ describe('MsvToastService', () => {
 
       expect(service.position).toBe('bottom-left');
 
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length > 0) {
           expect(service.position).toBe('bottom-left');
           done();
@@ -246,14 +246,16 @@ describe('MsvToastService', () => {
     it('should allow position override per toast', (done) => {
       service.configure({ position: 'top-right' });
 
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length > 0) {
           expect(service.position).toBe('bottom-right');
           done();
         }
       });
 
-      service.info('Override position', undefined, { position: 'bottom-right' });
+      service.info('Override position', undefined, {
+        position: 'bottom-right',
+      });
     });
   });
 
@@ -261,7 +263,7 @@ describe('MsvToastService', () => {
     it('should include timestamp in toast', (done) => {
       const beforeTime = Date.now();
 
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length > 0) {
           expect(toasts[0].timestamp).toBeGreaterThanOrEqual(beforeTime);
           expect(toasts[0].timestamp).toBeLessThanOrEqual(Date.now());
@@ -273,7 +275,7 @@ describe('MsvToastService', () => {
     });
 
     it('should maintain correct duration in toast object', (done) => {
-      service.getToasts().subscribe(toasts => {
+      service.getToasts().subscribe((toasts) => {
         if (toasts.length > 0) {
           expect(toasts[0].duration).toBe(3000);
           done();

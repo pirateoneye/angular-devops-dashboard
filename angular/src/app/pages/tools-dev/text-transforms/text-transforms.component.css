@@ -1,4 +1,42 @@
-.tt-stats { color:#495057; font-size:11px; margin-top:4px; }
-.tt-buttons { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
-.tt-btn { background:#fff; color:#005caa; border:1px solid #005caa; border-radius:20px; padding:4px 12px; font-size:12px; cursor:pointer; font-family:'Open Sans',sans-serif; }
-.tt-btn:hover { background:#f8f9fa; }
+.tt-stats {
+  color: var(--msv-text-muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+.tt-warn {
+  color: var(--msv-warning);
+  background: var(--msv-warning-bg);
+  border: 1px solid var(--msv-warning-bg);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.tt-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+.tt-btn {
+  background: var(--msv-surface);
+  color: var(--msv-primary);
+  border: 1px solid var(--msv-primary);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: "Open Sans", sans-serif;
+}
+.tt-btn:hover {
+  background: var(--msv-surface-2);
+}
+.tt-output-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tt-copy-output {
+  font-size: 11px;
+  padding: 2px 10px;
+}

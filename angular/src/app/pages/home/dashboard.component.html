@@ -1,23 +1,64 @@
-<div class="container pt-2 pb-3">
+<div class="container container-max pt-2 pb-3">
   <div class="dash-hero">
     <div class="dash-hero-row">
       <div>
         <h1 class="dash-hero-title">MSV Tools</h1>
-        <p class="dash-hero-sub">Pusat kontrol tools dev &amp; piket Merchant Services.</p>
+        <p class="dash-hero-sub">
+          Pusat kontrol tools dev &amp; piket Merchant Services.
+        </p>
+        <div class="dash-hero-stats">
+          <span class="dash-stat-pill dash-stat-dev"
+            >{{ toolStats().devTools }} Dev Tools</span
+          >
+          <span class="dash-stat-pill dash-stat-util"
+            >{{ toolStats().utilities }} Utility</span
+          >
+          <span class="dash-stat-pill dash-stat-piket"
+            >{{ toolStats().piket }} Piket</span
+          >
+        </div>
       </div>
       <div class="dash-hero-search">
         <mat-icon aria-hidden="true">search</mat-icon>
-        <input type="text" [ngModel]="query()" (ngModelChange)="query.set($event)" placeholder="Cari tool…" autocomplete="off" aria-label="Search tools" />
+        <input
+          type="text"
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+          placeholder="Cari tool…"
+          autocomplete="off"
+          aria-label="Search tools"
+        />
+        @if (showClear()) {
+          <button
+            type="button"
+            class="dash-search-clear"
+            (click)="clearQuery()"
+            aria-label="Clear search"
+          >
+            &times;
+          </button>
+        }
       </div>
     </div>
   </div>
+
+  <!-- Search result count -->
+  @if (hasQuery) {
+    <p class="dash-result-count">
+      {{ totalResults() }} tools found for '{{ query() }}'
+    </p>
+  }
 
   <!-- Recently used (only when not searching) -->
   @if (!hasQuery && recentTools().length) {
     <h2 class="dash-section-title">Recent</h2>
     <div class="dash-chips">
       @for (t of recentTools(); track t.slug) {
-        <a class="dash-chip" [routerLink]="t.route" [queryParams]="t.queryParams || null">
+        <a
+          class="dash-chip"
+          [routerLink]="t.route"
+          [queryParams]="t.queryParams || null"
+        >
           <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
           <span>{{ t.label }}</span>
         </a>
@@ -25,7 +66,37 @@
     </div>
   } @else if (!hasQuery) {
     <h2 class="dash-section-title">Recent</h2>
-    <p class="dash-hint">Belum ada tool yang dibuka. Buka sebuah tool untuk muncul di sini.</p>
+    <div class="dash-empty">
+      <svg
+        class="dash-empty-svg"
+        viewBox="0 0 64 64"
+        fill="none"
+        aria-hidden="true"
+      >
+        <circle
+          cx="32"
+          cy="32"
+          r="28"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-dasharray="4 4"
+        />
+        <path
+          d="M32 14v10l6 6"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <circle cx="32" cy="32" r="4" fill="currentColor" opacity="0.5" />
+      </svg>
+      <p class="dash-hint">
+        Belum ada tool yang dibuka. Buka sebuah tool untuk muncul di sini.
+      </p>
+      <a class="dash-cta" routerLink="/tools-dev/batch-runner"
+        >Coba buka Batch Runner &rarr;</a
+      >
+    </div>
   }
 
   @for (g of groups; track g.key) {
@@ -33,12 +104,21 @@
       <h2 class="dash-section-title">{{ g.label }}</h2>
       <div class="dash-grid">
         @for (t of tilesByGroup()[g.key]; track t.route) {
-          <a class="dash-tile" [routerLink]="t.route" [queryParams]="t.queryParams || null">
-            <mat-icon class="dash-tile-icon" aria-hidden="true">{{ t.icon }}</mat-icon>
+          <a
+            class="dash-tile"
+            [routerLink]="t.route"
+            [queryParams]="t.queryParams || null"
+          >
+            <mat-icon class="dash-tile-icon" aria-hidden="true">{{
+              t.icon
+            }}</mat-icon>
             <div class="dash-tile-body">
               <div class="dash-tile-title">{{ t.label }}</div>
               <div class="dash-tile-desc">{{ t.description }}</div>
             </div>
+            <span class="dash-group-badge dash-group-{{ t.group }}">{{
+              g.label
+            }}</span>
           </a>
         }
       </div>
@@ -47,7 +127,21 @@
 
   @if (noResults()) {
     <div class="dash-empty">
-      Tidak ada tool yang cocok dengan “{{ query() }}”.
+      <svg
+        class="dash-empty-svg"
+        viewBox="0 0 64 64"
+        fill="none"
+        aria-hidden="true"
+      >
+        <circle cx="28" cy="28" r="12" stroke="currentColor" stroke-width="2" />
+        <path
+          d="M37 37l10 10"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+      </svg>
+      Tidak ada tool yang cocok dengan &ldquo;{{ query() }}&rdquo;.
     </div>
   }
 </div>

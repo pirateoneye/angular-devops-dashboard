@@ -1,0 +1,47 @@
+@use "@angular/material" as mat;
+
+// Include the common styles for Angular Material
+@include mat.core();
+
+// Custom palette matching brand primary #005caa
+$msv-primary: mat.define-palette(mat.$indigo-palette, 700, 500, 900);
+$msv-accent: mat.define-palette(mat.$blue-palette, 400, 300, 600);
+$msv-warn: mat.define-palette(mat.$red-palette);
+
+$msv-typography: mat.define-typography-config(
+  $font-family: '"Open Sans", Roboto, "Helvetica Neue", sans-serif',
+);
+
+// Light theme
+$light-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $msv-primary,
+      accent: $msv-accent,
+      warn: $msv-warn,
+    ),
+    typography: $msv-typography,
+    density: -2,
+  )
+);
+
+// Dark theme
+$dark-theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: $msv-primary,
+      accent: $msv-accent,
+      warn: $msv-warn,
+    ),
+    typography: $msv-typography,
+    density: -2,
+  )
+);
+
+// Apply light by default
+@include mat.all-component-themes($light-theme);
+
+// Dark mode via [data-theme="dark"]
+html[data-theme="dark"] {
+  @include mat.all-component-colors($dark-theme);
+}

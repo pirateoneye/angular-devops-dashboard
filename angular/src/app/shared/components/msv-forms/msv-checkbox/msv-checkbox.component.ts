@@ -1,4 +1,11 @@
-import { Component, Input, forwardRef, OnInit, TemplateRef, Inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  forwardRef,
+  OnInit,
+  TemplateRef,
+  Inject,
+} from '@angular/core';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
@@ -44,17 +51,21 @@ export class MsvCheckboxComponent
   private onTouched: () => void = () => {};
 
   constructor(
-    private validatorHelper: MsvValidatorHelper,
-    @Inject(MSV_FORMS_CONFIG) private config: MsvFormsConfig
+    // public so the spec can assert it's injected (component['validatorHelper']); not used in this component's own logic
+    public readonly validatorHelper: MsvValidatorHelper,
+    @Inject(MSV_FORMS_CONFIG) private config: MsvFormsConfig,
   ) {}
 
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {}
 
   // ControlValueAccessor methods
+  // ControlValueAccessor: Angular calls this to push a new value INTO our component
   writeValue(value: boolean): void {
     this.value = value || false;
   }
 
+  // Angular passes us a function; we call it to push our value OUT
   registerOnChange(fn: (value: boolean) => void): void {
     this.onChange = fn;
   }
@@ -68,7 +79,7 @@ export class MsvCheckboxComponent
   }
 
   // Validator implementation
-  validate(control: AbstractControl): ValidationErrors | null {
+  validate(_control: AbstractControl): ValidationErrors | null {
     this.runValidation();
     return this.errors.length > 0 ? { msvError: this.errors[0] } : null;
   }
@@ -90,7 +101,7 @@ export class MsvCheckboxComponent
   // Validation logic
   private runValidation(): void {
     this.errors = [];
-    
+
     for (const validator of this.validators) {
       // Handle string-based validators
       if (typeof validator === 'string') {
@@ -99,11 +110,11 @@ export class MsvCheckboxComponent
           this.errors.push(this.config.validationMessages.required);
           continue;
         }
-      } 
+      }
       // Handle object-based validators
       else {
         const { type, message, fn } = validator;
-        
+
         // Custom validator
         if (type === 'custom' && fn) {
           const error = fn(this.value);
@@ -112,7 +123,7 @@ export class MsvCheckboxComponent
           }
           continue;
         }
-        
+
         // Required validator for boolean
         if (type === 'required' && !this.value) {
           this.errors.push(message || this.config.validationMessages.required);

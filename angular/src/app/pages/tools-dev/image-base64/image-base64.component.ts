@@ -17,6 +17,10 @@ export class ImageBase64Component {
   fileName = 'download.png';
   size = '';
   error = '';
+  dragOver = false;
+  imgWidth = 0;
+  imgHeight = 0;
+  copiedVariant = '';
 
   constructor(private snackBar: MatSnackBar) {}
 
@@ -27,14 +31,91 @@ export class ImageBase64Component {
     this.fileName = file.name || 'image';
     this.size = this.fmt(file.size);
     const reader = new FileReader();
-    reader.onload = () => { this.dataUrl = String(reader.result); };
-    reader.onerror = () => { this.error = 'Gagal membaca file.'; };
+    reader.onload = () => {
+      this.dataUrl = String(reader.result);
+    };
+    reader.onerror = () => {
+      this.error = 'Gagal membaca file.';
+    };
     reader.readAsDataURL(file);
+  }
+
+  onDragOver(e: DragEvent): void {
+    e.preventDefault();
+    e.stopPropagation();
+    this.dragOver = true;
+  }
+
+  onDragLeave(): void {
+    this.dragOver = false;
+  }
+
+  onDrop(e: DragEvent): void {
+    e.preventDefault();
+    e.stopPropagation();
+    this.dragOver = false;
+    const file = e.dataTransfer?.files?.[0];
+    if (!file || !file.type.startsWith('image/')) {
+      this.error = 'Harap drop file gambar.';
+      return;
+    }
+    this.error = '';
+    this.fileName = file.name || 'image';
+    this.size = this.fmt(file.size);
+    this.imgWidth = 0;
+    this.imgHeight = 0;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.dataUrl = String(reader.result);
+    };
+    reader.onerror = () => {
+      this.error = 'Gagal membaca file.';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async pasteFromClipboard(): Promise<void> {
+    try {
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        const imageTypes = item.types.filter((t) => t.startsWith('image/'));
+        if (imageTypes.length) {
+          const blob = await item.getType(imageTypes[0]);
+          this.fileName = 'clipboard.' + (imageTypes[0].split('/')[1] || 'png');
+          this.size = this.fmt(blob.size);
+          this.imgWidth = 0;
+          this.imgHeight = 0;
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.dataUrl = String(reader.result);
+          };
+          reader.onerror = () => {
+            this.error = 'Gagal membaca clipboard.';
+          };
+          reader.readAsDataURL(blob);
+          return;
+        }
+      }
+      this.error = 'Clipboard tidak berisi gambar.';
+    } catch {
+      this.error = 'Gagal membaca clipboard (perlu izin).';
+    }
+  }
+
+  onImageLoad(e: Event): void {
+    const img = e.target as HTMLImageElement;
+    this.imgWidth = img.naturalWidth;
+    this.imgHeight = img.naturalHeight;
   }
 
   onUrlInput(): void {
     this.error = '';
-    if (!this.dataUrl.startsWith('data:')) { this.error = 'Bukan data URL valid (harus diawali "data:...").'; return; }
+    this.imgWidth = 0;
+    this.imgHeight = 0;
+    if (!this.dataUrl.startsWith('data:')) {
+      this.error = 'Bukan data URL valid (harus diawali "data:...").';
+      return;
+    }
     const m = /^data:([^;]+);base64/.exec(this.dataUrl);
     const ext = m ? m[1].split('/')[1] : 'png';
     this.fileName = 'image.' + ext;
@@ -55,8 +136,36 @@ export class ImageBase64Component {
 
   copy(): void {
     if (!this.dataUrl) return;
-    navigator.clipboard.writeText(this.dataUrl).then(() =>
-      this.snackBar.open('Disalin ke clipboard', 'Close', { duration: 1500 }),
-    );
+    navigator.clipboard
+      .writeText(this.dataUrl)
+      .then(() =>
+        this.snackBar.open('Disalin ke clipboard', 'Close', { duration: 1500 }),
+      );
+  }
+
+  copyVariant(kind: string): void {
+    if (!this.dataUrl) return;
+    let text = '';
+    switch (kind) {
+      case 'datauri':
+        text = this.dataUrl;
+        break;
+      case 'imgtag':
+        text = `<img src="${this.dataUrl}" alt="" />`;
+        break;
+      case 'css':
+        text = `background-image: url(${this.dataUrl});`;
+        break;
+      case 'markdown':
+        text = `![](${this.dataUrl})`;
+        break;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+      this.copiedVariant = kind;
+      this.snackBar.open('Disalin', 'Close', { duration: 1500 });
+      setTimeout(() => {
+        this.copiedVariant = '';
+      }, 2000);
+    });
   }
 }

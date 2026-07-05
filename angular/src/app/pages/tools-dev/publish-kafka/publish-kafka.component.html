@@ -1,110 +1,113 @@
 <div class="container pt-3 pb-3">
-    <mat-card class="tool-card">
-        <h2 class="tool-title">
-            Publish Kafka
-        </h2>
-        <p class="tool-sub">
-            Tools untuk publish kafka
-        </p>
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Publish Kafka</h2>
+    <p class="tool-sub">Tools untuk publish kafka</p>
 
-        <div class="tool-divider"></div>
+    <div class="tool-divider"></div>
 
-        <div class="batch-list-card">
-            <div class="d-flex row">
-                <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
-                    Principle
-                </h3>
-                <div class="d-flex row  mt-2 mb-2" style="padding-right: 0px;">
-                    <div class="col-12" style="padding-right: 0px;">
-                        <select [(ngModel)]="principle" class="select-key">
-                            <option value="MCB">MCB</option>
-                            <option value="MESSI">Messi</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex row">
-                <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
-                    Topic
-                </h3>
-            </div>
-            <div class="d-flex row  mt-2 mb-4" style="padding-right: 0px;">
-                <div class="col-12" style="padding-right: 0px;">
-                    <div class="input-group">
-                        <input type="text" class="form-control " placeholder="Topic" [(ngModel)]="topic">
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex row">
-                <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
-                    Request Body
-                </h3>
-            </div>
-            <div class="d-flex row  mt-2 mb-3">
-                <div class="col-12">
-                    <textarea style="width: 100%;" class="form-control" placeholder="Input" rows="10"
-                        [(ngModel)]="requestBody"></textarea>
-                </div>
-            </div>
-            <div class="d-flex row mt-2 mb-2">
-                <div class="col-12">
-                    <button style="width: 100%;" class="btn-primary" (click)="submit()">Submit</button>
-                </div>
-            </div>
+    <div class="batch-list-card">
+      <div class="d-flex row">
+        <label class="col-4 m-0 section-label" for="principle-select">
+          Principle
+        </label>
+        <div class="d-flex row mt-2 mb-2" style="padding-right: 0px">
+          <div class="col-12" style="padding-right: 0px">
+            <select
+              id="principle-select"
+              [(ngModel)]="principle"
+              class="select-key"
+            >
+              <option value="MCB">MCB</option>
+              <option value="MESSI">Messi</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex row">
+        <label class="col-4 m-0 section-label" for="topic-input"> Topic </label>
+      </div>
+      <div class="d-flex row mt-2 mb-4" style="padding-right: 0px">
+        <div class="col-12" style="padding-right: 0px">
+          <div class="input-group">
+            <input
+              id="topic-input"
+              type="text"
+              class="form-control"
+              placeholder="Topic"
+              [(ngModel)]="topic"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="d-flex row">
+        <label class="col-4 m-0 section-label" for="request-body">
+          Request Body
+        </label>
+      </div>
+      <div class="d-flex row mt-2 mb-3">
+        <div class="col-12">
+          <textarea
+            id="request-body"
+            style="width: 100%"
+            class="form-control"
+            placeholder="Input"
+            rows="10"
+            [(ngModel)]="requestBody"
+          ></textarea>
+        </div>
+      </div>
+      @if (validationError) {
+        <div class="validation-error">{{ validationError }}</div>
+      }
+      <div class="d-flex row mt-2 mb-2">
+        <div class="col-12">
+          <button style="width: 100%" class="btn-primary" (click)="submit()">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+
+    @if (response.status !== null) {
+      <div class="information" aria-live="polite" role="status">
+        <div class="d-flex align-items-center mt-3">
+          <mat-icon class="response-icon" aria-hidden="true">
+            batch_prediction
+          </mat-icon>
+          @if (response.status === "SUCCESS") {
+            <div class="badge-available" style="margin-left: 10px">Success</div>
+          }
+          @if (response.status === "ERROR") {
+            <div class="badge-failed" style="margin-left: 10px">Error</div>
+          }
+          @if (response.status === "ON_PROCESS") {
+            <mat-spinner diameter="24" style="margin-left: 10px"></mat-spinner>
+          }
         </div>
 
-        @if (response.status != null) {
-            <div class="information">
-                <div class="d-flex align-items-center mt-3">
-                    <mat-icon style="color: #005CAA" aria-hidden="true">
-                        batch_prediction
-                    </mat-icon>
-                    @if (response.status === 'SUCCESS') {
-                        <div class="badge-available" style="margin-left: 10px;">
-                            Success
-                        </div>
-                    }
-                    @if (response.status === 'ERROR') {
-                        <div class="badge-failed" style="margin-left: 10px;">
-                            Error
-                        </div>
-                    }
-                    @if (response.status === 'ON_PROCESS') {
-                        <div class="badge-unavailable" style="margin-left: 10px;">
-                            On Running
-                        </div>
-                    }
-                </div>
+        <div class="d-flex align-items-center mt-3">
+          <mat-icon class="response-icon" aria-hidden="true">
+            message
+          </mat-icon>
+          <h4 class="response-label">
+            Response : {{ response.message || "-" }}
+          </h4>
+        </div>
 
-                <div class="d-flex align-items-center mt-3">
-                    <mat-icon style="color: #005CAA" aria-hidden="true">
-                        message
-                    </mat-icon>
-                    <h4 style="color: #005CAA; font-family: 'Open Sans';  margin: 0; margin-left: 10px;">
-                        Response : {{response.message || '-'}}
-                    </h4>
-                </div>
-
-
-                @if (response.data != null) {
-                    <div>
-                        <div class="d-flex align-items-center mt-3 mb-3">
-                            <mat-icon style="color: #005CAA" aria-hidden="true">
-                                notes
-                            </mat-icon>
-                            <h4 style="color: #005CAA; font-family: 'Open Sans';  margin: 0; margin-left: 10px;">
-                                Response Data:
-                            </h4>
-                        </div>
-                        <div class="d-flex align-items-center response-data">
-                            <pre>{{response.data | json }}</pre>
-                        </div>
-                    </div>
-                }
+        @if (response.data !== null) {
+          <div>
+            <div class="d-flex align-items-center mt-3 mb-3">
+              <mat-icon class="response-icon" aria-hidden="true">
+                notes
+              </mat-icon>
+              <h4 class="response-label">Response Data:</h4>
             </div>
+            <div class="d-flex align-items-center response-data">
+              <pre>{{ response.data | json }}</pre>
+            </div>
+          </div>
         }
-
-
-
-    </mat-card>
+      </div>
+    }
+  </mat-card>
 </div>

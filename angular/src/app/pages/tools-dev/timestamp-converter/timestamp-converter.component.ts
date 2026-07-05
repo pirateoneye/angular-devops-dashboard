@@ -1,4 +1,8 @@
-﻿import { Component, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -38,6 +42,10 @@ export class TimestampConverterComponent {
     this.refreshNow();
   }
 
+  @HostListener('execute') onExecute(): void {
+    this.fromUnix();
+  }
+
   refreshNow(): void {
     this.error = '';
     const now = new Date();
@@ -68,7 +76,7 @@ export class TimestampConverterComponent {
     }
     // Auto-detect ms vs s when unit = s but value looks like ms.
     const ms = this.unit === 'ms' ? num : this.guessMs(num);
-    if (ms <= 0) {
+    if (ms < 0) {
       this.error = 'Timestamp negatif / di luar jangkauan.';
       return;
     }
@@ -99,9 +107,10 @@ export class TimestampConverterComponent {
       this.error = 'Masukkan tanggal (ISO / YYYY-MM-DD HH:mm:ss / RFC).';
       return;
     }
-    const d = raw.length === 10 && /^\d{4}-\d{2}-\d{2}$/.test(raw)
-      ? new Date(raw + 'T00:00:00Z')
-      : new Date(raw);
+    const d =
+      raw.length === 10 && /^\d{4}-\d{2}-\d{2}$/.test(raw)
+        ? new Date(raw + 'T00:00:00Z')
+        : new Date(raw);
     if (isNaN(d.getTime())) {
       this.error = 'Format tanggal tidak dikenali.';
       return;
@@ -116,16 +125,16 @@ export class TimestampConverterComponent {
   }
 
   useNow(): void {
-    this.unixInput = String(Math.floor(Date.now() / 1000));
-    this.unit = 's';
+    this.unixInput = String(Date.now());
+    this.unit = 'ms';
     this.fromUnix();
   }
 
   private guessMs(num: number): number {
-    // If seconds value would be year < 2001 or > 2286, assume it's ms.
+    // If seconds value would be year < 1970 or > 2286, assume it's ms.
     const asSec = num * 1000;
     const year = new Date(asSec).getUTCFullYear();
-    return year < 2001 || year > 2286 ? num : asSec;
+    return year < 1970 || year > 2286 ? num : asSec;
   }
 
   private relative(ms: number): string {
@@ -147,8 +156,8 @@ export class TimestampConverterComponent {
 
   copy(value: string): void {
     if (!value) return;
-    navigator.clipboard.writeText(value).then(() =>
-      this.snackBar.open('Disalin', 'Close', { duration: 1500 }),
-    );
+    navigator.clipboard
+      .writeText(value)
+      .then(() => this.snackBar.open('Disalin', 'Close', { duration: 1500 }));
   }
 }

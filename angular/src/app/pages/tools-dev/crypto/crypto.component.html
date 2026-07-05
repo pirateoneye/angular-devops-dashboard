@@ -18,7 +18,11 @@
         </h3>
         <div class="d-flex row mt-2 mb-2" style="padding-right: 0">
           <div class="col-12" style="padding-right: 0">
+            <label for="crypto-mode-select" class="visually-hidden"
+              >Encryption mode</label
+            >
             <select
+              id="crypto-mode-select"
               [(ngModel)]="mode"
               class="select-key form-select"
               aria-label="Encryption mode"
@@ -48,7 +52,9 @@
         </div>
         <div class="d-flex row mt-2 mb-3">
           <div class="col-12">
+            <label for="crypto-salt-input">Salt</label>
             <input
+              id="crypto-salt-input"
               type="text"
               style="width: 100%"
               class="form-control"
@@ -75,31 +81,49 @@
       </div>
       <div class="d-flex row mt-2 mb-3">
         <div class="col-6">
+          <label for="crypto-input-encrypt">Input</label>
           <textarea
+            id="crypto-input-encrypt"
             style="width: 100%"
             class="form-control"
             placeholder="Input"
             rows="4"
             [(ngModel)]="inputEncrypt"
           ></textarea>
+          @if (showEncryptError) {
+            <div class="validation-error" role="alert">Input is required.</div>
+          }
         </div>
         <div class="col-6" style="position: relative">
-          <textarea
-            style="width: 100%"
-            class="form-control"
-            disabled
-            placeholder="Output"
-            rows="4"
-            [(ngModel)]="resultEncrypt"
-          ></textarea>
+          <label for="crypto-output-encrypt">Output</label>
+          @if (isEncrypting) {
+            <div class="spinner-area">
+              <span class="spinner" aria-label="Loading"></span>
+            </div>
+          } @else {
+            <div aria-live="polite" role="status">
+              <textarea
+                id="crypto-output-encrypt"
+                style="width: 100%"
+                class="form-control"
+                disabled
+                placeholder="Output"
+                rows="4"
+                [(ngModel)]="resultEncrypt"
+              ></textarea>
+            </div>
+          }
           <div
             style="position: absolute; top: 8px; right: 8px"
             data-toggle="tooltip"
             title="Copy to clipboard"
           >
+            @if (copyFeedbackEncrypt) {
+              <span class="copy-feedback">Copied!</span>
+            }
             <button
               class="clipboard-button"
-              (click)="copyText(resultEncrypt)"
+              (click)="copyText(resultEncrypt, 'encrypt')"
               aria-label="Copy encrypted output"
             >
               <mat-icon aria-hidden="true">file_copy</mat-icon>
@@ -113,7 +137,11 @@
             style="width: 100%"
             class="btn-primary"
             (click)="encryptButton()"
+            [disabled]="isEncrypting"
           >
+            @if (isEncrypting) {
+              <span class="spinner spinner-btn" aria-label="Loading"></span>
+            }
             Encrypt
           </button>
         </div>
@@ -135,32 +163,50 @@
       </div>
       <div class="d-flex row mt-2 mb-3">
         <div class="col-6">
+          <label for="crypto-input-decrypt">Input</label>
           <textarea
+            id="crypto-input-decrypt"
             style="width: 100%"
             class="form-control"
             placeholder="Input"
             rows="4"
             [(ngModel)]="inputDecrypt"
           ></textarea>
+          @if (showDecryptError) {
+            <div class="validation-error" role="alert">Input is required.</div>
+          }
         </div>
         <div class="col-6" style="position: relative">
-          <textarea
-            style="width: 100%"
-            class="form-control"
-            disabled
-            placeholder="Output"
-            rows="4"
-            [(ngModel)]="resultDecrypt"
-            [class.text-danger]="isErrorDecrypt"
-          ></textarea>
+          <label for="crypto-output-decrypt">Output</label>
+          @if (isDecrypting) {
+            <div class="spinner-area">
+              <span class="spinner" aria-label="Loading"></span>
+            </div>
+          } @else {
+            <div aria-live="polite" role="status">
+              <textarea
+                id="crypto-output-decrypt"
+                style="width: 100%"
+                class="form-control"
+                disabled
+                placeholder="Output"
+                rows="4"
+                [(ngModel)]="resultDecrypt"
+                [class.text-danger]="isErrorDecrypt"
+              ></textarea>
+            </div>
+          }
           <div
             style="position: absolute; top: 8px; right: 8px"
             data-toggle="tooltip"
             title="Copy to clipboard"
           >
+            @if (copyFeedbackDecrypt) {
+              <span class="copy-feedback">Copied!</span>
+            }
             <button
               class="clipboard-button"
-              (click)="copyText(resultDecrypt)"
+              (click)="copyText(resultDecrypt, 'decrypt')"
               aria-label="Copy decrypted output"
             >
               <mat-icon aria-hidden="true">file_copy</mat-icon>
@@ -174,7 +220,11 @@
             style="width: 100%"
             class="btn-primary"
             (click)="decryptButton()"
+            [disabled]="isDecrypting"
           >
+            @if (isDecrypting) {
+              <span class="spinner spinner-btn" aria-label="Loading"></span>
+            }
             Decrypt
           </button>
         </div>
@@ -196,32 +246,44 @@
       </div>
       <div class="d-flex row mt-2 mb-3">
         <div class="col-6">
+          <label for="crypto-input-decode">Input</label>
           <textarea
+            id="crypto-input-decode"
             style="width: 100%"
             class="form-control"
             placeholder="Input"
             rows="4"
             [(ngModel)]="inputDecode"
           ></textarea>
+          @if (showDecodeError) {
+            <div class="validation-error" role="alert">Input is required.</div>
+          }
         </div>
         <div class="col-6" style="position: relative">
-          <textarea
-            style="width: 100%"
-            class="form-control"
-            disabled
-            placeholder="Output"
-            rows="4"
-            [(ngModel)]="resultDecode"
-            [class.text-danger]="isErrorDecode"
-          ></textarea>
+          <label for="crypto-output-decode">Output</label>
+          <div aria-live="polite" role="status">
+            <textarea
+              id="crypto-output-decode"
+              style="width: 100%"
+              class="form-control"
+              disabled
+              placeholder="Output"
+              rows="4"
+              [(ngModel)]="resultDecode"
+              [class.text-danger]="isErrorDecode"
+            ></textarea>
+          </div>
           <div
             style="position: absolute; top: 8px; right: 8px"
             data-toggle="tooltip"
             title="Copy to clipboard"
           >
+            @if (copyFeedbackDecode) {
+              <span class="copy-feedback">Copied!</span>
+            }
             <button
               class="clipboard-button"
-              (click)="copyText(resultDecode)"
+              (click)="copyText(resultDecode, 'decode')"
               aria-label="Copy decoded output"
             >
               <mat-icon aria-hidden="true">file_copy</mat-icon>

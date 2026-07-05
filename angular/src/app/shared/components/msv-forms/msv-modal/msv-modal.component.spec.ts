@@ -1,14 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
 import { MsvModalComponent } from './msv-modal.component';
 import { MsvModalRef } from './msv-modal-ref';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
-
-@Component({
-  template: `<div>Test Content</div>`
-})
-class TestContentComponent {}
 
 describe('MsvModalComponent', () => {
   let component: MsvModalComponent;
@@ -20,7 +14,7 @@ describe('MsvModalComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [MsvModalComponent],
-      imports: [CommonModule, OverlayModule]
+      imports: [CommonModule, OverlayModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvModalComponent);
@@ -62,8 +56,14 @@ describe('MsvModalComponent', () => {
     // i.e. event.target === event.currentTarget (the bound .msv-modal-backdrop).
     const backdrop = document.createElement('div');
     const event = new MouseEvent('click');
-    Object.defineProperty(event, 'target', { value: backdrop, writable: false });
-    Object.defineProperty(event, 'currentTarget', { value: backdrop, writable: false });
+    Object.defineProperty(event, 'target', {
+      value: backdrop,
+      writable: false,
+    });
+    Object.defineProperty(event, 'currentTarget', {
+      value: backdrop,
+      writable: false,
+    });
 
     component.onBackdropClick(event);
 
@@ -74,8 +74,14 @@ describe('MsvModalComponent', () => {
     component.closable = false;
     const backdrop = document.createElement('div');
     const event = new MouseEvent('click');
-    Object.defineProperty(event, 'target', { value: backdrop, writable: false });
-    Object.defineProperty(event, 'currentTarget', { value: backdrop, writable: false });
+    Object.defineProperty(event, 'target', {
+      value: backdrop,
+      writable: false,
+    });
+    Object.defineProperty(event, 'currentTarget', {
+      value: backdrop,
+      writable: false,
+    });
 
     component.onBackdropClick(event);
 
@@ -89,8 +95,14 @@ describe('MsvModalComponent', () => {
     const backdrop = document.createElement('div');
     const contentElement = document.createElement('div');
     const event = new MouseEvent('click');
-    Object.defineProperty(event, 'target', { value: contentElement, writable: false });
-    Object.defineProperty(event, 'currentTarget', { value: backdrop, writable: false });
+    Object.defineProperty(event, 'target', {
+      value: contentElement,
+      writable: false,
+    });
+    Object.defineProperty(event, 'currentTarget', {
+      value: backdrop,
+      writable: false,
+    });
 
     component.onBackdropClick(event);
 
@@ -101,9 +113,9 @@ describe('MsvModalComponent', () => {
     component.closable = true;
     const event = new KeyboardEvent('keydown', { key: 'Escape' });
     spyOn(event, 'preventDefault');
-    
+
     component.onEscapeKey(event);
-    
+
     expect(event.preventDefault).toHaveBeenCalled();
     expect(mockModalRef.close).toHaveBeenCalled();
   });
@@ -111,16 +123,16 @@ describe('MsvModalComponent', () => {
   it('should not close modal on escape key when closable is false', () => {
     component.closable = false;
     const event = new KeyboardEvent('keydown', { key: 'Escape' });
-    
+
     component.onEscapeKey(event);
-    
+
     expect(mockModalRef.close).not.toHaveBeenCalled();
   });
 
   it('should display close button when closable is true', () => {
     component.closable = true;
     fixture.detectChanges();
-    
+
     const closeButton = fixture.nativeElement.querySelector('.msv-modal-close');
     expect(closeButton).toBeTruthy();
   });
@@ -128,7 +140,7 @@ describe('MsvModalComponent', () => {
   it('should not display close button when closable is false', () => {
     component.closable = false;
     fixture.detectChanges();
-    
+
     const closeButton = fixture.nativeElement.querySelector('.msv-modal-close');
     expect(closeButton).toBeFalsy();
   });
@@ -136,18 +148,22 @@ describe('MsvModalComponent', () => {
   it('should call close when close button is clicked', () => {
     component.closable = true;
     fixture.detectChanges();
-    
-    const closeButton = fixture.nativeElement.querySelector('.msv-modal-close') as HTMLButtonElement;
+
+    const closeButton = fixture.nativeElement.querySelector(
+      '.msv-modal-close',
+    ) as HTMLButtonElement;
     closeButton.click();
-    
+
     expect(mockModalRef.close).toHaveBeenCalled();
   });
 
   it('should apply correct size class to container', () => {
     component.size = 'large';
     fixture.detectChanges();
-    
-    const container = fixture.nativeElement.querySelector('.msv-modal-container');
+
+    const container = fixture.nativeElement.querySelector(
+      '.msv-modal-container',
+    );
     expect(container.classList.contains('msv-modal-large')).toBe(true);
   });
 
@@ -155,14 +171,16 @@ describe('MsvModalComponent', () => {
     const testFixture = TestBed.createComponent(MsvModalComponent);
     const testComponent = testFixture.componentInstance;
     testComponent.modalRef = mockModalRef;
-    
+
     const headerContent = document.createElement('div');
     headerContent.setAttribute('msvModalHeader', '');
     headerContent.textContent = 'Test Header';
-    testFixture.nativeElement.querySelector('.msv-modal-header')?.appendChild(headerContent);
-    
+    testFixture.nativeElement
+      .querySelector('.msv-modal-header')
+      ?.appendChild(headerContent);
+
     testFixture.detectChanges();
-    
+
     expect(testFixture.nativeElement.textContent).toContain('Test Header');
   });
 
@@ -170,20 +188,22 @@ describe('MsvModalComponent', () => {
     const testFixture = TestBed.createComponent(MsvModalComponent);
     const testComponent = testFixture.componentInstance;
     testComponent.modalRef = mockModalRef;
-    
+
     const footerContent = document.createElement('div');
     footerContent.setAttribute('msvModalFooter', '');
     footerContent.textContent = 'Test Footer';
-    testFixture.nativeElement.querySelector('.msv-modal-footer')?.appendChild(footerContent);
-    
+    testFixture.nativeElement
+      .querySelector('.msv-modal-footer')
+      ?.appendChild(footerContent);
+
     testFixture.detectChanges();
-    
+
     expect(testFixture.nativeElement.textContent).toContain('Test Footer');
   });
 
   it('should not call close if modalRef is undefined', () => {
     component.modalRef = undefined;
-    
+
     expect(() => component.close()).not.toThrow();
   });
 });

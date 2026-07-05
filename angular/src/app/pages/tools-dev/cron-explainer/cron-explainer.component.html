@@ -1,30 +1,66 @@
-<div class="container pt-2 pb-3">
-  <mat-card class="tool-card">
-    <h2 class="tool-title">Cron Explainer</h2>
-    <h4 class="tool-sub">Jelaskan ekspresi cron (5 field) + perkiraan next run.</h4>
-    <div class="tool-divider"></div>
-    <div class="cron-input">
-      <input class="tool-input-mono" [(ngModel)]="expr" (ngModelChange)="explain()" placeholder="*/5 * * * *" aria-label="Cron expression" />
-      <button class="btn-primary" (click)="explain()">Explain</button>
-    </div>
-    @if (error) {
-      <div class="tool-error" role="alert">{{ error }}</div>
+<h2 class="tool-title">Cron Explainer</h2>
+<h4 class="tool-sub">Jelaskan ekspresi cron (5 field) + perkiraan next run.</h4>
+<div class="tool-divider"></div>
+
+<div class="cron-examples">
+  <label class="tool-label" for="cron-example-select">Try example</label>
+  <select
+    id="cron-example-select"
+    class="tool-input-mono"
+    (change)="selectExample($any($event.target).value)"
+  >
+    <option value="" disabled selected>Pilih contoh...</option>
+    @for (ex of examples; track ex.expr) {
+      <option [value]="ex.expr">{{ ex.label }} &mdash; {{ ex.expr }}</option>
     }
-    @if (human && !error) {
-      <div class="cron-human">{{ human }}</div>
-    }
-    @if (nextRun && !error) {
-      <div class="cron-next">Next run: <strong>{{ nextRun }}</strong></div>
-    }
-    @if (detail.length && !error) {
-      <table class="cron-table">
-        <thead><tr><th>Field</th><th>Nilai</th></tr></thead>
-        <tbody>
-          @for (d of detail; track d.label) {
-            <tr><td class="cron-label">{{ d.label }}</td><td class="rt-mono">{{ d.desc }}</td></tr>
-          }
-        </tbody>
-      </table>
-    }
-  </mat-card>
+  </select>
 </div>
+
+<div class="cron-input">
+  <input
+    class="tool-input-mono"
+    [(ngModel)]="expr"
+    (ngModelChange)="explain()"
+    placeholder="*/5 * * * *"
+    aria-label="Cron expression"
+  />
+  <button class="btn-primary" (click)="explain()">Explain</button>
+</div>
+@if (error) {
+  <div class="tool-error" role="alert">{{ error }}</div>
+}
+@if (human && !error) {
+  <div class="cron-human-row">
+    <div class="cron-human">{{ human }}</div>
+    <button
+      class="icon-btn"
+      (click)="copyHuman()"
+      aria-label="Salin penjelasan"
+    >
+      <mat-icon aria-hidden="true">file_copy</mat-icon>
+    </button>
+  </div>
+}
+@if (nextRun && !error) {
+  <div class="cron-next">
+    Next run: <strong>{{ nextRun }}</strong>
+  </div>
+}
+@if (detail.length && !error) {
+  <table class="cron-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Nilai</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (d of detail; track d.label) {
+        <tr>
+          <td class="cron-label">{{ d.label }}</td>
+          <td class="rt-mono">{{ d.desc }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

@@ -1,35 +1,79 @@
-﻿<div class="container pt-3 pb-3">
-  <mat-card class="tool-card">
-    <h2 class="tool-title">Character &amp; Word Counter</h2>
-    <h4 class="tool-sub">Hitung karakter, kata, baris, kalimat, byte, dan frekuensi karakter secara real-time.</h4>
-    <div class="tool-divider"></div>
+<h2 class="tool-title">Character &amp; Word Counter</h2>
+<h4 class="tool-sub">
+  Hitung karakter, kata, baris, kalimat, byte, dan frekuensi karakter secara
+  real-time.
+</h4>
+<div class="tool-divider"></div>
 
-    <textarea class="tool-area" rows="8" [(ngModel)]="input" placeholder="Ketik atau tempel teks di sini..."></textarea>
+<textarea
+  #ta
+  class="tool-area"
+  rows="8"
+  [ngModel]="input"
+  (ngModelChange)="onInputChange($event)"
+  (select)="onSelect($event)"
+  (mouseup)="onSelect($event)"
+  placeholder="Ketik atau tempel teks di sini..."
+></textarea>
 
-    <div class="cc-grid">
-      <div class="cc-stat"><span class="cc-num">{{ chars }}</span><span class="cc-lbl">Karakter</span></div>
-      <div class="cc-stat"><span class="cc-num">{{ charsNoSpaces }}</span><span class="cc-lbl">Tanpa spasi</span></div>
-      <div class="cc-stat"><span class="cc-num">{{ bytes }}</span><span class="cc-lbl">Bytes (UTF-8)</span></div>
-      <div class="cc-stat"><span class="cc-num">{{ words }}</span><span class="cc-lbl">Kata</span></div>
-      <div class="cc-stat"><span class="cc-num">{{ lines }}</span><span class="cc-lbl">Baris</span></div>
-      <div class="cc-stat"><span class="cc-num">{{ sentences }}</span><span class="cc-lbl">Kalimat</span></div>
-      <div class="cc-stat"><span class="cc-num">{{ paragraphs }}</span><span class="cc-lbl">Paragraf</span></div>
-      <div class="cc-stat"><span class="cc-num">{{ readingTime }}</span><span class="cc-lbl">Waktu baca</span></div>
-    </div>
+@if (selectedCount > 0) {
+  <div class="cc-selected">Selected: {{ selectedCount }} karakter</div>
+}
 
-    @if (freq.length) {
-      <div class="cc-freq">
-        <label class="tool-label">Top 20 frekuensi karakter</label>
-        <div class="cc-bars">
-          @for (f of freq; track f.char) {
-            <div class="cc-bar">
-              <span class="cc-bar-char">{{ f.char === ' ' ? 'SP' : f.char }}</span>
-              <div class="cc-bar-track"><div class="cc-bar-fill" [style.width.%]="f.pct"></div></div>
-              <span class="cc-bar-count">{{ f.count }} ({{ f.pct }}%)</span>
-            </div>
-          }
-        </div>
-      </div>
-    }
-  </mat-card>
+<div class="tool-actions">
+  <button class="btn-secondary" (click)="copyStats()">
+    <mat-icon aria-hidden="true">content_copy</mat-icon> Copy stats
+  </button>
 </div>
+
+<div class="cc-grid">
+  <div class="cc-stat">
+    <span class="cc-num">{{ chars }}</span
+    ><span class="cc-lbl">Karakter</span>
+  </div>
+  <div class="cc-stat">
+    <span class="cc-num">{{ charsNoSpaces }}</span
+    ><span class="cc-lbl">Tanpa spasi</span>
+  </div>
+  <div class="cc-stat">
+    <span class="cc-num">{{ bytes }}</span
+    ><span class="cc-lbl">Bytes (UTF-8)</span>
+  </div>
+  <div class="cc-stat">
+    <span class="cc-num">{{ words }}</span
+    ><span class="cc-lbl">Kata</span>
+  </div>
+  <div class="cc-stat">
+    <span class="cc-num">{{ lines }}</span
+    ><span class="cc-lbl">Baris</span>
+  </div>
+  <div class="cc-stat">
+    <span class="cc-num">{{ sentences }}</span
+    ><span class="cc-lbl">Kalimat</span>
+  </div>
+  <div class="cc-stat">
+    <span class="cc-num">{{ paragraphs }}</span
+    ><span class="cc-lbl">Paragraf</span>
+  </div>
+  <div class="cc-stat">
+    <span class="cc-num">{{ readingTime }}</span
+    ><span class="cc-lbl">Waktu baca</span>
+  </div>
+</div>
+
+@if (freq.length) {
+  <div class="cc-freq">
+    <label class="tool-label">Top 20 frekuensi karakter</label>
+    <div class="cc-bars">
+      @for (f of freq; track f.char) {
+        <div class="cc-bar">
+          <span class="cc-bar-char">{{ f.char === " " ? "SP" : f.char }}</span>
+          <div class="cc-bar-track">
+            <div class="cc-bar-fill" [style.width.%]="f.pct"></div>
+          </div>
+          <span class="cc-bar-count">{{ f.count }} ({{ f.pct }}%)</span>
+        </div>
+      }
+    </div>
+  </div>
+}

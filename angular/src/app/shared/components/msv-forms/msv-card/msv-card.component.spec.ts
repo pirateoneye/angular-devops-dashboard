@@ -10,7 +10,7 @@ import { MsvCardComponent } from './msv-card.component';
       <div>Test Body Content</div>
       <div msvCardFooter>Test Footer</div>
     </msv-card>
-  `
+  `,
 })
 class TestHostComponent {
   elevation: 0 | 1 | 2 | 3 | 4 = 1;
@@ -22,7 +22,7 @@ class TestHostComponent {
     <msv-card>
       <div>Body Only</div>
     </msv-card>
-  `
+  `,
 })
 class BodyOnlyHostComponent {}
 
@@ -32,7 +32,11 @@ describe('MsvCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvCardComponent, TestHostComponent, BodyOnlyHostComponent]
+      declarations: [
+        MsvCardComponent,
+        TestHostComponent,
+        BodyOnlyHostComponent,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvCardComponent);
@@ -87,30 +91,33 @@ describe('MsvCardComponent', () => {
 
   describe('Content Projection', () => {
     let hostFixture: ComponentFixture<TestHostComponent>;
-    let hostComponent: TestHostComponent;
     let cardElement: DebugElement;
 
     beforeEach(() => {
       hostFixture = TestBed.createComponent(TestHostComponent);
-      hostComponent = hostFixture.componentInstance;
       hostFixture.detectChanges();
-      cardElement = hostFixture.debugElement.query(By.directive(MsvCardComponent));
+      cardElement = hostFixture.debugElement.query(
+        By.directive(MsvCardComponent),
+      );
     });
 
     it('should project header content', () => {
-      const headerElement = cardElement.nativeElement.querySelector('.msv-card-header');
+      const headerElement =
+        cardElement.nativeElement.querySelector('.msv-card-header');
       expect(headerElement).toBeTruthy();
       expect(headerElement.textContent.trim()).toContain('Test Header');
     });
 
     it('should project body content', () => {
-      const bodyElement = cardElement.nativeElement.querySelector('.msv-card-body');
+      const bodyElement =
+        cardElement.nativeElement.querySelector('.msv-card-body');
       expect(bodyElement).toBeTruthy();
       expect(bodyElement.textContent.trim()).toContain('Test Body Content');
     });
 
     it('should project footer content', () => {
-      const footerElement = cardElement.nativeElement.querySelector('.msv-card-footer');
+      const footerElement =
+        cardElement.nativeElement.querySelector('.msv-card-footer');
       expect(footerElement).toBeTruthy();
       expect(footerElement.textContent.trim()).toContain('Test Footer');
     });
@@ -123,21 +130,26 @@ describe('MsvCardComponent', () => {
     beforeEach(() => {
       hostFixture = TestBed.createComponent(BodyOnlyHostComponent);
       hostFixture.detectChanges();
-      cardElement = hostFixture.debugElement.query(By.directive(MsvCardComponent));
+      cardElement = hostFixture.debugElement.query(
+        By.directive(MsvCardComponent),
+      );
     });
 
     it('should render header section even without content', () => {
-      const headerElement = cardElement.nativeElement.querySelector('.msv-card-header');
+      const headerElement =
+        cardElement.nativeElement.querySelector('.msv-card-header');
       expect(headerElement).toBeTruthy();
     });
 
     it('should render footer section even without content', () => {
-      const footerElement = cardElement.nativeElement.querySelector('.msv-card-footer');
+      const footerElement =
+        cardElement.nativeElement.querySelector('.msv-card-footer');
       expect(footerElement).toBeTruthy();
     });
 
     it('should always render body', () => {
-      const bodyElement = cardElement.nativeElement.querySelector('.msv-card-body');
+      const bodyElement =
+        cardElement.nativeElement.querySelector('.msv-card-body');
       expect(bodyElement).toBeTruthy();
       expect(bodyElement.textContent.trim()).toContain('Body Only');
     });
@@ -152,25 +164,27 @@ describe('MsvCardComponent', () => {
       hostFixture = TestBed.createComponent(TestHostComponent);
       hostComponent = hostFixture.componentInstance;
       hostFixture.detectChanges();
-      cardElement = hostFixture.debugElement.query(By.directive(MsvCardComponent));
+      cardElement = hostFixture.debugElement.query(
+        By.directive(MsvCardComponent),
+      );
     });
 
     it('should update elevation class when elevation input changes', () => {
       const cardComponent = cardElement.componentInstance as MsvCardComponent;
-      
+
       hostComponent.elevation = 3;
       hostFixture.detectChanges();
-      
+
       expect(cardComponent.elevation).toBe(3);
       expect(cardComponent.cardClasses).toContain('elevation-3');
     });
 
     it('should update padding class when padding input changes', () => {
       const cardComponent = cardElement.componentInstance as MsvCardComponent;
-      
+
       hostComponent.padding = false;
       hostFixture.detectChanges();
-      
+
       expect(cardComponent.padding).toBe(false);
       expect(cardComponent.cardClasses).not.toContain('with-padding');
     });

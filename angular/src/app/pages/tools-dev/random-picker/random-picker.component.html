@@ -1,50 +1,73 @@
-<div class="container pt-3 pb-3">
-  <mat-card class="tool-card">
-    <h2 class="tool-title">Random Picker &amp; Shuffler</h2>
-    <h4 class="tool-sub">Pilih item acak (unik/berulang) atau kocok urutan list dengan Fisher-Yates.</h4>
-    <div class="tool-divider"></div>
+<h2 class="tool-title">Random Picker &amp; Shuffler</h2>
+<h4 class="tool-sub">
+  Pilih item acak (unik/berulang) atau kocok urutan list dengan Fisher-Yates.
+</h4>
+<div class="tool-divider"></div>
 
-    <label class="tool-label" for="rp-input">Daftar item (satu per baris)</label>
-    <textarea id="rp-input" class="tool-area" rows="6" [(ngModel)]="input" placeholder="Apel
+<label class="tool-label" for="rp-input">Daftar item (satu per baris)</label>
+<textarea
+  id="rp-input"
+  class="tool-area"
+  rows="6"
+  [(ngModel)]="input"
+  placeholder="Apel
 Mangga
-Jeruk"></textarea>
+Jeruk"
+></textarea>
 
-    <div class="cj-row">
-      <label>Jumlah pilih <input type="number" min="1" [(ngModel)]="count" style="width:64px" /></label>
-      <label><input type="checkbox" [(ngModel)]="unique" /> Unik (tanpa pengulangan)</label>
-      <label><input type="checkbox" [(ngModel)]="sortResult" /> Urutkan hasil</label>
-    </div>
-
-    <div class="tool-actions">
-      <button class="btn-primary" (click)="pick()">Pick</button>
-      <button class="btn-secondary" (click)="shuffle()">Shuffle All</button>
-      <button class="btn-secondary" (click)="example()">Contoh</button>
-      <button class="btn-secondary" (click)="clear()">Clear</button>
-    </div>
-
-    @if (error) {
-      <div class="tool-error" role="alert">{{ error }}</div>
-    }
-    <div class="tool-stats">{{ items.length }} item</div>
-
-    @if (picks.length) {
-      <label class="tool-label" style="margin-top:10px">Hasil pilihan ({{ picks.length }})</label>
-      <div class="rp-list">
-        @for (p of picks; track p; let i = $index) {
-          <div class="rp-item">
-            <span class="rp-no">{{ i + 1 }}</span>
-            <code>{{ p.value }}</code>
-            <span class="rp-idx">#{{ p.index + 1 }}</span>
-          </div>
-        }
-      </div>
-      <button class="btn-secondary" (click)="copy(picksText)">Copy hasil</button>
-    }
-
-    @if (shuffled.length) {
-      <label class="tool-label" style="margin-top:10px">Hasil shuffle</label>
-      <textarea class="tool-area" rows="6" [value]="shuffledText" readonly></textarea>
-      <button class="btn-secondary" (click)="copy(shuffledText)">Copy</button>
-    }
-  </mat-card>
+<div class="cj-row">
+  <label
+    >Jumlah pilih
+    <input type="number" min="1" [(ngModel)]="count" style="width: 64px"
+  /></label>
+  <label
+    ><input type="checkbox" [(ngModel)]="unique" /> Unik (tanpa
+    pengulangan)</label
+  >
+  <label
+    ><input type="checkbox" [(ngModel)]="sortResult" /> Urutkan hasil</label
+  >
 </div>
+
+<div class="tool-actions">
+  <button class="btn-primary" (click)="pick()">Pick</button>
+  <button class="btn-secondary" (click)="shuffle()">Shuffle All</button>
+  <button class="btn-secondary" (click)="example()">Contoh</button>
+  <button class="btn-secondary" (click)="clear()">Clear</button>
+</div>
+
+@if (error) {
+  <div class="tool-error" role="alert">{{ error }}</div>
+}
+<div class="tool-stats">{{ items.length }} item</div>
+
+@if (picks.length) {
+  <label class="tool-label" style="margin-top: 10px"
+    >Hasil pilihan ({{ picks.length }})</label
+  >
+  <div class="rp-list">
+    @for (p of picks; track p; let i = $index) {
+      <div class="rp-item">
+        <span class="rp-no">{{ i + 1 }}</span>
+        <code>{{ p.value }}</code>
+        <span class="rp-idx">#{{ p.index + 1 }}</span>
+      </div>
+    }
+  </div>
+  <button class="btn-secondary" (click)="copy(picksText)">
+    {{ copied ? "Copied!" : "Copy hasil" }}
+  </button>
+}
+
+@if (shuffled.length) {
+  <label class="tool-label" style="margin-top: 10px">Hasil shuffle</label>
+  <textarea
+    class="tool-area"
+    rows="6"
+    [value]="shuffledText"
+    readonly
+  ></textarea>
+  <button class="btn-secondary" (click)="copy(shuffledText)">
+    {{ copied ? "Copied!" : "Copy" }}
+  </button>
+}

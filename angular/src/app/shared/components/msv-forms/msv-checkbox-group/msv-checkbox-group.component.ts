@@ -53,9 +53,10 @@ export class MsvCheckboxGroupComponent
 
   constructor(
     private validatorHelper: MsvValidatorHelper,
-    @Inject(MSV_FORMS_CONFIG) private config: MsvFormsConfig
+    @Inject(MSV_FORMS_CONFIG) private config: MsvFormsConfig,
   ) {}
 
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {}
 
   writeValue(value: any[]): void {
@@ -74,7 +75,7 @@ export class MsvCheckboxGroupComponent
     this.disabled = isDisabled;
   }
 
-  validate(control: AbstractControl): ValidationErrors | null {
+  validate(_control: AbstractControl): ValidationErrors | null {
     this.runValidation();
     return this.errors.length > 0 ? { msvError: this.errors[0] } : null;
   }
@@ -106,7 +107,11 @@ export class MsvCheckboxGroupComponent
   }
 
   private runValidation(): void {
-    this.errors = this.validatorHelper.runValidation(this.value, this.validators, this.config);
+    this.errors = this.validatorHelper.runValidation(
+      this.value,
+      this.validators,
+      this.config,
+    );
   }
 
   get showError(): boolean {

@@ -1,11 +1,23 @@
-﻿import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-type SortMode = 'asc' | 'desc' | 'natural-asc' | 'natural-desc' | 'length-asc' | 'length-desc' | 'shuffle';
+type SortMode =
+  | 'asc'
+  | 'desc'
+  | 'natural-asc'
+  | 'natural-desc'
+  | 'length-asc'
+  | 'length-desc'
+  | 'shuffle';
 
 @Component({
   selector: 'app-text-sort',
@@ -27,7 +39,16 @@ export class TextSortComponent {
   trimLines = true;
   removeBlank = true;
 
-  constructor(private snackBar: MatSnackBar) {}
+  copyLabel = '';
+
+  constructor(
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  @HostListener('execute') onExecute(): void {
+    this.process();
+  }
 
   process(): void {
     this.error = '';
@@ -62,11 +83,13 @@ export class TextSortComponent {
     }
     this.output = lines.join('\n');
     const removed = beforeCount - lines.length;
-    this.stats = `${lines.length} baris` + (removed > 0 ? ` (hapus ${removed} duplikat)` : '');
+    this.stats =
+      `${lines.length} baris` +
+      (removed > 0 ? ` (hapus ${removed} duplikat)` : '');
   }
 
   private buildCompare(): (a: string, b: string) => number {
-    const fold = (s: string) => this.caseSensitive ? s : s.toLowerCase();
+    const fold = (s: string) => (this.caseSensitive ? s : s.toLowerCase());
     switch (this.mode) {
       case 'asc':
         return (a, b) => fold(a).localeCompare(fold(b));
@@ -88,12 +111,21 @@ export class TextSortComponent {
   private naturalCompare(a: string, b: string): number {
     const ax: (string | number)[] = [];
     const bx: (string | number)[] = [];
-    a.replace(/(\d+)|(\D+)/g, (_, $1, $2) => { ax.push($1 ? Number($1) : $2); return ''; });
-    b.replace(/(\d+)|(\D+)/g, (_, $1, $2) => { bx.push($1 ? Number($1) : $2); return ''; });
+    a.replace(/(\d+)|(\D+)/g, (_, $1, $2) => {
+      ax.push($1 ? Number($1) : $2);
+      return '';
+    });
+    b.replace(/(\d+)|(\D+)/g, (_, $1, $2) => {
+      bx.push($1 ? Number($1) : $2);
+      return '';
+    });
     while (ax.length && bx.length) {
       const an = ax.shift()!;
       const bn = bx.shift()!;
-      const nn = (typeof an === 'number' && typeof bn === 'number') ? (an as number) - (bn as number) : String(an).localeCompare(String(bn));
+      const nn =
+        typeof an === 'number' && typeof bn === 'number'
+          ? (an as number) - (bn as number)
+          : String(an).localeCompare(String(bn));
       if (nn !== 0) return nn;
     }
     return ax.length - bx.length;
@@ -117,8 +149,21 @@ export class TextSortComponent {
 
   copyOutput(): void {
     if (!this.output) return;
-    navigator.clipboard.writeText(this.output).then(() =>
-      this.snackBar.open('Disalin ke clipboard', 'Close', { duration: 1500 }),
-    );
+    navigator.clipboard.writeText(this.output).then(() => {
+      this.copyLabel = 'Copied!';
+      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.copyLabel = '';
+        this.cdr.markForCheck();
+      }, 1500);
+      this.snackBar.open('Disalin ke clipboard', 'Close', { duration: 1500 });
+    });
+  }
+
+  onInputKeydown(event: KeyboardEvent): void {
+    if (event.ctrlKey && event.key === 'Enter') {
+      event.preventDefault();
+      this.process();
+    }
   }
 }

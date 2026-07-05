@@ -1,11 +1,14 @@
-﻿import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-interface PickResult { value: string; index: number; }
+interface PickResult {
+  value: string;
+  index: number;
+}
 
 @Component({
   selector: 'app-random-picker',
@@ -24,11 +27,16 @@ export class RandomPickerComponent {
   picks: PickResult[] = [];
   shuffled: string[] = [];
   error = '';
+  copied = false;
+  private copyTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private snackBar: MatSnackBar) {}
 
   get items(): string[] {
-    return this.input.split(/\r?\n/).map((l) => l.trim()).filter((l) => l !== '');
+    return this.input
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter((l) => l !== '');
   }
 
   get picksText(): string {
@@ -39,11 +47,20 @@ export class RandomPickerComponent {
     return this.shuffled.join('\n');
   }
 
+  get tooFew(): boolean {
+    return this.items.length > 0 && this.items.length < 2;
+  }
+
   pick(): void {
     this.error = '';
     const items = this.items;
     if (items.length === 0) {
       this.error = 'Masukkan minimal satu item.';
+      this.picks = [];
+      return;
+    }
+    if (items.length < 2) {
+      this.error = 'Enter at least 2 items to pick from';
       this.picks = [];
       return;
     }
@@ -60,7 +77,9 @@ export class RandomPickerComponent {
       const arr = [...pool];
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+        const tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
       }
       for (let k = 0; k < want; k++) result.push(arr[k]);
     } else {
@@ -68,7 +87,9 @@ export class RandomPickerComponent {
         result.push(pool[Math.floor(Math.random() * pool.length)]);
       }
     }
-    this.picks = this.sortResult ? [...result].sort((a, b) => a.value.localeCompare(b.value)) : result;
+    this.picks = this.sortResult
+      ? [...result].sort((a, b) => a.value.localeCompare(b.value))
+      : result;
   }
 
   shuffle(): void {
@@ -79,19 +100,37 @@ export class RandomPickerComponent {
       this.shuffled = [];
       return;
     }
+    if (items.length < 2) {
+      this.error = 'Enter at least 2 items to pick from';
+      this.shuffled = [];
+      return;
+    }
     const arr = [...items];
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+      const tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
     }
     this.shuffled = arr;
   }
 
   copy(text: string): void {
     if (!text) return;
-    navigator.clipboard.writeText(text).then(() =>
-      this.snackBar.open('Disalin', 'Close', { duration: 1200 }),
-    );
+    if (this.copyTimer) clearTimeout(this.copyTimer);
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        this.copied = true;
+        this.copyTimer = setTimeout(() => {
+          this.copied = false;
+        }, 1500);
+        this.snackBar.open('Disalin', 'Close', { duration: 1200 });
+      })
+      .catch(() => {
+        this.error =
+          'Gagal menyalin ke clipboard. Pastikan situs diakses melalui HTTPS atau localhost.';
+      });
   }
 
   clear(): void {
@@ -99,6 +138,7 @@ export class RandomPickerComponent {
     this.picks = [];
     this.shuffled = [];
     this.error = '';
+    this.copied = false;
   }
 
   example(): void {

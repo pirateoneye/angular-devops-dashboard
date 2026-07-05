@@ -1,4 +1,8 @@
-﻿import { Component, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -6,7 +10,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 type Group = 'owner' | 'group' | 'other';
-interface PermBits { read: boolean; write: boolean; execute: boolean; }
+interface PermBits {
+  read: boolean;
+  write: boolean;
+  execute: boolean;
+}
 
 @Component({
   selector: 'app-chmod-calc',
@@ -30,6 +38,8 @@ export class ChmodCalcComponent {
   inputStr = '';
   parseError = '';
 
+  copiedType: string | null = null;
+
   groups: { key: Group; label: string; letter: string }[] = [
     { key: 'owner', label: 'Owner', letter: 'u' },
     { key: 'group', label: 'Group', letter: 'g' },
@@ -38,14 +48,18 @@ export class ChmodCalcComponent {
 
   presets = ['755', '644', '600', '700', '666', '777', '750', '511'];
 
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   private bitsValue(b: PermBits): number {
     return (b.read ? 4 : 0) + (b.write ? 2 : 0) + (b.execute ? 1 : 0);
   }
 
   get octal(): string {
-    const special = (this.setuid ? 4 : 0) + (this.setgid ? 2 : 0) + (this.sticky ? 1 : 0);
+    const special =
+      (this.setuid ? 4 : 0) + (this.setgid ? 2 : 0) + (this.sticky ? 1 : 0);
     const o = this.bitsValue(this.perms.owner);
     const g = this.bitsValue(this.perms.group);
     const t = this.bitsValue(this.perms.other);
@@ -89,7 +103,10 @@ export class ChmodCalcComponent {
     const o = this.perms.owner;
     if (o.read && o.write && o.execute) desc.push('pemilik penuh');
     if (this.perms.other.write) desc.push('world-writable (berbahaya)');
-    return (parts.length ? parts.join(', ') + ' · ' : '') + (desc.length ? desc.join(', ') : 'aman');
+    return (
+      (parts.length ? parts.join(', ') + ' · ' : '') +
+      (desc.length ? desc.join(', ') : 'aman')
+    );
   }
 
   toggleAll(group: Group, value: boolean): void {
@@ -115,7 +132,8 @@ export class ChmodCalcComponent {
       this.snackBar.open('Diterapkan', 'Close', { duration: 1200 });
       return;
     }
-    this.parseError = 'Format tidak dikenali. Contoh oktal: 755 — simbolik: rwxr-xr-x.';
+    this.parseError =
+      'Format tidak dikenali. Contoh oktal: 755 — simbolik: rwxr-xr-x.';
   }
 
   private parseOctal(octal: string): void {
@@ -128,7 +146,11 @@ export class ChmodCalcComponent {
     this.setuid = !!(special & 4);
     this.setgid = !!(special & 2);
     this.sticky = !!(special & 1);
-    const toBits = (n: number): PermBits => ({ read: !!(n & 4), write: !!(n & 2), execute: !!(n & 1) });
+    const toBits = (n: number): PermBits => ({
+      read: !!(n & 4),
+      write: !!(n & 2),
+      execute: !!(n & 1),
+    });
     this.perms.owner = toBits(parseInt(rest[0], 8));
     this.perms.group = toBits(parseInt(rest[1], 8));
     this.perms.other = toBits(parseInt(rest[2], 8));
@@ -136,21 +158,39 @@ export class ChmodCalcComponent {
 
   private parseSymbolic(sym: string): void {
     const grp = (start: number) => sym.slice(start, start + 3);
-    const toBits = (s: string, specialChar: string): { b: PermBits; special: boolean } => ({
-      b: { read: s[0] === 'r', write: s[1] === 'w', execute: s[2] === 'x' || s[2] === specialChar.toLowerCase() },
-      special: s[2] === specialChar.toLowerCase() || s[2] === specialChar.toUpperCase(),
+    const toBits = (
+      s: string,
+      specialChar: string,
+    ): { b: PermBits; special: boolean } => ({
+      b: {
+        read: s[0] === 'r',
+        write: s[1] === 'w',
+        execute: s[2] === 'x' || s[2] === specialChar.toLowerCase(),
+      },
+      special:
+        s[2] === specialChar.toLowerCase() ||
+        s[2] === specialChar.toUpperCase(),
     });
     const o = toBits(grp(0), 's');
     const g = toBits(grp(3), 's');
     const t = toBits(grp(6), 't');
-    this.perms.owner = o.b; this.setuid = o.special;
-    this.perms.group = g.b; this.setgid = g.special;
-    this.perms.other = t.b; this.sticky = t.special;
+    this.perms.owner = o.b;
+    this.setuid = o.special;
+    this.perms.group = g.b;
+    this.setgid = g.special;
+    this.perms.other = t.b;
+    this.sticky = t.special;
   }
 
-  copy(v: string): void {
-    navigator.clipboard.writeText(v).then(() =>
-      this.snackBar.open('Disalin', 'Close', { duration: 1200 }),
-    );
+  copy(v: string, type: string): void {
+    navigator.clipboard.writeText(v).then(() => {
+      this.copiedType = type;
+      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.copiedType = null;
+        this.cdr.markForCheck();
+      }, 1500);
+      this.snackBar.open('Disalin', 'Close', { duration: 1200 });
+    });
   }
 }

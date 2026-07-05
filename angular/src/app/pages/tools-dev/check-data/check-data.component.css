@@ -1,132 +1,156 @@
-select{
-    outline: none;
-  font-family: 'Open Sans'
+select {
+  outline: none;
+  font-family: inherit;
+}
+
+.select-key {
+  transition: all 0.3s;
+  width: 100%;
+  cursor: pointer;
+  height: 45px;
+  border-radius: var(--msv-radius-sm, 5px);
+  padding: 5px;
+}
+
+.select-key option {
+  transition: all 0.3s;
+  background-color: var(--msv-surface, #fff);
+  cursor: pointer;
+}
+
+.select-key:hover {
+  background-color: var(--msv-border, var(--msv-syntax-code-border));
+}
+
+.select-target {
+  transition: all 0.3s;
+  width: 100%;
+  cursor: pointer;
+  font-weight: 600;
+  height: 45px;
+  border-radius: var(--msv-radius-sm, 5px) 0 0 var(--msv-radius-sm, 5px);
+  padding: 5px;
+  border: none;
+  background-color: var(--msv-border, var(--msv-syntax-code-border));
+}
+
+.select-target option {
+  transition: all 0.3s;
+  background-color: var(--msv-surface, #fff);
+  cursor: pointer;
+}
+
+.select-target:hover {
+  background-color: var(--msv-border, var(--msv-syntax-code-border));
+}
+
+.batch-list-card {
+  border-bottom: 3px solid var(--msv-border, #ced4da);
+  padding: 1rem;
+}
+
+.form-control {
+  height: 45px;
+}
+
+.information {
+  width: 100%;
+  background-color: var(--msv-accent-bg, #e6f3ff);
+  color: var(--msv-text, #333);
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: var(--msv-radius-md, 12px);
+  padding: 12px;
+}
+
+.information-header {
+  color: var(--msv-accent-text, #005caa);
+  font-family: inherit;
+}
+
+.badge-available {
+  width: fit-content;
+  background-color: var(--msv-success-bg, #c2ffc5);
+  color: var(--msv-success, #009649);
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: var(--msv-radius-pill, 24px);
+  padding: 5px 15px;
+}
+
+.badge-info {
+  width: fit-content;
+  background-color: var(--msv-accent-bg, #e6f3ff);
+  color: var(--msv-accent-text, #005caa);
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: var(--msv-radius-pill, 24px);
+  padding: 5px 15px;
+}
+
+.badge-unavailable {
+  width: fit-content;
+  background-color: var(--msv-warning-bg, #ffe592);
+  color: var(--msv-warning, #885403);
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: var(--msv-radius-pill, 24px);
+  padding: 5px 15px;
+}
+
+.badge-failed {
+  width: fit-content;
+  background-color: var(--msv-error-bg, #ffd9d3);
+  color: var(--msv-error, #cd1923);
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: var(--msv-radius-pill, 24px);
+  padding: 5px 15px;
+}
+
+.badge-notyet {
+  width: fit-content;
+  background-color: var(--msv-surface-2, #cfcfcf);
+  color: var(--msv-text-muted, #495057);
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: var(--msv-radius-pill, 24px);
+  padding: 5px 15px;
+}
+
+.uploader-status ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+  stroke: var(--msv-primary-contrast, #fff);
+}
+
+/* Loading spinner */
+.check-data-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--msv-border, #ced4da);
+  border-top-color: var(--msv-primary, #005caa);
+  border-radius: 50%;
+  animation: cd-spin 0.6s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes cd-spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .select-key{
-      transition: all 0.3s;
-      width: 100%;
-      cursor: pointer;
-      height: 45px;
-      border-radius: 8px;
-      padding: 5px;
-    }
+}
 
-    .select-key option{
-      transition: all 0.3s;
-      background-color: #ffffff;
-      cursor: pointer;
-    }
+input[type="text"]:focus {
+  box-shadow: none;
+  outline: 0 none;
+}
 
-    .select-key:hover{
-      transition: all 0.3s;
-      background-color: #ced4da;
-    }
-
-    .select-target{
-      transition: all 0.3s;
-      width: 100%;
-      cursor: pointer;
-      font-weight: 600;
-      height: 45px;
-      border-radius: 8px 0px 0px 8px;
-      padding: 5px;
-      border: none;
-      background-color: #ced4da;
-    }
-
-    .select-target option{
-      transition: all 0.3s;
-      background-color: #ffffff;
-      cursor: pointer;
-    }
-
-    .select-target:hover{
-      transition: all 0.3s;
-      background-color: #ced4da;
-    }
-
-    .batch-list-card {
-      border-bottom: 3px solid #ced4da;
-      padding: 1rem;
-    }
-
-    .form-control{
-      height: 45px;
-    }
-  
-    .information {
-      width: 100%;
-      background-color: #E6F3FF;
-      color: #885403;
-      font-family: 'Open Sans', sans-serif;
-      font-weight: 600;
-      border-radius: 12px;
-      padding: 12px;
-    }
-  
-    
-    .badge-available {
-      width: fit-content;
-      background-color: #C2FFC5;
-      color: #009649;
-      font-family: 'Open Sans', sans-serif;
-      font-weight: 600;
-      border-radius: 24px;
-      padding: 5px 15px;
-    }
-    
-    .badge-info {
-      width: fit-content;
-      background-color: #e6f3ff;
-      color: #005caa;
-      font-family: 'Open Sans', sans-serif;
-      font-weight: 600;
-      border-radius: 24px;
-      padding: 5px 15px;
-    }
-    
-    .badge-unavailable {
-      width: fit-content;
-      background-color: #FFE592;
-      color: #885403;
-      font-family: 'Open Sans', sans-serif;
-      font-weight: 600;
-      border-radius: 24px;
-      padding: 5px 15px;
-    }
-    
-    .badge-failed {
-      width: fit-content;
-      background-color: #FFD9D3;
-      color: #CD1923;
-      font-family: 'Open Sans', sans-serif;
-      font-weight: 600;
-      border-radius: 24px;
-      padding: 5px 15px;
-    }
-    
-    .badge-notyet {
-      width: fit-content;
-      background-color: #ced4da;
-      color: #495057;
-      font-family: 'Open Sans', sans-serif;
-      font-weight: 600;
-      border-radius: 24px;
-      padding: 5px 15px;
-    }
-    
-  
-  input[type="text"]:focus {   
-    box-shadow: none;
-    outline: 0 none;
-  }
-
-  .response-data{
-    padding: 5px;
-    background: #f7f7f7;
-    border-radius: 12px;
-    border-color: #ced4da;
-    color: #030273;
-    font-family: monospace;
-  }
+.response-data {
+  padding: 5px;
+  background: var(--msv-surface-2, #f7f7f7);
+  border-radius: var(--msv-radius-md, 12px);
+  border-color: var(--msv-border, #ced4da);
+  color: var(--msv-text, #030273);
+  font-family: monospace;
+}

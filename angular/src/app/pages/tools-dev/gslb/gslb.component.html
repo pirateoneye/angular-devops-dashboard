@@ -1,0 +1,788 @@
+<div class="gslb">
+  <!-- Toasts -->
+  <div class="toasts" aria-live="polite">
+    @for (t of toasts; track t.id) {
+      <div
+        class="toast"
+        [class]="t.type"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'Dismiss: ' + t.msg"
+        (click)="dismissToast(t.id)"
+        (keydown.enter)="dismissToast(t.id)"
+      >
+        <span class="toast-ico">{{
+          t.type === "ok" ? "✓" : t.type === "err" ? "✕" : "ℹ"
+        }}</span>
+        {{ t.msg }}
+      </div>
+    }
+  </div>
+
+  <!-- Header -->
+  <header class="head">
+    <div class="head-left">
+      <h1>GSLB / DNS Console</h1>
+      <span class="badge">{{ svc.username() }}</span>
+    </div>
+    <div class="head-right">
+      <div
+        class="stats-bar"
+        [title]="
+          svc.counts().up +
+          ' UP · ' +
+          svc.counts().oos +
+          ' OOS · ' +
+          svc.counts().down +
+          ' DOWN · ' +
+          svc.counts().susp +
+          ' SUSP'
+        "
+      >
+        @if (totalMembers() > 0) {
+          <span class="stats-seg up" [style.flex]="svc.counts().up"></span>
+          <span class="stats-seg oos" [style.flex]="svc.counts().oos"></span>
+          <span class="stats-seg down" [style.flex]="svc.counts().down"></span>
+          <span class="stats-seg susp" [style.flex]="svc.counts().susp"></span>
+        }
+      </div>
+      <div class="verdict">
+        <span class="v up" title="UP members">{{ svc.counts().up }} UP</span>
+        <span class="v oos" title="Out of service"
+          >{{ svc.counts().oos }} OOS</span
+        >
+        <span class="v down" title="Down">{{ svc.counts().down }} DOWN</span>
+        <span class="v susp" title="Locally suspended (pending refresh)"
+          >{{ svc.counts().susp }} SUSP</span
+        >
+      </div>
+      <button
+        class="icon-btn dns-toggle-btn"
+        (click)="toggleDnsDrawer()"
+        [title]="svc.filteredDnsPool().length + ' DNS in pool'"
+        aria-label="Add DNS to monitor"
+      >
+        <mat-icon>add</mat-icon>
+        Add DNS
+        <span class="badge dns-pool-count">{{
+          svc.filteredDnsPool().length
+        }}</span>
+      </button>
+      <button
+        class="icon-btn"
+        (click)="reloadTasks()"
+        [disabled]="svc.loadingTasks()"
+        title="Reload tasks"
+        aria-label="Reload tasks"
+      >
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button
+        class="icon-btn"
+        (click)="logout()"
+        title="Sign out"
+        aria-label="Sign out"
+      >
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- Filter bar (shared across all sections) -->
+  <div class="filters" [class.scrolled]="filtersScrolled()">
+    <div class="search">
+      <mat-icon>search</mat-icon>
+      <label class="sr-only" for="filter-fqdn">Filter FQDN</label>
+      <input
+        id="filter-fqdn"
+        type="text"
+        placeholder="Filter FQDN…"
+        [ngModel]="svc.search()"
+        (ngModelChange)="onSearch($event)"
+      />
+      @if (svc.search()) {
+        <button
+          class="clear-x"
+          (click)="onSearch('')"
+          aria-label="Clear search"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+    <label class="sr-only" for="zone-filter">Zone</label>
+    <mat-button-toggle-group
+      id="zone-filter"
+      [value]="svc.zoneFilter()"
+      (change)="setZone($event.value)"
+    >
+      <mat-button-toggle value="all">All</mat-button-toggle>
+      <mat-button-toggle value="external">External</mat-button-toggle>
+      <mat-button-toggle value="internal">Internal</mat-button-toggle>
+    </mat-button-toggle-group>
+    <label class="sr-only" for="sort-key">Sort</label>
+    <mat-button-toggle-group
+      id="sort-key"
+      [value]="svc.sortKey()"
+      (change)="setSort($event.value)"
+    >
+      <mat-button-toggle value="name" title="Sort by name"
+        ><mat-icon>sort_by_alpha</mat-icon></mat-button-toggle
+      >
+      <mat-button-toggle value="updated" title="Sort by last checked"
+        ><mat-icon>schedule</mat-icon></mat-button-toggle
+      >
+    </mat-button-toggle-group>
+    <span class="count"
+      >showing
+      {{
+        svc.filteredTaskCards().length +
+          svc.monCardsExternal().length +
+          svc.monCardsInternal().length
+      }}
+      of {{ svc.cards().length }}</span
+    >
+    @if (svc.search() || svc.zoneFilter() !== "all") {
+      <button class="link-btn" (click)="clearFilters()">clear</button>
+    }
+  </div>
+
+  <!-- Actionable card template (Suspend / Unsuspend section — task cards only).
+       Two-click confirm: arming either action shows a "confirm?" button. -->
+  <ng-template #cardTpl let-c>
+    <div
+      class="card"
+      [class.open]="c.expanded"
+      [class.has-up]="cardHasUp(c)"
+      [class.all-down]="cardAllDown(c)"
+    >
+      <div
+        class="card-head"
+        role="button"
+        tabindex="0"
+        [attr.aria-expanded]="c.expanded"
+        (click)="toggleExpand(c.fqdn)"
+        (keydown.enter)="toggleExpand(c.fqdn)"
+        (keydown.space)="toggleExpand(c.fqdn)"
+      >
+        <span class="arrow" aria-hidden="true">{{
+          c.expanded ? "▾" : "▸"
+        }}</span>
+        <span
+          class="dot"
+          [class]="c.snapshot ? 'live' : 'idle'"
+          title="{{ c.snapshot ? 'loaded' : 'not loaded' }}"
+        ></span>
+        <h3>{{ c.fqdn }}</h3>
+        <span class="zone" [class]="c.zone">{{ c.zone }}</span>
+        @if (c.snapshot) {
+          @if (svc.countState(c, "UP")) {
+            <span class="pill up">{{ svc.countState(c, "UP") }}</span>
+          }
+          @if (svc.countState(c, "OUT OF SERVICE")) {
+            <span class="pill oos">{{
+              svc.countState(c, "OUT OF SERVICE")
+            }}</span>
+          }
+          @if (svc.countState(c, "DOWN")) {
+            <span class="pill down">{{ svc.countState(c, "DOWN") }}</span>
+          }
+          @if (svc.countState(c, "SUSPENDED")) {
+            <span class="pill susp">{{ svc.countState(c, "SUSPENDED") }}</span>
+          }
+        }
+        @if (c.refreshing) {
+          <span class="refreshing" title="refreshing…"
+            ><mat-icon>sync</mat-icon></span
+          >
+        }
+        <span class="spacer"></span>
+        @if (lastUpdated(c)) {
+          <span class="ts">{{ lastUpdated(c) }}</span>
+        }
+        <button
+          class="icon-btn sm"
+          (click)="$event.stopPropagation(); refresh(c.fqdn)"
+          [disabled]="c.loading"
+          title="Refresh"
+          aria-label="Refresh"
+        >
+          <mat-icon>sync</mat-icon>
+        </button>
+        @if (c.armed === "suspend" || c.armed === "unsuspend") {
+          <button
+            class="sm"
+            [class]="c.armed === 'suspend' ? 'btn-danger' : 'btn-success'"
+            (click)="$event.stopPropagation(); confirmArm(c)"
+          >
+            confirm?
+          </button>
+        } @else {
+          <button
+            class="btn-danger sm"
+            (click)="$event.stopPropagation(); arm(c, 'suspend')"
+            [disabled]="!c.snapshot || c.loading"
+            title="Suspend all"
+            aria-label="Suspend all"
+          >
+            <mat-icon>pause</mat-icon>
+          </button>
+          <button
+            class="btn-success sm"
+            (click)="$event.stopPropagation(); arm(c, 'unsuspend')"
+            [disabled]="!c.snapshot || c.loading"
+            title="Unsuspend all"
+            aria-label="Unsuspend all"
+          >
+            <mat-icon>play_arrow</mat-icon>
+          </button>
+        }
+      </div>
+
+      @if (c.expanded) {
+        <div class="card-body">
+          @if (c.loading) {
+            <div class="skeleton">
+              @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+                <div class="sk-row"></div>
+              }
+            </div>
+          } @else if (c.error) {
+            <div class="err-row">
+              <span>Failed to load — {{ c.error }}</span>
+              <button class="link-btn" (click)="refresh(c.fqdn)">retry</button>
+            </div>
+          } @else if (!c.snapshot) {
+            <div class="muted small">No data.</div>
+          } @else {
+            <div class="sites-grid">
+              @for (site of svc.sitesOf(c); track site.name) {
+                <div class="site-tile">
+                  <div class="site-tile-hdr">
+                    <span class="site-name">{{ site.name }}</span>
+                    <span
+                      class="site-strip"
+                      [attr.aria-label]="site.members.length + ' members'"
+                    >
+                      @for (m of site.members; track trackMember($index, m)) {
+                        <span
+                          class="strip-dot"
+                          [class]="stateClass(m.state)"
+                          [title]="
+                            svc.countState(c, m.state) +
+                            ' ' +
+                            stateLabel(m.state)
+                          "
+                        ></span>
+                      }
+                    </span>
+                    <span class="site-count">{{ site.members.length }}</span>
+                  </div>
+                  <div class="rows">
+                    @for (m of site.members; track trackMember($index, m)) {
+                      <div class="row" [class]="stateClass(m.state)">
+                        <div class="row-top">
+                          <span class="rdot"></span>
+                          <span class="rname" [title]="m.svc_name">{{
+                            shortName(m.svc_name)
+                          }}</span>
+                          <button
+                            class="copy-btn"
+                            (click)="
+                              $event.stopPropagation(); copyText(m.svc_name)
+                            "
+                            [attr.aria-label]="'Copy ' + m.svc_name"
+                            title="Copy service name"
+                          >
+                            @if (copiedId() === m.svc_name) {
+                              <mat-icon>check</mat-icon>
+                            } @else {
+                              <mat-icon>content_copy</mat-icon>
+                            }
+                          </button>
+                          <span class="mchip" [class]="stateClass(m.state)">{{
+                            stateLabelShort(m.state)
+                          }}</span>
+                        </div>
+                        <div class="row-bot">
+                          <span class="rip"
+                            >{{ m.svr_ip }}:{{ m.svr_port }}</span
+                          >
+                          <button
+                            class="copy-btn"
+                            (click)="
+                              $event.stopPropagation();
+                              copyText(m.svr_ip + ':' + m.svr_port)
+                            "
+                            [attr.aria-label]="
+                              'Copy ' + m.svr_ip + ':' + m.svr_port
+                            "
+                            title="Copy IP:port"
+                          >
+                            @if (copiedId() === m.svr_ip + ":" + m.svr_port) {
+                              <mat-icon>check</mat-icon>
+                            } @else {
+                              <mat-icon>content_copy</mat-icon>
+                            }
+                          </button>
+                          <span class="racts">
+                            <button
+                              class="micro"
+                              (click)="openGtm(m, c.fqdn)"
+                              title="GTM detail"
+                              aria-label="GTM detail"
+                            >
+                              <mat-icon>info</mat-icon>
+                            </button>
+                            <button
+                              class="micro danger"
+                              (click)="suspend(m, c.fqdn)"
+                              [disabled]="
+                                m.state === 'DOWN' || m.state === 'SUSPENDED'
+                              "
+                              title="Suspend"
+                              aria-label="Suspend"
+                            >
+                              <mat-icon>pause</mat-icon>
+                            </button>
+                            <button
+                              class="micro success"
+                              (click)="unsuspend(m, c.fqdn)"
+                              [disabled]="m.state === 'UP'"
+                              title="Unsuspend"
+                              aria-label="Unsuspend"
+                            >
+                              <mat-icon>play_arrow</mat-icon>
+                            </button>
+                          </span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </ng-template>
+
+  <!-- Section 1: Suspend / Unsuspend (assigned tasks from get_task/user) -->
+  <section class="sec">
+    <div class="sec-hdr">
+      <div class="sec-title">
+        <mat-icon>build</mat-icon>
+        <h2>Suspend / Unsuspend</h2>
+        <span class="sec-sub">your assigned tasks · from get_task/user</span>
+      </div>
+      <div class="verdict sm">
+        <span class="v up">{{ svc.taskCounts().up }} UP</span>
+        <span class="v oos">{{ svc.taskCounts().oos }} OOS</span>
+        <span class="v down">{{ svc.taskCounts().down }} DOWN</span>
+        <span class="v susp">{{ svc.taskCounts().susp }} SUSP</span>
+      </div>
+    </div>
+
+    @if (svc.loadingTasks() && svc.taskCards().length === 0) {
+      <div class="big-load">
+        <mat-progress-spinner
+          mode="indeterminate"
+          diameter="40"
+        ></mat-progress-spinner>
+      </div>
+    } @else if (svc.taskCards().length === 0) {
+      <div class="empty" role="status" aria-live="polite">
+        No active tasks assigned. Your actionable FQDNs will appear here.
+      </div>
+    } @else if (svc.filteredTaskCards().length === 0) {
+      <div class="empty" role="status" aria-live="polite">
+        No tasks match the current filter.
+      </div>
+    } @else {
+      <div class="cards" role="status" aria-live="polite">
+        @for (c of svc.filteredTaskCards(); track trackFqdn($index, c)) {
+          <ng-container
+            [ngTemplateOutlet]="cardTpl"
+            [ngTemplateOutletContext]="{ $implicit: c }"
+          ></ng-container>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Section 2: Monitoring — External (view-only table: DNS rows × site columns) -->
+  <section class="sec">
+    <div class="sec-hdr">
+      <div class="sec-title">
+        <mat-icon>dns</mat-icon>
+        <h2>Monitoring — External</h2>
+        <span class="sec-sub">view only · external zone</span>
+      </div>
+      <div class="verdict sm">
+        <span class="v up">{{ svc.monCountsExternal().up }} UP</span>
+        <span class="v oos">{{ svc.monCountsExternal().oos }} OOS</span>
+        <span class="v down">{{ svc.monCountsExternal().down }} DOWN</span>
+        <span class="v susp">{{ svc.monCountsExternal().susp }} SUSP</span>
+      </div>
+    </div>
+
+    @if (svc.monCardsExternal().length === 0) {
+      <div class="empty" role="status" aria-live="polite">
+        No external DNS shown yet. Pick DNS below to display its status (view
+        only).
+      </div>
+    } @else {
+      <div class="table-responsive" role="status" aria-live="polite">
+        <table class="mon-table">
+          <thead>
+            <tr>
+              <th class="dns-col">DNS</th>
+              @for (site of svc.monSiteColsExternal(); track site) {
+                <th class="site-col">{{ site }}</th>
+              }
+              <th class="ts-col">checked</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of svc.monCardsExternal(); track trackFqdn($index, c)) {
+              <tr>
+                <td class="dns-col" [title]="c.fqdn">
+                  @if (c.refreshing || c.loading) {
+                    <span class="refreshing" title="refreshing…"
+                      ><mat-icon>sync</mat-icon></span
+                    >
+                  }
+                  <span class="dns-cell">{{ c.fqdn }}</span>
+                  <button
+                    class="copy-btn"
+                    (click)="copyText(c.fqdn)"
+                    [attr.aria-label]="'Copy ' + c.fqdn"
+                    title="Copy FQDN"
+                  >
+                    @if (copiedId() === c.fqdn) {
+                      <mat-icon>check</mat-icon>
+                    } @else {
+                      <mat-icon>content_copy</mat-icon>
+                    }
+                  </button>
+                </td>
+                @for (site of svc.monSiteColsExternal(); track site) {
+                  <td class="site-cell">
+                    @for (
+                      m of svc.membersAtSite(c, site);
+                      track trackMember($index, m)
+                    ) {
+                      <span
+                        class="mchip"
+                        [class]="stateClass(m.state)"
+                        (click)="openGtm(m, c.fqdn)"
+                        [title]="memberTitle(m)"
+                      >
+                        {{
+                          m.state === "UP"
+                            ? "UP"
+                            : m.state === "DOWN"
+                              ? "DN"
+                              : m.state === "OUT OF SERVICE"
+                                ? "OOS"
+                                : "SUS"
+                        }}
+                      </span>
+                    }
+                  </td>
+                }
+                <td class="ts-col">{{ lastUpdated(c) || "—" }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <!-- Section 3: Monitoring — Internal (view-only, user-curated) -->
+  <section class="sec">
+    <div class="sec-hdr">
+      <div class="sec-title">
+        <mat-icon>dns</mat-icon>
+        <h2>Monitoring — Internal</h2>
+        <span class="sec-sub">view only · internal zone</span>
+      </div>
+      <div class="verdict sm">
+        <span class="v up">{{ svc.monCountsInternal().up }} UP</span>
+        <span class="v oos">{{ svc.monCountsInternal().oos }} OOS</span>
+        <span class="v down">{{ svc.monCountsInternal().down }} DOWN</span>
+        <span class="v susp">{{ svc.monCountsInternal().susp }} SUSP</span>
+        @if (svc.monCards().length) {
+          <button
+            class="link-btn"
+            (click)="clearMonitoring()"
+            title="Stop showing all DNS"
+          >
+            clear all
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (svc.monCardsInternal().length === 0) {
+      <div class="empty" role="status" aria-live="polite">
+        No internal DNS shown yet. Pick DNS below to display its status (view
+        only).
+      </div>
+    } @else {
+      <div class="table-responsive" role="status" aria-live="polite">
+        <table class="mon-table">
+          <thead>
+            <tr>
+              <th class="dns-col">DNS</th>
+              @for (site of svc.monSiteColsInternal(); track site) {
+                <th class="site-col">{{ site }}</th>
+              }
+              <th class="ts-col">checked</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of svc.monCardsInternal(); track trackFqdn($index, c)) {
+              <tr>
+                <td class="dns-col" [title]="c.fqdn">
+                  @if (c.refreshing || c.loading) {
+                    <span class="refreshing" title="refreshing…"
+                      ><mat-icon>sync</mat-icon></span
+                    >
+                  }
+                  <span class="dns-cell">{{ c.fqdn }}</span>
+                  <button
+                    class="copy-btn"
+                    (click)="copyText(c.fqdn)"
+                    [attr.aria-label]="'Copy ' + c.fqdn"
+                    title="Copy FQDN"
+                  >
+                    @if (copiedId() === c.fqdn) {
+                      <mat-icon>check</mat-icon>
+                    } @else {
+                      <mat-icon>content_copy</mat-icon>
+                    }
+                  </button>
+                </td>
+                @for (site of svc.monSiteColsInternal(); track site) {
+                  <td class="site-cell">
+                    @for (
+                      m of svc.membersAtSite(c, site);
+                      track trackMember($index, m)
+                    ) {
+                      <span
+                        class="mchip"
+                        [class]="stateClass(m.state)"
+                        (click)="openGtm(m, c.fqdn)"
+                        [title]="memberTitle(m)"
+                      >
+                        {{
+                          m.state === "UP"
+                            ? "UP"
+                            : m.state === "DOWN"
+                              ? "DN"
+                              : m.state === "OUT OF SERVICE"
+                                ? "OOS"
+                                : "SUS"
+                        }}
+                      </span>
+                    }
+                  </td>
+                }
+                <td class="ts-col">{{ lastUpdated(c) || "—" }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <!-- DNS picker slide-in drawer -->
+  @if (showDnsDrawer()) {
+    <div
+      class="dns-overlay"
+      (click)="showDnsDrawer.set(false)"
+      (keydown.escape)="showDnsDrawer.set(false)"
+    ></div>
+    <div
+      class="dns-drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Add DNS to monitor"
+    >
+      <div class="dns-drawer-hdr">
+        <h2>Add DNS to monitor</h2>
+        <button
+          class="icon-btn"
+          (click)="showDnsDrawer.set(false)"
+          aria-label="Close"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="dns-picker">
+        <div class="search">
+          <mat-icon>search</mat-icon>
+          <label class="sr-only" for="dns-search">Search FQDN</label>
+          <input
+            id="dns-search"
+            type="text"
+            placeholder="Search FQDN to show…"
+            [ngModel]="svc.dnsQuery()"
+            (ngModelChange)="setDnsQuery($event)"
+            aria-label="Search DNS to show"
+          />
+          @if (svc.dnsQuery()) {
+            <button
+              class="clear-x"
+              (click)="setDnsQuery('')"
+              aria-label="Clear"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </div>
+        <div class="dns-list">
+          @for (e of svc.filteredDnsPool(); track e.fqdn) {
+            <div class="dns-row">
+              <span class="zone" [class]="e.zone">{{ e.zone }}</span>
+              <span class="dns-fqdn" [title]="e.fqdn">{{ e.fqdn }}</span>
+              <button
+                class="copy-btn"
+                (click)="copyText(e.fqdn)"
+                [attr.aria-label]="'Copy ' + e.fqdn"
+                title="Copy FQDN"
+              >
+                @if (copiedId() === e.fqdn) {
+                  <mat-icon>check</mat-icon>
+                } @else {
+                  <mat-icon>content_copy</mat-icon>
+                }
+              </button>
+              <button
+                class="micro success"
+                (click)="addDns(e.fqdn, e.zone)"
+                title="Show this DNS"
+                aria-label="Show this DNS"
+              >
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          } @empty {
+            <div class="dns-empty">
+              @if (svc.dnsQuery().trim()) {
+                No matching DNS in the pool.
+              } @else {
+                All pool DNS are shown. Type to search for more.
+              }
+            </div>
+          }
+        </div>
+        @if (svc.canAddCustomDns()) {
+          <div class="dns-custom">
+            <span
+              class="dns-custom-q"
+              [title]="svc.dnsQuery().trim().toLowerCase()"
+              >"{{ svc.dnsQuery().trim().toLowerCase() }}" not in pool — add as
+              custom:</span
+            >
+            <label class="sr-only" for="dns-zone">Zone</label>
+            <mat-button-toggle-group
+              id="dns-zone"
+              [value]="dnsZone"
+              (change)="setDnsZone($event.value)"
+            >
+              <mat-button-toggle value="external">External</mat-button-toggle>
+              <mat-button-toggle value="internal">Internal</mat-button-toggle>
+            </mat-button-toggle-group>
+            <button class="btn-primary sm" (click)="addDnsCustom()">
+              <mat-icon>add</mat-icon> Add custom
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- GTM detail slide-over -->
+  @if (svc.gtmMember()) {
+    <div class="overlay" (click)="closeGtm()">
+      <div
+        #slidePanel
+        class="slide"
+        role="dialog"
+        aria-modal="true"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="slide-hdr">
+          <h2>GTM pool member</h2>
+          <button class="icon-btn" (click)="closeGtm()" aria-label="Close">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        @if (svc.gtmLoading()) {
+          <div class="slide-load">
+            <mat-progress-spinner
+              mode="indeterminate"
+              diameter="36"
+            ></mat-progress-spinner>
+          </div>
+        } @else if (svc.gtmError()) {
+          <div class="err-row">
+            <span>{{ svc.gtmError() }}</span
+            ><button class="link-btn" (click)="retryGtm()">retry</button>
+          </div>
+        } @else {
+          <div class="slide-body">
+            <div class="gtm-status-head">
+              <span
+                class="gtm-dot"
+                [class]="stateClass(svc.gtmMember()!.state)"
+              ></span>
+              <h3>{{ shortName(svc.gtmMember()?.svc_name ?? "") }}</h3>
+            </div>
+            <div class="gtm-detail-card">
+              <h3>Member Details</h3>
+              <div class="gtm-detail-row">
+                <span>Service</span
+                ><strong>{{ svc.gtmMember()?.svc_name }}</strong>
+              </div>
+              <div class="gtm-detail-row">
+                <span>IP:Port</span
+                ><code
+                  >{{ svc.gtmMember()?.svr_ip }}:{{
+                    svc.gtmMember()?.svr_port
+                  }}</code
+                >
+              </div>
+              <div class="gtm-detail-row">
+                <span>State</span
+                ><span
+                  class="mchip"
+                  [class]="stateClass(svc.gtmMember()!.state)"
+                  >{{ stateLabel(svc.gtmMember()!.state) }}</span
+                >
+              </div>
+            </div>
+            @if (svc.gtmDetail()) {
+              <details class="gtm-pool-details">
+                <summary>Pool Details</summary>
+                <div class="gtm-detail-row">
+                  <span>Pool</span
+                  ><strong>{{ svc.gtmDetail()?.["pool"] }}</strong>
+                </div>
+                <div class="gtm-detail-row">
+                  <span>Enabled</span
+                  ><span>{{ svc.gtmDetail()?.["enabled"] }}</span>
+                </div>
+              </details>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

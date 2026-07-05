@@ -1,53 +1,103 @@
 <div class="container pt-3 pb-3">
-  <mat-card class="example-card mb-3 mat-elevation-z5 p-4" style="border-radius: 16px">
-    <h2 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+  <mat-card
+    class="example-card mb-3 mat-elevation-z5 p-4"
+    style="border-radius: 16px"
+  >
+    <h2
+      class="m-0"
+      style="
+        color: #144e83;
+        font-family: &quot;Open Sans&quot;;
+        font-weight: 700;
+      "
+    >
       Jadwal Piket
     </h2>
-    <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
+    <h4
+      style="
+        color: #495057;
+        font-family: &quot;Open Sans&quot;;
+        font-weight: 400;
+      "
+    >
       Kalender jadwal piket berdasarkan file .txt
     </h4>
 
-    <div style="width: 100%; height: 1px; background-color: #E9ECEF; padding: 0; margin: 0; margin-bottom: 16px;"></div>
+    <div
+      style="
+        width: 100%;
+        height: 1px;
+        background-color: #e9ecef;
+        padding: 0;
+        margin: 0;
+        margin-bottom: 16px;
+      "
+    ></div>
 
     <!-- File Upload -->
     <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
       <button mat-raised-button color="primary" (click)="fileInput.click()">
         <mat-icon aria-hidden="true">upload_file</mat-icon> Upload Jadwal (.txt)
       </button>
-      <input hidden type="file" #fileInput accept=".txt" (change)="onFileSelected($event)">
+      <input
+        hidden
+        type="file"
+        #fileInput
+        accept=".txt"
+        (change)="onFileSelected($event)"
+      />
       @if (fileName()) {
         <span class="text-muted">{{ fileName() }}</span>
       }
     </div>
 
     @if (statusMenu() === statusAPI.LOADING) {
-      <div class="d-flex align-items-center flex-column" style="padding: 40px 0;">
-        <img src="assets/loading4.gif" alt="Memuat jadwal" style="width: 75px;">
-        <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400; margin-top: 12px;">
-          Memuat Jadwal...
-        </h4>
+      <div
+        class="d-flex align-items-center flex-column"
+        style="padding: 40px 0"
+        aria-live="polite"
+      >
+        <span class="cal-spinner" aria-hidden="true"></span>
+        <h4 class="tool-sub">Memuat Jadwal...</h4>
       </div>
     }
 
     @if (statusMenu() === statusAPI.FAILED) {
-      <div class="alert alert-danger" role="alert">
+      <div class="alert alert-danger" role="alert" aria-live="assertive">
         Gagal membaca file. Pastikan format benar: TANGGAL,PIC1,PIC2,PIC3
       </div>
     }
 
     <!-- Calendar Navigation -->
-    <div class="calendar-nav d-flex align-items-center justify-content-between mb-3">
-      <button mat-icon-button (click)="prevMonth()" aria-label="Bulan sebelumnya">
+    <div
+      class="calendar-nav d-flex align-items-center justify-content-between mb-3"
+    >
+      <button
+        mat-icon-button
+        (click)="prevMonth()"
+        aria-label="Bulan sebelumnya"
+      >
         <mat-icon aria-hidden="true">chevron_left</mat-icon>
       </button>
       <div class="month-year">
-        <h3 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
+        <h3
+          class="m-0"
+          style="
+            color: #144e83;
+            font-family: &quot;Open Sans&quot;;
+            font-weight: 700;
+          "
+        >
           {{ monthNames[currentMonth()] }} {{ currentYear() }}
         </h3>
       </div>
       <div class="d-flex gap-2">
         <button mat-stroked-button (click)="goToToday()">Hari Ini</button>
-        <button mat-icon-button (click)="nextMonth()" aria-label="Bulan berikutnya">
+        <button
+          mat-icon-button
+          (click)="nextMonth()"
+          aria-label="Bulan berikutnya"
+        >
           <mat-icon aria-hidden="true">chevron_right</mat-icon>
         </button>
       </div>
@@ -71,13 +121,22 @@
           <div class="day-number">{{ cell.day }}</div>
           @if (cell.schedule) {
             <div class="pic-list">
-              <div class="pic-item pic-1" title="PIC 1: {{ cell.schedule.pic1 }}">
+              <div
+                class="pic-item pic-1"
+                title="PIC 1: {{ cell.schedule.pic1 }}"
+              >
                 <span class="pic-label">1</span> {{ cell.schedule.pic1 }}
               </div>
-              <div class="pic-item pic-2" title="PIC 2: {{ cell.schedule.pic2 }}">
+              <div
+                class="pic-item pic-2"
+                title="PIC 2: {{ cell.schedule.pic2 }}"
+              >
                 <span class="pic-label">2</span> {{ cell.schedule.pic2 }}
               </div>
-              <div class="pic-item pic-3" title="PIC 3: {{ cell.schedule.pic3 }}">
+              <div
+                class="pic-item pic-3"
+                title="PIC 3: {{ cell.schedule.pic3 }}"
+              >
                 <span class="pic-label">3</span> {{ cell.schedule.pic3 }}
               </div>
             </div>

@@ -1,237 +1,294 @@
 .bg-layout {
-    background: #005caa;
-    height: 5rem;
-  }
-
-  .clipboard-button{
-    transition: all 0.3s;
-    border: none;
-    background: none;
-  }  
-
-  .clipboard-button:hover{
-    transition: all 0.3s;
-    color:#005CAA;
-  }  
-  
-  .icon-overlay {
-    position: relative;
-    background-color: transparent;
-  }
-  
-  .icon-overlay:before {
-    content: " ";
-    width: calc(100% + 15rem);
-    height: 11rem;
-    position: absolute;
-    left: -15rem;
-    /* background-image: url(clove-ornament.139a2d89f497d64c.svg);
-    */
-    background-position: -10rem -27rem;
-  }
-  
-  .idle-background {}
-  
-  .on-process-background {
-    background-color: beige !important;
-  }
-  
-  .success-background {
-    background-color: #d4edda !important;
-  }
-  
-  .failed-background {
-    background-color: #f8d7da !important;
-  }
-  
-  
-  .example-card {
-    /* max-width: 400px;
-    */
-    background-color: #fff;
-    color: black;
-  }
-  
-  .example-header-image {
-    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
-    background-size: cover;
-  }
-  
-  
-  ::ng-deep .mat-progress-bar-fill::after {
-    background-color: #144e83;
-  }
-
-  ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
-    stroke: #144e83;
-    }
-  
-  ::ng-deep .mat-progress-bar-buffer {
-    background: #E4E8EB;
-  }
-  
-  ::ng-deep .mat-progress-bar {
-    border-radius: 2px;
-  }
-  
-  .log-box
-  {
-    white-space: pre-wrap;
-      background-color: #f6f6f6;
-      padding: 10px;
-      border: 2px solid #ced4da;
-      border-radius: 12px;
-      overflow-wrap: break-word;
-  }
-  
-  .link-button {
-    color: #e6f3ff;
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    font-family: 'Open Sans', sans-serif;
-    transition: all 0.3s;
-    animation: fadeIn 0.3s;
-  }
-  
-  .link-button-disabled {
-    color: #868e96;
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    font-family: 'Open Sans', sans-serif;
-    cursor: not-allowed;
-  }
-  
-  .link-button:hover {
-    color: #F4F8FC;
-    text-decoration: underline;
-    transition: all 0.3s;
-    animation: fadeIn 0.3s;
-  }
-  
-  .user-chip {
-    background-color: #e6f3ff;
-    border-radius: 40px;
-    width: fit-content;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    transition: all 0.3s;
-  }
-  
-  .user-chip:hover {
-    background-color: #f1ffff;
-    transition: all 0.3s;
-    cursor: pointer;
-  }
-
-  select{
-    outline: none;
-  font-family: 'Open Sans'
+  background: var(--msv-primary);
+  height: 5rem;
 }
 
-  .select-key{
-    transition: all 0.3s;
-    width: 100%;
-    cursor: pointer;
-    height: 45px;
-    border-radius: 8px;
-    padding: 5px;
-  }
+.clipboard-button {
+  transition: all 0.3s;
+  border: none;
+  background: none;
+  color: var(--msv-text-muted);
+}
 
-  .select-key option{
-    transition: all 0.3s;
-    background-color: #ffffff;
-    cursor: pointer;
-  }
+.clipboard-button:hover {
+  transition: all 0.3s;
+  color: var(--msv-primary);
+}
 
-  .select-key:hover{
-    transition: all 0.3s;
-    background-color: #ced4da;
-  }
+.icon-overlay {
+  position: relative;
+  background-color: transparent;
+}
 
-  .batch-list-card {
-    border-bottom: 3px solid #ced4da;
-    padding: 1rem;
-  }
-  
-  .batch-list-card:hover {
-    background-color: #f8f9fa;
-    transition: all 0.3s;
-  }
-  
-  .badge-available {
-    width: fit-content;
-    background-color: #C2FFC5;
-    color: #009649;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 24px;
-    padding: 5px 15px;
-  }
-  
-  .badge-info {
-    width: fit-content;
-    background-color: #e6f3ff;
-    color: #005caa;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 24px;
-    padding: 5px 15px;
-  }
-  
-  .badge-unavailable {
-    width: fit-content;
-    background-color: #FFE592;
-    color: #885403;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 24px;
-    padding: 5px 15px;
-  }
-  
-  .badge-failed {
-    width: fit-content;
-    background-color: #FFD9D3;
-    color: #CD1923;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 24px;
-    padding: 5px 15px;
-  }
-  
-  .badge-notyet {
-    width: fit-content;
-    background-color: #ced4da;
-    color: #495057;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 24px;
-    padding: 5px 15px;
-  }
+.icon-overlay:before {
+  content: " ";
+  width: calc(100% + 15rem);
+  height: 11rem;
+  position: absolute;
+  left: -15rem;
+  /* background-image: url(clove-ornament.139a2d89f497d64c.svg);
+  */
+  background-position: -10rem -27rem;
+}
 
-  .batch-information {
-    width: 100%;
-    background-color: #E6F3FF;
-    color: #885403;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    border-radius: 12px;
-    padding: 12px;
-  }
+.idle-background {
+}
 
-  .uploader-status ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
-    stroke: #ffffff;
+.on-process-background {
+  background-color: var(--msv-warning-bg) !important;
+}
 
-  }
+.success-background {
+  background-color: var(--msv-success-bg) !important;
+}
 
-  ::ng-deep .custom-modalbox {
-    mat-dialog-container {
-        padding: 40;
-        background-color: white;
-        border-radius: 20px;
-        
-    }
+.failed-background {
+  background-color: var(--msv-error-bg) !important;
+}
+
+.example-card {
+  /* max-width: 400px;
+  */
+  background-color: var(--msv-surface);
+  color: var(--msv-text);
+}
+
+.example-header-image {
+  background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg");
+  background-size: cover;
+}
+
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: var(--msv-primary-hover);
+}
+
+::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+  stroke: var(--msv-primary-hover);
+}
+
+::ng-deep .mat-progress-bar-buffer {
+  background: var(--msv-border);
+}
+
+::ng-deep .mat-progress-bar {
+  border-radius: 2px;
+}
+
+.log-box {
+  white-space: pre-wrap;
+  background-color: var(--msv-bg);
+  padding: 10px;
+  border: 2px solid var(--msv-border);
+  border-radius: 12px;
+  overflow-wrap: break-word;
+}
+
+.link-button {
+  color: var(--msv-accent-text);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: "Open Sans", sans-serif;
+  transition: all 0.3s;
+  animation: fadeIn 0.3s;
+}
+
+.link-button-disabled {
+  color: var(--msv-text-muted);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: "Open Sans", sans-serif;
+  cursor: not-allowed;
+}
+
+.link-button:hover {
+  color: var(--msv-primary-contrast);
+  text-decoration: underline;
+  transition: all 0.3s;
+  animation: fadeIn 0.3s;
+}
+
+.user-chip {
+  background-color: var(--msv-accent-bg);
+  border-radius: 40px;
+  width: fit-content;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  transition: all 0.3s;
+}
+
+.user-chip:hover {
+  background-color: var(--msv-surface-2);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+select {
+  outline: none;
+  font-family: "Open Sans";
+}
+
+.select-key {
+  transition: all 0.3s;
+  width: 100%;
+  cursor: pointer;
+  height: 45px;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.select-key option {
+  transition: all 0.3s;
+  background-color: var(--msv-surface);
+  cursor: pointer;
+}
+
+.select-key:hover {
+  transition: all 0.3s;
+  background-color: var(--msv-border);
+}
+
+.batch-list-card {
+  border-bottom: 3px solid var(--msv-border);
+  padding: 1rem;
+}
+
+.batch-list-card:hover {
+  background-color: var(--msv-surface-2);
+  transition: all 0.3s;
+}
+
+.badge-available {
+  width: fit-content;
+  background-color: var(--msv-success-bg);
+  color: var(--msv-success);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.badge-info {
+  width: fit-content;
+  background-color: var(--msv-accent-bg);
+  color: var(--msv-accent-text);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.badge-unavailable {
+  width: fit-content;
+  background-color: var(--msv-warning-bg);
+  color: var(--msv-warning);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.badge-failed {
+  width: fit-content;
+  background-color: var(--msv-error-bg);
+  color: var(--msv-error);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.badge-notyet {
+  width: fit-content;
+  background-color: var(--msv-border);
+  color: var(--msv-text-muted);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 24px;
+  padding: 5px 15px;
+}
+
+.batch-information {
+  width: 100%;
+  background-color: var(--msv-accent-bg);
+  color: var(--msv-warning);
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.uploader-status ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+  stroke: var(--msv-primary-contrast);
+}
+
+::ng-deep .custom-modalbox {
+  mat-dialog-container {
+    padding: 40;
+    background-color: var(--msv-surface);
+    border-radius: 20px;
   }
-  
-  
+}
+
+/* Visually hidden but screen-reader accessible */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--msv-border);
+  border-top-color: var(--msv-primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+.spinner-btn {
+  margin-right: 6px;
+}
+
+.spinner-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 94px;
+  border: 1px solid var(--msv-border);
+  border-radius: var(--msv-radius-sm);
+  background: var(--msv-surface-2);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Form validation */
+.validation-error {
+  color: var(--msv-error);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Copy feedback inline */
+.copy-feedback {
+  font-size: 12px;
+  color: var(--msv-success);
+  vertical-align: middle;
+  margin-right: 4px;
+}

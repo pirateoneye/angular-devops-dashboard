@@ -1,8 +1,0 @@
-.cc-top { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-.cc-swatch { width:64px; height:64px; border-radius:10px; border:1px solid #ddd; }
-.cc-picker { width:48px; height:64px; padding:0; border:none; background:none; cursor:pointer; }
-.cc-row { margin-bottom:10px; }
-.cc-line { display:flex; align-items:center; gap:6px; }
-.cc-input-mono { flex:1; font-family:monospace; font-size:13px; border:1px solid #ddd; border-radius:6px; padding:6px; }
-.cc-rgb { display:flex; align-items:center; gap:6px; }
-.cc-num { width:64px; border:1px solid #ddd; border-radius:6px; padding:6px; font-family:monospace; }

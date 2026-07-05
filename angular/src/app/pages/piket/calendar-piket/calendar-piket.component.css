@@ -1,4 +1,4 @@
-﻿.calendar-nav {
+.calendar-nav {
   padding: 8px 0;
 }
 
@@ -10,66 +10,66 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
-  border: 1px solid #E9ECEF;
+  border: 1px solid var(--msv-border, #e9ecef);
   border-radius: 12px;
   padding: 12px;
-  background: #ffffff;
+  background: var(--msv-surface, #ffffff);
 }
 
 .day-header {
   text-align: center;
   font-weight: 700;
-  color: #144E83;
+  color: var(--msv-primary, #144e83);
   padding: 10px 4px;
   font-size: 0.9rem;
-  font-family: 'Open Sans', sans-serif;
+  font-family: inherit;
 }
 
 .day-cell {
   min-height: 100px;
-  border: 1px solid #E9ECEF;
-  border-radius: 8px;
+  border: 1px solid var(--msv-border, #e9ecef);
+  border-radius: var(--msv-radius-sm, 8px);
   padding: 6px;
-  background: #ffffff;
+  background: var(--msv-surface, #ffffff);
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
 .day-cell:hover {
-  border-color: #144E83;
+  border-color: var(--msv-primary, #144e83);
   box-shadow: 0 2px 8px rgba(20, 78, 131, 0.15);
 }
 
 .day-cell.other-month {
-  background: #F8F9FA;
+  background: var(--msv-surface-2, #f8f9fa);
   opacity: 0.6;
 }
 
 .day-cell.today {
-  border: 2px solid #144E83;
-  background: #E8F4FD;
+  border: 2px solid var(--msv-primary, #144e83);
+  background: var(--msv-accent-bg, #e8f4fd);
 }
 
 .day-cell.has-schedule {
-  background: #FFF8E1;
+  background: var(--msv-warning-bg, #fff8e1);
 }
 
 .day-cell.today.has-schedule {
-  background: #E3F2FD;
-  border: 2px solid #144E83;
+  background: var(--msv-accent-bg, #e3f2fd);
+  border: 2px solid var(--msv-primary, #144e83);
 }
 
 .day-number {
   font-weight: 700;
-  color: #144E83;
+  color: var(--msv-primary, #144e83);
   font-size: 1rem;
   margin-bottom: 4px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: inherit;
 }
 
 .today .day-number {
-  color: #0D47A1;
+  color: var(--msv-primary-hover, #0d47a1);
 }
 
 .pic-list {
@@ -88,7 +88,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: 'Open Sans', sans-serif;
+  font-family: inherit;
 }
 
 .pic-label {
@@ -100,39 +100,39 @@
   border-radius: 50%;
   font-size: 0.65rem;
   font-weight: 700;
-  color: white;
+  color: var(--msv-primary-contrast, #fff);
   flex-shrink: 0;
 }
 
 .pic-1 .pic-label {
-  background-color: #D32F2F;
+  background-color: var(--msv-pic1, #d32f2f);
 }
 
 .pic-2 .pic-label {
-  background-color: #1976D2;
+  background-color: var(--msv-pic2, #1976d2);
 }
 
 .pic-3 .pic-label {
-  background-color: #388E3C;
+  background-color: var(--msv-pic3, #388e3c);
 }
 
 .pic-1 {
-  color: #D32F2F;
+  color: var(--msv-pic1, #d32f2f);
 }
 
 .pic-2 {
-  color: #1976D2;
+  color: var(--msv-pic2, #1976d2);
 }
 
 .pic-3 {
-  color: #388E3C;
+  color: var(--msv-pic3, #388e3c);
 }
 
 .legend {
   padding: 12px;
-  border: 1px solid #E9ECEF;
-  border-radius: 8px;
-  background: #FAFAFA;
+  border: 1px solid var(--msv-border, #e9ecef);
+  border-radius: var(--msv-radius-sm, 8px);
+  background: var(--msv-surface-2, #fafafa);
 }
 
 .legend-item {
@@ -140,8 +140,8 @@
   align-items: center;
   gap: 6px;
   font-size: 0.85rem;
-  color: #495057;
-  font-family: 'Open Sans', sans-serif;
+  color: var(--msv-text-muted, #495057);
+  font-family: inherit;
 }
 
 .legend-box {
@@ -149,29 +149,45 @@
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--msv-border, #ccc);
 }
 
 .today-box {
-  border: 2px solid #144E83;
-  background: #E8F4FD;
+  border: 2px solid var(--msv-primary, #144e83);
+  background: var(--msv-accent-bg, #e8f4fd);
 }
 
 .schedule-box {
-  background: #FFF8E1;
-  border-color: #FFD54F;
+  background: var(--msv-warning-bg, #fff8e1);
+  border-color: var(--msv-warning, #ffd54f);
 }
 
 .pic1-box {
-  background: #D32F2F;
+  background: var(--msv-pic1, #d32f2f);
 }
 
 .pic2-box {
-  background: #1976D2;
+  background: var(--msv-pic2, #1976d2);
 }
 
 .pic3-box {
-  background: #388E3C;
+  background: var(--msv-pic3, #388e3c);
+}
+
+/* Loading spinner for calendar */
+.cal-spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--msv-border, #ced4da);
+  border-top-color: var(--msv-primary, #144e83);
+  border-radius: 50%;
+  animation: cal-spin 0.6s linear infinite;
+}
+@keyframes cal-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive */
@@ -180,35 +196,28 @@
     gap: 2px;
     padding: 6px;
   }
-
   .day-cell {
     min-height: 60px;
     padding: 3px;
   }
-
   .day-header {
     font-size: 0.75rem;
     padding: 6px 2px;
   }
-
   .day-number {
     font-size: 0.8rem;
   }
-
   .pic-list {
     font-size: 0.65rem;
   }
-
   .pic-item {
     padding: 1px 2px;
   }
-
   .pic-label {
     width: 12px;
     height: 12px;
     font-size: 0.55rem;
   }
-
   .month-year h3 {
     font-size: 1.1rem;
   }
@@ -218,17 +227,15 @@
   .day-cell {
     min-height: 45px;
   }
-
   .pic-list {
     display: none;
   }
-
   .day-cell.has-schedule .day-number::after {
-    content: '';
+    content: "";
     display: block;
     width: 6px;
     height: 6px;
-    background: #FFD54F;
+    background: var(--msv-warning, #ffd54f);
     border-radius: 50%;
     margin: 2px auto 0;
   }

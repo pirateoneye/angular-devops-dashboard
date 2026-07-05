@@ -1,21 +1,26 @@
 ﻿import { Component } from '@angular/core';
-import { SelectOption, ResponseData } from '../../../shared/components/msv-forms/interfaces';
+import {
+  SelectOption,
+  ResponseData,
+} from '../../../shared/components/msv-forms/interfaces';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../../module/material.module';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { InputFileUploadComponent } from '../../../shared/component/form/input-file-upload/input-file-upload.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule, InputFileUploadComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    MaterialModule,
+    MsvFormsModule,
+  ],
   selector: 'app-msv-docs',
   templateUrl: './msv-docs.component.html',
-  styleUrls: ['./msv-docs.component.css']
+  styleUrls: ['./msv-docs.component.css'],
 })
 export class MsvDocsComponent {
   // Demo values for interactive examples
@@ -41,7 +46,7 @@ export class MsvDocsComponent {
 
   constructor() {
     this.customPasswordValidators = [
-      { type: 'custom', fn: this.validatePassword }
+      { type: 'custom', fn: this.validatePassword },
     ];
   }
 
@@ -50,14 +55,14 @@ export class MsvDocsComponent {
     { label: 'Option 1', value: '1' },
     { label: 'Option 2', value: '2' },
     { label: 'Option 3', value: '3' },
-    { label: 'Disabled Option', value: '4', disabled: true }
+    { label: 'Disabled Option', value: '4', disabled: true },
   ];
 
   // Demo response data
   demoResponse: ResponseData = {
     status: 'SUCCESS',
     message: 'Operation completed successfully',
-    data: { userId: 123, timestamp: new Date().toISOString() }
+    data: { userId: 123, timestamp: new Date().toISOString() },
   };
 
   // Code examples as properties

@@ -1,4 +1,13 @@
-import { Component, Input, forwardRef, OnInit, TemplateRef, Inject, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  forwardRef,
+  OnInit,
+  TemplateRef,
+  Inject,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
@@ -51,9 +60,10 @@ export class MsvFileUploadComponent
 
   constructor(
     private validatorHelper: MsvValidatorHelper,
-    @Inject(MSV_FORMS_CONFIG) private config: MsvFormsConfig
+    @Inject(MSV_FORMS_CONFIG) private config: MsvFormsConfig,
   ) {}
 
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {}
 
   // ControlValueAccessor methods
@@ -74,7 +84,7 @@ export class MsvFileUploadComponent
   }
 
   // Validator implementation
-  validate(control: AbstractControl): ValidationErrors | null {
+  validate(_control: AbstractControl): ValidationErrors | null {
     this.runValidation();
     return this.errors.length > 0 ? { msvError: this.errors[0] } : null;
   }
@@ -130,7 +140,9 @@ export class MsvFileUploadComponent
 
       // Check file size
       if (file.size > this.maxSize) {
-        fileErrors.push(`File too large: ${file.name} (max ${this.formatFileSize(this.maxSize)})`);
+        fileErrors.push(
+          `File too large: ${file.name} (max ${this.formatFileSize(this.maxSize)})`,
+        );
         continue;
       }
 
@@ -176,26 +188,26 @@ export class MsvFileUploadComponent
 
   // File type validation
   private isFileTypeValid(file: File): boolean {
-    const acceptedTypes = this.accept.split(',').map(t => t.trim());
-    
+    const acceptedTypes = this.accept.split(',').map((t) => t.trim());
+
     for (const type of acceptedTypes) {
       if (type === '*/*') return true;
-      
+
       // Check exact MIME type match
       if (type === file.type) return true;
-      
+
       // Check wildcard MIME type (e.g., "image/*")
       if (type.endsWith('/*')) {
         const baseType = type.split('/')[0];
         if (file.type.startsWith(baseType + '/')) return true;
       }
-      
+
       // Check file extension
       if (type.startsWith('.')) {
         if (file.name.toLowerCase().endsWith(type.toLowerCase())) return true;
       }
     }
-    
+
     return false;
   }
 
@@ -205,13 +217,17 @@ export class MsvFileUploadComponent
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   }
 
   // Validation logic
   private runValidation(): void {
-    const customErrors = this.validatorHelper.runValidation(this.value, this.validators, this.config);
-    
+    const customErrors = this.validatorHelper.runValidation(
+      this.value,
+      this.validators,
+      this.config,
+    );
+
     // Only add custom validator errors if no file-specific errors exist
     if (this.errors.length === 0) {
       this.errors = customErrors;

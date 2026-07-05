@@ -13,7 +13,7 @@ import { MSV_FORMS_CONFIG } from '../msv-forms.config';
     <ng-template #customError let-errors>
       <div class="custom-error">Custom: {{ errors[0] }}</div>
     </ng-template>
-  `
+  `,
 })
 class TestErrorTemplateComponent {
   @ViewChild('customError', { static: true }) customError!: TemplateRef<any>;
@@ -29,8 +29,8 @@ describe('MsvTextareaComponent', () => {
       email: 'Format email tidak valid',
       minLength: (min: number) => `Minimal ${min} karakter`,
       maxLength: (max: number) => `Maksimal ${max} karakter`,
-      pattern: 'Format tidak valid'
-    }
+      pattern: 'Format tidak valid',
+    },
   };
 
   beforeEach(async () => {
@@ -39,8 +39,8 @@ describe('MsvTextareaComponent', () => {
       imports: [FormsModule],
       providers: [
         MsvValidatorHelper,
-        { provide: MSV_FORMS_CONFIG, useValue: mockConfig }
-      ]
+        { provide: MSV_FORMS_CONFIG, useValue: mockConfig },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvTextareaComponent);
@@ -122,10 +122,10 @@ describe('MsvTextareaComponent', () => {
   describe('Error Template', () => {
     it('should use custom errorTemplate when provided', () => {
       const hostFixture = TestBed.createComponent(TestErrorTemplateComponent);
-      const hostComponent = hostFixture.componentInstance;
       hostFixture.detectChanges();
 
-      const textareaComponent = hostFixture.debugElement.children[0].componentInstance;
+      const textareaComponent =
+        hostFixture.debugElement.children[0].componentInstance;
       textareaComponent.value = '';
       textareaComponent.onBlur();
       hostFixture.detectChanges();
@@ -133,7 +133,9 @@ describe('MsvTextareaComponent', () => {
       const compiled = hostFixture.nativeElement;
       const customError = compiled.querySelector('.custom-error');
       expect(customError).toBeTruthy();
-      expect(customError.textContent).toContain('Custom: Field ini wajib diisi');
+      expect(customError.textContent).toContain(
+        'Custom: Field ini wajib diisi',
+      );
     });
 
     it('should use default error display when errorTemplate is null', () => {
@@ -153,7 +155,8 @@ describe('MsvTextareaComponent', () => {
       const hostFixture = TestBed.createComponent(TestErrorTemplateComponent);
       hostFixture.detectChanges();
 
-      const textareaComponent = hostFixture.debugElement.children[0].componentInstance;
+      const textareaComponent =
+        hostFixture.debugElement.children[0].componentInstance;
       textareaComponent.validators = ['required'];
       textareaComponent.value = '';
       textareaComponent.onBlur();
@@ -166,7 +169,9 @@ describe('MsvTextareaComponent', () => {
   describe('Service Integration', () => {
     it('should inject MsvValidatorHelper service', () => {
       expect(component['validatorHelper']).toBeTruthy();
-      expect(component['validatorHelper'] instanceof MsvValidatorHelper).toBe(true);
+      expect(component['validatorHelper'] instanceof MsvValidatorHelper).toBe(
+        true,
+      );
     });
 
     it('should inject MSV_FORMS_CONFIG', () => {
@@ -182,7 +187,11 @@ describe('MsvTextareaComponent', () => {
       component.value = '';
       component.onBlur();
 
-      expect(validatorHelper.runValidation).toHaveBeenCalledWith('', ['required'], component['config']);
+      expect(validatorHelper.runValidation).toHaveBeenCalledWith(
+        '',
+        ['required'],
+        component['config'],
+      );
       expect(component.errors).toEqual(['Test error']);
     });
   });

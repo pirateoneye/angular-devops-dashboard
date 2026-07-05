@@ -193,11 +193,34 @@
 
 .select {
   outline: none;
-  font-family: "Open Sans", sans-serif;
+  font-family: inherit;
   transition: all 0.3s;
   width: 100%;
   cursor: pointer;
   height: 45px;
   border-radius: var(--msv-radius-sm);
   padding: 5px;
+}
+
+/* Spinner (replaces loading GIF) */
+.spinner {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--msv-border);
+  border-top-color: var(--msv-primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-container {
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 40px 0;
 }

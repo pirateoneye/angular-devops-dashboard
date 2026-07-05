@@ -9,6 +9,7 @@ export const environment = {
   hostMessiProd: 'https://asis.com',
   hostMagentaProd: 'https://asiss.com',
   hostBatchRunner: 'https://api-tools.apps.ocpdevgra.dti.co.id',
+  hostGslb: 'https://gege.com',
 };
 
 /*

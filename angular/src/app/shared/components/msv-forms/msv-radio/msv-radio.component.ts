@@ -39,7 +39,11 @@ export class MsvRadioComponent
   implements ControlValueAccessor, Validator, OnInit
 {
   @Input() options: SelectOption[] = [];
-  @Input() name: string = 'msv-radio-' + Math.random().toString(36).substr(2, 9);
+  @Input() name: string =
+    'msv-radio-' +
+    Math.random()
+      .toString(36)
+      .slice(2, 2 + 9);
   @Input() validators: ValidatorType[] = [];
   @Input() direction: 'horizontal' | 'vertical' = 'vertical';
   @Input() disabled: boolean = false;
@@ -54,15 +58,18 @@ export class MsvRadioComponent
 
   constructor(
     private validatorHelper: MsvValidatorHelper,
-    @Inject(MSV_FORMS_CONFIG) private config: MsvFormsConfig
+    @Inject(MSV_FORMS_CONFIG) private config: MsvFormsConfig,
   ) {}
 
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {}
 
+  // ControlValueAccessor: Angular calls this to push a new value INTO our component
   writeValue(value: any): void {
     this.value = value;
   }
 
+  // Angular passes us a function; we call it to push our value OUT
   registerOnChange(fn: (value: any) => void): void {
     this.onChange = fn;
   }
@@ -75,14 +82,14 @@ export class MsvRadioComponent
     this.disabled = isDisabled;
   }
 
-  validate(control: AbstractControl): ValidationErrors | null {
+  validate(_control: AbstractControl): ValidationErrors | null {
     this.runValidation();
     return this.errors.length > 0 ? { msvError: this.errors[0] } : null;
   }
 
   onSelect(optionValue: any): void {
     if (this.disabled) return;
-    
+
     this.value = optionValue;
     this.onChange(this.value);
     this.runValidation();
@@ -95,7 +102,11 @@ export class MsvRadioComponent
   }
 
   private runValidation(): void {
-    this.errors = this.validatorHelper.runValidation(this.value, this.validators, this.config);
+    this.errors = this.validatorHelper.runValidation(
+      this.value,
+      this.validators,
+      this.config,
+    );
   }
 
   get showError(): boolean {

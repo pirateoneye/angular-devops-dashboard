@@ -1,10 +1,17 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-import { Toast, ToastType } from './msv-toast.service';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
+import { Toast } from './msv-toast.service';
 
 @Component({
   selector: 'msv-toast',
   templateUrl: './msv-toast.component.html',
-  styleUrls: ['./msv-toast.component.css']
+  styleUrls: ['./msv-toast.component.css'],
 })
 export class MsvToastComponent implements OnInit, OnDestroy {
   @Input() toast!: Toast;

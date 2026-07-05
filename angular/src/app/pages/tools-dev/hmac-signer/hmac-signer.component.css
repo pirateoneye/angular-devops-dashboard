@@ -1,8 +1,0 @@
-.row-controls { display:flex; gap:16px; margin-top:10px; flex-wrap:wrap; }
-.ctrl { display:flex; flex-direction:column; }
-.ctrl select { border:1px solid #ced4da; border-radius:8px; padding:6px 8px; font-family:'Open Sans',sans-serif; font-size:12px; background:#fff; }
-.sig-box { margin-top:10px; display:flex; align-items:center; gap:8px; }
-.sig-val { flex:1; font-family:monospace; font-size:11px; border:1px solid #ced4da; border-radius:8px; padding:6px; background:#fafafa; }
-.verify-result { margin-top:8px; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:600; }
-.verify-result.match { color:#137a43; background:#d7f5e3; }
-.verify-result.mismatch { color:#cd1923; background:#ffd9d3; }

@@ -12,7 +12,7 @@ import { MSV_FORMS_CONFIG } from '../msv-forms.config';
       <span msvPrefix class="prefix-icon">&#64;</span>
       <span msvSuffix class="suffix-icon">✓</span>
     </msv-input>
-  `
+  `,
 })
 class TestHostComponent {}
 
@@ -24,7 +24,7 @@ class TestHostComponent {}
     <ng-template #customError let-errors>
       <div class="custom-error">Custom: {{ errors[0] }}</div>
     </ng-template>
-  `
+  `,
 })
 class TestErrorTemplateComponent {
   @ViewChild('customError', { static: true }) customError!: TemplateRef<any>;
@@ -40,18 +40,22 @@ describe('MsvInputComponent', () => {
       email: 'Format email tidak valid',
       minLength: (min: number) => `Minimal ${min} karakter`,
       maxLength: (max: number) => `Maksimal ${max} karakter`,
-      pattern: 'Format tidak valid'
-    }
+      pattern: 'Format tidak valid',
+    },
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvInputComponent, TestHostComponent, TestErrorTemplateComponent],
+      declarations: [
+        MsvInputComponent,
+        TestHostComponent,
+        TestErrorTemplateComponent,
+      ],
       imports: [FormsModule],
       providers: [
         MsvValidatorHelper,
-        { provide: MSV_FORMS_CONFIG, useValue: mockConfig }
-      ]
+        { provide: MSV_FORMS_CONFIG, useValue: mockConfig },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvInputComponent);
@@ -162,7 +166,7 @@ describe('MsvInputComponent', () => {
       const compiled = hostFixture.nativeElement;
       const wrapper = compiled.querySelector('.input-wrapper');
       expect(wrapper).toBeTruthy();
-      
+
       const input = wrapper.querySelector('input');
       expect(input).toBeTruthy();
     });
@@ -171,10 +175,10 @@ describe('MsvInputComponent', () => {
   describe('Error Template', () => {
     it('should use custom errorTemplate when provided', () => {
       const hostFixture = TestBed.createComponent(TestErrorTemplateComponent);
-      const hostComponent = hostFixture.componentInstance;
       hostFixture.detectChanges();
 
-      const inputComponent = hostFixture.debugElement.children[0].componentInstance;
+      const inputComponent =
+        hostFixture.debugElement.children[0].componentInstance;
       inputComponent.value = '';
       inputComponent.onBlur();
       hostFixture.detectChanges();
@@ -182,7 +186,9 @@ describe('MsvInputComponent', () => {
       const compiled = hostFixture.nativeElement;
       const customError = compiled.querySelector('.custom-error');
       expect(customError).toBeTruthy();
-      expect(customError.textContent).toContain('Custom: Field ini wajib diisi');
+      expect(customError.textContent).toContain(
+        'Custom: Field ini wajib diisi',
+      );
     });
 
     it('should use default error display when errorTemplate is null', () => {
@@ -202,7 +208,8 @@ describe('MsvInputComponent', () => {
       const hostFixture = TestBed.createComponent(TestErrorTemplateComponent);
       hostFixture.detectChanges();
 
-      const inputComponent = hostFixture.debugElement.children[0].componentInstance;
+      const inputComponent =
+        hostFixture.debugElement.children[0].componentInstance;
       inputComponent.validators = ['required'];
       inputComponent.value = '';
       inputComponent.onBlur();
@@ -215,7 +222,9 @@ describe('MsvInputComponent', () => {
   describe('Service Integration', () => {
     it('should inject MsvValidatorHelper service', () => {
       expect(component['validatorHelper']).toBeTruthy();
-      expect(component['validatorHelper'] instanceof MsvValidatorHelper).toBe(true);
+      expect(component['validatorHelper'] instanceof MsvValidatorHelper).toBe(
+        true,
+      );
     });
 
     it('should inject MSV_FORMS_CONFIG', () => {
@@ -231,7 +240,11 @@ describe('MsvInputComponent', () => {
       component.value = '';
       component.onBlur();
 
-      expect(validatorHelper.runValidation).toHaveBeenCalledWith('', ['required'], component['config']);
+      expect(validatorHelper.runValidation).toHaveBeenCalledWith(
+        '',
+        ['required'],
+        component['config'],
+      );
       expect(component.errors).toEqual(['Test error']);
     });
   });

@@ -1,237 +1,481 @@
-<div class="container pt-3 pb-3" infiniteScroll [infiniteScrollDistance]="1" [infiniteScrollThrottle]="50"
-    (scrolled)="onScroll($event)">
-    <mat-card class="example-card mb-3 mat-elevation-z5 p-4" style="border-radius: 16px">
-        <h2 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 600;">
-            List Keluhan
-        </h2>
-        <h4 style="color: #495057; font-family: 'Open Sans'; font-weight: 400;">
-            Tools untuk menampilkan list keluhan yang ada di Merchant Hotline environment <b>PROD</b>
-        </h4>
+<div
+  class="container pt-3 pb-3"
+  infiniteScroll
+  [infiniteScrollDistance]="1"
+  [infiniteScrollThrottle]="50"
+  (scrolled)="onScroll($event)"
+>
+  <mat-card
+    class="example-card mb-3 mat-elevation-z5 p-4"
+    style="border-radius: 16px"
+  >
+    <h2
+      class="m-0"
+      style="
+        color: #144e83;
+        font-family: &quot;Open Sans&quot;;
+        font-weight: 600;
+      "
+    >
+      List Keluhan
+    </h2>
+    <h4
+      style="
+        color: #495057;
+        font-family: &quot;Open Sans&quot;;
+        font-weight: 400;
+      "
+    >
+      Tools untuk menampilkan list keluhan yang ada di Merchant Hotline
+      environment <b>PROD</b>
+    </h4>
 
-        <div class="batch-list-card">
-            <div class="d-flex row">
-                <h3 class="col-4 m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">
-                    Status
-                </h3>
-                <div class="d-flex row  mt-2 mb-2" style="padding-right: 0px;">
-                    <div class="col-12" style="padding-right: 0px;">
-                        <select [(ngModel)]="filterStatus" class="select" (change)="onChangeSelectFilterStatus()" aria-label="Filter status keluhan">
-                            <option value="ALL">ALL</option>
-                            <option value="Assigned">Assigned</option>
-                            <option value="Close">Close</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+    <div class="batch-list-card">
+      <div class="d-flex row">
+        <h3
+          class="col-4 m-0"
+          style="
+            color: #144e83;
+            font-family: &quot;Open Sans&quot;;
+            font-weight: 700;
+          "
+        >
+          Status
+        </h3>
+        <div class="d-flex row mt-2 mb-2" style="padding-right: 0px">
+          <div class="col-12" style="padding-right: 0px">
+            <select
+              [(ngModel)]="filterStatus"
+              class="select"
+              (change)="onChangeSelectFilterStatus()"
+              aria-label="Filter status keluhan"
+            >
+              <option value="ALL">ALL</option>
+              <option value="Assigned">Assigned</option>
+              <option value="Close">Close</option>
+            </select>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <div class="d-flex flex-row justify-content-around text-center">
-            <div class="p-2">
-                <div class="d-flex flex-column ">
-                    <div class="m-0"><h3 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">Total Keluhan</h3></div>
-                    <div class="m-0"><h4 class="m-0" style="color: #616161; font-family: 'Open Sans'; font-weight: 700;">{{totalRows()}}</h4></div>
-                </div>
-            </div>
-            <div class="p-2">
-                <div class="d-flex flex-column ">
-                    <div class="m-0"><h3 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 700;">Tanggal Hit Data</h3></div>
-                    <div class="m-0"><h4 class="m-0" style="color: #616161; font-family: 'Open Sans'; font-weight: 700;">{{hitDate() | date:'dd MMM yyyy, HH:mm:ss'}}</h4></div>
-                </div>
-            </div>
+    <div class="d-flex flex-row justify-content-around text-center">
+      <div class="p-2">
+        <div class="d-flex flex-column">
+          <div class="m-0">
+            <h3
+              class="m-0"
+              style="
+                color: #144e83;
+                font-family: &quot;Open Sans&quot;;
+                font-weight: 700;
+              "
+            >
+              Total Keluhan
+            </h3>
+          </div>
+          <div class="m-0">
+            <h4
+              class="m-0"
+              style="
+                color: #616161;
+                font-family: &quot;Open Sans&quot;;
+                font-weight: 700;
+              "
+            >
+              {{ totalRows() }}
+            </h4>
+          </div>
         </div>
+      </div>
+      <div class="p-2">
+        <div class="d-flex flex-column">
+          <div class="m-0">
+            <h3
+              class="m-0"
+              style="
+                color: #144e83;
+                font-family: &quot;Open Sans&quot;;
+                font-weight: 700;
+              "
+            >
+              Tanggal Hit Data
+            </h3>
+          </div>
+          <div class="m-0">
+            <h4
+              class="m-0"
+              style="
+                color: #616161;
+                font-family: &quot;Open Sans&quot;;
+                font-weight: 700;
+              "
+            >
+              {{ hitDate() | date: "dd MMM yyyy, HH:mm:ss" }}
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  @if (statusMenu() === statusAPI.FAILED) {
+    <mat-card
+      class="example-card mb-3 mat-elevation-z5 p-4"
+      style="border-radius: 16px"
+      aria-live="assertive"
+    >
+      <div class="alert alert-danger" role="alert">
+        {{ errorMessage() || "Gagal memuat list keluhan." }}
+      </div>
     </mat-card>
+  }
 
-    @if (statusMenu() === statusAPI.FAILED) {
-        <mat-card class="example-card mb-3 mat-elevation-z5 p-4" style="border-radius: 16px">
-            <div class="alert alert-danger" role="alert">
-                {{ errorMessage() || 'Gagal memuat list keluhan.' }}
-            </div>
-        </mat-card>
-    }
-
-    @if (statusMenu() === statusAPI.SUCCESS) {
-        @for (keluhan of keluhanList(); track keluhan.requestid; let i = $index) {
-            <mat-expansion-panel class="example-card mb-3 mat-elevation-z5 p-4" style="border-radius: 16px;">
-                <mat-expansion-panel-header>
-                    <mat-panel-title style="flex-basis: fit-content;">
-                        <div class="d-flex flex-column ">
-                            <div class="m-0"><h3 class="m-0" style="color: #144E83; font-family: 'Open Sans'; font-weight: 800;">{{i+1}}. {{keluhan.requestid}} - {{keluhan.summary}}</h3></div>
-                            <div class="m-0"><h5 class="m-0" style="color: #616161; font-family: 'Open Sans'; font-weight: 700;">{{keluhan.entrydate | date:'dd MMM yyyy, HH:mm:ss' }}</h5></div>
-                        </div>
-
-
-                    </mat-panel-title>
-                    <mat-panel-description>
-                        <div style="margin-left: auto;">
-                        </div>
-                        @if (keluhan.handled) {
-                            <div class="badge-info" style="margin-left: auto;">
-                                HANDLED
-                            </div>
-                        }
-                        @if (keluhan.handled && keluhan.handled.isNeedFu) {
-                            <div class="badge-info" style="margin-left: 2px;">
-                                NEED FU
-                            </div>
-                        }
-                        <!-- <div class="badge-info" style="margin-left: 2px;">
+  @if (statusMenu() === statusAPI.SUCCESS) {
+    <div aria-live="polite">
+      @for (keluhan of keluhanList(); track keluhan.requestid; let i = $index) {
+        <mat-expansion-panel
+          class="example-card mb-3 mat-elevation-z5 p-4"
+          style="border-radius: 16px"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title style="flex-basis: fit-content">
+              <div class="d-flex flex-column">
+                <div class="m-0">
+                  <h3
+                    class="m-0"
+                    style="
+                      color: #144e83;
+                      font-family: &quot;Open Sans&quot;;
+                      font-weight: 800;
+                    "
+                  >
+                    {{ i + 1 }}. {{ keluhan.requestid }} - {{ keluhan.summary }}
+                  </h3>
+                </div>
+                <div class="m-0">
+                  <h5
+                    class="m-0"
+                    style="
+                      color: #616161;
+                      font-family: &quot;Open Sans&quot;;
+                      font-weight: 700;
+                    "
+                  >
+                    {{ keluhan.entrydate | date: "dd MMM yyyy, HH:mm:ss" }}
+                  </h5>
+                </div>
+              </div>
+            </mat-panel-title>
+            <mat-panel-description>
+              <div style="margin-left: auto"></div>
+              @if (keluhan.handled) {
+                <div class="badge-info" style="margin-left: auto">HANDLED</div>
+              }
+              @if (keluhan.handled && keluhan.handled.isNeedFu) {
+                <div class="badge-info" style="margin-left: 2px">NEED FU</div>
+              }
+              <!-- <div class="badge-info" style="margin-left: 2px;">
                             REPLIED
                         </div> -->
-                        @if (keluhan.dueSoon) {
-                            <div class="badge-failed" style="margin-left: 2px;">
-                                DUE DATE
-                            </div>
-                        }
-                        <div class="badge-{{keluhan.status.toLowerCase()}}" style="margin-left: 2px;">
-                            {{keluhan.status.toUpperCase()}}
-                        </div>
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-                <hr>
-                <h3 class="mt-3" style="color: #144E83; font-family: 'Open Sans'; font-weight: 600;">
-                    Permasalahan
-                </h3>
-                <div class="information">
-                    <pre
-                        style="color: #495057; font-family: 'Open Sans'; font-weight: 400; white-space: pre-line ; margin: 0;">
-                        {{keluhan.permasalahan}}
-                    </pre>
+              @if (keluhan.dueSoon) {
+                <div class="badge-failed" style="margin-left: 2px">
+                  DUE DATE
                 </div>
+              }
+              <div
+                class="badge-{{ keluhan.status.toLowerCase() }}"
+                style="margin-left: 2px"
+              >
+                {{ keluhan.status.toUpperCase() }}
+              </div>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <hr />
+          <h3
+            class="mt-3"
+            style="
+              color: #144e83;
+              font-family: &quot;Open Sans&quot;;
+              font-weight: 600;
+            "
+          >
+            Permasalahan
+          </h3>
+          <div class="information">
+            <pre
+              style="
+                color: #495057;
+                font-family: &quot;Open Sans&quot;;
+                font-weight: 400;
+                white-space: pre-line;
+                margin: 0;
+              "
+            >
+                        {{ keluhan.permasalahan }}
+                    </pre
+            >
+          </div>
 
-                <h3 class="mt-3" style="color: #144E83; font-family: 'Open Sans'; font-weight: 600;">
-                    Notes
-                </h3>
-                <div class="information">
-                    <pre
-                        style="color: #495057; font-family: 'Open Sans'; font-weight: 400; white-space: pre-line ; margin: 0;">
-                        {{keluhan.notes}}
-                      </pre>
-                </div>
+          <h3
+            class="mt-3"
+            style="
+              color: #144e83;
+              font-family: &quot;Open Sans&quot;;
+              font-weight: 600;
+            "
+          >
+            Notes
+          </h3>
+          <div class="information">
+            <pre
+              style="
+                color: #495057;
+                font-family: &quot;Open Sans&quot;;
+                font-weight: 400;
+                white-space: pre-line;
+                margin: 0;
+              "
+            >
+                        {{ keluhan.notes }}
+                      </pre
+            >
+          </div>
 
-                <h3 class="mt-3" style="color: #144E83; font-family: 'Open Sans'; font-weight: 600;">
-                    Informasi Merchant
-                </h3>
-                <div class="information">
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            person
-                        </mat-icon>
-                        <h4
-                            style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                            Nama Pemilik : {{keluhan.namaPemilik}}
-                        </h4>
-                    </div>
+          <h3
+            class="mt-3"
+            style="
+              color: #144e83;
+              font-family: &quot;Open Sans&quot;;
+              font-weight: 600;
+            "
+          >
+            Informasi Merchant
+          </h3>
+          <div class="information">
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #005caa" aria-hidden="true">
+                person
+              </mat-icon>
+              <h4
+                style="
+                  color: #005caa;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 500;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                Nama Pemilik : {{ keluhan.namaPemilik }}
+              </h4>
+            </div>
 
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            phone
-                        </mat-icon>
-                        <h4
-                            style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                            No Telp Pemilik : {{keluhan.telpPemilik}}
-                        </h4>
-                    </div>
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #005caa" aria-hidden="true">
+                phone
+              </mat-icon>
+              <h4
+                style="
+                  color: #005caa;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 500;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                No Telp Pemilik : {{ keluhan.telpPemilik }}
+              </h4>
+            </div>
 
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            email
-                        </mat-icon>
-                        <h4
-                            style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                            Email Pemilik : {{keluhan.email}}
-                        </h4>
-                    </div>
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #005caa" aria-hidden="true">
+                email
+              </mat-icon>
+              <h4
+                style="
+                  color: #005caa;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 500;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                Email Pemilik : {{ keluhan.email }}
+              </h4>
+            </div>
 
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            store
-                        </mat-icon>
-                        <h4
-                            style="color: #005CAA; font-family: 'Open Sans'; font-weight: 600; margin: 0; margin-left: 10px;">
-                            Toko : {{keluhan.merchantname}}
-                        </h4>
-                    </div>
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #005caa" aria-hidden="true">
+                store
+              </mat-icon>
+              <h4
+                style="
+                  color: #005caa;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 600;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                Toko : {{ keluhan.merchantname }}
+              </h4>
+            </div>
 
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            store
-                        </mat-icon>
-                        <h4
-                            style="color: #005CAA; font-family: 'Open Sans'; font-weight: 600; margin: 0; margin-left: 10px;">
-                            MID : {{keluhan.mid}}
-                        </h4>
-                    </div>
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #005caa" aria-hidden="true">
+                store
+              </mat-icon>
+              <h4
+                style="
+                  color: #005caa;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 600;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                MID : {{ keluhan.mid }}
+              </h4>
+            </div>
 
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            calendar_today
-                        </mat-icon>
-                        <h4
-                            style="color: #005CAA; font-family: 'Open Sans'; font-weight: 600; margin: 0; margin-left: 10px;">
-                            Entry Date : {{keluhan.entrydate}}
-                        </h4>
-                    </div>
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #005caa" aria-hidden="true">
+                calendar_today
+              </mat-icon>
+              <h4
+                style="
+                  color: #005caa;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 600;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                Entry Date : {{ keluhan.entrydate }}
+              </h4>
+            </div>
 
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #aa0039" aria-hidden="true">
-                            calendar_today
-                        </mat-icon>
-                        <h4
-                            style="color: #aa0039; font-family: 'Open Sans'; font-weight: 600; margin: 0; margin-left: 10px;">
-                            Due Date : {{keluhan.duedate}}
-                        </h4>
-                    </div>
-                </div>
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #aa0039" aria-hidden="true">
+                calendar_today
+              </mat-icon>
+              <h4
+                style="
+                  color: #aa0039;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 600;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                Due Date : {{ keluhan.duedate }}
+              </h4>
+            </div>
+          </div>
 
+          <h3
+            class="mt-3"
+            style="
+              color: #144e83;
+              font-family: &quot;Open Sans&quot;;
+              font-weight: 600;
+            "
+          >
+            Informasi Penanganan
+          </h3>
+          <div class="information">
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #005caa" aria-hidden="true">
+                person
+              </mat-icon>
+              <h4
+                style="
+                  color: #005caa;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 500;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                Handled By :
+                {{
+                  keluhan.handled && keluhan.handled.name
+                    ? keluhan.handled.name
+                    : "-"
+                }}
+              </h4>
+            </div>
 
-                <h3 class="mt-3" style="color: #144E83; font-family: 'Open Sans'; font-weight: 600;">
-                    Informasi Penanganan
-                </h3>
-                <div class="information">
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            person
-                        </mat-icon>
-                        <h4
-                            style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                            Handled By : {{keluhan.handled && keluhan.handled.name ? keluhan.handled.name : '-' }}
-                        </h4>
-                    </div>
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #005caa" aria-hidden="true">
+                calendar_today
+              </mat-icon>
+              <h4
+                style="
+                  color: #005caa;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 500;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                @if (keluhan.handled && keluhan.handled.date) {
+                  <span>
+                    Handled Date :
+                    {{
+                      keluhan.handled.date | date: "dd MMM yyyy, HH:mm:ss"
+                    }}</span
+                  >
+                }
+                @if (!(keluhan.handled && keluhan.handled.date)) {
+                  <span> Handled Date : -</span>
+                }
+              </h4>
+            </div>
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #005caa" aria-hidden="true">
+                build
+              </mat-icon>
+              <h4
+                style="
+                  color: #005caa;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 500;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                Handled Method :
+                {{
+                  keluhan.handled && keluhan.handled.method
+                    ? keluhan.handled.method
+                    : "-"
+                }}
+              </h4>
+            </div>
+            <div class="d-flex align-items-center">
+              <mat-icon style="color: #005caa" aria-hidden="true">
+                notes
+              </mat-icon>
+              <h4
+                style="
+                  color: #005caa;
+                  font-family: &quot;Open Sans&quot;;
+                  font-weight: 500;
+                  margin: 0;
+                  margin-left: 10px;
+                "
+              >
+                Handled Notes :
+                {{
+                  keluhan.handled && keluhan.handled.notes
+                    ? keluhan.handled.notes
+                    : "-"
+                }}
+              </h4>
+            </div>
 
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            calendar_today
-                        </mat-icon>
-                        <h4
-                            style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                            @if (keluhan.handled && keluhan.handled.date) {
-                                <span> Handled Date : {{keluhan.handled.date | date:'dd MMM yyyy, HH:mm:ss'}}</span>
-                            }
-                            @if (!(keluhan.handled && keluhan.handled.date)) {
-                                <span> Handled Date : -</span>
-                            }
-                        </h4>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            build
-                        </mat-icon>
-                        <h4
-                            style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                            Handled Method : {{keluhan.handled && keluhan.handled.method ? keluhan.handled.method : '-' }}
-                        </h4>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <mat-icon style="color: #005CAA" aria-hidden="true">
-                            notes
-                        </mat-icon>
-                        <h4
-                            style="color: #005CAA; font-family: 'Open Sans'; font-weight: 500; margin: 0; margin-left: 10px;">
-                            Handled Notes : {{keluhan.handled && keluhan.handled.notes ? keluhan.handled.notes : '-' }}
-                        </h4>
-                    </div>
-
-                    <!-- <br>
+            <!-- <br>
 
                     <div class="d-flex align-items-center">
                         <mat-icon style="color: #005CAA">
@@ -263,12 +507,11 @@
                             Replied Date : {{keluhan.replied && keluhan.replied.date ? keluhan.replied.date : '-' }}
                         </h4>
                     </div> -->
-                </div>
+          </div>
 
-                <quick-handle [keluhan]="keluhan"></quick-handle>
+          <quick-handle [keluhan]="keluhan"></quick-handle>
 
-
-                <!-- <h3 class="mt-3" style="color: #144E83; font-family: 'Open Sans'; font-weight: 600;">
+          <!-- <h3 class="mt-3" style="color: #144E83; font-family: 'Open Sans'; font-weight: 600;">
                     Quick Reply
                 </h3>
                 <div class="information">
@@ -292,22 +535,22 @@
 
                     <button style="width: 100%;" class="button-primary mt-3">Send</button>
                 </div> -->
-            </mat-expansion-panel>
-        }
-    }
+        </mat-expansion-panel>
+      }
+    </div>
+  }
 
-    @if (statusMenu() === statusAPI.LOADING || keluhanList().length < totalRows()) {
-        <mat-card class="example-card mb-3 mat-elevation-z5 p-4" style="border-radius: 16px">
-            <ng-container>
-                <div class="d-flex align-items-center flex-column"
-                    style="width: fit-content; margin-left: auto; margin-right: auto;">
-                    <img src="../assets/loading4.gif" alt="logo"
-                        style="width: 75px; margin-left: auto; margin-right: auto;">
-                    <h4 style="color: #495057;font-weight: 400;">
-                        Memuat List Keluhan
-                    </h4>
-                </div>
-            </ng-container>
-        </mat-card>
-    }
+  @if (
+    statusMenu() === statusAPI.LOADING || keluhanList().length < totalRows()
+  ) {
+    <mat-card
+      class="example-card mb-3 mat-elevation-z5 p-4"
+      style="border-radius: 16px"
+    >
+      <div class="d-flex align-items-center flex-column loading-container">
+        <div class="spinner" aria-hidden="true"></div>
+        <h4 class="tool-sub">Memuat List Keluhan</h4>
+      </div>
+    </mat-card>
+  }
 </div>

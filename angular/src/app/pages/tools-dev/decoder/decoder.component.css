@@ -1,8 +1,54 @@
-.jf-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.jf-grid > div { position:relative; }
-.copy-btn { position:absolute; top:26px; right:4px; background:transparent; border:none; cursor:pointer; color:#005caa; padding:2px; }
-.copy-btn mat-icon { font-size:18px; width:18px; height:18px; }
-.dec-modes { display:flex; gap:6px; margin-bottom:10px; }
-.dec-mode { background:#fff; color:#495057; border:1px solid #ced4da; border-radius:18px; padding:5px 12px; cursor:pointer; font-family:'Open Sans',sans-serif; font-weight:600; font-size:12px; }
-.dec-mode.active { background:#005caa; color:#fff; border-color:#005caa; }
-@media (max-width:768px){ .jf-grid { grid-template-columns:1fr; } }
+.jf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.jf-grid > div {
+  position: relative;
+}
+.copy-btn {
+  position: absolute;
+  top: 26px;
+  right: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--msv-primary);
+  padding: 2px;
+}
+.copy-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+.dec-copied-feedback {
+  font-size: 11px;
+  color: var(--msv-success);
+  font-weight: 600;
+}
+.dec-modes {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.dec-mode {
+  background: var(--msv-surface);
+  color: var(--msv-text-muted);
+  border: 1px solid var(--msv-syntax-code-border);
+  border-radius: 18px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+}
+.dec-mode.active {
+  background: var(--msv-primary);
+  color: var(--msv-surface);
+  border-color: var(--msv-primary);
+}
+@media (max-width: 768px) {
+  .jf-grid {
+    grid-template-columns: 1fr;
+  }
+}

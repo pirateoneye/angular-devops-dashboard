@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MsvTableComponent } from './msv-table.component';
 import { MSV_FORMS_CONFIG } from '../msv-forms.config';
-import { Component, TemplateRef, ViewChild, SimpleChange } from '@angular/core';
+import { SimpleChange } from '@angular/core';
 import { MsvTableColumn } from './msv-table.types';
 
 describe('MsvTableComponent', () => {
@@ -14,17 +14,15 @@ describe('MsvTableComponent', () => {
       email: 'Format email tidak valid',
       minLength: (min: number) => `Minimal ${min} karakter`,
       maxLength: (max: number) => `Maksimal ${max} karakter`,
-      pattern: 'Format tidak valid'
+      pattern: 'Format tidak valid',
     },
-    loadingText: 'Processing...'
+    loadingText: 'Processing...',
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [MsvTableComponent],
-      providers: [
-        { provide: MSV_FORMS_CONFIG, useValue: mockConfig }
-      ]
+      providers: [{ provide: MSV_FORMS_CONFIG, useValue: mockConfig }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvTableComponent);
@@ -53,11 +51,11 @@ describe('MsvTableComponent', () => {
   it('should render table with columns', () => {
     component.columns = [
       { key: 'name', header: 'Name' },
-      { key: 'age', header: 'Age' }
+      { key: 'age', header: 'Age' },
     ];
     component.data = [
       { name: 'John', age: 30 },
-      { name: 'Jane', age: 25 }
+      { name: 'Jane', age: 25 },
     ];
     fixture.detectChanges();
 
@@ -70,16 +68,18 @@ describe('MsvTableComponent', () => {
   it('should render table rows with data', () => {
     component.columns = [
       { key: 'name', header: 'Name' },
-      { key: 'age', header: 'Age' }
+      { key: 'age', header: 'Age' },
     ];
     component.data = [
       { name: 'John', age: 30 },
-      { name: 'Jane', age: 25 }
+      { name: 'Jane', age: 25 },
     ];
     // Direct @Input assignment doesn't fire ngOnChanges in a unit test, so the
     // component's displayedData (populated by ngOnChanges -> updateDisplayedData)
     // would stay empty. Trigger it explicitly so rows render.
-    component.ngOnChanges({ data: new SimpleChange([], component.data, false) } as any);
+    component.ngOnChanges({
+      data: new SimpleChange([], component.data, false),
+    } as any);
     fixture.detectChanges();
 
     const rows = fixture.nativeElement.querySelectorAll('tbody tr');
@@ -90,7 +90,9 @@ describe('MsvTableComponent', () => {
     spyOn(component.rowClick, 'emit');
     component.columns = [{ key: 'name', header: 'Name' }];
     component.data = [{ name: 'John' }];
-    component.ngOnChanges({ data: new SimpleChange([], component.data, false) } as any);
+    component.ngOnChanges({
+      data: new SimpleChange([], component.data, false),
+    } as any);
     fixture.detectChanges();
 
     const row = fixture.nativeElement.querySelector('tbody tr');
@@ -103,7 +105,7 @@ describe('MsvTableComponent', () => {
     component.sortable = true;
     component.columns = [
       { key: 'name', header: 'Name', sortable: true },
-      { key: 'age', header: 'Age', sortable: false }
+      { key: 'age', header: 'Age', sortable: false },
     ];
     fixture.detectChanges();
 
@@ -145,17 +147,13 @@ describe('MsvTableComponent', () => {
 
     expect(component.sortChange.emit).toHaveBeenCalledWith({
       column: 'name',
-      direction: 'asc'
+      direction: 'asc',
     });
   });
 
   it('should sort data in ascending order', () => {
     component.columns = [{ key: 'name', header: 'Name', sortable: true }];
-    component.data = [
-      { name: 'Charlie' },
-      { name: 'Alice' },
-      { name: 'Bob' }
-    ];
+    component.data = [{ name: 'Charlie' }, { name: 'Alice' }, { name: 'Bob' }];
     component.sortable = true;
     component.sortColumn = 'name';
     component.sortDirection = 'asc';
@@ -168,11 +166,7 @@ describe('MsvTableComponent', () => {
 
   it('should sort data in descending order', () => {
     component.columns = [{ key: 'name', header: 'Name', sortable: true }];
-    component.data = [
-      { name: 'Alice' },
-      { name: 'Charlie' },
-      { name: 'Bob' }
-    ];
+    component.data = [{ name: 'Alice' }, { name: 'Charlie' }, { name: 'Bob' }];
     component.sortable = true;
     component.sortColumn = 'name';
     component.sortDirection = 'desc';
@@ -185,11 +179,7 @@ describe('MsvTableComponent', () => {
 
   it('should sort numeric data correctly', () => {
     component.columns = [{ key: 'age', header: 'Age', sortable: true }];
-    component.data = [
-      { age: 30 },
-      { age: 25 },
-      { age: 35 }
-    ];
+    component.data = [{ age: 30 }, { age: 25 }, { age: 35 }];
     component.sortable = true;
     component.sortColumn = 'age';
     component.sortDirection = 'asc';
@@ -218,12 +208,7 @@ describe('MsvTableComponent', () => {
   it('should paginate data when paginator is enabled', () => {
     component.paginator = true;
     component.pageSize = 2;
-    component.data = [
-      { id: 1 },
-      { id: 2 },
-      { id: 3 },
-      { id: 4 }
-    ];
+    component.data = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }];
     component.ngOnInit();
 
     expect(component.paginatedData.length).toBe(2);
@@ -242,12 +227,7 @@ describe('MsvTableComponent', () => {
   it('should handle page change event', () => {
     component.paginator = true;
     component.pageSize = 2;
-    component.data = [
-      { id: 1 },
-      { id: 2 },
-      { id: 3 },
-      { id: 4 }
-    ];
+    component.data = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }];
     component.ngOnInit();
 
     component.onPageChange({ page: 2, pageSize: 2 });
@@ -284,8 +264,12 @@ describe('MsvTableComponent', () => {
 
   it('should not sort when column is not sortable', () => {
     component.sortable = true;
-    const column: MsvTableColumn = { key: 'name', header: 'Name', sortable: false };
-    
+    const column: MsvTableColumn = {
+      key: 'name',
+      header: 'Name',
+      sortable: false,
+    };
+
     component.onHeaderClick(column);
 
     expect(component.sortColumn).toBeNull();
@@ -294,8 +278,12 @@ describe('MsvTableComponent', () => {
 
   it('should not sort when sortable is disabled globally', () => {
     component.sortable = false;
-    const column: MsvTableColumn = { key: 'name', header: 'Name', sortable: true };
-    
+    const column: MsvTableColumn = {
+      key: 'name',
+      header: 'Name',
+      sortable: true,
+    };
+
     component.onHeaderClick(column);
 
     expect(component.sortColumn).toBeNull();
@@ -309,8 +297,8 @@ describe('MsvTableComponent', () => {
         currentValue: [{ id: 1 }],
         previousValue: [],
         firstChange: true,
-        isFirstChange: () => true
-      }
+        isFirstChange: () => true,
+      },
     });
 
     expect(component.displayedData.length).toBe(1);
@@ -324,8 +312,8 @@ describe('MsvTableComponent', () => {
         currentValue: 2,
         previousValue: 10,
         firstChange: false,
-        isFirstChange: () => false
-      }
+        isFirstChange: () => false,
+      },
     });
 
     expect(component.displayedData.length).toBe(3);
@@ -342,11 +330,7 @@ describe('MsvTableComponent', () => {
 
   it('should handle null values in sorting', () => {
     component.columns = [{ key: 'name', header: 'Name', sortable: true }];
-    component.data = [
-      { name: 'Alice' },
-      { name: null },
-      { name: 'Bob' }
-    ];
+    component.data = [{ name: 'Alice' }, { name: null }, { name: 'Bob' }];
     component.sortable = true;
     component.sortColumn = 'name';
     component.sortDirection = 'asc';

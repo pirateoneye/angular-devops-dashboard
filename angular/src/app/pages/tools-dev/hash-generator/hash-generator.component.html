@@ -1,26 +1,60 @@
-<div class="container pt-3 pb-3">
-  <mat-card class="tool-card">
-    <h2 class="tool-title">Hash Generator</h2>
-    <h4 class="tool-sub">Buat hash MD5/SHA dari teks (client-side, via crypto-js).</h4>
-    <div class="tool-divider"></div>
+<h2 class="tool-title">Hash Generator</h2>
+<h4 class="tool-sub">
+  Buat hash MD5/SHA dari teks (client-side, via crypto-js).
+</h4>
+<div class="tool-divider"></div>
 
-    <label class="tool-label">Input</label>
-    <textarea class="tool-area" rows="6" [(ngModel)]="input" placeholder="Ketik atau tempel teks..."></textarea>
+<label class="tool-label">Input</label>
+<textarea
+  class="tool-area"
+  rows="6"
+  [(ngModel)]="input"
+  (input)="onInputChange()"
+  placeholder="Ketik atau tempel teks..."
+></textarea>
 
-    <div class="tool-actions">
-      <button class="btn-primary" (click)="generate()">Generate semua hash</button>
-    </div>
+<div class="tool-actions">
+  <button class="btn-primary" (click)="generate()" [disabled]="loading">
+    Generate semua hash
+  </button>
+  <label class="auto-toggle">
+    <input type="checkbox" [(ngModel)]="autoMode" />
+    <span>Auto</span>
+  </label>
+  @if (results.length && !loading) {
+    <button class="btn-secondary" (click)="copyAll()">
+      {{ copiedAll ? "Copied!" : "Copy all" }}
+    </button>
+  }
+</div>
 
-    @if (results.length) {
-      <div class="hash-list">
-        @for (r of results; track r.algo) {
-          <div class="hash-row">
-            <span class="hash-algo">{{ r.algo }}</span>
-            <input class="hash-val" [value]="r.hash" readonly />
-            <button class="icon-btn" (click)="copy(r.hash)" title="Copy" [attr.aria-label]="'Copy ' + r.algo + ' hash'"><mat-icon aria-hidden="true">file_copy</mat-icon></button>
-          </div>
-        }
+@if (loading) {
+  <div class="hash-spinner"></div>
+} @else if (!input.trim()) {
+  <div class="icon-empty">
+    <mat-icon class="empty-icon">tag</mat-icon>
+    <h3>Enter text to generate hashes</h3>
+    <p class="tool-sub">MD5, SHA1, SHA256, SHA384, SHA512, SHA3.</p>
+  </div>
+} @else if (results.length) {
+  <div class="hash-list result-enter">
+    @for (r of results; track r.algo; let i = $index) {
+      <div class="hash-row">
+        <span class="hash-algo">{{ r.algo }}</span>
+        <input class="hash-val" [value]="r.hash" readonly />
+        <button
+          class="icon-btn"
+          (click)="copy(r.hash, i)"
+          title="Copy"
+          [attr.aria-label]="'Copy ' + r.algo + ' hash'"
+        >
+          @if (copiedIndex === i) {
+            <span class="hash-copied-feedback">Copied!</span>
+          } @else {
+            <mat-icon aria-hidden="true">file_copy</mat-icon>
+          }
+        </button>
       </div>
     }
-  </mat-card>
-</div>
+  </div>
+}

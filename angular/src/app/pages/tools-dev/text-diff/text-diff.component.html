@@ -1,37 +1,64 @@
-<div class="container pt-3 pb-3">
-  <mat-card class="tool-card">
-    <h2 class="tool-title">Text Diff</h2>
-    <h4 class="tool-sub">Bandingkan dua teks per baris (line-based LCS diff).</h4>
-    <div class="tool-divider"></div>
+<h2 class="tool-title">Text Diff</h2>
+<h4 class="tool-sub">Bandingkan dua teks per baris (line-based LCS diff).</h4>
+<div class="tool-divider"></div>
 
-    <div class="td-grid">
-      <div>
-        <label class="tool-label">Teks A (lama)</label>
-        <textarea class="tool-area" rows="10" [(ngModel)]="left" placeholder="Teks lama..."></textarea>
-      </div>
-      <div>
-        <label class="tool-label">Teks B (baru)</label>
-        <textarea class="tool-area" rows="10" [(ngModel)]="right" placeholder="Teks baru..."></textarea>
-      </div>
-    </div>
+<div class="td-grid">
+  <div>
+    <label class="tool-label">Teks A (lama)</label>
+    <textarea
+      class="tool-area"
+      rows="10"
+      [(ngModel)]="left"
+      placeholder="Teks lama..."
+    ></textarea>
+    <span class="td-char-count">{{ left.length }} karakter</span>
+  </div>
+  <div>
+    <label class="tool-label">Teks B (baru)</label>
+    <textarea
+      class="tool-area"
+      rows="10"
+      [(ngModel)]="right"
+      placeholder="Teks baru..."
+    ></textarea>
+    <span class="td-char-count">{{ right.length }} karakter</span>
+  </div>
+</div>
 
-    <div class="tool-actions">
-      <button class="btn-primary" (click)="compare()">Bandingkan</button>
-      <button class="btn-secondary" (click)="clear()">Clear</button>
-      @if (diff.length) {
-        <span class="td-stats">+{{ added }} &minus;{{ removed }} ={{ unchanged }}</span>
-      }
-    </div>
+<div class="tool-actions">
+  <button class="btn-primary" (click)="compare()">Bandingkan</button>
+  <button class="btn-secondary" (click)="swap()">&#8693; Swap</button>
+  <button class="btn-secondary" (click)="loadExample()">Load example</button>
+  <button class="btn-secondary" (click)="clear()">Clear</button>
+  @if (diff.length) {
+    <span class="td-stats"
+      >+{{ added }} &minus;{{ removed }} ={{ unchanged }}</span
+    >
+  }
+</div>
 
-    @if (diff.length) {
-      <div class="td-result">
-        @for (line of diff; track $index) {
-          <div class="td-line" [class.add]="line.type === 'add'" [class.del]="line.type === 'del'">
-            <span class="td-sign">{{ line.type === 'add' ? '+' : line.type === 'del' ? '-' : ' ' }}</span>
-            <span class="td-text">{{ line.text }}</span>
-          </div>
-        }
+@if (!diff.length && !left && !right) {
+  <div class="icon-empty">
+    <mat-icon class="empty-icon">compare_arrows</mat-icon>
+    <h3>Enter two texts to compare</h3>
+    <p class="tool-sub">Line-by-line diff between old and new versions.</p>
+  </div>
+}
+
+@if (diff.length) {
+  <div class="td-result result-enter">
+    @for (line of diff; track $index) {
+      <div
+        class="td-line"
+        [class.add]="line.type === 'add'"
+        [class.del]="line.type === 'del'"
+      >
+        <span class="td-ln">{{ line.lineNum }}</span>
+        <span class="td-sign">{{
+          line.type === "add" ? "+" : line.type === "del" ? "-" : " "
+        }}</span>
+        <span class="td-text">{{ line.text }}</span>
       </div>
     }
-  </mat-card>
-</div>
+  </div>
+}

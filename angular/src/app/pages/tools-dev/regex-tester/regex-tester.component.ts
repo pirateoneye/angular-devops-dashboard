@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -9,6 +13,11 @@ interface MatchRow {
   index: number;
   match: string;
   groups: string[];
+}
+
+interface SamplePattern {
+  label: string;
+  pattern: string;
 }
 
 @Component({
@@ -26,12 +35,49 @@ export class RegexTesterComponent {
   error = '';
   matches: MatchRow[] = [];
   highlighted: SafeHtml = '';
+  matchCount = 0;
+
+  samplePatterns: SamplePattern[] = [
+    { label: 'Email', pattern: '^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$' },
+    { label: 'URL', pattern: '^https?:\\/\\/[\\w\\.-]+\\.\\w{2,}(\\/\\S*)?$' },
+    { label: 'Phone', pattern: '^\\+?[\\d\\s\\-\\(\\)]{7,15}$' },
+    {
+      label: 'IP Address',
+      pattern: '^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$',
+    },
+    { label: 'Date (ISO)', pattern: '^\\d{4}-\\d{2}-\\d{2}$' },
+  ];
+
+  private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private sanitizer: DomSanitizer) {}
 
+  @HostListener('execute') onExecute(): void {
+    this.run();
+  }
+
+  onInputChange(): void {
+    this.resetTimer();
+    this.debounceTimer = setTimeout(() => this.run(), 300);
+  }
+
+  selectSample(pattern: string): void {
+    this.pattern = pattern;
+    this.run();
+  }
+
+  private resetTimer(): void {
+    if (this.debounceTimer !== null) {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = null;
+    }
+  }
+
   run(): void {
+    this.resetTimer();
     this.error = '';
     this.matches = [];
+    this.matchCount = 0;
     this.highlighted = this.sanitizer.bypassSecurityTrustHtml('');
     if (!this.pattern) {
       this.error = 'Pattern kosong.';
@@ -66,6 +112,7 @@ export class RegexTesterComponent {
         });
       }
     }
+    this.matchCount = this.matches.length;
     this.buildHighlight();
   }
 
@@ -74,10 +121,6 @@ export class RegexTesterComponent {
   }
 
   private buildHighlight(): void {
-    // Splice <mark>/</mark> around the match ranges already computed on the
-    // RAW testString (this.matches holds m.index + m[0].length). Escaping each
-    // slice independently avoids re-running the user pattern against the
-    // HTML-escaped string, which would mismatch on &lt;/&gt;/&amp; entities.
     let html = '';
     let lastEnd = 0;
     for (const m of this.matches) {

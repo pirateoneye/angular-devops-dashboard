@@ -1,12 +1,77 @@
-﻿.cc-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:12px; }
-.cc-stat { background:#f8f9fa; border-radius:8px; padding:8px; text-align:center; }
-.cc-num { display:block; font-size:20px; font-weight:700; color:#144e83; }
-.cc-lbl { display:block; font-size:11px; color:#495057; margin-top:2px; }
-.cc-freq { margin-top:14px; }
-.cc-bars { display:flex; flex-direction:column; gap:4px; margin-top:6px; max-height:240px; overflow:auto; }
-.cc-bar { display:flex; align-items:center; gap:8px; font-size:12px; }
-.cc-bar-char { width:24px; text-align:center; font-family:monospace; background:#005caa; color:#fff; border-radius:4px; padding:1px 0; }
-.cc-bar-track { flex:1; background:#ced4da; border-radius:4px; height:10px; overflow:hidden; }
-.cc-bar-fill { background:#005caa; height:100%; }
-.cc-bar-count { width:110px; color:#495057; font-size:11px; }
-@media (max-width:768px){ .cc-grid { grid-template-columns:repeat(2,1fr); } }
+.cc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+.cc-stat {
+  background: var(--msv-surface-2);
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+}
+.cc-num {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--msv-primary-hover);
+}
+.cc-lbl {
+  display: block;
+  font-size: 11px;
+  color: var(--msv-text-muted);
+  margin-top: 2px;
+}
+.cc-selected {
+  font-size: 12px;
+  color: var(--msv-primary-hover);
+  font-weight: 600;
+  margin-top: 4px;
+}
+.cc-freq {
+  margin-top: 14px;
+}
+.cc-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+  max-height: 240px;
+  overflow: auto;
+}
+.cc-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.cc-bar-char {
+  width: 24px;
+  text-align: center;
+  font-family: monospace;
+  background: var(--msv-primary);
+  color: var(--msv-surface);
+  border-radius: 4px;
+  padding: 1px 0;
+}
+.cc-bar-track {
+  flex: 1;
+  background: var(--msv-border);
+  border-radius: 4px;
+  height: 10px;
+  overflow: hidden;
+}
+.cc-bar-fill {
+  background: var(--msv-primary);
+  height: 100%;
+}
+.cc-bar-count {
+  width: 110px;
+  color: var(--msv-text-muted);
+  font-size: 11px;
+}
+@media (max-width: 768px) {
+  .cc-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

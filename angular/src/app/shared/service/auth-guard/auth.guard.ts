@@ -1,24 +1,16 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthGuard implements CanActivate {
-
-  constructor(private router: Router) { }
-
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const userLocalStorage = localStorage.getItem('authorized');
-    const isLoggedIn = userLocalStorage ? true : false;
-    if (!isLoggedIn) {
-      this.router.navigate(['/login']);
-      return false;
-    }
-    return true;
+/**
+ * Generic login gate — the modern functional-guard form. Redirects to
+ * `/login` when `localStorage['authorized']` is missing. (Currently unused
+ * in routing; kept here as a ready-made guard for any future protected page.)
+ */
+export const authGuard: CanActivateFn = () => {
+  if (!localStorage.getItem('authorized')) {
+    const router = inject(Router);
+    router.navigate(['/login']);
+    return false;
   }
-  
-}
+  return true;
+};

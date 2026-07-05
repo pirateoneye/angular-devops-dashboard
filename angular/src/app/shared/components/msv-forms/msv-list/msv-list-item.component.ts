@@ -1,38 +1,47 @@
-import { Component, Input, HostBinding, HostListener, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  Input,
+  HostBinding,
+  HostListener,
+  EventEmitter,
+  Output,
+} from '@angular/core';
 
 @Component({
   selector: 'msv-list-item',
   template: `<ng-content></ng-content>`,
-  styles: [`
-    :host {
-      display: block;
-      padding: 12px 16px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border-radius: var(--msv-border-radius, 5px);
-      font-family: var(--msv-font-family, 'Open Sans', sans-serif);
-      user-select: none;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: var(--msv-border-radius, 5px);
+        font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+        user-select: none;
+      }
 
-    :host(:hover:not(.disabled)) {
-      background-color: rgba(20, 78, 131, 0.08);
-    }
+      :host(:hover:not(.disabled)) {
+        background-color: rgba(20, 78, 131, 0.08);
+      }
 
-    :host(.selected) {
-      background-color: rgba(20, 78, 131, 0.15);
-      font-weight: 600;
-    }
+      :host(.selected) {
+        background-color: rgba(20, 78, 131, 0.15);
+        font-weight: 600;
+      }
 
-    :host(.disabled) {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  `]
+      :host(.disabled) {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    `,
+  ],
 })
 export class MsvListItemComponent {
   @Input() value: any;
   @Input() disabled: boolean = false;
-  
+
   @Output() itemClick = new EventEmitter<MsvListItemComponent>();
 
   @HostBinding('class.selected')
@@ -44,7 +53,7 @@ export class MsvListItemComponent {
   }
 
   @HostListener('click', ['$event'])
-  onClick(event: Event): void {
+  onClick(_event: Event): void {
     if (!this.disabled) {
       this.itemClick.emit(this);
     }

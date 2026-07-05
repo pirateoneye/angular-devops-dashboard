@@ -15,7 +15,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ToolCatalogService, ToolEntry, NavEntry } from '../../../core/service/tool-catalog.service';
+import {
+  ToolCatalogService,
+  ToolEntry,
+  NavEntry,
+} from '../../../core/service/tool-catalog.service';
 
 interface ResultRow {
   kind: 'tool' | 'nav';
@@ -99,7 +103,8 @@ export class CommandPaletteComponent implements OnInit {
       for (const tool of this.catalog.tools) {
         if (!this.data.favorites.includes(tool.slug)) rows.push(toolRow(tool));
       }
-      for (const n of [...this.catalog.devTools, ...this.catalog.piket]) rows.push(this.navRow(n));
+      for (const n of [...this.catalog.devTools, ...this.catalog.piket])
+        rows.push(this.navRow(n));
     } else {
       rows.push(...this.catalog.searchTools(q).map((t) => toolRow(t)));
       rows.push(...this.catalog.searchNav(q).map((n) => this.navRow(n)));
@@ -109,7 +114,13 @@ export class CommandPaletteComponent implements OnInit {
   }
 
   private navRow(n: NavEntry): ResultRow {
-    return { kind: 'nav', label: n.label, icon: n.icon, group: n.group, route: n.route };
+    return {
+      kind: 'nav',
+      label: n.label,
+      icon: n.icon,
+      group: n.group,
+      route: n.route,
+    };
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -117,10 +128,14 @@ export class CommandPaletteComponent implements OnInit {
     const rows = this.results();
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      this.activeIndex.set(Math.min(this.activeIndex() + 1, rows.length - 1));
+      const next = Math.min(this.activeIndex() + 1, rows.length - 1);
+      this.activeIndex.set(next);
+      this.scrollToActive(next);
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
-      this.activeIndex.set(Math.max(this.activeIndex() - 1, 0));
+      const prev = Math.max(this.activeIndex() - 1, 0);
+      this.activeIndex.set(prev);
+      this.scrollToActive(prev);
     } else if (event.key === 'Enter') {
       event.preventDefault();
       const row = rows[this.activeIndex()];
@@ -139,7 +154,8 @@ export class CommandPaletteComponent implements OnInit {
     this.ref.close();
   }
 
-  trackRow(_i: number, row: ResultRow): string {
-    return `${row.kind}:${row.route}:${row.queryParams?.t ?? ''}`;
+  private scrollToActive(index: number): void {
+    const el = document.getElementById('pal-opt-' + index);
+    el?.scrollIntoView({ block: 'nearest' });
   }
 }

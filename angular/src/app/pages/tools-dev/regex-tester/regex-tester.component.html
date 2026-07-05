@@ -1,54 +1,81 @@
-<div class="container pt-3 pb-3">
-  <mat-card class="tool-card">
-    <h2 class="tool-title">Regex Tester</h2>
-    <h4 class="tool-sub">Uji ekspresi reguler dan lihat capture groups.</h4>
-    <div class="tool-divider"></div>
+<h2 class="tool-title">Regex Tester</h2>
+<h4 class="tool-sub">Uji ekspresi reguler dan lihat capture groups.</h4>
+<div class="tool-divider"></div>
 
-    <div class="rt-row">
-      <div class="rt-pattern">
-        <label class="tool-label">Pattern</label>
-        <input class="tool-input-mono" [(ngModel)]="pattern" (ngModelChange)="run()" placeholder="\b(\w+)@(\w+)\.(\w+)\b" />
-      </div>
-      <div class="rt-flags">
-        <label class="tool-label">Flags</label>
-        <input class="tool-input-mono" [(ngModel)]="flags" (ngModelChange)="run()" placeholder="g" />
-      </div>
-    </div>
-
-    <label class="tool-label">Test string</label>
-    <textarea class="tool-area" rows="6" [(ngModel)]="testString" (ngModelChange)="run()" placeholder="Teks untuk diuji..."></textarea>
-
-    <div class="tool-actions">
-      <button class="btn-primary" (click)="run()">Run</button>
-      @if (matches.length) {
-        <span class="tool-stats">{{ matches.length }} match</span>
-      }
-    </div>
-
-    @if (error) {
-      <div class="tool-error" role="alert">{{ error }}</div>
-    }
-
-    @if (!error && testString) {
-      <div class="rt-highlight" [innerHTML]="highlighted"></div>
-    }
-
-    @if (matches.length && !error) {
-      <table class="rt-table">
-        <thead>
-          <tr><th>#</th><th>Index</th><th>Match</th><th>Groups</th></tr>
-        </thead>
-        <tbody>
-          @for (m of matches; track m.index; let i = $index) {
-            <tr>
-              <td>{{ i + 1 }}</td>
-              <td>{{ m.index }}</td>
-              <td class="rt-mono">{{ m.match }}</td>
-              <td class="rt-mono">{{ m.groups.join(' | ') }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    }
-  </mat-card>
+<div class="rt-row">
+  <div class="rt-pattern">
+    <label class="tool-label">Pattern</label>
+    <input
+      class="tool-input-mono"
+      [(ngModel)]="pattern"
+      (input)="onInputChange()"
+      placeholder="\b(\w+)@(\w+)\.(\w+)\b"
+    />
+  </div>
+  <div class="rt-flags">
+    <label class="tool-label">Flags</label>
+    <input
+      class="tool-input-mono"
+      [(ngModel)]="flags"
+      (input)="onInputChange()"
+      placeholder="g"
+    />
+  </div>
 </div>
+
+<label class="tool-label">Samples</label>
+<select class="rt-select" (change)="selectSample($any($event.target).value)">
+  <option value="">-- Pilih sample pattern --</option>
+  @for (s of samplePatterns; track s.label) {
+    <option [value]="s.pattern">{{ s.label }}</option>
+  }
+</select>
+
+<label class="tool-label">Test string</label>
+<textarea
+  class="tool-area"
+  rows="6"
+  [(ngModel)]="testString"
+  (input)="onInputChange()"
+  placeholder="Teks untuk diuji..."
+></textarea>
+
+<div class="tool-actions">
+  <button class="btn-primary" (click)="run()">Run</button>
+  @if (matchCount) {
+    <span class="tool-stats"
+      >{{ matchCount }} match{{ matchCount > 1 ? "es" : "" }} found</span
+    >
+  }
+</div>
+
+@if (error) {
+  <div class="tool-error" role="alert">{{ error }}</div>
+}
+
+@if (!error && testString) {
+  <div class="rt-highlight" [innerHTML]="highlighted"></div>
+}
+
+@if (matches.length && !error) {
+  <table class="rt-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Index</th>
+        <th>Match</th>
+        <th>Groups</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (m of matches; track m.index; let i = $index) {
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ m.index }}</td>
+          <td class="rt-mono">{{ m.match }}</td>
+          <td class="rt-mono">{{ m.groups.join(" | ") }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

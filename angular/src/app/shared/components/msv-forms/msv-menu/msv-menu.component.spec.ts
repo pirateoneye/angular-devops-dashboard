@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MsvMenuComponent } from './msv-menu.component';
 import { MsvMenuItemComponent } from './msv-menu-item.component';
-import { Component, DebugElement } from '@angular/core';
+import { Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
 @Component({
@@ -11,7 +11,7 @@ import { By } from '@angular/platform-browser';
       <msv-menu-item>Item 2</msv-menu-item>
       <msv-menu-item [disabled]="true">Item 3 (Disabled)</msv-menu-item>
     </msv-menu>
-  `
+  `,
 })
 class TestMenuHostComponent {}
 
@@ -21,7 +21,7 @@ describe('MsvMenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvMenuComponent, MsvMenuItemComponent]
+      declarations: [MsvMenuComponent, MsvMenuItemComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvMenuComponent);
@@ -50,13 +50,19 @@ describe('MsvMenuComponent with items', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvMenuComponent, MsvMenuItemComponent, TestMenuHostComponent]
+      declarations: [
+        MsvMenuComponent,
+        MsvMenuItemComponent,
+        TestMenuHostComponent,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestMenuHostComponent);
     fixture.detectChanges();
 
-    const menuDebugElement = fixture.debugElement.query(By.directive(MsvMenuComponent));
+    const menuDebugElement = fixture.debugElement.query(
+      By.directive(MsvMenuComponent),
+    );
     menuComponent = menuDebugElement.componentInstance;
   });
 
@@ -77,9 +83,9 @@ describe('MsvMenuComponent with items', () => {
   it('should skip disabled items when navigating with ArrowDown', () => {
     const items = menuComponent.menuItems.toArray();
     items[0].focus();
-    
+
     spyOn(items[1], 'focus');
-    
+
     // Simulate ArrowDown from first item
     const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
     menuComponent.onKeyDown(event);
@@ -90,9 +96,9 @@ describe('MsvMenuComponent with items', () => {
   it('should focus previous item on ArrowUp', () => {
     const items = menuComponent.menuItems.toArray();
     items[1].focus();
-    
+
     spyOn(items[0], 'focus');
-    
+
     const event = new KeyboardEvent('keydown', { key: 'ArrowUp' });
     menuComponent.onKeyDown(event);
 
@@ -111,7 +117,7 @@ describe('MsvMenuComponent with items', () => {
 
   it('should focus last enabled item on End key', () => {
     const items = menuComponent.menuItems.toArray();
-    const enabledItems = items.filter(item => !item.disabled);
+    const enabledItems = items.filter((item) => !item.disabled);
     spyOn(enabledItems[enabledItems.length - 1], 'focus');
 
     const event = new KeyboardEvent('keydown', { key: 'End' });
@@ -122,13 +128,13 @@ describe('MsvMenuComponent with items', () => {
 
   it('should wrap to first item when navigating down from last item', () => {
     const items = menuComponent.menuItems.toArray();
-    const enabledItems = items.filter(item => !item.disabled);
-    
+    const enabledItems = items.filter((item) => !item.disabled);
+
     // Focus last enabled item
     enabledItems[enabledItems.length - 1].focus();
-    
+
     spyOn(enabledItems[0], 'focus');
-    
+
     const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
     menuComponent.onKeyDown(event);
 
@@ -137,7 +143,7 @@ describe('MsvMenuComponent with items', () => {
 
   it('should focus first enabled item when focusFirstEnabledItem is called', () => {
     const items = menuComponent.menuItems.toArray();
-    const enabledItems = items.filter(item => !item.disabled);
+    const enabledItems = items.filter((item) => !item.disabled);
     spyOn(enabledItems[0], 'focus');
 
     menuComponent.focusFirstEnabledItem();

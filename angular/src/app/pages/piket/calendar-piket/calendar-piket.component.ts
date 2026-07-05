@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, computed, signal } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  computed,
+  signal,
+} from '@angular/core';
 import { StatusAPI } from 'src/app/shared/model/enum/status-api.enum';
 
 interface ScheduleEntry {
@@ -21,15 +26,24 @@ import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../../module/material.module';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, MsvFormsModule, MatSlideToggleModule, InfiniteScrollModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MaterialModule,
+    MsvFormsModule,
+    MatSlideToggleModule,
+    InfiniteScrollDirective,
+  ],
   selector: 'app-calendar-piket',
   templateUrl: './calendar-piket.component.html',
   styleUrls: ['./calendar-piket.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarPiketComponent {
   statusMenu = signal<StatusAPI>(StatusAPI.IDLE);
@@ -42,16 +56,34 @@ export class CalendarPiketComponent {
   readonly fileName = signal('');
 
   monthNames = [
-    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
   ];
   dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
   readonly calendarDays = computed<CalendarDay[]>(() =>
-    this.buildCalendar(this.currentMonth(), this.currentYear(), this.scheduleMap())
+    this.buildCalendar(
+      this.currentMonth(),
+      this.currentYear(),
+      this.scheduleMap(),
+    ),
   );
 
-  private buildCalendar(month: number, year: number, scheduleMap: Map<string, ScheduleEntry>): CalendarDay[] {
+  private buildCalendar(
+    month: number,
+    year: number,
+    scheduleMap: Map<string, ScheduleEntry>,
+  ): CalendarDay[] {
     const days: CalendarDay[] = [];
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
@@ -64,7 +96,7 @@ export class CalendarPiketComponent {
       days.push({
         day: prevMonthLastDay - i,
         isCurrentMonth: false,
-        isToday: false
+        isToday: false,
       });
     }
 
@@ -72,7 +104,8 @@ export class CalendarPiketComponent {
     const today = new Date();
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = this.formatDateStr(day, month, year);
-      const isToday = day === today.getDate() &&
+      const isToday =
+        day === today.getDate() &&
         month === today.getMonth() &&
         year === today.getFullYear();
 
@@ -80,7 +113,7 @@ export class CalendarPiketComponent {
         day,
         isCurrentMonth: true,
         schedule: scheduleMap.get(dateStr),
-        isToday
+        isToday,
       });
     }
 
@@ -90,7 +123,7 @@ export class CalendarPiketComponent {
       days.push({
         day,
         isCurrentMonth: false,
-        isToday: false
+        isToday: false,
       });
     }
     return days;
@@ -106,7 +139,7 @@ export class CalendarPiketComponent {
     const month = this.currentMonth() - 1;
     if (month < 0) {
       this.currentMonth.set(11);
-      this.currentYear.update(y => y - 1);
+      this.currentYear.update((y) => y - 1);
     } else {
       this.currentMonth.set(month);
     }
@@ -116,7 +149,7 @@ export class CalendarPiketComponent {
     const month = this.currentMonth() + 1;
     if (month > 11) {
       this.currentMonth.set(0);
-      this.currentYear.update(y => y + 1);
+      this.currentYear.update((y) => y + 1);
     } else {
       this.currentMonth.set(month);
     }
@@ -157,24 +190,29 @@ export class CalendarPiketComponent {
 
   parseSchedule(content: string): void {
     const map = new Map<string, ScheduleEntry>();
-    const lines = content.split(/\r?\n/).filter(line => line.trim() !== '');
+    const lines = content.split(/\r?\n/).filter((line) => line.trim() !== '');
 
     // Skip header if first line contains non-date words
     let startIndex = 0;
     const firstLine = lines[0]?.trim().toUpperCase();
-    if (firstLine && (firstLine.includes('TANGGAL') || firstLine.includes('DATE') || firstLine.includes('PIC'))) {
+    if (
+      firstLine &&
+      (firstLine.includes('TANGGAL') ||
+        firstLine.includes('DATE') ||
+        firstLine.includes('PIC'))
+    ) {
       startIndex = 1;
     }
 
     for (let i = startIndex; i < lines.length; i++) {
-      const parts = lines[i].split(',').map(p => p.trim());
+      const parts = lines[i].split(',').map((p) => p.trim());
       if (parts.length >= 4) {
         const dateStr = parts[0];
         const entry: ScheduleEntry = {
           dateStr,
           pic1: parts[1] || '-',
           pic2: parts[2] || '-',
-          pic3: parts[3] || '-'
+          pic3: parts[3] || '-',
         };
         map.set(dateStr, entry);
 

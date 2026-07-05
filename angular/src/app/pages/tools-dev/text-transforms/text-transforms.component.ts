@@ -16,48 +16,159 @@ export class TextTransformsComponent {
   input = '';
   output = '';
   stats = '';
+  outputCopied = false;
+  private statsTimer: ReturnType<typeof setTimeout> | null = null;
+  private copyTimer: ReturnType<typeof setTimeout> | null = null;
+
+  readonly maxChars = 102400;
+
+  get inputTooBig(): boolean {
+    return this.input.length > this.maxChars;
+  }
 
   constructor(private snackBar: MatSnackBar) {}
 
   private setOut(fn: (s: string) => string): void {
     this.output = fn(this.input);
-    this.computeStats();
+    this.debouncedStats();
   }
 
   computeStats(): void {
-    const chars = this.input.length;
-    const words = this.input.trim() ? this.input.trim().split(/\s+/).length : 0;
-    const lines = this.input ? this.input.split('\n').length : 0;
-    this.stats = `${chars} char · ${words} kata · ${lines} baris`;
+    this.debouncedStats();
   }
 
-  upper() { this.setOut((s) => s.toUpperCase()); }
-  lower() { this.setOut((s) => s.toLowerCase()); }
-  title() { this.setOut((s) => s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())); }
-  camel() { this.setOut((s) => s.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (_, c) => c.toUpperCase())); }
-  snake() { this.setOut((s) => s.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '').toLowerCase()); }
-  kebab() { this.setOut((s) => s.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '').toLowerCase()); }
-  sortAsc() { this.setOut((s) => s.split('\n').sort((a, b) => a.localeCompare(b)).join('\n')); }
-  sortDesc() { this.setOut((s) => s.split('\n').sort((a, b) => b.localeCompare(a)).join('\n')); }
-  dedupe() { this.setOut((s) => Array.from(new Set(s.split('\n'))).join('\n')); }
-  trimLines() { this.setOut((s) => s.split('\n').map((l) => l.trim()).join('\n')); }
-  reverseLines() { this.setOut((s) => s.split('\n').reverse().join('\n')); }
-  reverseText() { this.setOut((s) => [...s].reverse().join('')); }
-  escapeHtml() { this.setOut((s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')); }
-  unescapeHtml() { this.setOut((s) => s.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')); }
-  escapeJson() { this.setOut((s) => JSON.stringify(s)); }
-  removeBlank() { this.setOut((s) => s.split('\n').filter((l) => l.trim() !== '').join('\n')); }
+  private debouncedStats(): void {
+    if (this.statsTimer) clearTimeout(this.statsTimer);
+    this.statsTimer = setTimeout(() => {
+      const chars = this.input.length;
+      const words = this.input.trim()
+        ? this.input.trim().split(/\s+/).length
+        : 0;
+      const lines = this.input ? this.input.split('\n').length : 0;
+      this.stats = `${chars} char · ${words} kata · ${lines} baris`;
+    }, 300);
+  }
 
-  copy(): void {
-    if (!this.output) return;
-    navigator.clipboard.writeText(this.output).then(() =>
-      this.snackBar.open('Disalin ke clipboard', 'Close', { duration: 1500 }),
+  upper() {
+    this.setOut((s) => s.toUpperCase());
+  }
+  lower() {
+    this.setOut((s) => s.toLowerCase());
+  }
+  title() {
+    this.setOut((s) =>
+      s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()),
     );
+  }
+  camel() {
+    this.setOut((s) =>
+      s.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (_, c) => c.toUpperCase()),
+    );
+  }
+  snake() {
+    this.setOut((s) =>
+      s
+        .trim()
+        .replace(/\s+/g, '_')
+        .replace(/[^a-zA-Z0-9_]/g, '')
+        .toLowerCase(),
+    );
+  }
+  kebab() {
+    this.setOut((s) =>
+      s
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-zA-Z0-9-]/g, '')
+        .toLowerCase(),
+    );
+  }
+  sortAsc() {
+    this.setOut((s) =>
+      s
+        .split('\n')
+        .sort((a, b) => a.localeCompare(b))
+        .join('\n'),
+    );
+  }
+  sortDesc() {
+    this.setOut((s) =>
+      s
+        .split('\n')
+        .sort((a, b) => b.localeCompare(a))
+        .join('\n'),
+    );
+  }
+  dedupe() {
+    this.setOut((s) => Array.from(new Set(s.split('\n'))).join('\n'));
+  }
+  trimLines() {
+    this.setOut((s) =>
+      s
+        .split('\n')
+        .map((l) => l.trim())
+        .join('\n'),
+    );
+  }
+  reverseLines() {
+    this.setOut((s) => s.split('\n').reverse().join('\n'));
+  }
+  reverseText() {
+    this.setOut((s) => [...s].reverse().join(''));
+  }
+  escapeHtml() {
+    this.setOut((s) =>
+      s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;'),
+    );
+  }
+  unescapeHtml() {
+    this.setOut((s) =>
+      s
+        .replace(/&quot;/g, '"')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&'),
+    );
+  }
+  escapeJson() {
+    this.setOut((s) => JSON.stringify(s));
+  }
+  removeBlank() {
+    this.setOut((s) =>
+      s
+        .split('\n')
+        .filter((l) => l.trim() !== '')
+        .join('\n'),
+    );
+  }
+
+  copyOutput(): void {
+    if (!this.output) return;
+    if (this.copyTimer) clearTimeout(this.copyTimer);
+    navigator.clipboard
+      .writeText(this.output)
+      .then(() => {
+        this.outputCopied = true;
+        this.copyTimer = setTimeout(() => {
+          this.outputCopied = false;
+        }, 1500);
+        this.snackBar.open('Disalin ke clipboard', 'Close', { duration: 1500 });
+      })
+      .catch(() => {
+        this.snackBar.open('Gagal menyalin ke clipboard', 'Close', {
+          duration: 2000,
+        });
+      });
   }
 
   clear(): void {
     this.input = '';
     this.output = '';
     this.stats = '';
+    this.outputCopied = false;
   }
 }

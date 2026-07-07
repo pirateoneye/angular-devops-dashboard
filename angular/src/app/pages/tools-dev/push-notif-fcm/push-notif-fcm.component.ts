@@ -78,7 +78,7 @@ export class PushNotifFcmComponent {
           this.response.status = 'SUCCESS';
         },
         error: (e) => {
-          console.error('Error', e);
+          this.buildErrorReponse('Error Push Notification FCM', e);
         },
       });
   }

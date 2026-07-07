@@ -7,7 +7,7 @@
       sisi klien.
     </p>
   </div>
-  @if (hasInput) {
+  @if (hasInput()) {
     <button
       type="button"
       class="ssl-clear icon-btn"
@@ -144,10 +144,8 @@
         @if (keyAlg) {
           <span class="ssl-pill ssl-pill--alg">{{ keyAlg }}</span>
         }
-        @if (certState) {
-          <span class="ssl-pill" [ngClass]="certState.cls">{{
-            certState.label
-          }}</span>
+        @if (certState(); as state) {
+          <span class="ssl-pill" [ngClass]="state.cls">{{ state.label }}</span>
         }
       </span>
     </div>

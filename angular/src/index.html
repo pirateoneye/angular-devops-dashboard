@@ -28,7 +28,7 @@
     <script>
       /* Prevent FOUC for dark-mode users: set theme before Angular bootstraps. */
       try {
-        var m = localStorage.getItem("theme-mode");
+        var m = localStorage.getItem("msv-theme");
         if (m === "dark") {
           document.documentElement.setAttribute("data-theme", "dark");
         }

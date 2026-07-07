@@ -151,11 +151,6 @@ const routes: Routes = [
       import('./pages/login/login.component').then((m) => m.LoginComponent),
   },
   {
-    path: 'demo',
-    loadComponent: () =>
-      import('./pages/demo/demo.component').then((m) => m.DemoComponent),
-  },
-  {
     path: 'dashboard',
     loadComponent: () =>
       import('./pages/home/dashboard.component').then(

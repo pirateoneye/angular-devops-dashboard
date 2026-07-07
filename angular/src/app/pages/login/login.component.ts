@@ -2,25 +2,11 @@
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../module/material.module';
-import { MsvFormsModule } from '../../shared/components/msv-forms/msv-forms.module';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
-    MaterialModule,
-    MsvFormsModule,
-    MatSlideToggleModule,
-    InfiniteScrollDirective,
-  ],
+  imports: [CommonModule, FormsModule, MatCardModule],
   selector: 'msv-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],

@@ -67,7 +67,7 @@ export class PublishKafkaComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((error) => {
-          this.buildErrorReponse('Error Push Notification FCM', error);
+          this.buildErrorReponse('Error Publish Kafka', error);
           throw new Error(error);
         }),
       )

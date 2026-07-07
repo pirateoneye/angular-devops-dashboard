@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -880,7 +880,7 @@ interface OutButton {
   standalone: true,
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule],
   templateUrl: './ssl-converter.component.html',
-  styleUrls: ['./ssl-converter.component.css'],
+  styleUrl: './ssl-converter.component.css',
 })
 export class SslConverterComponent {
   readonly OutputFormat = OutputFormat;
@@ -931,11 +931,10 @@ export class SslConverterComponent {
 
   constructor(private snackBar: MatSnackBar) {}
 
-  get hasInput(): boolean {
-    return (
-      !!this.detection || this.rawText.trim().length > 0 || this.byteCount > 0
-    );
-  }
+  readonly hasInput = computed(
+    () =>
+      !!this.detection || this.rawText.trim().length > 0 || this.byteCount > 0,
+  );
 
   /** Preview text for the result box, capped so a huge output can't jank the DOM.
    *  The download still ships the full text. */
@@ -950,7 +949,7 @@ export class SslConverterComponent {
 
   /** Validity status for a detected certificate (valid / expiring soon / expired),
    *  derived from metadata.notAfter (ISO). Empty when not applicable. */
-  get certState(): { label: string; cls: string } | null {
+  readonly certState = computed(() => {
     const na = this.metadata?.notAfter;
     if (!na || this.detection?.type !== SslType.CERT) return null;
     const t = Date.parse(na);
@@ -959,7 +958,7 @@ export class SslConverterComponent {
     if (days < 0) return { label: 'Kedaluwarsa', cls: 'ssl-state--expired' };
     if (days < 30) return { label: 'Berakhir segera', cls: 'ssl-state--soon' };
     return { label: 'Masih berlaku', cls: 'ssl-state--valid' };
-  }
+  });
 
   iconForType(t: SslType | undefined): string {
     switch (t) {
@@ -990,6 +989,11 @@ export class SslConverterComponent {
     this.error = '';
     if (!this.rawText.trim()) {
       this.resetResult();
+      return;
+    }
+    // ponytail: guard pasted text same as readFile guards binary drops (maxBytes=1MB)
+    if (this.rawText.length > this.maxBytes) {
+      this.error = `Input terlalu besar (maks ${this.maxBytes} karakter).`;
       return;
     }
     this.runDetect(this.rawText);

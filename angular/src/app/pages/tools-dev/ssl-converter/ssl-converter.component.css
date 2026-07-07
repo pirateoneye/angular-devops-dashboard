@@ -623,6 +623,160 @@
   }
 }
 
+/* ===== Dark mode ===== */
+[data-theme="dark"] {
+  /* --- Dropzone --- */
+  & .ssl-dropzone {
+    border-color: var(--msv-border);
+    background: var(--msv-bg);
+  }
+  & .ssl-dropzone::after {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04),
+      transparent 40%
+    );
+  }
+  & .ssl-dropzone:hover {
+    background: var(--msv-surface-2);
+  }
+  & .ssl-dropzone--active {
+    background: var(--msv-accent-bg);
+  }
+  & .ssl-dropzone--detected {
+    border-color: var(--msv-border);
+    background: var(--msv-surface);
+  }
+  & .ssl-dropzone--detected .ssl-dropzone__icon {
+    color: var(--msv-success);
+  }
+  & .ssl-dropzone__sub {
+    color: var(--msv-text-muted);
+  }
+
+  /* --- Chips --- */
+  & .ssl-chip {
+    border-color: var(--msv-border);
+  }
+  & .ssl-dropzone:hover .ssl-chip {
+    border-color: var(--msv-text-muted);
+  }
+
+  /* --- Badge --- */
+  & .ssl-badge {
+    background: var(--msv-accent-bg);
+    border-color: var(--msv-border);
+  }
+  & .ssl-badge__mark {
+    border-color: var(--msv-border);
+  }
+
+  /* --- Meta --- */
+  & .ssl-meta {
+    background: var(--msv-bg);
+    border-color: var(--msv-border);
+  }
+  & .ssl-meta__row {
+    border-bottom-color: var(--msv-border);
+  }
+  & .ssl-meta__v,
+  & .ssl-meta__list,
+  & .ssl-meta__subjects,
+  & .ssl-meta__pair-val {
+    color: var(--msv-text);
+  }
+
+  /* --- Result --- */
+  & .ssl-result {
+    border-color: var(--msv-border);
+  }
+  & .ssl-result__head {
+    background: var(--msv-surface-2);
+    border-bottom-color: var(--msv-border);
+  }
+
+  /* --- Preview --- */
+  & .ssl-preview {
+    color: var(--msv-text);
+    background: var(--msv-bg);
+    border-top-color: var(--msv-border);
+  }
+  & .ssl-preview::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--msv-bg);
+  }
+  & .ssl-preview::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  /* --- Output buttons --- */
+  & .ssl-out {
+    border-color: var(--msv-border);
+  }
+  & .ssl-out:hover {
+    background: var(--msv-accent-bg);
+  }
+  & .ssl-out--active {
+    background: var(--msv-accent-bg);
+  }
+  & .ssl-out__hint {
+    color: var(--msv-text-muted);
+  }
+
+  /* --- Pill defaults --- */
+  & .ssl-pill {
+    border-color: var(--msv-border);
+  }
+
+  /* --- Pill status variants --- */
+  & .ssl-pill--enc {
+    background: var(--msv-warning-bg);
+    border-color: #6b5030;
+  }
+  & .ssl-pill--alg {
+    background: var(--msv-success-bg);
+    border-color: #2a6238;
+  }
+  & .ssl-pill.ssl-state--valid {
+    background: var(--msv-success-bg);
+    border-color: #2a6238;
+  }
+  & .ssl-pill.ssl-state--soon {
+    background: var(--msv-warning-bg);
+    border-color: #6b5030;
+  }
+  & .ssl-pill.ssl-state--expired {
+    background: var(--msv-error-bg);
+    border-color: #6b2828;
+  }
+
+  /* --- Hex viewer --- */
+  & .ssl-hex {
+    background: var(--msv-bg);
+    border-color: var(--msv-border);
+  }
+  & .ssl-hex::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--msv-bg);
+  }
+
+  /* --- Binary size --- */
+  & .ssl-binary__size {
+    color: var(--msv-text-muted);
+  }
+
+  /* --- Preview truncation --- */
+  & .ssl-preview__trunc {
+    background: var(--msv-warning-bg);
+    border-top-color: var(--msv-border);
+  }
+
+  /* --- Error dismiss hover --- */
+  & .ssl-error__dismiss:hover {
+    color: var(--msv-error);
+  }
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .ssl-dropzone__halo {

@@ -3,8 +3,12 @@ import { CanActivateFn, Router } from '@angular/router';
 
 /**
  * Generic login gate — the modern functional-guard form. Redirects to
- * `/login` when `localStorage['authorized']` is missing. (Currently unused
- * in routing; kept here as a ready-made guard for any future protected page.)
+ * `/login` when `localStorage['authorized']` is missing.
+ *
+ * UNUSED in current routing (piket uses piketGuard, GSLB uses gslbGuard).
+ * Kept here for future protected pages that need a simple pass-through gate.
+ *
+ * @deprecated Use domain-specific guards like piketGuard/gslbGuard instead.
  */
 export const authGuard: CanActivateFn = () => {
   if (!localStorage.getItem('authorized')) {

@@ -93,20 +93,6 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'tools-dev/msv-test',
-    loadComponent: () =>
-      import('./pages/tools-dev/msv-test/msv-test.component').then(
-        (m) => m.MsvTestComponent,
-      ),
-  },
-  {
-    path: 'tools-dev/msv-docs',
-    loadComponent: () =>
-      import('./pages/tools-dev/msv-docs/msv-docs.component').then(
-        (m) => m.MsvDocsComponent,
-      ),
-  },
-  {
     path: 'piket/login',
     loadComponent: () =>
       import('./pages/piket/piket-authorization/piket-authorization.component').then(

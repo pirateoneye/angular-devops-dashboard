@@ -107,20 +107,6 @@ export class DashboardComponent {
       group: 'tools-dev',
     },
     {
-      label: 'MSV Test',
-      description: 'Sandbox komponen MSV',
-      icon: 'science',
-      route: '/tools-dev/msv-test',
-      group: 'tools-dev',
-    },
-    {
-      label: 'MSV Docs',
-      description: 'Dokumentasi komponen MSV',
-      icon: 'menu_book',
-      route: '/tools-dev/msv-docs',
-      group: 'tools-dev',
-    },
-    {
       label: 'Utilities',
       description:
         '15 tools: JSON, decoder, regex, hash, JWT, SSL, diff, transforms, sort, char counter, cron, image/base64, timestamp, chmod, random',

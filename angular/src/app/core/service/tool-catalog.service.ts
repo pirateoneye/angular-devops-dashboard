@@ -249,19 +249,6 @@ export class ToolCatalogService {
       group: 'Dev Tools',
       keywords: ['dns', 'gslb', 'suspend', 'monitor'],
     },
-    {
-      label: 'MSV Test',
-      icon: 'science',
-      route: '/tools-dev/msv-test',
-      group: 'Dev Tools',
-      keywords: ['sandbox'],
-    },
-    {
-      label: 'MSV Docs',
-      icon: 'menu_book',
-      route: '/tools-dev/msv-docs',
-      group: 'Dev Tools',
-    },
   ];
 
   readonly piket: NavEntry[] = [

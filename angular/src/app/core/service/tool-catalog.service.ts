@@ -243,6 +243,20 @@ export class ToolCatalogService {
       ],
     },
     {
+      label: 'Jenkins Build',
+      icon: 'build_circle',
+      route: '/tools-dev/jenkins-build',
+      group: 'Dev Tools',
+      keywords: ['jenkins', 'ci', 'deploy', 'release', 'pipeline', 'job', 'build', 'batch', 'preset', 'generate'],
+    },
+    {
+      label: 'SSL Check',
+      icon: 'verified_user',
+      route: '/tools-dev/ssl-check',
+      group: 'Dev Tools',
+      keywords: ['ssl', 'cert', 'expired', 'verify'],
+    },
+    {
       label: 'GSLB',
       icon: 'dns',
       route: '/tools-dev/gslb',
@@ -270,13 +284,6 @@ export class ToolCatalogService {
       icon: 'merge_type',
       route: '/piket/fix-after-merge-cis',
       group: 'Piket',
-    },
-    {
-      label: 'Calendar Piket',
-      icon: 'calendar_today',
-      route: '/piket/calendar',
-      group: 'Piket',
-      keywords: ['schedule'],
     },
   ];
 

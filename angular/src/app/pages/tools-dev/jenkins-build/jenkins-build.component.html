@@ -1,0 +1,441 @@
+<!-- jenkins-build.component.html -- Three-zone layout: top bar | workspace | build history -->
+<div class="container pt-3 pb-3">
+  <!-- ================================================================= -->
+  <!-- Zone 1: Top bar                                                     -->
+  <!-- ================================================================= -->
+  <div class="top-bar">
+    <h2 class="tool-title">Jenkins Build</h2>
+    <div class="top-actions">
+      <button mat-stroked-button (click)="openServerDialog()">
+        <mat-icon>settings</mat-icon> Servers
+      </button>
+    </div>
+  </div>
+
+  <!-- No server configured -->
+  @if (servers().length === 0) {
+    <mat-card class="tool-card">
+      <div class="empty-state">
+        <mat-icon class="empty-icon">dns</mat-icon>
+        <h3>Tidak ada server Jenkins</h3>
+        <p>Tambahkan server Jenkins untuk mulai build</p>
+        <button mat-raised-button color="primary" (click)="openServerDialog()">
+          <mat-icon>add</mat-icon> Tambahkan Server
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <!-- Server selector chips -->
+    <div class="server-bar">
+      @for (s of servers(); track s.id) {
+        <button
+          mat-stroked-button
+          class="server-chip"
+          [class.active]="s.id === activeServerId()"
+          (click)="selectServer(s)"
+        >
+          {{ s.label }}
+        </button>
+      }
+    </div>
+
+    @if (activeServer()) {
+      <!-- ================================================================= -->
+      <!-- Zone 2: Main workspace — two columns                               -->
+      <!-- ================================================================= -->
+      <div class="workspace">
+        <!-- ------------------------------------------------------------- -->
+        <!-- Left column: Project list                                       -->
+        <!-- ------------------------------------------------------------- -->
+        <div class="left-col">
+          <!-- Search -->
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Cari project</mat-label>
+            <input matInput
+              [ngModel]="projSearchQ()"
+              (ngModelChange)="setSearchQuery($event)"
+              placeholder="Filter {{ projList().length }} projects…" />
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <!-- Group filter chips -->
+          @if (projGroups().length > 0) {
+            <div class="group-chips">
+              <button
+                class="group-chip"
+                [class.active]="projActiveGroup() === null"
+                (click)="setActiveGroup(null)"
+              >
+                All
+                <span class="chip-count">{{ projList().length }}</span>
+              </button>
+              @for (g of projGroups(); track g) {
+                <button
+                  class="group-chip"
+                  [class.active]="projActiveGroup() === g"
+                  (click)="setActiveGroup(g)"
+                >
+                  {{ g }}
+                  <span class="chip-count">{{ getGroupCount(g) }}</span>
+                </button>
+              }
+              @if (projSelectedCount() > 0) {
+                <button class="group-chip add-tag" matTooltip="Add tag to selected" (click)="addGroupToSelected('')">
+                  <mat-icon>add</mat-icon>
+                </button>
+              }
+            </div>
+          }
+
+          <!-- Loading skeleton -->
+          @if (projLoading()) {
+            <div class="skeleton-list">
+              @for (i of [0,1,2,3,4,5]; track i) {
+                <div class="skeleton-row">
+                  <div class="skeleton-box w-24"></div>
+                  <div class="skeleton-box w-full"></div>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Empty: no jobs -->
+          @if (!projLoading() && projList().length === 0 && !projError()) {
+            <div class="empty-state" (click)="loadJobs()" role="button" tabindex="0"
+              (keydown.enter)="loadJobs()">
+              <mat-icon>sync</mat-icon>
+              <p>Tidak ada job ditemukan</p>
+              <button mat-stroked-button>Reload</button>
+            </div>
+          }
+
+          <!-- Error state -->
+          @if (projError()) {
+            <div class="empty-state error-state">
+              <mat-icon>error</mat-icon>
+              <p>{{ projError() }}</p>
+              <button mat-stroked-button (click)="loadJobs()">Retry</button>
+            </div>
+          }
+
+          <!-- Project list -->
+          <div class="project-list">
+            @for (p of projFiltered(); track p.name) {
+              <div
+                class="project-item"
+                [class.selected]="projSelectedIds().has(p.name)"
+                [class.favorite]="favoriteSet().has(p.name)"
+              >
+                <mat-checkbox
+                  class="project-check"
+                  [checked]="projSelectedIds().has(p.name)"
+                  (change)="toggleProject(p.name)"
+                  (click)="$event.stopPropagation()"
+                ></mat-checkbox>
+
+                <button mat-icon-button class="fav-btn"
+                  (click)="toggleFavorite({ name: p.name, url: p.url, color: p.color }); $event.stopPropagation()"
+                  [matTooltip]="favoriteSet().has(p.name) ? 'Remove favorite' : 'Add favorite'">
+                  <mat-icon>{{ favoriteSet().has(p.name) ? 'star' : 'star_border' }}</mat-icon>
+                </button>
+
+                <mat-icon class="job-status" [ngClass]="jobColorClass(p.color)">
+                  {{ jobColorIcon(p.color) }}
+                </mat-icon>
+
+                <span class="project-name" (click)="selectJob({ name: p.name, url: p.url, color: p.color })">
+                  {{ p.name }}
+                </span>
+
+                <span class="group-pills">
+                  @for (g of p.groups; track g) {
+                    <span class="group-pill" (click)="setActiveGroup(g); $event.stopPropagation()">{{ g }}</span>
+                  }
+                </span>
+              </div>
+            }
+          </div>
+
+          <!-- Footer -->
+          <div class="list-footer">
+            <span>{{ projSelectedCount() }} selected / {{ projList().length }} total</span>
+            <div class="footer-actions">
+              <button mat-button (click)="selectAllProjects()">Select All</button>
+              <button mat-button (click)="deselectAllProjects()">Deselect All</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- Right column: Parameter form + action                           -->
+        <!-- ------------------------------------------------------------- -->
+        <div class="right-col">
+          @if (!selectedJob()) {
+            <div class="empty-state">
+              <mat-icon>touch_app</mat-icon>
+              <p>Pilih job dari daftar untuk mengisi parameter</p>
+            </div>
+          } @else {
+            <div class="job-header">
+              <mat-icon [ngClass]="jobColorClass(selectedJob()!.color)">
+                {{ jobColorIcon(selectedJob()!.color) }}
+              </mat-icon>
+              <span class="job-title">{{ selectedJob()!.name }}</span>
+            </div>
+
+            <!-- Preset selector -->
+            <div class="preset-bar">
+              <mat-form-field appearance="outline" class="preset-select">
+                <mat-label>Preset</mat-label>
+                <mat-select
+                  [value]="presetActiveId()"
+                  (selectionChange)="applyPreset($event.value)"
+                >
+                  <mat-option [value]="null">No preset</mat-option>
+                  @for (p of presetsForJob(); track p.id) {
+                    <mat-option [value]="p.id">{{ p.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              @if (presetActiveId()) {
+                <button mat-icon-button matTooltip="Clear preset" (click)="clearPreset()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
+
+              <button mat-stroked-button (click)="showPresetSave.set(!showPresetSave())">
+                <mat-icon>save</mat-icon> Save preset
+              </button>
+            </div>
+
+            <!-- Preset save inline -->
+            @if (showPresetSave()) {
+              <div class="preset-save-inline">
+                <mat-form-field appearance="outline" class="preset-name-input">
+                  <mat-label>Preset name</mat-label>
+                  <input matInput [(ngModel)]="presetName" placeholder="e.g. Release v3 to Prod" />
+                </mat-form-field>
+                <button mat-raised-button color="primary"
+                  [disabled]="!presetName().trim()"
+                  (click)="saveCurrentAsPreset()">
+                  Save
+                </button>
+                <button mat-button (click)="showPresetSave.set(false)">Cancel</button>
+              </div>
+            }
+
+            <!-- Smart default indicator -->
+            @if (smartDefaultProject()) {
+              <div class="smart-default-bar">
+                <mat-icon>history</mat-icon>
+                <span>Menggunakan parameter tersimpan untuk {{ smartDefaultProject() }}</span>
+                <button mat-button (click)="clearPreset(); smartDefaultProject.set(null)">Reset ke default</button>
+              </div>
+            }
+
+            <!-- Loading params -->
+            @if (status() === 'loading-params') {
+              <mat-progress-bar mode="indeterminate" class="loading-bar"></mat-progress-bar>
+            }
+
+            <!-- Dynamic parameter form -->
+            @if (status() !== 'loading-params') {
+              @if (paramDefs().length === 0) {
+                <p class="no-params">Job ini tidak memiliki parameter.</p>
+              } @else {
+                <div class="param-form">
+                  @for (def of paramDefs(); track def.name) {
+                    <div class="param-field">
+                      <label class="param-label">
+                        {{ def.name }}
+                        @if (def.description) {
+                          <span class="param-desc">— {{ def.description }}</span>
+                        }
+                      </label>
+
+                      @switch (def.type) {
+                        @case ('BooleanParameterDefinition') {
+                          <mat-checkbox
+                            [checked]="!!getParamValue(def.name)"
+                            (change)="setCheckParam(def.name, $event.checked)">
+                            {{ def.name }}
+                          </mat-checkbox>
+                        }
+                        @case ('ChoiceParameterDefinition') {
+                          @if (getParamChoices(def).length <= 3) {
+                            <mat-radio-group
+                              [value]="getParamValue(def.name)"
+                              (change)="setTextParam(def.name, $event.value)">
+                              @for (ch of getParamChoices(def); track ch) {
+                                <mat-radio-button [value]="ch">{{ ch }}</mat-radio-button>
+                              }
+                            </mat-radio-group>
+                          } @else {
+                            <mat-form-field appearance="outline" class="full-width">
+                              <mat-select
+                                [value]="getParamValue(def.name)"
+                                (selectionChange)="setTextParam(def.name, $event.value)">
+                                @for (ch of getParamChoices(def); track ch) {
+                                  <mat-option [value]="ch">{{ ch }}</mat-option>
+                                }
+                              </mat-select>
+                            </mat-form-field>
+                          }
+                        }
+                        @case ('TextParameterDefinition') {
+                          <mat-form-field appearance="outline" class="full-width">
+                            <textarea matInput
+                              [value]="getParamValue(def.name)"
+                              (input)="setTextParam(def.name, $any($event.target).value)"
+                              rows="3"
+                            ></textarea>
+                          </mat-form-field>
+                        }
+                        @case ('PasswordParameterDefinition') {
+                          <mat-form-field appearance="outline" class="full-width">
+                            <input matInput
+                              type="password"
+                              [value]="getParamValue(def.name)"
+                              (input)="setTextParam(def.name, $any($event.target).value)"
+                            />
+                          </mat-form-field>
+                        }
+                        @default {
+                          <mat-form-field appearance="outline" class="full-width">
+                            <input matInput
+                              [value]="getParamValue(def.name)"
+                              (input)="setTextParam(def.name, $any($event.target).value)"
+                            />
+                          </mat-form-field>
+                        }
+                      }
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- Build actions -->
+              <div class="build-section">
+                @if (projSelectedCount() > 1) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    class="build-btn batch-armed"
+                    [class.batch-arm-glow]="batchArmed()"
+                    [disabled]="!selectedJob() || isLoading()"
+                    (click)="build()"
+                  >
+                    <mat-icon>rocket_launch</mat-icon>
+                    Build {{ projSelectedCount() }} Projects
+                  </button>
+                }
+
+                @if (projSelectedCount() === 1) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    class="build-btn"
+                    [disabled]="!selectedJob() || isLoading()"
+                    (click)="build()"
+                  >
+                    @if (status() === 'building') {
+                      <mat-spinner diameter="20" class="build-spinner"></mat-spinner>
+                    }
+                    <mat-icon>rocket_launch</mat-icon>
+                    Build
+                  </button>
+                }
+
+                @if (projSelectedCount() === 0) {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    class="build-btn"
+                    [disabled]="!selectedJob() || isLoading()"
+                    (click)="build()"
+                  >
+                    @if (status() === 'building') {
+                      <mat-spinner diameter="20" class="build-spinner"></mat-spinner>
+                    }
+                    <mat-icon>rocket_launch</mat-icon>
+                    Build (current job)
+                  </button>
+                }
+
+                @if (status() === 'success') {
+                  <div class="build-success" aria-live="polite">
+                    <mat-icon>check_circle</mat-icon>
+                    <span>{{ statusMessage() }}</span>
+                    @if (buildResultUrl()) {
+                      <a [href]="buildResultUrl()" target="_blank" rel="noopener">View console</a>
+                    }
+                  </div>
+                }
+                @if (status() === 'error') {
+                  <div class="build-error" aria-live="polite">
+                    <mat-icon>error</mat-icon>
+                    <span>{{ statusMessage() }}</span>
+                  </div>
+                }
+                @if (status() === 'idle' || status() === 'loading-jobs') {
+                  <span class="status-idle">Ready</span>
+                }
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- Zone 3: Build History drawer                                       -->
+      <!-- ================================================================= -->
+      <div class="history-drawer" [class.open]="!historyCollapsed()">
+        <button class="history-toggle" (click)="toggleHistory()">
+          <mat-icon>{{ historyCollapsed() ? 'chevron_right' : 'expand_more' }}</mat-icon>
+          <span>Build History ({{ historyRecords().length }})</span>
+        </button>
+
+        <div class="history-body">
+          @if (historyRecords().length === 0) {
+            <div class="empty-state compact">
+              <mat-icon>history</mat-icon>
+              <span>Riwayat build akan muncul di sini</span>
+            </div>
+          } @else {
+            <div class="history-actions">
+              <button mat-button color="warn" (click)="clearHistory()">
+                <mat-icon>delete</mat-icon> Clear
+              </button>
+            </div>
+            <div class="history-list">
+              @for (r of historyRecords(); track r.id) {
+                <div class="history-row" [class.history-error]="r.status === 'failed'">
+                  <mat-icon class="history-status">
+                    {{ r.status === 'success' ? 'check_circle' : r.status === 'failed' ? 'error' : 'hourglass_empty' }}
+                  </mat-icon>
+                  <div class="history-info">
+                    <span class="history-project">{{ r.projectName }}</span>
+                    <span class="history-meta">
+                      {{ r.jobName }}
+                      @if (r.presetName) { · {{ r.presetName }} }
+                      · {{ r.timestamp | date:'short' }}
+                    </span>
+                  </div>
+                  @if (r.resultUrl) {
+                    <a [href]="r.resultUrl" target="_blank" rel="noopener" class="history-link">
+                      <mat-icon>open_in_new</mat-icon>
+                    </a>
+                  }
+                  @if (r.errorMessage) {
+                    <span class="history-error-msg">{{ r.errorMessage }}</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

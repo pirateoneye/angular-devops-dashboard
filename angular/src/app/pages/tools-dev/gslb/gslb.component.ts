@@ -7,6 +7,7 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivityService } from '../../../shared/service/activity.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../module/material.module';
@@ -34,6 +35,7 @@ interface Toast {
 export class GslbComponent implements OnDestroy {
   readonly svc = inject(GslbService);
   private readonly router = inject(Router);
+  private readonly feed = inject(ActivityService);
 
   readonly toasts: Toast[] = [];
   private toastId = 0;
@@ -125,20 +127,15 @@ export class GslbComponent implements OnDestroy {
 
   async suspendAll(card: GslbCard): Promise<void> {
     const r = await this.svc.suspendAll(card.fqdn);
-    this.toast(
-      r.fail ? `Suspended ${r.ok}/${r.ok + r.fail}` : `Suspended all ${r.ok}`,
-      r.fail ? 'info' : 'ok',
-    );
+    const total = r.ok + r.fail;
+    this.toast(r.fail ? `Suspended ${r.ok}/${total}` : `Suspended all ${r.ok}`, r.fail ? 'info' : 'ok');
+    this.feed.log('gslb', `Suspend ${card.fqdn}: ${r.ok}/${total}`, r.fail ? 'warn' : 'ok');
   }
-
   async unsuspendAll(card: GslbCard): Promise<void> {
     const r = await this.svc.unsuspendAll(card.fqdn);
-    this.toast(
-      r.fail
-        ? `Unsuspended ${r.ok}/${r.ok + r.fail}`
-        : `Unsuspended all ${r.ok}`,
-      r.fail ? 'info' : 'ok',
-    );
+    const total = r.ok + r.fail;
+    this.toast(r.fail ? `Unsuspended ${r.ok}/${total}` : `Unsuspended all ${r.ok}`, r.fail ? 'info' : 'ok');
+    this.feed.log('gslb', `Unsuspend ${card.fqdn}: ${r.ok}/${total}`, r.fail ? 'warn' : 'ok');
   }
 
   async suspend(member: GslbMember, fqdn: string): Promise<void> {

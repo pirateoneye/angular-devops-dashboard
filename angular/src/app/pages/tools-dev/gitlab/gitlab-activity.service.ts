@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { ActivityService } from '../../../shared/service/activity.service';
 
 export interface LogEntry {
   ts: number;
@@ -8,6 +9,7 @@ export interface LogEntry {
 
 @Injectable({ providedIn: 'root' })
 export class GitlabActivityService {
+  private readonly feed = inject(ActivityService);
   private readonly maxLen = 200;
   readonly entries = signal<LogEntry[]>([]);
 
@@ -17,6 +19,7 @@ export class GitlabActivityService {
 
   append(message: string, kind: LogEntry['kind'] = 'info'): void {
     this.entries.update((arr) => [...arr.slice(-(this.maxLen - 1)), { ts: Date.now(), message, kind }]);
+    this.feed.log('gitlab', message, kind);
   }
 
   clear(): void {

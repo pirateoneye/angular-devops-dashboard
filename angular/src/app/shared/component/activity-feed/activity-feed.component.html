@@ -1,0 +1,23 @@
+<div class="feed">
+  <div class="feed-bar" (click)="toggle()" role="button" tabindex="0" (keydown.enter)="toggle()">
+    <mat-icon>campaign</mat-icon>
+    <span class="feed-count">{{ feed.count() }} aktivitas</span>
+    <span style="flex:1"></span>
+    <button class="clear-btn" (click)="$event.stopPropagation(); clear()" title="Clear feed">clear</button>
+    <mat-icon>{{ feed.collapsed() ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+  @if (!feed.collapsed()) {
+    <div class="feed-body">
+      @for (e of feed.entries(); track e.ts; let last = $last) {
+        <div class="entry">
+          <mat-icon class="ico" [style.color]="feed.colorFor(e.kind)">{{ feed.iconFor(e.source) }}</mat-icon>
+          <span class="src" [style.background]="feed.colorFor(e.kind) + '22'" [style.color]="feed.colorFor(e.kind)">{{ srcLabel(e.source) }}</span>
+          <span class="msg">{{ e.message }}</span>
+          <span class="ts">{{ timeStr(e.ts) }}</span>
+        </div>
+      } @empty {
+        <div style="padding:8px 0;color:var(--msv-text-dim);text-align:center">Belum ada aktivitas.</div>
+      }
+    </div>
+  }
+</div>

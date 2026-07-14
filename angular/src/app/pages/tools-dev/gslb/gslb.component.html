@@ -2,20 +2,7 @@
   <!-- Toasts -->
   <div class="toasts" aria-live="polite">
     @for (t of toasts; track t.id) {
-      <div
-        class="toast"
-        [class]="t.type"
-        role="button"
-        tabindex="0"
-        [attr.aria-label]="'Dismiss: ' + t.msg"
-        (click)="dismissToast(t.id)"
-        (keydown.enter)="dismissToast(t.id)"
-      >
-        <span class="toast-ico">{{
-          t.type === "ok" ? "✓" : t.type === "err" ? "✕" : "ℹ"
-        }}</span>
-        {{ t.msg }}
-      </div>
+      <omp-toast [message]="t.msg" [type]="t.type" (dismiss)="dismissToast(t.id)" />
     }
   </div>
 

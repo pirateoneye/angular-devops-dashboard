@@ -11,6 +11,7 @@ import { ActivityService } from '../../../shared/service/activity.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../module/material.module';
+import { ToastComponent } from '../../../shared/component/toast/toast.component';
 import { GslbService } from '../../../shared/service/gslb/gslb.service';
 import {
   GslbCard,
@@ -18,16 +19,11 @@ import {
   GslbState,
 } from '../../../shared/service/gslb/gslb.models';
 
-interface Toast {
-  id: number;
-  msg: string;
-  type: 'ok' | 'err' | 'info';
-}
 
 @Component({
   standalone: true,
   selector: 'app-gslb',
-  imports: [CommonModule, FormsModule, MaterialModule],
+  imports: [CommonModule, FormsModule, MaterialModule, ToastComponent],
   templateUrl: './gslb.component.html',
   styleUrl: './gslb.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,10 +33,8 @@ export class GslbComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly feed = inject(ActivityService);
 
-  readonly toasts: Toast[] = [];
+  readonly toasts: { id: number; msg: string; type: 'ok' | 'err' | 'info' }[] = [];
   private toastId = 0;
-  private readonly toastTimers = new Set<ReturnType<typeof setTimeout>>();
-
   readonly copiedId = signal('');
   private copyTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -207,12 +201,10 @@ export class GslbComponent implements OnDestroy {
   toast(msg: string, type: 'ok' | 'err' | 'info'): void {
     const id = ++this.toastId;
     this.toasts.push({ id, msg, type });
-    const t = setTimeout(() => {
+    setTimeout(() => {
       const i = this.toasts.findIndex((x) => x.id === id);
       if (i >= 0) this.toasts.splice(i, 1);
-      this.toastTimers.delete(t);
     }, 3500);
-    this.toastTimers.add(t);
   }
 
   dismissToast(id: number): void {
@@ -221,8 +213,6 @@ export class GslbComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.toastTimers.forEach((t) => clearTimeout(t));
-    this.toastTimers.clear();
-    if (this.copyTimer) clearTimeout(this.copyTimer);
+    clearTimeout(this.copyTimer ?? undefined);
   }
 }

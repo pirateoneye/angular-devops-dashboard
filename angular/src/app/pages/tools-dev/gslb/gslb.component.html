@@ -219,11 +219,7 @@
 
         @if (c.loading) {
           <div class="card-body">
-            <div class="skeleton">
-              @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-                <div class="sk-row"></div>
-              }
-            </div>
+            <omp-skeleton [rows]="6" />
           </div>
         } @else if (c.error) {
           <div class="card-body">

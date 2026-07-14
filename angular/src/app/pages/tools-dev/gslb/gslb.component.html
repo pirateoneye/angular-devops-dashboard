@@ -242,15 +242,11 @@
               <tr>
                 <td><span class="svc" [title]="m.svc_name">{{ shortName(m.svc_name) }}</span></td>
                 <td>
-                  <button class="copy-btn" (click)="$event.stopPropagation(); copyText(m.svc_name)" [attr.aria-label]="'Copy ' + m.svc_name">
-                    @if (copiedId() === m.svc_name) { <mat-icon>check</mat-icon> } @else { <mat-icon>content_copy</mat-icon> }
-                  </button>
+                  <omp-copy-btn [value]="m.svc_name" />
                 </td>
                 <td><span class="rip">{{ m.svr_ip }}:{{ m.svr_port }}</span></td>
                 <td>
-                  <button class="copy-btn" (click)="$event.stopPropagation(); copyText(m.svr_ip + ':' + m.svr_port)" [attr.aria-label]="'Copy ' + m.svr_ip + ':' + m.svr_port">
-                    @if (copiedId() === m.svr_ip + ':' + m.svr_port) { <mat-icon>check</mat-icon> } @else { <mat-icon>content_copy</mat-icon> }
-                  </button>
+                  <omp-copy-btn [value]="m.svr_ip + ':' + m.svr_port" />
                 </td>
                 <td><span class="mchip" [class]="stateClass(m.state)">{{ stateLabelShort(m.state) }}</span></td>
                 <td>

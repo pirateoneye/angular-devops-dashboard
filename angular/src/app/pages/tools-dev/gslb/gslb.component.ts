@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../module/material.module';
 import { ToastComponent } from '../../../shared/component/toast/toast.component';
+import { CopyBtnComponent } from '../../../shared/component/copy-btn/copy-btn.component';
 import { GslbService } from '../../../shared/service/gslb/gslb.service';
 import {
   GslbCard,
@@ -23,7 +24,7 @@ import {
 @Component({
   standalone: true,
   selector: 'app-gslb',
-  imports: [CommonModule, FormsModule, MaterialModule, ToastComponent],
+  imports: [CommonModule, FormsModule, MaterialModule, ToastComponent, CopyBtnComponent],
   templateUrl: './gslb.component.html',
   styleUrl: './gslb.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

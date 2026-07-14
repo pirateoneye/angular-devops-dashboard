@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
     <div class="toast-wrp" [class]="type" role="button" tabindex="0"
       [attr.aria-label]="'Dismiss: ' + message"
       (click)="dismiss.emit()"
+      (keydown.enter)="dismiss.emit()">
       <span class="toast-ico">{{ type === 'ok' ? '\u2713' : type === 'err' ? '\u2715' : '\u2139' }}</span>
       {{ message }}
     </div>

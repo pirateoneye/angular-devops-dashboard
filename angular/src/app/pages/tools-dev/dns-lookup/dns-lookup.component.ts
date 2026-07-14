@@ -47,6 +47,9 @@ interface DnsRecord { type: string; name: string; value: string; ttl: number; }
         @if (error()) {
           <div class="tool-error" role="alert"><mat-icon>error_outline</mat-icon> {{ error() }}</div>
         }
+        @if (!loading() && records().length === 0 && !error() && queried) {
+          <div class="tool-empty" role="status">Tidak ada record DNS ditemukan untuk domain ini.</div>
+        }
 
         @if (records().length > 0) {
           <table mat-table [dataSource]="records()" class="dns-table" style="width:100%;margin-top:12px">
@@ -76,6 +79,7 @@ interface DnsRecord { type: string; name: string; value: string; ttl: number; }
 export class DnsLookupComponent {
   private http = inject(HttpClient);
   private snack = inject(MatSnackBar);
+  queried = false;
   domain = signal('');
   rrType = signal('A');
   types = ['A', 'AAAA', 'CNAME', 'MX', 'TXT', 'NS', 'SOA', 'PTR', 'SRV'];
@@ -86,8 +90,7 @@ export class DnsLookupComponent {
 
   query() {
     const d = this.domain().trim();
-    if (!d) return;
-    this.loading.set(true); this.error.set(''); this.records.set([]);
+    this.loading.set(true); this.error.set(''); this.records.set([]); this.queried = true;
     const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(d)}&type=${this.rrType()}`;
     this.http.get<{Answer?: DnsRecord[]}>(url, { headers: { Accept: 'application/dns-json' } }).subscribe({
       next: r => {

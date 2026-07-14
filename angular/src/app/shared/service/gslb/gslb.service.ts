@@ -399,6 +399,12 @@ export class GslbService {
     this.persistMonitoring();
   }
 
+  setCardArmed(fqdn: string, armed: GslbCard['armed']): void {
+    this.cards.update((list) =>
+      list.map((c) => (c.fqdn === fqdn ? { ...c, armed } : c)),
+    );
+  }
+
   private addMonitoring(raw: string, zone: GslbZone): number {
     const fqdns = raw
       .split(/[\s,;]+/)

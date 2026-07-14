@@ -196,24 +196,38 @@
           >
             <mat-icon>sync</mat-icon>
           </button>
-          <button
-            class="btn-danger sm"
-            (click)="$event.stopPropagation(); suspendAll(c)"
-            [disabled]="!c.snapshot || c.loading"
-            title="Suspend all"
-            aria-label="Suspend all"
-          >
-            <mat-icon>pause</mat-icon>
-          </button>
-          <button
-            class="btn-success sm"
-            (click)="$event.stopPropagation(); unsuspendAll(c)"
-            [disabled]="!c.snapshot || c.loading"
-            title="Unsuspend all"
-            aria-label="Unsuspend all"
-          >
-            <mat-icon>play_arrow</mat-icon>
-          </button>
+          @if (c.armed) {
+            <button
+              class="btn-danger sm"
+              (click)="$event.stopPropagation(); executeBulk(c)"
+              title="{{ c.armed === 'suspend' ? 'Confirm suspend all' : 'Confirm unsuspend all' }}"
+              [attr.aria-label]="c.armed === 'suspend' ? 'Confirm suspend all' : 'Confirm unsuspend all'"
+            >
+              ⚠️ {{ c.armed === 'suspend' ? 'Suspend' : 'Unsuspend' }}
+            </button>
+            <button class="icon-btn sm" (click)="$event.stopPropagation(); armBulk(c, c.armed!)" title="Cancel" aria-label="Cancel ARM">
+              <mat-icon>close</mat-icon>
+            </button>
+          } @else {
+            <button
+              class="btn-danger sm"
+              (click)="$event.stopPropagation(); armBulk(c, 'suspend')"
+              [disabled]="!c.snapshot || c.loading"
+              title="Suspend all (click to arm)"
+              aria-label="Arm suspend all"
+            >
+              <mat-icon>pause</mat-icon>
+            </button>
+            <button
+              class="btn-success sm"
+              (click)="$event.stopPropagation(); armBulk(c, 'unsuspend')"
+              [disabled]="!c.snapshot || c.loading"
+              title="Unsuspend all (click to arm)"
+              aria-label="Arm unsuspend all"
+            >
+              <mat-icon>play_arrow</mat-icon>
+            </button>
+          }
         </div>
 
         @if (c.loading) {

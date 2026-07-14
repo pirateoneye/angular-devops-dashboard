@@ -104,8 +104,25 @@ export class GslbComponent implements OnDestroy {
       .refresh(fqdn)
       .catch(() => this.toast('Refresh failed: ' + fqdn, 'err'));
   }
-
   // Two-click arm for bulk suspend/unsuspend
+  armBulk(card: GslbCard, action: 'suspend' | 'unsuspend'): void {
+    const armed = card.armed === action ? null : action;
+    this.svc.setCardArmed(card.fqdn, armed);
+    if (armed) {
+      setTimeout(() => {
+        const c = this.svc.cards().find((x) => x.fqdn === card.fqdn);
+        if (c?.armed === action) this.svc.setCardArmed(card.fqdn, null);
+      }, 5000);
+    }
+  }
+
+  executeBulk(card: GslbCard): void {
+    const action = card.armed;
+    this.svc.setCardArmed(card.fqdn, null);
+    if (action === 'suspend') this.suspendAll(card);
+    else if (action === 'unsuspend') this.unsuspendAll(card);
+  }
+
   async suspendAll(card: GslbCard): Promise<void> {
     const r = await this.svc.suspendAll(card.fqdn);
     this.toast(

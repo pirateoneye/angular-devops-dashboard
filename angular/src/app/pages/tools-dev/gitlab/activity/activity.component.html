@@ -1,0 +1,24 @@
+<div class="activity-panel" [class.collapsed]="collapsed()">
+  <button class="activity-toggle" (click)="toggle()">
+    <span class="activity-badge" [class.has-errors]="logSvc.errorCount() > 0">{{ logSvc.count() }}</span>
+    Log Aktivitas
+  </button>
+
+  @if (!collapsed()) {
+    <div class="activity-body">
+      <div class="activity-actions">
+        <button class="btn btn-sm btn-outline" (click)="clear()">Hapus</button>
+      </div>
+      <div class="activity-entries">
+        @for (e of logSvc.entries(); track e.ts) {
+          <div class="activity-entry" [class]="e.kind">
+            <span class="entry-time">{{ e.ts | date:'HH:mm:ss' }}</span>
+            <span class="entry-msg">{{ e.message }}</span>
+          </div>
+        } @empty {
+          <p class="empty">Belum ada aktivitas.</p>
+        }
+      </div>
+    </div>
+  }
+</div>

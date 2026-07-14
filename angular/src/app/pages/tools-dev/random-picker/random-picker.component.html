@@ -30,8 +30,8 @@ Jeruk"
 </div>
 
 <div class="tool-actions">
-  <button class="btn-primary" (click)="pick()">Pick</button>
-  <button class="btn-secondary" (click)="shuffle()">Shuffle All</button>
+  <button class="btn-primary" (click)="pick()" [disabled]="!input.trim()">Pick</button>
+  <button class="btn-secondary" (click)="shuffle()" [disabled]="!input.trim()">Shuffle All</button>
   <button class="btn-secondary" (click)="example()">Contoh</button>
   <button class="btn-secondary" (click)="clear()">Clear</button>
 </div>

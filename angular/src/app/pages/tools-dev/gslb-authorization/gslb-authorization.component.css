@@ -110,3 +110,12 @@
 .chk input {
   cursor: pointer;
 }
+.auth-pw-wrap { position: relative; display: flex; align-items: center; }
+.auth-pw-wrap input { padding-right: 36px; }
+.auth-eye {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--msv-text-muted); cursor: pointer;
+  padding: 2px; border-radius: 4px; display: flex; align-items: center;
+}
+.auth-eye:hover { color: var(--msv-text); }
+.auth-eye mat-icon { font-size: 20px; width: 20px; height: 20px; }

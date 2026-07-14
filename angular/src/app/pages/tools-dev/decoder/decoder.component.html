@@ -51,10 +51,10 @@
 </div>
 
 <div class="tool-actions">
-  <button class="btn-primary" (click)="encode()" [disabled]="mode === 'jwt'">
+  <button class="btn-primary" (click)="encode()" [disabled]="mode === 'jwt' || !input.trim()">
     Encode
   </button>
-  <button class="btn-primary" (click)="decode()">Decode</button>
+  <button class="btn-primary" (click)="decode()" [disabled]="!input.trim()">Decode</button>
   <button class="btn-secondary" (click)="trySample()">Try sample</button>
   <button class="btn-secondary" (click)="clear()">Clear</button>
 </div>

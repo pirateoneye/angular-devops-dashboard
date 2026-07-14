@@ -1,0 +1,155 @@
+<div class="bulk-shell">
+  @if (!action()) {
+    <div class="action-grid">
+      <button class="action-card" (click)="selectAction('tag')">
+        <span class="action-icon">🏷️</span>
+        <h3>Bulk Tag</h3>
+        <p>Create a tag on selected projects.</p>
+      </button>
+      <button class="action-card" (click)="selectAction('merge')">
+        <span class="action-icon">🔀</span>
+        <h3>Bulk Merge Request</h3>
+        <p>Open MRs across selected projects.</p>
+      </button>
+    </div>
+  } @else {
+    <div class="stepper">
+      <div class="stepper-header">
+        <div class="step" [class.active]="step() >= 1">1. Select</div>
+        <div class="step" [class.active]="step() >= 2">2. Configure</div>
+        <div class="step" [class.active]="step() >= 3">3. Preview</div>
+      </div>
+
+      @if (step() === 1) {
+        <div class="step-body">
+          <div class="subbar">
+            <input
+              type="search"
+              [(ngModel)]="searchFilter"
+              placeholder="Search projects..."
+              class="form-control"
+            />
+            <div class="subbar-actions">
+              <button class="btn btn-sm btn-outline" (click)="toggleAll(true)">Select all</button>
+              <button class="btn btn-sm btn-outline" (click)="toggleAll(false)">Deselect all</button>
+              <span class="selected-count">{{ selectedCount() }} selected</span>
+            </div>
+          </div>
+          <div class="project-list">
+            @for (p of filteredProjects(); track p.id) {
+              <label class="project-item">
+                <input type="checkbox" [checked]="p.selected" (change)="toggleProject(p.id)" />
+                <span class="project-name">{{ p.name }}</span>
+                <span class="project-namespace">{{ p.namespace }}</span>
+              </label>
+            } @empty {
+              <p class="empty">No projects match.</p>
+            }
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-outline" (click)="backToActions()">Back</button>
+            <button class="btn btn-primary" [disabled]="selectedCount() === 0" (click)="nextStep()">Next</button>
+          </div>
+        </div>
+      }
+
+      @if (step() === 2) {
+        <div class="step-body">
+          @if (action() === 'tag') {
+            <div class="form-group">
+              <label>Tag name</label>
+              <input type="text" [(ngModel)]="tagName" class="form-control" placeholder="e.g. v1.2.0" />
+            </div>
+            <div class="form-group">
+              <label>Target ref</label>
+              <input type="text" [(ngModel)]="tagRef" class="form-control" placeholder="main" />
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <input type="text" [(ngModel)]="tagMsg" class="form-control" placeholder="Release v1.2.0" />
+            </div>
+          } @else {
+            <div class="form-group">
+              <label>Source branch</label>
+              <input type="text" [(ngModel)]="mrSource" class="form-control" placeholder="feature/x" />
+            </div>
+            <div class="form-group">
+              <label>Target branch</label>
+              <input type="text" [(ngModel)]="mrTarget" class="form-control" placeholder="main" />
+            </div>
+            <div class="form-group">
+              <label>MR title</label>
+              <input type="text" [(ngModel)]="mrTitle" class="form-control" placeholder="Merge feature/x" />
+            </div>
+          }
+          <div class="step-actions">
+            <button class="btn btn-outline" (click)="prevStep()">Back</button>
+            <button class="btn btn-primary" [disabled]="!canPreview()" (click)="preview(); nextStep()">Preview</button>
+          </div>
+        </div>
+      }
+
+      @if (step() === 3) {
+        <div class="step-body">
+          @if (previewing()) {
+            <p class="loading">Checking readiness…</p>
+          } @else if (previewResults().length > 0) {
+            <div class="summary">
+              <span class="ready">{{ readyCount() }} ready</span>
+              <span class="issues">{{ issueCount() }} issues</span>
+            </div>
+            <table class="preview-table">
+              <thead>
+                <tr><th>Project</th><th>Status</th><th>Detail</th></tr>
+              </thead>
+              <tbody>
+                @for (r of previewResults(); track r.projectId) {
+                  <tr [class.ok]="r.ok" [class.fail]="!r.ok">
+                    <td>{{ r.projectName }}</td>
+                    <td>{{ r.ok ? 'Ready' : 'Blocked' }}</td>
+                    <td>{{ r.detail }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <p class="empty">No preview yet.</p>
+          }
+          <div class="step-actions">
+            <button class="btn btn-outline" (click)="prevStep()">Back</button>
+            <button class="btn btn-primary" [disabled]="!canExecute()" (click)="armExecute()">
+              {{ executeArmed() ? 'Jalankan?' : 'Execute' }}
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (execResults().length > 0) {
+        <div class="step-body results">
+          <h4>Results</h4>
+          <table class="result-table">
+            <thead>
+              <tr><th>Project</th><th>Action</th><th>Status</th><th>Detail</th></tr>
+            </thead>
+            <tbody>
+              @for (r of execResults(); track r.projectId) {
+                <tr [class.success]="r.success" [class.fail]="!r.success">
+                  <td>{{ r.projectName }}</td>
+                  <td>{{ r.action }}</td>
+                  <td>{{ r.success ? 'Done' : 'Failed' }}</td>
+                  <td>
+                    @if (r.mrUrl) {
+                      <a [href]="r.mrUrl" target="_blank">MR #{{ r.mrIid }}</a>
+                    } @else {
+                      {{ r.detail }}
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</div>

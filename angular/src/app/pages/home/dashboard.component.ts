@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   signal,
   computed,
+  inject,
   HostListener,
   ElementRef,
 } from '@angular/core';
@@ -11,10 +12,7 @@ import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import {
-  ToolCatalogService,
-  ToolEntry,
-} from '../../core/service/tool-catalog.service';
+import { ToolCatalogService } from '../../core/service/tool-catalog.service';
 
 interface ToolTile {
   label: string;
@@ -40,109 +38,41 @@ interface ToolTile {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent {
+  private readonly catalog = inject(ToolCatalogService);
+
   query = signal('');
 
-  tiles: ToolTile[] = [
-    {
-      label: 'Batch Runner',
-      description: 'Jalankan batch manual di UAT',
-      icon: 'event_note',
-      route: '/tools-dev/batch-runner',
-      group: 'tools-dev',
-    },
-    {
-      label: 'Crypto',
-      description: 'Enkripsi / dekripsi / decode',
-      icon: 'enhanced_encryption',
-      route: '/tools-dev/crypto',
-      group: 'tools-dev',
-    },
-    {
-      label: 'Check Data',
-      description: 'Cek data pengajuan',
-      icon: 'search',
-      route: '/tools-dev/check-data',
-      group: 'tools-dev',
-    },
-    {
-      label: 'Delete Data',
-      description: 'Hapus data pengajuan',
-      icon: 'delete',
-      route: '/tools-dev/delete-data',
-      group: 'tools-dev',
-    },
-    {
-      label: 'File Server Manager',
-      description: 'Kelola file server',
-      icon: 'folder',
-      route: '/tools-dev/file-server-manager',
-      group: 'tools-dev',
-    },
-    {
-      label: 'Push Notif FCM',
-      description: 'Kirim push notification FCM',
-      icon: 'notifications',
-      route: '/tools-dev/push-notif-fcm',
-      group: 'tools-dev',
-    },
-    {
-      label: 'Publish Kafka',
-      description: 'Publish message ke Kafka',
-      icon: 'send',
-      route: '/tools-dev/publish-kafka',
-      group: 'tools-dev',
-    },
-    {
-      label: 'GitLab Tools',
-      description: 'Monitor tag & operasi bulk GitLab',
-      icon: 'merge_type',
-      route: '/tools-dev/gitlab',
-      group: 'tools-dev',
-    },
-    {
-      label: 'GSLB',
-      description: 'Monitor & suspend/unsuspend GSLB DNS',
-      icon: 'dns',
-      route: '/tools-dev/gslb',
-      group: 'tools-dev',
-    },
+  readonly devTiles = computed<ToolTile[]>(() =>
+    this.catalog.devTools.map((d) => ({
+      label: d.label,
+      icon: d.icon,
+      route: d.route,
+      description: d.keywords?.slice(0, 2).join(', ') ?? '',
+      group: 'tools-dev' as const,
+    })),
+  );
+
+  readonly piketTiles = computed<ToolTile[]>(() =>
+    this.catalog.piket.map((p) => ({
+      label: p.label,
+      icon: p.icon,
+      route: p.route,
+      description: '',
+      group: 'piket' as const,
+    })),
+  );
+
+  readonly allTiles = computed<ToolTile[]>(() => [
+    ...this.devTiles(),
+    ...this.piketTiles(),
     {
       label: 'Utilities',
-      description:
-        '15 tools: JSON, decoder, regex, hash, JWT, SSL, diff, transforms, sort, char counter, cron, image/base64, timestamp, chmod, random',
+      description: `${this.catalog.tools.length} tool bantu format & data`,
       icon: 'build',
       route: '/utilities',
-      group: 'utility',
+      group: 'utility' as const,
     },
-    {
-      label: 'List Keluhan',
-      description: 'Daftar keluhan piket',
-      icon: 'list_alt',
-      route: '/piket/keluhan-list',
-      group: 'piket',
-    },
-    {
-      label: 'Fix Data User',
-      description: 'Perbaiki data user',
-      icon: 'edit',
-      route: '/piket/fix-data-user',
-      group: 'piket',
-    },
-    {
-      label: 'Fix After Merge CIS',
-      description: 'Perbaikan pasca merge CIS',
-      icon: 'merge_type',
-      route: '/piket/fix-after-merge-cis',
-      group: 'piket',
-    },
-    {
-      label: 'Calendar Piket',
-      description: 'Jadwal piket',
-      icon: 'calendar_today',
-      route: '/piket/calendar',
-      group: 'piket',
-    },
-  ];
+  ]);
 
   groups: { key: ToolTile['group']; label: string }[] = [
     { key: 'tools-dev', label: 'Dev Tools' },
@@ -151,21 +81,24 @@ export class DashboardComponent {
   ];
 
   readonly toolStats = computed(() => ({
-    devTools: this.tiles.filter((t) => t.group === 'tools-dev').length,
-    utilities: this.tiles.filter((t) => t.group === 'utility').length,
-    piket: this.tiles.filter((t) => t.group === 'piket').length,
+    devTools: this.catalog.devTools.length,
+    utilities: this.catalog.tools.length,
+    piket: this.catalog.piket.length,
   }));
 
+  /** Recently used utility tools as chips. */
+  readonly recentTiles = computed(() =>
+    this.catalog
+      .recents()
+      .map((slug) => this.catalog.bySlug(slug))
+      .filter((t): t is NonNullable<typeof t> => !!t),
+  );
+
   constructor(
-    public catalog: ToolCatalogService,
     private hostRef: ElementRef<HTMLElement>,
   ) {}
 
-  get hasQuery(): boolean {
-    return this.query().trim().length > 0;
-  }
-
-  readonly showClear = computed(() => this.hasQuery);
+  readonly hasQuery = computed(() => this.query().trim().length > 0);
 
   clearQuery(): void {
     this.query.set('');
@@ -185,14 +118,6 @@ export class DashboardComponent {
     }
   }
 
-  /** Recently used tools, resolved from the catalog. Memoized until recents change. */
-  readonly recentTools = computed<ToolEntry[]>(() =>
-    this.catalog
-      .recents()
-      .map((s) => this.catalog.bySlug(s))
-      .filter((t): t is ToolEntry => !!t),
-  );
-
   /**
    * Tiles grouped by group key, filtered by the current query. Memoized until
    * the `query` signal changes, so the template no longer pays O(groups x tiles)
@@ -200,9 +125,10 @@ export class DashboardComponent {
    */
   readonly tilesByGroup = computed<Record<string, ToolTile[]>>(() => {
     const q = this.query().trim().toLowerCase();
+    const all = this.allTiles();
     const map: Record<string, ToolTile[]> = {};
     for (const g of this.groups) {
-      map[g.key] = this.tiles.filter((t) => {
+      map[g.key] = all.filter((t) => {
         if (t.group !== g.key) return false;
         if (!q) return true;
         return (
@@ -228,11 +154,11 @@ export class DashboardComponent {
   /** True when a search is active but matched no tiles in any group. */
   readonly noResults = computed<boolean>(
     () =>
-      this.hasQuery &&
+      this.hasQuery() &&
       !this.groups.some((g) => this.tilesByGroup()[g.key].length > 0),
   );
 
   hasGroup(key: string): boolean {
-    return this.tiles.some((t) => t.group === key);
+    return this.allTiles().some((t) => t.group === key);
   }
 }

@@ -70,17 +70,12 @@ export class JwtDebuggerComponent {
   autoMode = false;
   private debounceTimer: any = null;
 
-  onTokenChange(): void {
+  onTokenInput(): void {
     if (!this.autoMode) return;
     clearTimeout(this.debounceTimer);
     this.debounceTimer = setTimeout(() => this.decode(), 200);
   }
 
-  onTokenPaste(): void {
-    if (!this.autoMode) return;
-    clearTimeout(this.debounceTimer);
-    this.debounceTimer = setTimeout(() => this.decode(), 200);
-  }
 
   private b64urlDecode(s: string): string {
     const pad = s.length % 4 === 0 ? '' : '='.repeat(4 - (s.length % 4));

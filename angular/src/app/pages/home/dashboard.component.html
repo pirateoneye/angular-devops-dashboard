@@ -24,11 +24,11 @@
           type="text"
           [ngModel]="query()"
           (ngModelChange)="query.set($event)"
-          placeholder="Cari tool…"
+          placeholder="Cari tool… (tekan / untuk fokus)"
           autocomplete="off"
           aria-label="Search tools"
         />
-        @if (showClear()) {
+        @if (hasQuery()) {
           <button
             type="button"
             class="dash-search-clear"
@@ -42,62 +42,25 @@
     </div>
   </div>
 
-  <!-- Search result count -->
-  @if (hasQuery) {
-    <p class="dash-result-count">
-      {{ totalResults() }} tools found for '{{ query() }}'
-    </p>
-  }
-
-  <!-- Recently used (only when not searching) -->
-  @if (!hasQuery && recentTools().length) {
-    <h2 class="dash-section-title">Recent</h2>
+  <!-- Recents strip -->
+  @if (recentTiles().length && !hasQuery()) {
     <div class="dash-chips">
-      @for (t of recentTools(); track t.slug) {
-        <a
-          class="dash-chip"
-          [routerLink]="t.route"
-          [queryParams]="t.queryParams || null"
-        >
+      @for (t of recentTiles(); track t.slug) {
+        <a class="dash-chip" [routerLink]="t.route" [queryParams]="t.queryParams">
           <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
           <span>{{ t.label }}</span>
         </a>
       }
     </div>
-  } @else if (!hasQuery) {
-    <h2 class="dash-section-title">Recent</h2>
-    <div class="dash-empty">
-      <svg
-        class="dash-empty-svg"
-        viewBox="0 0 64 64"
-        fill="none"
-        aria-hidden="true"
-      >
-        <circle
-          cx="32"
-          cy="32"
-          r="28"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-dasharray="4 4"
-        />
-        <path
-          d="M32 14v10l6 6"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <circle cx="32" cy="32" r="4" fill="currentColor" opacity="0.5" />
-      </svg>
-      <p class="dash-hint">
-        Belum ada tool yang dibuka. Buka sebuah tool untuk muncul di sini.
-      </p>
-      <a class="dash-cta" routerLink="/tools-dev/batch-runner"
-        >Coba buka Batch Runner &rarr;</a
-      >
-    </div>
   }
+
+  <!-- Search result count -->
+  @if (hasQuery()) {
+    <p class="dash-result-count">
+      {{ totalResults() }} tools found for '{{ query() }}'
+    </p>
+  }
+
 
   @for (g of groups; track g.key) {
     @if (tilesByGroup()[g.key].length) {

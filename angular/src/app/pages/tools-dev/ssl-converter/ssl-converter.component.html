@@ -88,19 +88,27 @@
   ></textarea>
 </div>
 
-<!-- Password (encrypted keys only) -->
-@if (detection?.isEncrypted) {
+<!-- Password (encrypted keys / PKCS12 / JKS) -->
+@if (detection?.isEncrypted || detection?.type === SslType.PKCS12 || detection?.type === SslType.JKS) {
   <div class="ssl-section ssl-pwd">
-    <label class="tool-label" for="sslPwd">Password kunci terenkripsi</label>
+    <label class="tool-label" for="sslPwd">{{
+      detection?.type === SslType.PKCS12 ? 'Password keystore (opsional)' :
+      detection?.type === SslType.JKS ? 'Password keystore (opsional)' :
+      'Password kunci terenkripsi'
+    }}</label>
     <input
       id="sslPwd"
       type="password"
       class="tool-input-mono"
       [(ngModel)]="password"
       (ngModelChange)="onPassword()"
-      placeholder="Password dekripsi"
+      [placeholder]="
+        detection?.type === SslType.PKCS12 || detection?.type === SslType.JKS
+          ? 'Password (kosongkan jika tidak ada)'
+          : 'Password dekripsi'
+      "
       autocomplete="current-password"
-      aria-label="Password kunci terenkripsi"
+      aria-label="Password kunci"
     />
   </div>
 }

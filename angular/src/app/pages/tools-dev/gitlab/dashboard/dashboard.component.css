@@ -1,0 +1,58 @@
+.gl-db { padding:1rem 1.5rem; }
+.gl-kpis { display:flex; gap:12px; margin-bottom:1rem; }
+.gl-kpi { flex:1; background:var(--msv-surface); border:1px solid var(--msv-border); border-radius:8px; padding:14px 16px; text-align:center; cursor:pointer; transition:border-color .15s; }
+.gl-kpi:hover { border-color:var(--msv-primary); }
+.gl-kpi.ok { border-color:var(--msv-success); }
+.gl-kpi.warn { border-color:var(--msv-warning); }
+.gl-kpi-num { display:block; font-size:1.6rem; font-weight:700; color:var(--msv-text); }
+.gl-kpi.ok .gl-kpi-num { color:var(--msv-success); }
+.gl-kpi.warn .gl-kpi-num { color:var(--msv-warning); }
+.gl-kpi-lbl { font-size:.75rem; color:var(--msv-text-muted); text-transform:uppercase; letter-spacing:.5px; }
+
+.gl-search { position:relative; margin-bottom:12px; }
+.gl-search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--msv-text-muted); font-size:20px; width:20px; height:20px; }
+.gl-search .gl-input { padding-left:40px; }
+
+.gl-chips { display:flex; gap:8px; margin-bottom:1rem; }
+.gl-chip { background:var(--msv-surface-2); color:var(--msv-text-muted); border:1px solid var(--msv-border); padding:6px 14px; border-radius:20px; font-size:.8rem; cursor:pointer; transition:all .15s; }
+.gl-chip:hover { border-color:var(--msv-primary); color:var(--msv-text); }
+.gl-chip.active { background:var(--msv-primary); color:#fff; border-color:var(--msv-primary); }
+
+.gl-table-wrap { overflow-x:auto; }
+.gl-table { width:100%; border-collapse:collapse; font-size:.85rem; }
+.gl-table th { text-align:left; padding:10px 12px; border-bottom:1px solid var(--msv-border); color:var(--msv-text-muted); font-weight:600; font-size:.75rem; text-transform:uppercase; letter-spacing:.5px; }
+.gl-table th.sortable { cursor:pointer; user-select:none; }
+.gl-table th.sortable:hover { color:var(--msv-primary); }
+.gl-table td { padding:10px 12px; border-bottom:1px solid var(--msv-border); color:var(--msv-text); }
+.gl-table tr:hover td { background:var(--msv-surface-2); }
+
+.gl-proj-name { font-weight:600; }
+.gl-proj-path { font-size:.78rem; color:var(--msv-text-muted); margin-top:2px; }
+.gl-tag-chip { display:inline-block; background:var(--msv-accent-bg); border:1px solid var(--msv-border); border-radius:4px; padding:2px 8px; }
+.gl-tag-chip code { font-size:.78rem; color:var(--msv-primary); }
+
+.gl-age { font-size:.8rem; font-weight:600; padding:2px 8px; border-radius:12px; }
+.gl-age-green { background:var(--msv-success-bg); color:var(--msv-success); }
+.gl-age-orange { background:var(--msv-warning-bg); color:var(--msv-warning); }
+.gl-age-red { background:var(--msv-error-bg); color:var(--msv-error); }
+.gl-age-gray { color:var(--msv-text-muted); }
+
+.gl-empty { text-align:center; padding:3rem; color:var(--msv-text-muted); font-size:.9rem; }
+.gl-link { background:none; border:none; color:var(--msv-primary); cursor:pointer; font-size:inherit; text-decoration:underline; }
+
+.gl-btn-ghost { background:var(--msv-accent-bg); color:var(--msv-text); border:1px solid var(--msv-border); padding:8px 16px; border-radius:6px; cursor:pointer; font-size:.85rem; }
+.gl-btn-ghost:hover { border-color:var(--msv-primary); }
+.gl-load-more { display:block; margin:1rem auto 0; }
+
+.gl-mute { color:var(--msv-text-muted); }
+.gl-input { background:var(--msv-surface-2); border:1px solid var(--msv-border); color:var(--msv-text); padding:10px 12px; border-radius:6px; font-size:.9rem; }
+.gl-input:focus { outline:none; border-color:var(--msv-primary); }
+
+.gl-select-bar { display:flex; align-items:center; gap:10px; background:var(--msv-surface); border:1px solid var(--msv-border); border-radius:8px; padding:10px 16px; margin-bottom:12px; font-size:.85rem; color:var(--msv-text); }
+.gl-btn-ghost.sm { padding:4px 10px; font-size:.78rem; }
+.gl-btn-primary { display:inline-flex; align-items:center; gap:6px; background:var(--msv-primary); color:#fff; border:none; padding:8px 16px; border-radius:6px; font-size:.85rem; font-weight:600; cursor:pointer; }
+.gl-btn-primary:hover { background:var(--msv-primary-hover); }
+
+.gl-chk-th { width:40px; text-align:center; }
+.gl-chk-td { text-align:center; }
+.gl-chk-th input, .gl-chk-td input { accent-color:var(--msv-primary); cursor:pointer; }

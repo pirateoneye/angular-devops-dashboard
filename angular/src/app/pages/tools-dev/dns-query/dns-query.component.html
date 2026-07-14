@@ -1,0 +1,195 @@
+<div class="dns-query">
+  <!-- Toasts -->
+  <div class="toasts" aria-live="polite">
+    @for (t of toasts; track t.id) {
+      <div
+        class="toast"
+        [class]="t.type"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'Dismiss: ' + t.msg"
+        (click)="dismissToast(t.id)"
+        (keydown.enter)="dismissToast(t.id)"
+      >
+        <span class="toast-ico">{{
+          t.type === 'ok' ? '✓' : t.type === 'err' ? '✕' : 'ℹ'
+        }}</span>
+        {{ t.msg }}
+      </div>
+    }
+  </div>
+
+  <!-- Header -->
+  <header class="head">
+    <div class="head-left">
+      <h1>DNS Query</h1>
+      <span class="badge">Cloudflare DoH</span>
+    </div>
+    <div class="head-right">
+      <span class="count">{{ cards().length }} domain{{ cards().length !== 1 ? 's' : '' }}</span>
+      <button
+        class="icon-btn"
+        (click)="queryAll()"
+        [disabled]="cards().length === 0"
+        title="Refresh all"
+        aria-label="Refresh all"
+      >
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- Add domain bar -->
+  <div class="add-bar">
+    <div class="search">
+      <mat-icon>add_circle</mat-icon>
+      <label class="sr-only" for="new-domain">Domain</label>
+      <input
+        id="new-domain"
+        type="text"
+        placeholder="Tambah domain… (pisahkan dengan koma)"
+        [ngModel]="newDomain()"
+        (ngModelChange)="newDomain.set($event)"
+        (keydown.enter)="addDomain()"
+      />
+      @if (newDomain()) {
+        <button class="clear-x" (click)="newDomain.set('')" aria-label="Clear input">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+    <button class="btn-primary" (click)="addDomain()" [disabled]="!newDomain().trim()">
+      Tambah
+    </button>
+    <div class="preset-row">
+      <span class="muted small">Coba:</span>
+      @for (p of domainPresets; track p) {
+        <button class="link-btn" (click)="addPreset(p)">{{ p }}</button>
+      }
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filters">
+    <span class="muted small">Filter type:</span>
+    <label class="sr-only" for="rr-type-filter">Record type</label>
+    <mat-button-toggle-group
+      id="rr-type-filter"
+      [value]="rrTypeFilter()"
+      (change)="rrTypeFilter.set($event.value)"
+    >
+      @for (t of rrTypes; track t) {
+        <mat-button-toggle [value]="t">{{ t === 'ALL' ? 'Semua' : t }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </div>
+
+  <!-- Empty state -->
+  @if (cards().length === 0) {
+    <div class="empty" role="status" aria-live="polite">
+      <mat-icon class="empty-icon">dns</mat-icon>
+      <p>Tambah domain di atas untuk mulai query DNS.</p>
+    </div>
+  }
+
+  <!-- Card grid -->
+  <div class="cards">
+    @for (c of cards(); track trackDomain($index, c)) {
+      <div class="card">
+        <!-- card header -->
+        <div class="card-head">
+          <span
+            class="dot"
+            [class.live]="c.lastUpdated !== null"
+            [class.idle]="c.lastUpdated === null"
+            [title]="c.lastUpdated ? 'loaded' : 'not loaded'"
+          ></span>
+          <h3>{{ c.domain }}</h3>
+
+          @if (!c.loading && !c.error) {
+            @for (tc of typeCounts(c); track tc.type) {
+              <span class="pill" [class]="tc.type.toLowerCase()">{{ tc.count }} {{ tc.type }}</span>
+            }
+          }
+
+          @if (c.refreshing) {
+            <span class="refreshing" title="refreshing…">
+              <mat-icon>sync</mat-icon>
+            </span>
+          }
+
+          <span class="spacer"></span>
+
+          @if (lastUpdated(c)) {
+            <span class="ts">{{ lastUpdated(c) }}</span>
+          }
+
+          <button
+            class="icon-btn sm"
+            (click)="$event.stopPropagation(); refreshDomain(c.domain)"
+            [disabled]="c.loading"
+            title="Refresh"
+            aria-label="Refresh"
+          >
+            <mat-icon>sync</mat-icon>
+          </button>
+
+          <button
+            class="icon-btn sm danger"
+            (click)="$event.stopPropagation(); removeDomain(c.domain)"
+            title="Remove"
+            aria-label="Remove"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- card body -->
+        @if (c.loading) {
+          <div class="card-body">
+            <div class="skeleton">
+              @for (i of [1, 2, 3, 4, 5]; track i) {
+                <div class="sk-row"></div>
+              }
+            </div>
+          </div>
+        } @else if (c.error) {
+          <div class="card-body">
+            <div class="err-row">
+              <mat-icon>error_outline</mat-icon>
+              <span>{{ c.error }}</span>
+              <button class="link-btn" (click)="refreshDomain(c.domain)">retry</button>
+            </div>
+          </div>
+        } @else if (c.records.length === 0) {
+          <div class="card-body">
+            <div class="muted small" style="padding: 8px 14px">No records.</div>
+          </div>
+        } @else {
+          <div class="card-body">
+            <table class="record-table">
+              @for (r of visibleRecords(c); track trackRecord($index, r)) {
+                <tr>
+                  <td><span class="rtype">{{ r.type }}</span></td>
+                  <td>
+                    <span class="rname" [title]="r.name">{{ r.name }}</span>
+                    <button class="copy-btn" (click)="$event.stopPropagation(); copyText(r.name)" [attr.aria-label]="'Copy ' + r.name">
+                      @if (copiedId() === r.name) { <mat-icon>check</mat-icon> } @else { <mat-icon>content_copy</mat-icon> }
+                    </button>
+                  </td>
+                  <td>
+                    <span class="rvalue" [title]="r.value">{{ r.value }}</span>
+                    <button class="copy-btn" (click)="$event.stopPropagation(); copyText(r.value)" [attr.aria-label]="'Copy ' + r.value">
+                      @if (copiedId() === r.value) { <mat-icon>check</mat-icon> } @else { <mat-icon>content_copy</mat-icon> }
+                    </button>
+                  </td>
+                  <td><span class="rttl">{{ r.ttl }}s</span></td>
+                </tr>
+              }
+            </table>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

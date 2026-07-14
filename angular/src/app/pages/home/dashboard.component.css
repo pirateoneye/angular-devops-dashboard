@@ -7,10 +7,11 @@
 .dash-hero {
   background: linear-gradient(
     135deg,
-    var(--msv-primary) 0%,
-    var(--msv-primary-hover) 100%
+    #005caa 0%,
+    #0a2540 60%,
+    #0d1b2a 100%
   );
-  color: var(--msv-primary-contrast);
+  color: #fff;
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 14px;

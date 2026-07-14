@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Utilities — Toolbox</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #0f1117; color: #e4e6eb; display: flex; height: 100vh; }
+/* sidebar */
+.sidebar { width: 280px; min-width: 280px; background: #1a1c23; border-right: 1px solid #2a2d35; display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-header { padding: 16px; border-bottom: 1px solid #2a2d35; }
+.sidebar-search { display: flex; align-items: center; gap: 8px; background: #0f1117; border: 1px solid #2a2d35; border-radius: 8px; padding: 8px 12px; }
+.sidebar-search input { background: none; border: none; color: #e4e6eb; font-size: 13px; outline: none; width: 100%; }
+.sidebar-search input::placeholder { color: #6b7280; }
+.sidebar-search .s-icon { color: #6b7280; font-size: 15px; }
+.sidebar-scroll { flex: 1; overflow-y: auto; padding: 8px 0; }
+.group-title { padding: 8px 16px 4px; font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+.tool-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; margin: 1px 4px; border-radius: 6px; cursor: pointer; font-size: 13px; color: #d1d5db; transition: background 0.1s; }
+.tool-row:hover { background: #252838; }
+.tool-row.active { background: #1e2040; color: #c7d2fe; }
+.tool-row .t-icon { font-size: 16px; width: 20px; text-align: center; }
+.tool-row .star { margin-left: auto; font-size: 14px; color: #6b7280; border: none; background: none; cursor: pointer; }
+.tool-row .star.on { color: #fbbf24; }
+.fav-section { border-bottom: 1px solid #2a2d35; padding-bottom: 4px; margin-bottom: 4px; }
+.empty-msg { padding: 16px; font-size: 12px; color: #6b7280; text-align: center; }
+/* main */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { display: flex; align-items: center; gap: 12px; padding: 10px 20px; background: #1a1c23; border-bottom: 1px solid #2a2d35; }
+.topbar .logo { width: 28px; height: 28px; background: #6366f1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 14px; }
+.topbar .breadcrumb { font-size: 13px; color: #9ca3af; }
+.topbar .breadcrumb span { color: #e4e6eb; }
+.content { flex: 1; padding: 24px; overflow-y: auto; max-width: 900px; }
+.tool-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.tool-sub { font-size: 13px; color: #9ca3af; margin-bottom: 16px; }
+.divider { height: 1px; background: #2a2d35; margin: 16px 0; }
+.label { font-size: 13px; font-weight: 500; color: #9ca3af; margin-bottom: 8px; }
+.textarea { width: 100%; min-height: 120px; background: #1a1c23; border: 1px solid #2a2d35; border-radius: 8px; padding: 12px; color: #e4e6eb; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; resize: vertical; outline: none; }
+.textarea:focus { border-color: #6366f1; }
+.btn-row { display: flex; gap: 8px; margin: 12px 0 20px; }
+.btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; }
+.btn-primary { background: #6366f1; color: #fff; }
+.btn-secondary { background: #252838; color: #d1d5db; }
+.btn-primary:hover { background: #5558e6; }
+.btn-secondary:hover { background: #2f3348; }
+.output-area { background: #0d1117; border: 1px solid #2a2d35; border-radius: 8px; padding: 16px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 12px; color: #c9d1d9; min-height: 80px; white-space: pre-wrap; }
+.empty-state { display: flex; flex-direction: column; align-items: center; padding: 60px 20px; color: #6b7280; }
+.empty-state .e-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
+.empty-state h3 { font-size: 15px; font-weight: 500; margin-bottom: 4px; color: #9ca3af; }
+.empty-state p { font-size: 13px; }
+</style>
+</head>
+<body>
+<!-- sidebar -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-search">
+      <span class="s-icon">🔍</span>
+      <input type="text" placeholder="Filter tools…">
+    </div>
+  </div>
+  <div class="sidebar-scroll">
+    <!-- Favorites -->
+    <div class="fav-section">
+      <div class="group-title">
+        <span>⭐</span> Favorites
+      </div>
+      <div class="tool-row">
+        <span class="t-icon">📝</span> JSON Formatter
+        <span class="star on">★</span>
+      </div>
+      <div class="tool-row">
+        <span class="t-icon">🔐</span> JWT Debugger
+        <span class="star on">★</span>
+      </div>
+    </div>
+    <!-- Encoders & Crypto -->
+    <div class="group-title">Encoders &amp; Crypto</div>
+    <div class="tool-row active">
+      <span class="t-icon">📝</span> JSON Formatter
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">🔑</span> Decoder
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">🔐</span> Hash Generator
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">🎫</span> JWT Debugger
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">🔒</span> SSL Converter
+      <span class="star"></span>
+    </div>
+    <!-- Text -->
+    <div class="group-title">Text</div>
+    <div class="tool-row">
+      <span class="t-icon">🔤</span> Regex Tester
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">✏️</span> Text Transforms
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">📊</span> Text Sort
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">🔢</span> Char Counter
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">↔️</span> Text Diff
+      <span class="star"></span>
+    </div>
+    <!-- Format & Data -->
+    <div class="group-title">Format &amp; Data</div>
+    <div class="tool-row">
+      <span class="t-icon">🕐</span> Cron Explainer
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">🖼️</span> Image / Base64
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">⏱️</span> Timestamp Converter
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">⚙️</span> Chmod Calculator
+      <span class="star"></span>
+    </div>
+    <div class="tool-row">
+      <span class="t-icon">🎲</span> Random Picker
+      <span class="star"></span>
+    </div>
+  </div>
+</div>
+
+<!-- main -->
+<div class="main">
+  <div class="topbar">
+    <div class="logo">M</div>
+    <div class="breadcrumb"><span>Home</span> / <span>Utilities</span></div>
+  </div>
+  <div class="content">
+    <h2 class="tool-title">JSON Formatter</h2>
+    <p class="tool-sub">Format, minify, dan validasi JSON.</p>
+    <div class="divider"></div>
+
+    <div class="label">Input</div>
+    <textarea class="textarea" placeholder='Paste JSON here — e.g. {"users":[{"name":"John","age":30}]}'></textarea>
+
+    <div class="btn-row">
+      <button class="btn btn-primary">Format</button>
+      <button class="btn btn-secondary">Minify</button>
+      <button class="btn btn-secondary">Validate</button>
+      <label style="display:flex;align-items:center;gap:6px;margin-left:16px;font-size:13px;color:#9ca3af;cursor:pointer">
+        <input type="checkbox"> Auto
+      </label>
+    </div>
+
+    <div class="label">Output</div>
+    <div class="output-area">
+      <span style="color:#f97583">"users"</span>: [
+        {
+          <span style="color:#f97583">"name"</span>: <span style="color:#79c0ff">"John"</span>,
+          <span style="color:#f97583">"age"</span>: <span style="color:#79c0ff">30</span>
+        }
+      ]
+    </div>
+  </div>
+</div>
+</body>
+</html>

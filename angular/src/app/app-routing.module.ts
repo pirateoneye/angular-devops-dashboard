@@ -86,10 +86,87 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'tools-dev/jenkins-build',
+    loadComponent: () =>
+      import('./pages/tools-dev/jenkins-build/jenkins-build.component').then(
+        (m) => m.JenkinsBuildComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/ssl-check',
+    loadComponent: () =>
+      import('./pages/tools-dev/ssl-check/ssl-check.component').then(
+        (m) => m.SslCheckComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/dns-lookup',
+    loadComponent: () =>
+      import('./pages/tools-dev/dns-lookup/dns-lookup.component').then(
+        (m) => m.DnsLookupComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/dns-query',
+    loadComponent: () =>
+      import('./pages/tools-dev/dns-query/dns-query.component').then(
+        (m) => m.DnsQueryComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/latency-stats',
+    loadComponent: () =>
+      import('./pages/tools-dev/latency-stats/latency-stats.component').then(
+        (m) => m.LatencyStatsComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/k8s-generator',
+    loadComponent: () =>
+      import('./pages/tools-dev/k8s-generator/k8s-generator.component').then(
+        (m) => m.K8sGeneratorComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/uuid-gen',
+    loadComponent: () =>
+      import('./pages/tools-dev/uuid-gen/uuid-gen.component').then(
+        (m) => m.UuidGenComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/cidr-calc',
+    loadComponent: () =>
+      import('./pages/tools-dev/cidr-calc/cidr-calc.component').then(
+        (m) => m.CidrCalcComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/yaml-json',
+    loadComponent: () =>
+      import('./pages/tools-dev/yaml-json/yaml-json.component').then(
+        (m) => m.YamlJsonComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/nginx-fmt',
+    loadComponent: () =>
+      import('./pages/tools-dev/nginx-fmt/nginx-fmt.component').then(
+        (m) => m.NginxFmtComponent,
+      ),
+  },
+  {
     path: 'tools-dev/publish-kafka',
     loadComponent: () =>
       import('./pages/tools-dev/publish-kafka/publish-kafka.component').then(
         (m) => m.PublishKafkaComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/ssl-converter',
+    loadComponent: () =>
+      import('./pages/tools-dev/ssl-converter/ssl-converter.component').then(
+        (m) => m.SslConverterComponent,
       ),
   },
   {

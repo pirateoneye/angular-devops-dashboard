@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   OnInit,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,6 +34,7 @@ export class GslbAuthorizationComponent implements OnInit {
   remember = true;
   submitting = false;
   loginError = '';
+  readonly showPassword = signal(false);
   redirectPath = '';
 
   ngOnInit(): void {

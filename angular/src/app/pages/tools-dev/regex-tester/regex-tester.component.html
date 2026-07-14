@@ -41,7 +41,7 @@
 ></textarea>
 
 <div class="tool-actions">
-  <button class="btn-primary" (click)="run()">Run</button>
+  <button class="btn-primary" (click)="run()" [disabled]="!testString.trim() || !pattern.trim()">Run</button>
   @if (matchCount) {
     <span class="tool-stats"
       >{{ matchCount }} match{{ matchCount > 1 ? "es" : "" }} found</span

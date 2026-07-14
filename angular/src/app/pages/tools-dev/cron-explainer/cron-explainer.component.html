@@ -24,7 +24,7 @@
     placeholder="*/5 * * * *"
     aria-label="Cron expression"
   />
-  <button class="btn-primary" (click)="explain()">Explain</button>
+  <button class="btn-primary" (click)="explain()" [disabled]="!expr.trim()">Explain</button>
 </div>
 @if (error) {
   <div class="tool-error" role="alert">{{ error }}</div>

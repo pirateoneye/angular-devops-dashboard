@@ -1,0 +1,26 @@
+.gl-gate { display:flex; align-items:center; justify-content:center; min-height:60vh; padding:2rem; }
+.gl-gate-card { text-align:center; max-width:420px; width:100%; background:var(--msv-surface); border:1px solid var(--msv-border); border-radius:12px; padding:2.5rem 2rem; }
+.gl-gate-icon-wrap { width:64px; height:64px; border-radius:50%; background:var(--msv-accent-bg); display:inline-flex; align-items:center; justify-content:center; margin-bottom:1rem; }
+.gl-gate-icon { font-size:32px; width:32px; height:32px; color:var(--msv-primary); }
+.gl-gate-card h2 { margin:0 0 .5rem; font-size:1.5rem; color:var(--msv-text); }
+.gl-gate-desc { color:var(--msv-text-muted); margin:0 0 1.5rem; font-size:.9rem; line-height:1.5; }
+.gl-gate-hint { color:var(--msv-text-muted); font-size:.8rem; margin:1.5rem 0 0; line-height:1.6; }
+.gl-gate-hint code { background:var(--msv-surface-2); padding:1px 5px; border-radius:3px; font-size:.8rem; }
+
+.gl-form { text-align:left; }
+.gl-field { display:block; margin-bottom:.75rem; font-size:.85rem; color:var(--msv-text-muted); }
+.gl-input-wrap { position:relative; display:flex; margin-top:4px; }
+.gl-input { flex:1; background:var(--msv-surface-2); border:1px solid var(--msv-border); color:var(--msv-text); padding:10px 12px; border-radius:6px; width:100%; font-size:.9rem; }
+.gl-input:focus { outline:none; border-color:var(--msv-primary); }
+.gl-eye { position:absolute; right:2px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--msv-text-muted); cursor:pointer; padding:4px 8px; }
+.gl-eye:hover { color:var(--msv-text); }
+
+.gl-error { background:var(--msv-error-bg); color:var(--msv-error); padding:8px 12px; border-radius:6px; font-size:.85rem; margin-bottom:.75rem; }
+
+.gl-btn-primary { display:inline-flex; align-items:center; gap:6px; background:var(--msv-primary); color:#fff; border:none; padding:10px 20px; border-radius:6px; font-size:.9rem; font-weight:600; cursor:pointer; width:100%; justify-content:center; }
+.gl-btn-primary:hover { background:var(--msv-primary-hover); }
+.gl-btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+.gl-btn-primary mat-icon { font-size:20px; width:20px; height:20px; }
+
+.gl-spin mat-icon { animation:gl-spin 0.9s linear infinite; }
+@keyframes gl-spin { to { transform:rotate(360deg); } }

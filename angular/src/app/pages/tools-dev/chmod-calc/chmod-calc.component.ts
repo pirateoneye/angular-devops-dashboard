@@ -90,9 +90,6 @@ export class ChmodCalcComponent {
     );
   }
 
-  get rwxNotation(): string {
-    return this.symbolic;
-  }
 
   get summary(): string {
     const parts: string[] = [];

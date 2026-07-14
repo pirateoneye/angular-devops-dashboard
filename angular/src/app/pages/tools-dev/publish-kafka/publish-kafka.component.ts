@@ -67,7 +67,7 @@ export class PublishKafkaComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         catchError((error) => {
-          this.buildErrorReponse('Error Publish Kafka', error);
+          this.buildErrorResponse('Error Publish Kafka', error);
           throw new Error(error);
         }),
       )
@@ -80,7 +80,7 @@ export class PublishKafkaComponent {
       });
   }
 
-  private buildErrorReponse(message: string, error: any) {
+  private buildErrorResponse(message: string, error: any) {
     this.response.message = message;
     this.response.data = {
       url: error.url,

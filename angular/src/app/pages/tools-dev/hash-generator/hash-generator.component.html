@@ -14,23 +14,21 @@
 ></textarea>
 
 <div class="tool-actions">
-  <button class="btn-primary" (click)="generate()" [disabled]="loading">
+  <button class="btn-primary" (click)="generate()" [disabled]="!input.trim()">
     Generate semua hash
   </button>
   <label class="auto-toggle">
     <input type="checkbox" [(ngModel)]="autoMode" />
     <span>Auto</span>
   </label>
-  @if (results.length && !loading) {
+  @if (results.length) {
     <button class="btn-secondary" (click)="copyAll()">
       {{ copiedAll ? "Copied!" : "Copy all" }}
     </button>
   }
 </div>
 
-@if (loading) {
-  <div class="hash-spinner"></div>
-} @else if (!input.trim()) {
+@if (!input.trim()) {
   <div class="icon-empty">
     <mat-icon class="empty-icon">tag</mat-icon>
     <h3>Enter text to generate hashes</h3>

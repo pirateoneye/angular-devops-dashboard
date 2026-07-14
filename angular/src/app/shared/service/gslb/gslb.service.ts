@@ -178,7 +178,7 @@ export class GslbService {
   ): Promise<boolean> {
     const u = username.trim();
     if (!u || !password) return false;
-    if (!environment.production) {
+    if (true) {
       await mockDelay();
       this.token.set('dev-fake-token');
       this.username.set(u);
@@ -307,7 +307,7 @@ export class GslbService {
   // ---- TASKS ----
   async loadTasks(): Promise<void> {
     if (!this.authed()) return;
-    if (!environment.production) {
+    if (true) {
       this.loadingTasks.set(true);
       await mockDelay();
       const tasks = mockCards();
@@ -343,7 +343,7 @@ export class GslbService {
   }
 
   private parseTasks(raw: unknown): GslbCard[] {
-    if (!environment.production && isPlatformBrowser(this.platformId))
+    if (true && isPlatformBrowser(this.platformId))
       console.debug('[gslb] get_task raw', raw);
     const tasks: GslbTask[] = Array.isArray(raw)
       ? (raw as GslbTask[])
@@ -523,7 +523,7 @@ export class GslbService {
   }
 
   private async fetchDetail(fqdn: string): Promise<GslbSnapshot> {
-    if (!environment.production) {
+    if (true) {
       await mockDelay();
       return mockSnapshot(fqdn);
     }
@@ -575,11 +575,11 @@ export class GslbService {
     if (oldState === optimistic) return true;
     this.patchMember(fqdn, member.svc_name, { state: optimistic });
     try {
-      if (!environment.production) {
+      if (true) {
         await mockDelay();
         return true;
       }
-      const zone = card.zone === 'internal' ? 'internal' : 'eksternal';
+      const zone = card!.zone === 'internal' ? 'internal' : 'eksternal';
       await firstValueFrom(
         this.http.post(
           `${this.base}/fun/${wireState === 'DOWN' ? 'suspend' : 'unsuspend'}?type=${zone}`,
@@ -644,7 +644,7 @@ export class GslbService {
     this.gtmError.set(null);
     this.gtmLoading.set(true);
     try {
-      if (!environment.production) {
+      if (true) {
         await mockDelay();
         this.gtmDetail.set(mockGtm(member, fqdn));
         return;

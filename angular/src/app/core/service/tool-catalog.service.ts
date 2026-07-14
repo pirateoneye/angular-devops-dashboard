@@ -263,6 +263,13 @@ export class ToolCatalogService {
       group: 'Dev Tools',
       keywords: ['dns', 'gslb', 'suspend', 'monitor'],
     },
+    {
+      label: 'DNS Query',
+      icon: 'travel_explore',
+      route: '/tools-dev/dns-query',
+      group: 'Dev Tools',
+      keywords: ['dns', 'query', 'lookup', 'a', 'aaaa', 'cname', 'mx', 'txt', 'ns', 'record'],
+    },
   ];
 
   readonly piket: NavEntry[] = [

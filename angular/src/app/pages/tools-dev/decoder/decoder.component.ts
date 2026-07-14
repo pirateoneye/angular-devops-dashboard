@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 type Mode = 'base64' | 'url' | 'jwt';
 
@@ -33,17 +32,19 @@ export class DecoderComponent {
     { key: 'jwt', label: 'JWT' },
   ];
 
-  constructor(
-    private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   @HostListener('execute') onExecute(): void {
     this.decode();
   }
 
   trySample(): void {
-    this.input = 'SGVsbG8gV29ybGQhIFRoaXMgaXMgYSB0ZXN0IHN0cmluZw==';
+    const samples: Record<Mode, string> = {
+      base64: 'SGVsbG8gV29ybGQhIFRoaXMgaXMgYSB0ZXN0IHN0cmluZw==',
+      url: 'Hello%20World%21%20This%20is%20a%20test%20string',
+      jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+    };
+    this.input = samples[this.mode] ?? samples.base64;
   }
 
   encode(): void {

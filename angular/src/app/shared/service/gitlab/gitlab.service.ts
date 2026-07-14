@@ -219,6 +219,20 @@ export class GitLabService {
     this.clientCache = null;
   }
 
+  /** DEV ONLY: seed dummy token + mock projects so the full UI can be inspected. */
+  devBypass(): void {
+    this.token.set('bypass-dummy-token');
+    this.projects.set([
+      { id: 1, name: 'proj-a', path_with_namespace: 'grp/proj-a', web_url: 'https://asui/grp/proj-a' },
+      { id: 2, name: 'proj-b', path_with_namespace: 'grp/proj-b', web_url: 'https://asui/grp/proj-b' },
+      { id: 3, name: 'proj-c', path_with_namespace: 'grp/proj-c', web_url: 'https://asui/grp/proj-c' },
+    ]);
+  }
+
+  private get bypass(): boolean {
+    return this.token() === 'bypass-dummy-token';
+  }
+
   async saveAccount(name: string, url: string, token: string): Promise<void> {
     // Validate token against the given URL before storing.
     const probe = new GitLabClient(this.adapter, url, token);
@@ -264,22 +278,27 @@ export class GitLabService {
     }
   }
 
-  listProjectTags(pid: number, opts?: ListTagsOptions): Promise<GitLabTag[]> {
-    return this.client().listProjectTags(pid, opts);
+  async listProjectTags(pid: number, _opts?: ListTagsOptions): Promise<GitLabTag[]> {
+    if (this.bypass) return [];
+    return this.client().listProjectTags(pid, _opts);
   }
-  listProjectBranches(pid: number): Promise<Branch[]> {
+  async listProjectBranches(pid: number): Promise<Branch[]> {
+    if (this.bypass) return [{ name: `feature/example-${pid}`, protected: false }];
     return this.client().listProjectBranches(pid);
   }
   listProjectMembers(pid: number): Promise<Member[]> {
     return this.client().listProjectMembers(pid);
   }
-  listProjectLabels(pid: number): Promise<Label[]> {
+  async listProjectLabels(pid: number): Promise<Label[]> {
+    if (this.bypass) return [{ id: pid, name: 'dev-label', color: '#36f' } as Label];
     return this.client().listProjectLabels(pid);
   }
-  listProjectMilestones(pid: number): Promise<Milestone[]> {
+  async listProjectMilestones(pid: number): Promise<Milestone[]> {
+    if (this.bypass) return [];
     return this.client().listProjectMilestones(pid);
   }
   listOpenMergeRequests(pid: number): Promise<MergeRequestResponse[]> {
+    if (this.bypass) return Promise.resolve([]);
     return this.client().listOpenMergeRequests(pid);
   }
 
@@ -296,6 +315,16 @@ export class GitLabService {
     projectIds: number[],
     cfg: ExecConfig,
   ): Promise<PreviewResult[]> {
+    // Dev bypass: return all-ok for every project without touching the API.
+    if (this.bypass) {
+      return projectIds.map((pid) => ({
+        projectId: pid,
+        projectName: this.projectName(pid),
+        ok: true,
+        reasons: [],
+        detail: cfg.tagName ?? cfg.source ?? '',
+      }));
+    }
     const client = this.client();
     const nameOf = (pid: number) => this.projectName(pid);
 
@@ -401,6 +430,17 @@ export class GitLabService {
     cfg: ExecConfig,
     concurrency = DEFAULT_CONCURRENCY,
   ): Promise<ExecResult[]> {
+    // Dev bypass: return dummy success results.
+    if (this.bypass) {
+      return projectIds.map((pid) => ({
+        projectId: pid,
+        projectName: this.projectName(pid),
+        success: true,
+        action,
+        status: 'done' as const,
+        detail: cfg.tagName ?? cfg.source ?? '',
+      }));
+    }
     const client = this.client();
     const nameOf = (pid: number) => this.projectName(pid);
     const batch = { concurrency };

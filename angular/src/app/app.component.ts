@@ -22,6 +22,11 @@ export class AppComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly userService = inject(UserService);
   private readonly catalog = inject(ToolCatalogService);
+  /** Dev tool entries for the nav dropdown. */
+  readonly devTools = this.catalog.devTools;
+
+  /** Piket entries for the nav dropdown. */
+  readonly piketTools = this.catalog.piket;
   readonly theme = inject(ThemeService);
 
   /** Current username, exposed as a signal so OnPush tracks changes. */

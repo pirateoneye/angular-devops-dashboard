@@ -1,18 +1,16 @@
 <div
   mat-dialog-content
   class="dialog-content"
-  style="border-radius: 32px; background-color: white"
+  style="border-radius: 32px; background: var(--msv-surface); color: var(--msv-text)"
 >
   <div
     class="container shadow-none d-flex flex-column align-items-start m-0 p-2"
-    style="width: 650px; box-shadow: none !important; border-radius: 16px"
+    style="max-width: min(650px, 90vw); box-shadow: none !important; border-radius: 16px"
   >
     <h1
       class="font-general m-0"
       style="
-        color: #144e83;
-        font-family: &quot;Open Sans&quot;;
-        font-weight: 700;
+        color: var(--msv-primary);
       "
     >
       Masukkan Nama Kamu
@@ -20,9 +18,7 @@
     <h4
       class="m-0 p-0"
       style="
-        color: #495057;
-        font-family: &quot;Open Sans&quot;;
-        font-weight: 400;
+        color: var(--msv-text);
       "
     >
       Masukkan nama kamu untuk melanjutkan, nama ini akan digunakan hanya
@@ -33,7 +29,7 @@
       style="
         width: 100%;
         height: 1px;
-        background-color: #e9ecef;
+        background-color: var(--msv-border);
         padding: 0;
         margin: 0;
         margin-top: 12px;
@@ -41,62 +37,59 @@
       "
     ></div>
 
-    <div class="d-flex flex-row align-items-center w-100">
-      <label
-        for="name"
-        class="font-general"
-        style="
-          color: #144e83;
-          font-family: &quot;Open Sans&quot;;
-          font-weight: 600;
-          font-size: 16px;
-          margin-right: 24px;
-        "
-      >
-        Nama
-      </label>
-      <input
-        [(ngModel)]="nama"
-        type="text"
-        class="form-control input-text-field"
-        id="name"
-        placeholder="Masukkan Nama Kamu"
-      />
-    </div>
-    <div *ngIf="!isLocalstorage" class="w-100">
-      <div
-        *ngIf="nama.length === 0"
-        class="col button-primary-disabled mt-4 w-100"
-      >
-        <span> Lanjutkan </span>
-      </div>
-      <div
-        *ngIf="nama.length !== 0"
-        (click)="setNama()"
-        class="col button-primary mt-4 w-100"
-      >
-        <span> Lanjutkan </span>
-      </div>
-    </div>
-
-    <div *ngIf="isLocalstorage" class="d-flex flex-row w-100 gap-2">
-      <div
-        *ngIf="nama.length === 0"
-        class="col button-primary-disabled mt-4 w-100"
-      >
-        <span> Lanjutkan </span>
-      </div>
-      <div
-        *ngIf="nama.length !== 0"
-        (click)="setNama()"
-        class="col button-primary mt-4 w-100"
-      >
-        <span> Lanjutkan </span>
+    <form (ngSubmit)="setNama()" class="w-100">
+      <div class="d-flex flex-row align-items-center w-100">
+        <label
+          for="name"
+          class="font-general"
+          style="
+            color: var(--msv-primary);
+            font-weight: 600;
+            font-size: 16px;
+            margin-right: 24px;
+          "
+        >
+          Nama
+        </label>
+        <input
+          [(ngModel)]="nama"
+          type="text"
+          class="form-control input-text-field"
+          id="name"
+          name="name"
+          placeholder="Masukkan Nama Kamu"
+          maxlength="50"
+          autofocus
+        />
       </div>
 
-      <div (click)="closeModal()" class="col button-secondary mt-4 w-100">
-        <span> Batal </span>
+      <div class="d-flex flex-row w-100 gap-2">
+        <button
+          [disabled]="nama.trim().length === 0"
+          class="col button-primary mt-4 w-100"
+          type="submit"
+        >
+          <span> Lanjutkan </span>
+        </button>
+        @if (!isLocalstorage) {
+          <button
+            type="button"
+            class="col button-secondary mt-4 w-100"
+            (click)="skipName()"
+          >
+            <span> Lewati </span>
+          </button>
+        }
+        @if (isLocalstorage) {
+          <button
+            type="button"
+            class="col button-secondary mt-4 w-100"
+            (click)="closeModal()"
+          >
+            <span> Batal </span>
+          </button>
+        }
       </div>
-    </div>
+    </form>
   </div>
 </div>

@@ -66,7 +66,7 @@
 </div>
 
 <div class="tool-actions">
-  <button class="btn-primary" (click)="process()">Proses</button>
+  <button class="btn-primary" (click)="process()" [disabled]="!input.trim()">Proses</button>
   <button class="btn-secondary" (click)="clear()">Clear</button>
   @if (stats) {
     <span class="tool-stats">{{ stats }}</span>

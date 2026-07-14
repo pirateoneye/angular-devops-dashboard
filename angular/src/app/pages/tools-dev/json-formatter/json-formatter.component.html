@@ -48,9 +48,9 @@
 </div>
 
 <div class="tool-actions">
-  <button class="btn-primary" (click)="format()">Format</button>
-  <button class="btn-primary" (click)="minify()">Minify</button>
-  <button class="btn-secondary" (click)="validate()">Validate</button>
+  <button class="btn-primary" (click)="format()" [disabled]="!input.trim()">Format</button>
+  <button class="btn-primary" (click)="minify()" [disabled]="!input.trim()">Minify</button>
+  <button class="btn-secondary" (click)="validate()" [disabled]="!input.trim()">Validate</button>
   <button class="btn-secondary" (click)="clear()">Clear</button>
   <label class="auto-toggle">
     <input type="checkbox" [(ngModel)]="autoMode" />

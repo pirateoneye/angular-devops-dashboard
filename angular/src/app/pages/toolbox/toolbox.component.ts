@@ -148,16 +148,6 @@ export class ToolboxComponent implements OnInit {
       .filter((t) => this.matchesQuery(t)),
   );
 
-  /** Recently used tools, filtered by the current query and excluding favorites. */
-  readonly recentTools = computed<ToolEntry[]>(() => {
-    const favs = new Set(this.catalog.favorites());
-    return this.catalog
-      .recents()
-      .map((s) => this.catalog.bySlug(s))
-      .filter((t): t is ToolEntry => !!t)
-      .filter((t) => !favs.has(t.slug))
-      .filter((t) => this.matchesQuery(t));
-  });
 
   /** Category groups with their filtered tool lists (memoized per query). */
   readonly groupEntries = computed<GroupEntry[]>(() =>
@@ -173,14 +163,12 @@ export class ToolboxComponent implements OnInit {
   readonly hasAnyTool = computed<boolean>(
     () =>
       this.favoriteTools().length > 0 ||
-      this.recentTools().length > 0 ||
       this.groupEntries().some((ge) => ge.tools.length > 0),
   );
 
   /** Flat list of every visible tool row in display order. */
   readonly visibleTools = computed<ToolEntry[]>(() => {
     const result: ToolEntry[] = [];
-    for (const t of this.recentTools()) result.push(t);
     for (const t of this.favoriteTools()) result.push(t);
     for (const ge of this.groupEntries()) {
       for (const t of ge.tools) result.push(t);

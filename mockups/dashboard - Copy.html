@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — MSV Tools</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #0f1117; color: #e4e6eb; }
+.header { display: flex; align-items: center; gap: 12px; padding: 12px 24px; background: #1a1c23; border-bottom: 1px solid #2a2d35; }
+.logo { width: 32px; height: 32px; background: #6366f1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 16px; }
+.nav { display: flex; gap: 4px; margin-left: 32px; }
+.nav a { padding: 6px 14px; border-radius: 6px; text-decoration: none; color: #9ca3af; font-size: 14px; }
+.nav a.active { background: #1e2030; color: #e4e6eb; }
+.nav a .icon { font-size: 16px; margin-right: 4px; vertical-align: -2px; }
+.spacer { flex: 1; }
+.user-btn { padding: 6px 12px; border-radius: 6px; background: #1e2030; color: #9ca3af; border: none; cursor: pointer; font-size: 13px; }
+.container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+.hero { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; gap: 24px; }
+.hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.hero p { color: #9ca3af; font-size: 14px; margin-bottom: 16px; }
+.stats { display: flex; gap: 8px; }
+.stat { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+.stat.dev { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+.stat.util { background: rgba(34,197,94,0.15); color: #86efac; }
+.stat.piket { background: rgba(251,146,60,0.15); color: #fdba74; }
+.search-box { display: flex; align-items: center; gap: 8px; background: #1a1c23; border: 1px solid #2a2d35; border-radius: 10px; padding: 10px 16px; min-width: 320px; }
+.search-box input { background: none; border: none; color: #e4e6eb; font-size: 14px; outline: none; width: 100%; }
+.search-box input::placeholder { color: #6b7280; }
+.search-box .s-icon { color: #6b7280; font-size: 18px; }
+.section-title { font-size: 14px; font-weight: 500; color: #9ca3af; margin-bottom: 12px; margin-top: 24px; text-transform: uppercase; letter-spacing: 0.5px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 8px; }
+.tile { display: flex; align-items: flex-start; gap: 12px; padding: 16px; background: #1a1c23; border: 1px solid #2a2d35; border-radius: 10px; cursor: pointer; transition: border-color 0.15s; text-decoration: none; color: inherit; position: relative; }
+.tile:hover { border-color: #6366f1; }
+.tile .t-icon { font-size: 22px; margin-top: 2px; }
+.tile-body { flex: 1; }
+.tile-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.tile-desc { font-size: 12px; color: #9ca3af; line-height: 1.4; }
+.badge { position: absolute; top: 8px; right: 8px; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 500; }
+.badge.dev { background: rgba(99,102,241,0.12); color: #a5b4fc; }
+.badge.util { background: rgba(34,197,94,0.12); color: #86efac; }
+.badge.piket { background: rgba(251,146,60,0.12); color: #fdba74; }
+@media (max-width: 800px) { .grid { grid-template-columns: 1fr; } .hero { flex-direction: column; } }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo">M</div>
+  <nav class="nav">
+    <a href="#" class="active"><span class="icon">🏠</span> Home</a>
+    <a href="#"><span class="icon">🔧</span> Utilities</a>
+    <a href="#"><span class="icon">⚙️</span> UAT/DEV</a>
+    <a href="#"><span class="icon">📋</span> Piket</a>
+  </nav>
+  <div class="spacer"></div>
+  <button class="user-btn">🔍 Ctrl+K</button>
+  <button class="user-btn">👤</button>
+</header>
+
+<div class="container">
+  <div class="hero">
+    <div>
+      <h1>MSV Tools</h1>
+      <p>Pusat kontrol tools dev &amp; piket Merchant Services.</p>
+      <div class="stats">
+        <span class="stat dev">9 Dev Tools</span>
+        <span class="stat util">1 Utility</span>
+        <span class="stat piket">3 Piket</span>
+      </div>
+    </div>
+    <div class="search-box">
+      <span class="s-icon">🔍</span>
+      <input type="text" placeholder="Cari tool…">
+    </div>
+  </div>
+
+  <div class="section-title">Dev Tools</div>
+  <div class="grid">
+    <a class="tile" href="#">
+      <span class="t-icon">📋</span>
+      <div class="tile-body">
+        <div class="tile-title">Batch Runner</div>
+        <div class="tile-desc">Jalankan batch manual di UAT</div>
+      </div>
+      <span class="badge dev">Dev Tools</span>
+    </a>
+    <a class="tile" href="#">
+      <span class="t-icon">🔐</span>
+      <div class="tile-body">
+        <div class="tile-title">Crypto</div>
+        <div class="tile-desc">Enkripsi / dekripsi / decode</div>
+      </div>
+      <span class="badge dev">Dev Tools</span>
+    </a>
+    <a class="tile" href="#">
+      <span class="t-icon">🔍</span>
+      <div class="tile-body">
+        <div class="tile-title">Check Data</div>
+        <div class="tile-desc">Cek data pengajuan</div>
+      </div>
+      <span class="badge dev">Dev Tools</span>
+    </a>
+    <a class="tile" href="#">
+      <span class="t-icon">🗑️</span>
+      <div class="tile-body">
+        <div class="tile-title">Delete Data</div>
+        <div class="tile-desc">Hapus data pengajuan</div>
+      </div>
+      <span class="badge dev">Dev Tools</span>
+    </a>
+    <a class="tile" href="#">
+      <span class="t-icon">📁</span>
+      <div class="tile-body">
+        <div class="tile-title">File Server Manager</div>
+        <div class="tile-desc">Kelola file server</div>
+      </div>
+      <span class="badge dev">Dev Tools</span>
+    </a>
+    <a class="tile" href="#">
+      <span class="t-icon">🔔</span>
+      <div class="tile-body">
+        <div class="tile-title">Push Notif FCM</div>
+        <div class="tile-desc">Kirim push notification FCM</div>
+      </div>
+      <span class="badge dev">Dev Tools</span>
+    </a>
+    <a class="tile" href="#">
+      <span class="t-icon">📨</span>
+      <div class="tile-body">
+        <div class="tile-title">Publish Kafka</div>
+        <div class="tile-desc">Publish message ke Kafka</div>
+      </div>
+      <span class="badge dev">Dev Tools</span>
+    </a>
+    <a class="tile" href="#">
+      <span class="t-icon">🔄</span>
+      <div class="tile-body">
+        <div class="tile-title">GitLab Tools</div>
+        <div class="tile-desc">Monitor tag &amp; operasi bulk GitLab</div>
+      </div>
+      <span class="badge dev">Dev Tools</span>
+    </a>
+    <a class="tile" href="#">
+      <span class="t-icon">🌐</span>
+      <div class="tile-body">
+        <div class="tile-title">GSLB</div>
+        <div class="tile-desc">Monitor &amp; suspend/unsuspend GSLB DNS</div>
+      </div>
+      <span class="badge dev">Dev Tools</span>
+    </a>
+  </div>
+
+  <div class="section-title">Utilities</div>
+  <div class="grid">
+    <a class="tile" href="#">
+      <span class="t-icon">🧰</span>
+      <div class="tile-body">
+        <div class="tile-title">Utilities</div>
+        <div class="tile-desc">15 tools: JSON, decoder, regex, hash, JWT, SSL, diff, transforms, sort, char counter, cron, image/base64, timestamp, chmod, random</div>
+      </div>
+      <span class="badge util">Utilities</span>
+    </a>
+  </div>
+
+  <div class="section-title">Piket</div>
+  <div class="grid">
+    <a class="tile" href="#">
+      <span class="t-icon">📝</span>
+      <div class="tile-body">
+        <div class="tile-title">List Keluhan</div>
+        <div class="tile-desc">Daftar keluhan piket</div>
+      </div>
+      <span class="badge piket">Piket</span>
+    </a>
+    <a class="tile" href="#">
+      <span class="t-icon">✏️</span>
+      <div class="tile-body">
+        <div class="tile-title">Fix Data User</div>
+        <div class="tile-desc">Perbaiki data user</div>
+      </div>
+      <span class="badge piket">Piket</span>
+    </a>
+    <a class="tile" href="#">
+      <span class="t-icon">🔄</span>
+      <div class="tile-body">
+        <div class="tile-title">Fix After Merge CIS</div>
+        <div class="tile-desc">Perbaikan pasca merge CIS</div>
+      </div>
+      <span class="badge piket">Piket</span>
+    </a>
+  </div>
+</div>
+</body>
+</html>

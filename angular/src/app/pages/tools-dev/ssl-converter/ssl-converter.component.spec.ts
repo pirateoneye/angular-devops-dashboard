@@ -225,6 +225,13 @@ describe('ssl-converter pure functions', () => {
       expect(out.fileName).toContain('pkcs1');
     });
 
+    it('PKCS12 -> PKCS12_EXTRACT should return error for junk bytes', () => {
+      const p12Det = detect(new Uint8Array([0x01, 0x02]), 'my.p12');
+      const out = convert(p12Det, OutputFormat.PKCS12_EXTRACT);
+      expect(out.error).toBeDefined();
+      expect(out.mime).toBe('text/plain');
+    });
+
     it('PKCS12 -> OPENSSL_CMD should return text with openssl commands', () => {
       const p12Det = detect(new Uint8Array([0x01, 0x02]), 'my.p12');
       const out = convert(p12Det, OutputFormat.OPENSSL_CMD);
@@ -371,10 +378,12 @@ describe('ssl-converter pure functions', () => {
       expect(outs).toContain(OutputFormat.JWK);
     });
 
-    it('PKCS12 -> should return OPENSSL_CMD', () => {
+    it('PKCS12 -> should return PKCS12_EXTRACT and OPENSSL_CMD', () => {
       const d = detect(new Uint8Array([0x01]), 'k.p12');
       const outs = availableOutputs(d);
-      expect(outs).toEqual([OutputFormat.OPENSSL_CMD]);
+      expect(outs).toContain(OutputFormat.PKCS12_EXTRACT);
+      expect(outs).toContain(OutputFormat.OPENSSL_CMD);
+      expect(outs.length).toBe(2);
     });
 
     it('JKS -> should return KEYTOOL_CMD', () => {

@@ -11,8 +11,8 @@ import { CanActivateFn, Router } from '@angular/router';
  * @deprecated Use domain-specific guards like piketGuard/gslbGuard instead.
  */
 export const authGuard: CanActivateFn = () => {
+  const router = inject(Router);
   if (!localStorage.getItem('authorized')) {
-    const router = inject(Router);
     router.navigate(['/login']);
     return false;
   }

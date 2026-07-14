@@ -78,7 +78,7 @@ export class PushNotifFcmComponent {
           this.response.status = 'SUCCESS';
         },
         error: (e) => {
-          this.buildErrorReponse('Error Push Notification FCM', e);
+          this.buildErrorResponse('Error Push Notification FCM', e);
         },
       });
   }
@@ -128,7 +128,7 @@ export class PushNotifFcmComponent {
         }
       }),
       catchError((error) => {
-        this.buildErrorReponse('Error Generating Access Token', error);
+        this.buildErrorResponse('Error Generating Access Token', error);
         throw new Error(error);
       }),
     );
@@ -149,13 +149,13 @@ export class PushNotifFcmComponent {
     const url = `https://fcm.googleapis.com/v1/projects/${this.serviceAccount[this.env].project_id}/messages:send`;
     return this.http.post(url, this.requestBody, { headers: headers }).pipe(
       catchError((error) => {
-        this.buildErrorReponse('Error Push Notification FCM', error);
+        this.buildErrorResponse('Error Push Notification FCM', error);
         throw new Error(error);
       }),
     );
   }
 
-  private buildErrorReponse(message: string, error: any) {
+  private buildErrorResponse(message: string, error: any) {
     this.response.message = message;
     this.response.data = {
       url: error.url,

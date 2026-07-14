@@ -19,23 +19,23 @@ export class ModalInsertNameComponent implements OnInit {
 
   constructor(private userService: UserService, public dialogRef: MatDialogRef<ModalInsertNameComponent>) { }
   
-  setNama(){
-    if (this.nama != '') {
-      this.userService.setNama(this.nama);
-      this.dialogRef.close(); // Close the dialog
+  setNama(): void {
+    if (this.nama.trim().length > 0) {
+      this.userService.setNama(this.nama.trim());
+      this.dialogRef.close();
     }
   }
 
-  closeModal(){
-    this.dialogRef.close(); // Close the dialog
+  skipName(): void {
+    this.dialogRef.close();
+  }
+
+  closeModal(): void {
+    this.dialogRef.close();
   }
 
   ngOnInit(): void {
-    this.nama = localStorage.getItem('user') ?? '';
-    if (this.nama != '') {
-      this.isLocalstorage = true;
-    }
+    this.nama = this.userService.getNama();
+    this.isLocalstorage = this.nama !== '';
   }
-  
-
 }

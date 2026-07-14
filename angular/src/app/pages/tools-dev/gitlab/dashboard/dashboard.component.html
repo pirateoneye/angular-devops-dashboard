@@ -1,0 +1,81 @@
+<div class="gl-db">
+  <div class="gl-kpis">
+    <div class="gl-kpi" (click)="setFilter('all')" tabindex="0" role="button" [attr.aria-label]="'Show all ' + totalCount() + ' projects'">
+      <span class="gl-kpi-num">{{ totalCount() }}</span>
+      <span class="gl-kpi-lbl">Proyek</span>
+    </div>
+    <div class="gl-kpi ok" (click)="setFilter('tagged')" tabindex="0" role="button" [attr.aria-label]="'Show ' + taggedCount() + ' tagged projects'">
+      <span class="gl-kpi-num">{{ taggedCount() }}</span>
+      <span class="gl-kpi-lbl">Ditag</span>
+    </div>
+    <div class="gl-kpi warn" (click)="setFilter('untagged')" tabindex="0" role="button" [attr.aria-label]="'Show ' + (totalCount() - taggedCount()) + ' untagged projects'">
+      <span class="gl-kpi-num">{{ totalCount() - taggedCount() }}</span>
+      <span class="gl-kpi-lbl">Belum Ditag</span>
+    </div>
+  </div>
+
+  <div class="gl-search">
+    <mat-icon class="gl-search-icon" aria-hidden="true">search</mat-icon>
+    <input class="gl-input" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event); visibleCount.set(30)" placeholder="Cari proyek..."/>
+  </div>
+
+  <div class="gl-chips">
+    <button class="gl-chip" [class.active]="filterChip() === 'all'" (click)="setFilter('all')">Semua</button>
+    <button class="gl-chip" [class.active]="filterChip() === 'tagged'" (click)="setFilter('tagged')">Ditag</button>
+    <button class="gl-chip" [class.active]="filterChip() === 'untagged'" (click)="setFilter('untagged')">Belum Ditag</button>
+  </div>
+
+  @if (selectedIds().size > 0) {
+    <div class="gl-select-bar">
+      {{ selectedIds().size }} terpilih
+      <button class="gl-btn-ghost sm" (click)="selectAll(false)">Hapus</button>
+      <button class="gl-btn-primary" (click)="emitSelected()">Buka Manajer Tag</button>
+    </div>
+  }
+
+  @if (loading() || tagsLoading()) {
+    <div class="gl-empty">Memuat proyek...</div>
+  } @else if (filtered().length === 0) {
+    <div class="gl-empty">Tidak ada proyek cocok dengan "{{ searchQuery() }}". <button class="gl-link" (click)="searchQuery.set(''); setFilter('all')">Hapus</button></div>
+  } @else {
+    <div class="gl-table-wrap">
+      <table class="gl-table">
+        <thead>
+          <tr>
+            <th class="gl-chk-th"><input type="checkbox" [checked]="allSelected()" (change)="onSelectAllChange($event)" /></th>
+            <th class="sortable" (click)="toggleSort('projectName')">Nama @if (sortKey() === 'projectName') { {{ sortDir() === 'asc' ? '▲' : '▼' }} }</th>
+            <th>Tag Terakhir</th>
+            <th class="sortable" (click)="toggleSort('tagDate')">Usia @if (sortKey() === 'tagDate') { {{ sortDir() === 'asc' ? '▲' : '▼' }} }</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of visible(); track r.project.id) {
+            <tr>
+              <td class="gl-chk-td"><input type="checkbox" [checked]="selectedIds().has(r.project.id)" (change)="toggleSelect(r.project.id)" /></td>
+              <td>
+                <div class="gl-proj-name">{{ r.project.name }}</div>
+                <div class="gl-proj-path">{{ r.project.path_with_namespace }}</div>
+              </td>
+              <td>
+                @if (r.latestTag) {
+                  <span class="gl-tag-chip"><code>{{ r.latestTag.name }}</code></span>
+                } @else {
+                  <span class="gl-mute">—</span>
+                }
+              </td>
+              <td>
+                <span class="gl-age" [class]="'gl-age-' + tagAgeColor(r.tagDate)">{{ tagAgeText(r.tagDate) }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (visibleCount() < filtered().length) {
+      <button class="gl-btn-ghost gl-load-more" (click)="loadMore()">
+        Muat 20 lagi ({{ visibleCount() }} dari {{ filtered().length }})
+      </button>
+    }
+  }
+</div>

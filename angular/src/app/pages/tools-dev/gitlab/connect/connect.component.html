@@ -1,0 +1,69 @@
+<div class="gl-gate">
+  <div class="gl-gate-card">
+    <div class="gl-gate-icon-wrap">
+      <mat-icon class="gl-gate-icon" aria-hidden="true">merge_type</mat-icon>
+    </div>
+    <h2>GitLab Tools</h2>
+    <p class="gl-gate-desc">
+      Hubungkan untuk mengakses project, tag, dan branch GitLab Anda.
+    </p>
+
+    <div class="gl-form">
+      <label class="gl-field" for="gl-token">
+        Personal Access Token
+        <div class="gl-input-wrap">
+          <input
+            id="gl-token"
+            class="gl-input"
+            [type]="showPassword() ? 'text' : 'password'"
+            [ngModel]="token()"
+            (ngModelChange)="token.set($event); error.set('')"
+            placeholder="glpat-xxxxxxxxxxxxxxxxxxxx"
+            [disabled]="connecting()"
+            autofocus
+          />
+          <button
+            type="button"
+            class="gl-eye"
+            (click)="showPassword.set(!showPassword())"
+            [attr.aria-label]="showPassword() ? 'Hide token' : 'Show token'"
+          >
+            <mat-icon aria-hidden="true">{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+      </label>
+
+      @if (error()) {
+        <div class="gl-error">{{ error() }}</div>
+      }
+
+      <button
+        class="gl-btn-primary gl-gate-btn"
+        (click)="connect()"
+        [disabled]="connecting() || !token()"
+      >
+        @if (connecting()) {
+          <mat-icon class="gl-spin" aria-hidden="true">sync</mat-icon>
+        } @else {
+          <mat-icon aria-hidden="true">key</mat-icon>
+        }
+        {{ connecting() ? 'Connecting...' : 'Connect' }}
+      </button>
+      <!-- DEV ONLY: bypass auth to inspect full UI -->
+      @if (!env.production) {
+        <button
+          class="gl-btn-secondary gl-gate-btn"
+          (click)="devBypass()"
+          [disabled]="connecting()"
+        >
+          Bypass
+        </button>
+      }
+    </div>
+
+    <p class="gl-gate-hint">
+      Buat token di GitLab <strong>&rarr; Settings &rarr; Access Tokens</strong> dengan scope <code>api</code>.<br />
+      Token disimpan di memori — tidak pernah ditulis ke disk.
+    </p>
+  </div>
+</div>

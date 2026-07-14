@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
  * from ssl-converter.logic.ts to keep the 3-file page pattern).
  * ========================================================================= */
 
+import * as forge from 'node-forge';
 import { KEYUTIL, X509, KJUR, ASN1HEX } from 'jsrsasign';
 
 export enum Encoding {
@@ -40,6 +41,7 @@ export enum OutputFormat {
   PKCS8PRV = 'PKCS8PRV',
   JWK = 'JWK',
   PEM_CHAIN = 'PEM_CHAIN',
+  PKCS12_EXTRACT = 'PKCS12_EXTRACT',
   OPENSSL_CMD = 'OPENSSL_CMD',
   KEYTOOL_CMD = 'KEYTOOL_CMD',
 }
@@ -580,7 +582,23 @@ function csrMetadata(d: DetectionResult): SslMetadata | null {
       /* */
     }
     try {
-      meta['keyAlg'] = safe(param.sbjpubkey?.type);
+      // jsrsasign v11 returns sbjpubkey as PEM string, not object with .type
+      const sigalg: string | undefined = param.sigalg;
+      if (sigalg) {
+        if (/(?:EC|ECDSA)/i.test(sigalg)) meta['keyAlg'] = 'EC';
+        else if (/RSA/i.test(sigalg)) meta['keyAlg'] = 'RSA';
+        else if (/DSA/i.test(sigalg)) meta['keyAlg'] = 'DSA';
+      }
+      const pubPem: string | undefined = param.sbjpubkey;
+      if (pubPem && typeof pubPem === 'string' && pubPem.includes('PUBLIC KEY')) {
+        const k = KEYUTIL.getKey(pubPem);
+        if (k?.type === 'RSA') {
+          const bits: number = (k.n?.bitLength && typeof k.n.bitLength === 'function') ? k.n.bitLength() : 0;
+          if (bits) meta['keySize'] = String(bits) + ' bit';
+        } else if (k?.type === 'EC') {
+          meta['keySize'] = safe(k.curveName);
+        }
+      }
     } catch {
       /**/
     }
@@ -615,7 +633,7 @@ export function availableOutputs(
     case SslType.P7B:
       return [OutputFormat.PEM_CHAIN, OutputFormat.DER];
     case SslType.PKCS12:
-      return [OutputFormat.OPENSSL_CMD];
+      return [OutputFormat.PKCS12_EXTRACT, OutputFormat.OPENSSL_CMD];
     case SslType.JKS:
       return [OutputFormat.KEYTOOL_CMD];
     case SslType.PRV_PKCS1:
@@ -638,6 +656,7 @@ export const OUTPUT_LABELS: Record<OutputFormat, string> = {
   [OutputFormat.PKCS8PRV]: 'PKCS#8',
   [OutputFormat.JWK]: 'JWK',
   [OutputFormat.PEM_CHAIN]: 'PEM Chain',
+  [OutputFormat.PKCS12_EXTRACT]: 'Extract PFX',
   [OutputFormat.OPENSSL_CMD]: 'openssl cmd',
   [OutputFormat.KEYTOOL_CMD]: 'keytool cmd',
 };
@@ -661,6 +680,8 @@ export function convert(
         return keyToJwk(d, 'key.jwk.json', password);
       case OutputFormat.PEM_CHAIN:
         return p7bToChain(d);
+      case OutputFormat.PKCS12_EXTRACT:
+        return pkcs12Extract(d, password);
       case OutputFormat.OPENSSL_CMD:
         return opensslCmd(d);
       case OutputFormat.KEYTOOL_CMD:
@@ -819,7 +840,18 @@ function p7bToChain(d: DetectionResult): ConvertOutput {
   };
 }
 
+function pkcs12Extract(d: DetectionResult, password?: string): ConvertOutput {
+  const extracted = tryPkcs12Extract(d, password);
+  if (extracted) return extracted;
+  return {
+    mime: 'text/plain',
+    fileName: 'extract-error.txt',
+    error: 'Gagal mengekstrak PKCS#12 di browser. Coba tab "openssl cmd" untuk panduan CLI.',
+  };
+}
+
 function opensslCmd(d: DetectionResult): ConvertOutput {
+  // CLI commands only — extraction is now a separate output format
   const f = d.fileName || 'file.p12';
   const text = [
     `# Inspect / list contents`,
@@ -836,6 +868,46 @@ function opensslCmd(d: DetectionResult): ConvertOutput {
   ].join('\n');
   return { text, mime: 'text/plain', fileName: 'openssl-commands.txt' };
 }
+
+/** Extract cert + key from PKCS12 using node-forge. Returns null if parse fails. */
+function tryPkcs12Extract(d: DetectionResult, password?: string): ConvertOutput | null {
+  try {
+    const bytes = curBytes(d);
+    const binStr = Array.from(bytes, b => String.fromCharCode(b)).join('');
+    const buf = forge.util.createBuffer(binStr);
+    const asn1Obj = forge.asn1.fromDer(buf);
+    const p12 = forge.pkcs12.pkcs12FromAsn1(asn1Obj, false, password || '');
+
+    const parts: string[] = [];
+
+    // Extract certificates
+    const certResult = p12.getBags({ bagType: (forge.pki.oids as Record<string,string>)['certBag'] });
+    const certBags = certResult[(forge.pki.oids as Record<string,string>)['certBag']] || [];
+    for (const bag of certBags) {
+      if (bag.cert) {
+        parts.push(forge.pki.certificateToPem(bag.cert));
+      }
+    }
+
+    // Extract private keys (both unencrypted keyBag and shrouded)
+    for (const oidType of [(forge.pki.oids as Record<string,string>)['keyBag'], (forge.pki.oids as Record<string,string>)['pkcs8ShroudedKeyBag']]) {
+      const keyResult = p12.getBags({ bagType: oidType });
+      const keyBags = keyResult[oidType] || [];
+      for (const bag of keyBags) {
+        if (bag.key) {
+          parts.push(forge.pki.privateKeyToPem(bag.key));
+        }
+      }
+    }
+
+    if (!parts.length) return null;
+    const base = (d.fileName || 'keystore').replace(/\.[^.]+$/, '');
+    return { text: parts.join('\n\n'), mime: 'application/x-pem-file', fileName: base + '.pem' };
+  } catch {
+    return null;
+  }
+}
+
 
 function keytoolCmd(d: DetectionResult): ConvertOutput {
   const f = d.fileName || 'file.jks';
@@ -908,6 +980,7 @@ export class SslConverterComponent {
     [OutputFormat.PKCS8PRV]: 'PKCS#8 private key',
     [OutputFormat.JWK]: 'JSON Web Key',
     [OutputFormat.PEM_CHAIN]: 'Concatenated certs',
+    [OutputFormat.PKCS12_EXTRACT]: 'In-browser extraction',
     [OutputFormat.OPENSSL_CMD]: 'openssl commands',
     [OutputFormat.KEYTOOL_CMD]: 'keytool commands',
   };
@@ -1066,8 +1139,8 @@ export class SslConverterComponent {
       return;
     }
 
-    // Encrypted keys need a password before we can inspect alg / metadata / convert.
-    if (d.isEncrypted) {
+    // Encrypted keys / PKCS12 / JKS need a password before convert
+    if (d.isEncrypted || d.type === SslType.PKCS12 || d.type === SslType.JKS) {
       this.outputs = this.toButtons(availableOutputs(d));
       if (this.password) this.tryDecrypt();
       return;
@@ -1087,7 +1160,10 @@ export class SslConverterComponent {
   }
 
   onPassword(): void {
-    if (this.detection?.isEncrypted && this.password) this.tryDecrypt();
+    if (!this.detection) return;
+    if (this.detection.isEncrypted || this.detection.type === SslType.PKCS12 || this.detection.type === SslType.JKS) {
+      this.tryDecrypt();
+    }
   }
 
   private tryDecrypt(): void {
@@ -1103,7 +1179,10 @@ export class SslConverterComponent {
     this.selectedFmt = null;
     this.hexPreview = '';
     if (this.metadata) this.error = '';
-    else this.error = 'Dekripsi gagal — periksa password.';
+    else if (this.detection?.type === SslType.PKCS12 || this.detection?.type === SslType.JKS) {
+      // PKCS12/JKS have no client-side metadata, but password change is valid
+      this.error = '';
+    } else this.error = 'Dekripsi gagal — periksa password.';
   }
 
   doConvert(fmt: OutputFormat): void {
@@ -1116,6 +1195,7 @@ export class SslConverterComponent {
     this.output = res;
     this.selectedFmt = fmt;
     this.hexPreview = res.bytes ? this.hexPreviewFrom(res.bytes) : '';
+    // Only set top-level error; output.error is the source of truth
     if (res.error) this.error = res.error;
     else this.error = '';
   }
@@ -1153,6 +1233,7 @@ export class SslConverterComponent {
 
   dismissError(): void {
     this.error = '';
+    if (this.output) this.output.error = undefined;
   }
 
   download(): void {

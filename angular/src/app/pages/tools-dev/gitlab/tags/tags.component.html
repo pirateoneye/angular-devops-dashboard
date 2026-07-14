@@ -1,0 +1,82 @@
+<div class="gl-tags">
+  <div class="gl-bar">
+    <button class="gl-btn-ghost" (click)="expandAll.set(!expandAll())">{{ expandAll() ? 'Collapse all' : 'Show all history' }}</button>
+    <span class="gl-mute">{{ rows().length }} project{{ rows().length !== 1 ? 's' : '' }} selected</span>
+    <button class="gl-btn-ghost" (click)="loadTags()" [disabled]="loading()">
+      <mat-icon>refresh</mat-icon> Refresh
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="gl-empty">Loading tags...</div>
+  } @else {
+    @for (row of rows(); track row.project.id) {
+      <div class="gl-tag-card">
+        <div class="gl-tag-head">
+          <div>
+            <div class="gl-proj-name">{{ row.project.name }}</div>
+            <div class="gl-proj-path">{{ row.project.path_with_namespace }}</div>
+          </div>
+          <button class="gl-btn-ghost sm" (click)="addingTag.set(row.project.id); tagName.set(''); tagMessage.set(''); tagError.set(''); tagBranch.set('main')">
+            <mat-icon>add</mat-icon> Add Tag
+          </button>
+        </div>
+
+        @if (row.latestTag) {
+          <div class="gl-tag-current">
+            <span class="gl-tag-chip"><code>{{ row.latestTag.name }}</code></span>
+            <span class="gl-tag-meta">{{ row.latestTag.commit.author_name }} · {{ tagAgeText(row.tagDate) }}</span>
+            <span class="gl-age" [class]="'gl-age-' + tagAgeColor(row.tagDate)">{{ tagAgeText(row.tagDate) }}</span>
+          </div>
+
+          @if (row.tags.length > 1) {
+            <details class="gl-tag-history" [attr.open]="expandAll() ? '' : null">
+              <summary>History ({{ row.tags.length - 1 }} more)</summary>
+              @for (t of row.tags.slice(1); track t.name) {
+                <div class="gl-history-row">
+                  <code>{{ t.name }}</code>
+                  <span class="gl-mute">{{ t.commit.author_name }}</span>
+                </div>
+              }
+            </details>
+          }
+        } @else if (row.error) {
+          <div class="gl-error">{{ row.error }}</div>
+        } @else {
+          <div class="gl-empty-project">No tags yet</div>
+        }
+      </div>
+
+      @if (addingTag() === row.project.id) {
+        <div class="gl-overlay" (click)="addingTag.set(null)" (keydown.escape)="addingTag.set(null)">
+          <div class="gl-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+            <div class="gl-modal-head">
+              <h3>Add Tag — {{ row.project.name }}</h3>
+              <button class="gl-icon-btn" (click)="addingTag.set(null)" aria-label="Close">&times;</button>
+            </div>
+            <label class="gl-field">Tag name
+              <input class="gl-input" [ngModel]="tagName()" (ngModelChange)="tagName.set($event)" placeholder="v1.0.0" [disabled]="savingTag()"/>
+            </label>
+            <label class="gl-field">From branch
+              <select class="gl-input" [ngModel]="tagBranch()" (ngModelChange)="tagBranch.set($event)">
+                @for (b of branchList(); track b) {
+                  <option [value]="b">{{ b }}</option>
+                }
+              </select>
+            </label>
+            <label class="gl-field">Message (optional)
+              <input class="gl-input" [ngModel]="tagMessage()" (ngModelChange)="tagMessage.set($event)" placeholder="Release notes" [disabled]="savingTag()"/>
+            </label>
+            @if (tagError()) { <div class="gl-error">{{ tagError() }}</div> }
+            <div class="gl-modal-btns">
+              <button class="gl-btn-ghost" (click)="addingTag.set(null)" [disabled]="savingTag()">Cancel</button>
+              <button class="gl-btn-primary" (click)="saveTag(row.project.id)" [disabled]="savingTag() || !tagName()">
+                {{ savingTag() ? 'Creating...' : 'Create Tag' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  }
+</div>

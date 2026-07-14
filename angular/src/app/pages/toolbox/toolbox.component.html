@@ -20,9 +20,9 @@
         class="toolbox-search-input"
         [ngModel]="query()"
         (ngModelChange)="query.set($event)"
-        placeholder="Filter tools…  (press /)"
+        placeholder="Cari tool… (tekan /)"
         autocomplete="off"
-        aria-label="Filter tools"
+        aria-label="Cari tool"
       />
       <span class="toolbox-match-count">{{ matchCount() }}</span>
       @if (hasQuery()) {
@@ -30,7 +30,7 @@
           type="button"
           class="toolbox-search-clear"
           (click)="query.set('')"
-          aria-label="Clear filter"
+          aria-label="Hapus filter"
         >
           &times;
         </button>
@@ -38,12 +38,13 @@
     </div>
 
     <div class="toolbox-scroll">
-      <!-- Recents (first — "what I just used" is faster to scan) -->
-      @if (recentTools().length) {
+
+      <!-- Favorites (pinned, after recents) -->
+      @if (favoriteTools().length) {
         <div class="toolbox-group-title">
-          <mat-icon aria-hidden="true">history</mat-icon>Recent
+          <mat-icon aria-hidden="true">star</mat-icon>Favorit
         </div>
-        @for (t of recentTools(); track t.slug; let idx = $index) {
+        @for (t of favoriteTools(); track t.slug; let idx = $index) {
           <div
             class="toolbox-tab-row"
             [class.active]="active() === t.slug"
@@ -58,43 +59,7 @@
               type="button"
               class="toolbox-star-btn"
               [attr.aria-pressed]="isFav(t.slug)"
-              [attr.aria-label]="
-                (isFav(t.slug) ? 'Unpin ' : 'Pin ') + t.label + ' as favorite'
-              "
-              (click)="toggleFav($event, t.slug)"
-            >
-              <mat-icon
-                class="toolbox-star"
-                [class.on]="isFav(t.slug)"
-                aria-hidden="true"
-                >{{ isFav(t.slug) ? "star" : "star_border" }}</mat-icon
-              >
-            </button>
-          </div>
-        }
-      }
-
-      <!-- Favorites (pinned, after recents) -->
-      @if (favoriteTools().length) {
-        <div class="toolbox-group-title">
-          <mat-icon aria-hidden="true">star</mat-icon>Favorites
-        </div>
-        @for (t of favoriteTools(); track t.slug; let idx = $index) {
-          <div
-            class="toolbox-tab-row"
-            [class.active]="active() === t.slug"
-            [class.key-focused]="focusIdx() === recentTools().length + idx"
-            (mouseenter)="prefetch(t.slug)"
-          >
-            <button type="button" class="toolbox-tab" (click)="select(t.slug)">
-              <mat-icon aria-hidden="true">{{ t.icon }}</mat-icon>
-              <span class="toolbox-tab-label">{{ t.label }}</span>
-            </button>
-            <button
-              type="button"
-              class="toolbox-star-btn"
-              [attr.aria-pressed]="isFav(t.slug)"
-              [attr.aria-label]="'Unpin ' + t.label + ' as favorite'"
+              [attr.aria-label]="'Lepas pin ' + t.label"
               (click)="toggleFav($event, t.slug)"
             >
               <mat-icon class="toolbox-star on" aria-hidden="true"
@@ -115,7 +80,6 @@
               [class.active]="active() === t.slug"
               [class.key-focused]="
                 focusIdx() ===
-                recentTools().length +
                   favoriteTools().length +
                   prevGroupToolCount(ge.group) +
                   idx
@@ -135,7 +99,7 @@
                 class="toolbox-star-btn"
                 [attr.aria-pressed]="isFav(t.slug)"
                 [attr.aria-label]="
-                  (isFav(t.slug) ? 'Unpin ' : 'Pin ') + t.label + ' as favorite'
+                  (isFav(t.slug) ? 'Lepas pin ' : 'Pin ') + t.label
                 "
                 (click)="toggleFav($event, t.slug)"
               >
@@ -153,7 +117,7 @@
 
       @if (!hasAnyTool()) {
         <div class="toolbox-empty">
-          No tools match &ldquo;{{ query() }}&rdquo;.
+          Tidak ada tool cocok dengan &ldquo;{{ query() }}&rdquo;.
         </div>
       }
 
@@ -162,7 +126,7 @@
           <mat-icon aria-hidden="true" class="toolbox-empty-icon"
             >star_border</mat-icon
           >
-          Star tools to pin them here
+          Bintangi tool favoritmu
         </div>
       }
     </div>
@@ -177,7 +141,7 @@
           class="toolbox-retry-btn"
           (click)="loadTool(active())"
         >
-          Retry
+          Coba lagi
         </button>
       </div>
     } @else if (toolCmp()) {

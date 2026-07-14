@@ -25,7 +25,7 @@
               "src/styles.css"
             ],
             "scripts": [],
-            "allowedCommonJsDependencies": ["crypto-js", "jsrsasign"]
+            "allowedCommonJsDependencies": ["crypto-js", "jsrsasign", "node-forge"]
           },
           "configurations": {
             "production": {

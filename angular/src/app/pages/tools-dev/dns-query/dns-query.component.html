@@ -170,7 +170,7 @@
             <table class="record-table">
               @for (r of visibleRecords(c); track trackRecord($index, r)) {
                 <tr>
-                  <td><span class="rtype">{{ r.type }}</span></td>
+                  <td><span class="rtype {{ r.type.toLowerCase() }}">{{ r.type }}</span></td>
                   <td>
                     <span class="rname" [title]="r.name">{{ r.name }}</span>
                     <button class="copy-btn" (click)="$event.stopPropagation(); copyText(r.name)" [attr.aria-label]="'Copy ' + r.name">

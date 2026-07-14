@@ -5,7 +5,6 @@ import {
   ChangeDetectionStrategy,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../module/material.module';
@@ -14,7 +13,7 @@ import { firstValueFrom } from 'rxjs';
 // ---------------------------------------------------------------------------
 // DNS models
 // ---------------------------------------------------------------------------
-type DnsRecordType = 'A' | 'AAAA' | 'CNAME' | 'MX' | 'TXT' | 'NS' | 'SOA' | 'PTR' | 'SRV';
+type DnsRecordType = 'A' | 'AAAA' | 'CNAME' | 'MX' | 'TXT' | 'NS' | 'SOA' | 'PTR' | 'SRV' | 'UNKNOWN';
 
 interface DnsRecord {
   type: DnsRecordType;
@@ -52,7 +51,7 @@ function parseAnswers(answers: DnsAnswer[]): DnsRecord[] {
       16: 'TXT', 2: 'NS', 6: 'SOA', 12: 'PTR', 33: 'SRV',
     };
     return {
-      type: typeMap[a.type] ?? ('UNKNOWN' as DnsRecordType),
+      type: typeMap[a.type] ?? 'UNKNOWN',
       name: a.name,
       value: a.data,
       ttl: a.TTL,
@@ -72,7 +71,7 @@ interface Toast {
 @Component({
   standalone: true,
   selector: 'app-dns-query',
-  imports: [CommonModule, FormsModule, MaterialModule],
+  imports: [FormsModule, MaterialModule],
   templateUrl: './dns-query.component.html',
   styleUrl: './dns-query.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -238,9 +237,7 @@ export class DnsQueryComponent implements OnDestroy {
     }));
   }
 
-  totalRecords(card: DnsCard): number {
-    return card.records.length;
-  }
+
 
   trackDomain(_: number, c: DnsCard): string {
     return c.domain;

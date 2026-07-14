@@ -87,6 +87,19 @@
 .pill.ptr   { color: #38bdf8; }
 .pill.srv   { color: #f472b6; }
 
+/* record type in table - same colour coding as pills */
+.rtype.a     { color: var(--msv-primary); }
+.rtype.aaaa  { color: #a78bfa; }
+.rtype.cname { color: var(--msv-warning); }
+.rtype.mx    { color: var(--msv-success); }
+.rtype.txt   { color: var(--msv-text-muted); }
+.rtype.ns    { color: #f87171; }
+.rtype.soa   { color: #fb923c; }
+.rtype.ptr   { color: #38bdf8; }
+.rtype.srv   { color: #f472b6; }
+.rtype.unknown { color: var(--msv-text-dim); }
+.pill.unknown { color: var(--msv-text-dim); }
+
 .refreshing { animation: spin 1.5s linear infinite; display: inline-flex; align-items: center; }
 .refreshing mat-icon { font-size: 16px; width: 16px; height: 16px; }
 

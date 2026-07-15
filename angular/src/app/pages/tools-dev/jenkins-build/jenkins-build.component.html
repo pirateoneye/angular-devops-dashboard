@@ -149,13 +149,15 @@
                   {{ jobColorIcon(p.color) }}
                 </mat-icon>
 
-                <span class="project-name" (click)="selectJob({ name: p.name, url: p.url, color: p.color })">
-                  {{ p.name }}
-                </span>
+                <span class="project-name" role="button" tabindex="0"
+                  (click)="selectJob({ name: p.name, url: p.url, color: p.color })"
+                  (keydown.enter)="selectJob({ name: p.name, url: p.url, color: p.color })">{{ p.name }}</span>
 
                 <span class="group-pills">
                   @for (g of p.groups; track g) {
-                    <span class="group-pill" (click)="setActiveGroup(g); $event.stopPropagation()">{{ g }}</span>
+                    <span class="group-pill" role="button" tabindex="0"
+                      (click)="setActiveGroup(g); $event.stopPropagation()"
+                      (keydown.enter)="setActiveGroup(g); $event.stopPropagation()">{{ g }}</span>
                   }
                 </span>
               </div>

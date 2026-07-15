@@ -8,6 +8,9 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../module/material.module';
+import { ToastComponent } from '../../../shared/component/toast/toast.component';
+import { SkeletonComponent } from '../../../shared/component/skeleton/skeleton.component';
+import { CopyBtnComponent } from '../../../shared/component/copy-btn/copy-btn.component';
 import { firstValueFrom } from 'rxjs';
 
 // ---------------------------------------------------------------------------
@@ -71,7 +74,7 @@ interface Toast {
 @Component({
   standalone: true,
   selector: 'app-dns-query',
-  imports: [FormsModule, MaterialModule],
+  imports: [FormsModule, MaterialModule, ToastComponent, SkeletonComponent, CopyBtnComponent],
   templateUrl: './dns-query.component.html',
   styleUrl: './dns-query.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

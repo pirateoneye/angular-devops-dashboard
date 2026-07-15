@@ -2,6 +2,7 @@
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { piketGuard } from './shared/service/auth-guard/piket.guard';
 import { gslbGuard } from './shared/service/auth-guard/gslb.guard';
+import { jenkinsGuard } from './shared/service/auth-guard/jenkins.guard';
 
 const routes: Routes = [
   {
@@ -91,12 +92,20 @@ const routes: Routes = [
       import('./pages/tools-dev/jenkins-build/jenkins-build.component').then(
         (m) => m.JenkinsBuildComponent,
       ),
+    canActivate: [jenkinsGuard],
   },
   {
     path: 'tools-dev/ssl-check',
     loadComponent: () =>
       import('./pages/tools-dev/ssl-check/ssl-check.component').then(
         (m) => m.SslCheckComponent,
+      ),
+  },
+  {
+    path: 'jenkins/login',
+    loadComponent: () =>
+      import('./pages/tools-dev/jenkins-authorization/jenkins-authorization.component').then(
+        (m) => m.JenkinsAuthorizationComponent,
       ),
   },
   {

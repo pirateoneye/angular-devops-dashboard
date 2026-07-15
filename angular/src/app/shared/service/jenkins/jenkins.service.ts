@@ -2,7 +2,8 @@
 // Injectable service for Jenkins REST API. Handles crumb, job discovery,
 // parameter metadata, and build triggering with CORS proxy fallback.
 
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
@@ -14,6 +15,9 @@ import {
 
 const BUILD_CRUMB_FIELD = 'Jenkins-Crumb';
 
+
+const LS_JENKINS_USER = 'jenkins.username';
+const LS_JENKINS_PASS = 'jenkins.password';
 interface RawParamDef {
   name: string;
   type: string;
@@ -43,12 +47,65 @@ interface ParamsResponse {
 @Injectable({ providedIn: 'root' })
 export class JenkinsService {
   private readonly http = inject(HttpClient);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
+
+  readonly username = signal('');
+  readonly password = signal('');
+  readonly authed = computed(() => this.username().length > 0 && this.password().length > 0);
+
+  constructor() {
+    this.restoreSession();
+  }
+
+  async loginWithCredentials(username: string, password: string, remember: boolean): Promise<boolean> {
+    const u = username.trim();
+    if (!u || !password) return false;
+    this.username.set(u);
+    this.password.set(password);
+    if (remember && this.isBrowser) {
+      localStorage.setItem(LS_JENKINS_USER, u);
+      localStorage.setItem(LS_JENKINS_PASS, password);
+    }
+    return true;
+  }
+
+  logout(): void {
+    this.username.set('');
+    this.password.set('');
+    if (this.isBrowser) {
+      localStorage.removeItem(LS_JENKINS_USER);
+      localStorage.removeItem(LS_JENKINS_PASS);
+    }
+  }
+
+  private restoreSession(): void {
+    if (!this.isBrowser) return;
+    const u = localStorage.getItem(LS_JENKINS_USER);
+    const p = localStorage.getItem(LS_JENKINS_PASS);
+    if (u && p) {
+      this.username.set(u);
+      this.password.set(p);
+    }
+  }
+
+  private authHeaders(): Record<string, string> {
+    const u = this.username();
+    const p = this.password();
+    if (!u || !p) return {};
+    try {
+      return { Authorization: `Basic ${btoa(`${u}:${p}`)}` };
+    } catch {
+      return {};
+    }
+  }
+
 
   /** GET {url}/crumbIssuer/api/json */
   fetchCrumb(jenkinsUrl: string): Observable<JenkinsCrumb> {
     const url = this.stripTrailingSlash(jenkinsUrl) + '/crumbIssuer/api/json';
     return this.http
-      .get<JenkinsCrumb>(url, { observe: 'body' as const })
+      .get<JenkinsCrumb>(url, { observe: 'body' as const, headers: this.authHeaders() })
       .pipe(catchError((err) => this.handleError(err, jenkinsUrl, 'fetching CSRF crumb')));
   }
 
@@ -56,7 +113,7 @@ export class JenkinsService {
   proxyCrumb(jenkinsUrl: string): Observable<JenkinsCrumb> {
     const url = `/api/jenkins/crumb?url=${encodeURIComponent(jenkinsUrl)}`;
     return this.http
-      .get<JenkinsCrumb>(url)
+      .get<JenkinsCrumb>(url, { headers: this.authHeaders() })
       .pipe(catchError((err) => this.handleError(err, jenkinsUrl, 'fetching CSRF crumb via proxy')));
   }
 
@@ -66,7 +123,7 @@ export class JenkinsService {
     const tree = 'jobs[name,url,color,displayName,_class]';
     const apiUrl = `${base}/api/json?tree=${encodeURIComponent(tree)}`;
 
-    return this.http.get<JobsResponse>(apiUrl).pipe(
+    return this.http.get<JobsResponse>(apiUrl, { headers: this.authHeaders() }).pipe(
       map((res) => {
         if (!res.jobs || !Array.isArray(res.jobs)) return [];
         return res.jobs
@@ -90,7 +147,7 @@ export class JenkinsService {
     const tree = 'property[parameterDefinitions[name,type,description,defaultParameterValue[value],choices]]';
     const apiUrl = `${base}/job/${encodedPath}/api/json?tree=${encodeURIComponent(tree)}`;
 
-    return this.http.get<ParamsResponse>(apiUrl).pipe(
+    return this.http.get<ParamsResponse>(apiUrl, { headers: this.authHeaders() }).pipe(
       map((res) => {
         const defs = res.property?.find((p) => p.parameterDefinitions)?.parameterDefinitions;
         if (!defs || defs.length === 0) return [];
@@ -122,6 +179,7 @@ export class JenkinsService {
     }
 
     const headers = {
+      ...this.authHeaders(),
       [BUILD_CRUMB_FIELD]: crumb,
       'Content-Type': 'application/x-www-form-urlencoded',
     };
@@ -156,7 +214,7 @@ export class JenkinsService {
     const base = this.stripTrailingSlash(jenkinsUrl);
     const buildUrl = `${base}/job/${encodedPath}/build`;
 
-    const headers = { [BUILD_CRUMB_FIELD]: crumb };
+    const headers = { ...this.authHeaders(), [BUILD_CRUMB_FIELD]: crumb };
 
     return this.http
       .post(buildUrl, null, {

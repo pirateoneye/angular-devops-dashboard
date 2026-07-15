@@ -10,9 +10,10 @@ import {
   computed,
   effect,
 } from '@angular/core';
+import { ActivityService } from '../../../shared/service/activity.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -121,7 +122,9 @@ function getDemoParams(jobName: string): JenkinsParamDef[] {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JenkinsBuildComponent {
-  private readonly jenkins = inject(JenkinsService);
+  private readonly feed = inject(ActivityService);
+  private readonly router = inject(Router);
+  readonly jenkins = inject(JenkinsService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   readonly projectReg = inject(ProjectRegistryService);
@@ -642,7 +645,6 @@ export class JenkinsBuildComponent {
       },
     });
   }
-
   private handleBuildSuccess(location: string, projectName: string, server: JenkinsServer): void {
     this.status.set('success');
     this.statusMessage.set('Build triggered successfully');
@@ -662,8 +664,8 @@ export class JenkinsBuildComponent {
       status: 'success',
       resultUrl: location,
     });
+    this.feed.log('jenkins', `Build ${projectName} queued`, 'ok');
   }
-
   private handleBuildError(
     err: unknown,
     server: JenkinsServer,
@@ -694,6 +696,7 @@ export class JenkinsBuildComponent {
               errorMessage: e.message,
             });
           }
+          this.feed.log('jenkins', `Build ${projectName || job.name} failed: ${e.message}`, 'err');
           onDone();
         },
       });
@@ -714,6 +717,7 @@ export class JenkinsBuildComponent {
         errorMessage: msg,
       });
     }
+    this.feed.log('jenkins', `Build ${projectName || job.name} failed: ${msg}`, 'err');
     onDone();
   }
 
@@ -855,6 +859,11 @@ export class JenkinsBuildComponent {
     this.jobs.set(demoProjects);
     this.projectReg.seedProjects(demoProjects, groups);
     this.favorites.set(['GENERATE-svc-payment', 'GENERATE-svc-auth', 'GENERATE-svc-gateway']);
+  }
+
+  logout(): void {
+    this.jenkins.logout();
+    this.router.navigateByUrl('/jenkins/login');
   }
 }
 

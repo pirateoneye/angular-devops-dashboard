@@ -33,9 +33,9 @@ export class GslbComponent implements OnDestroy {
   readonly svc = inject(GslbService);
   private readonly router = inject(Router);
   private readonly feed = inject(ActivityService);
-
   readonly toasts: { id: number; msg: string; type: 'ok' | 'err' | 'info' }[] = [];
   private toastId = 0;
+  private activeTimers = new Set<ReturnType<typeof setTimeout>>();
   readonly copiedId = signal('');
   private copyTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -202,10 +202,12 @@ export class GslbComponent implements OnDestroy {
   toast(msg: string, type: 'ok' | 'err' | 'info'): void {
     const id = ++this.toastId;
     this.toasts.push({ id, msg, type });
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       const i = this.toasts.findIndex((x) => x.id === id);
       if (i >= 0) this.toasts.splice(i, 1);
+      this.activeTimers.delete(timer);
     }, 3500);
+    this.activeTimers.add(timer);
   }
 
   dismissToast(id: number): void {
@@ -214,6 +216,8 @@ export class GslbComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.activeTimers.forEach((t) => clearTimeout(t));
+    this.activeTimers.clear();
     clearTimeout(this.copyTimer ?? undefined);
   }
 }

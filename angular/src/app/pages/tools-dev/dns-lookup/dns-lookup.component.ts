@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { EmptyStateComponent } from '../../../shared/component/empty-state/empty-state.component';
 
 interface DnsRecord { type: string; name: string; value: string; ttl: number; }
 
@@ -19,7 +20,7 @@ interface DnsRecord { type: string; name: string; value: string; ttl: number; }
   selector: 'app-dns-lookup',
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatTableModule,
     MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule,
-    MatProgressSpinnerModule, MatSnackBarModule],
+    MatProgressSpinnerModule, MatSnackBarModule, EmptyStateComponent],
   template: `
     <div class="container pt-3 pb-3" style="max-width:720px">
       <mat-card class="tool-card">
@@ -48,7 +49,7 @@ interface DnsRecord { type: string; name: string; value: string; ttl: number; }
           <div class="tool-error" role="alert"><mat-icon>error_outline</mat-icon> {{ error() }}</div>
         }
         @if (!loading() && records().length === 0 && !error() && queried) {
-          <div class="tool-empty" role="status">Tidak ada record DNS ditemukan untuk domain ini.</div>
+          <omp-empty-state message="Tidak ada record DNS ditemukan untuk domain ini." icon="dns" />
         }
 
         @if (records().length > 0) {

@@ -91,9 +91,7 @@ export class DnsQueryComponent implements OnDestroy {
   // Filter
   readonly rrTypeFilter = signal<DnsRecordType | 'ALL'>('ALL');
   readonly rrTypes: (DnsRecordType | 'ALL')[] = ['ALL', 'A', 'AAAA', 'CNAME', 'MX', 'TXT', 'NS', 'SOA', 'PTR', 'SRV'];
-  // Copy
-  readonly copiedId = signal('');
-  private copyTimer: ReturnType<typeof setTimeout> | null = null;
+
 
   // Toasts
   readonly toasts: Toast[] = [];
@@ -195,24 +193,6 @@ export class DnsQueryComponent implements OnDestroy {
     );
   }
 
-  // -------------------------------------------------------------------
-  // Copy
-  // -------------------------------------------------------------------
-  copyText(text: string): void {
-    navigator.clipboard.writeText(text).then(
-      () => {
-        this.copiedId.set(text);
-        if (this.copyTimer) clearTimeout(this.copyTimer);
-        this.copyTimer = setTimeout(() => {
-          this.copiedId.set('');
-          this.copyTimer = null;
-        }, 1500);
-      },
-      () => this.toast('Copy failed', 'err'),
-    );
-  }
-
-  // -------------------------------------------------------------------
   // Helpers
   // -------------------------------------------------------------------
   lastUpdated(card: DnsCard): string {
@@ -272,6 +252,5 @@ export class DnsQueryComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.toastTimers.forEach((t) => clearTimeout(t));
     this.toastTimers.clear();
-    if (this.copyTimer) clearTimeout(this.copyTimer);
   }
 }

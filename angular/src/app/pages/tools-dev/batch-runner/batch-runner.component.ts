@@ -14,16 +14,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../../module/material.module';
+import { ErrorStateComponent } from '../../../shared/component/error-state/error-state.component';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    MaterialModule,
-    MsvFormsModule,
+    CommonModule, FormsModule, RouterModule, MaterialModule,
+    MsvFormsModule, ErrorStateComponent,
   ],
   selector: 'msv-batch-runner',
   templateUrl: './batch-runner.component.html',

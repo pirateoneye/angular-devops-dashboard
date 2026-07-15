@@ -13,6 +13,17 @@
     </div>
   }
 
+  @if (statusMenu === statusAPI.FAILED) {
+    <div class="tool-card">
+      <h2 class="tool-title">Batch Runner</h2>
+      <p class="tool-sub">Gagal memuat list batch. Coba refresh halaman.</p>
+      <div class="tool-divider"></div>
+      <div class="tool-error" role="alert">
+        <p>Terjadi kesalahan saat menghubungi server.</p>
+      </div>
+    </div>
+  }
+
   @if (statusMenu === statusAPI.SUCCESS) {
     <div class="tool-card">
       <h2 class="tool-title">Batch Runner</h2>

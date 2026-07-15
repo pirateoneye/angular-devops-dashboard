@@ -246,13 +246,12 @@
                 </td>
                 <td><span class="mchip" [class]="stateClass(m.state)">{{ stateLabelShort(m.state) }}</span></td>
                 <td>
-                  <button class="micro danger" (click)="$event.stopPropagation(); suspend(m, c.fqdn)" [disabled]="m.state === 'DOWN' || m.state === 'SUSPENDED'">
+                  <button class="micro danger" (click)="$event.stopPropagation(); suspend(m, c.fqdn)" [disabled]="m.state === 'DOWN' || m.state === 'SUSPENDED'" [attr.aria-label]="'Suspend ' + m.svc_name">
                     <mat-icon>pause</mat-icon>
                   </button>
-                  <button class="micro success" (click)="$event.stopPropagation(); unsuspend(m, c.fqdn)" [disabled]="m.state === 'UP'">
+                  <button class="micro success" (click)="$event.stopPropagation(); unsuspend(m, c.fqdn)" [disabled]="m.state === 'UP'" [attr.aria-label]="'Unsuspend ' + m.svc_name">
                     <mat-icon>play_arrow</mat-icon>
                   </button>
-                </td>
               </tr>
             }
           </table>

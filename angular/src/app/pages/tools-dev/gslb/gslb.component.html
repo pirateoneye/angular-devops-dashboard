@@ -101,10 +101,10 @@
       [value]="svc.sortKey()"
       (change)="setSort($event.value)"
     >
-      <mat-button-toggle value="name" title="Sort by name"
+      <mat-button-toggle value="name" aria-label="Urut berdasarkan nama"
         ><mat-icon>sort_by_alpha</mat-icon></mat-button-toggle
       >
-      <mat-button-toggle value="updated" title="Sort by last checked"
+      <mat-button-toggle value="updated" aria-label="Urut berdasarkan terakhir diperiksa"
         ><mat-icon>schedule</mat-icon></mat-button-toggle
       >
     </mat-button-toggle-group>

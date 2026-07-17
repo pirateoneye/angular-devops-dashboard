@@ -10,9 +10,9 @@
         <span class="user-badge">{{ jenkins.username() }}</span>
       }
       <button mat-stroked-button (click)="openServerDialog()">
-        <mat-icon>settings</mat-icon> Servers
+        <mat-icon>settings</mat-icon> Server
       </button>
-      <button mat-icon-button matTooltip="Logout" (click)="logout()">
+      <button mat-icon-button matTooltip="Keluar" aria-label="Keluar" (click)="logout()">
         <mat-icon>logout</mat-icon>
       </button>
     </div>
@@ -39,6 +39,7 @@
           class="server-chip"
           [class.active]="s.id === activeServerId()"
           (click)="selectServer(s)"
+          [attr.aria-pressed]="s.id === activeServerId()"
         >
           {{ s.label }}
         </button>
@@ -58,34 +59,34 @@
           <mat-form-field appearance="outline" class="search-field">
             <mat-label>Cari project</mat-label>
             <input matInput
-              [ngModel]="projSearchQ()"
-              (ngModelChange)="setSearchQuery($event)"
-              placeholder="Filter {{ projList().length }} projects…" />
+              [ngModel]="projectReg.searchQuery()"
+              (ngModelChange)="projectReg.searchQuery.set($event)"
+              placeholder="Filter {{ projectReg.projects().length }} projects…" />
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
 
           <!-- Group filter chips -->
-          @if (projGroups().length > 0) {
+          @if (projectReg.groups().length > 0) {
             <div class="group-chips">
               <button
                 class="group-chip"
-                [class.active]="projActiveGroup() === null"
-                (click)="setActiveGroup(null)"
+                [class.active]="projectReg.activeGroup() === null"
+                (click)="projectReg.activeGroup.set(null)"
               >
-                All
-                <span class="chip-count">{{ projList().length }}</span>
+                Semua
+                <span class="chip-count">{{ projectReg.projects().length }}</span>
               </button>
-              @for (g of projGroups(); track g) {
+              @for (g of projectReg.groups(); track g) {
                 <button
                   class="group-chip"
-                  [class.active]="projActiveGroup() === g"
-                  (click)="setActiveGroup(g)"
+                  [class.active]="projectReg.activeGroup() === g"
+                  (click)="projectReg.activeGroup.set(g)"
                 >
                   {{ g }}
                   <span class="chip-count">{{ getGroupCount(g) }}</span>
                 </button>
               }
-              @if (projSelectedCount() > 0) {
+              @if (projectReg.selectedCount() > 0) {
                 <button class="group-chip add-tag" matTooltip="Add tag to selected" (click)="addGroupToSelected('')">
                   <mat-icon>add</mat-icon>
                 </button>
@@ -94,7 +95,7 @@
           }
 
           <!-- Loading skeleton -->
-          @if (projLoading()) {
+          @if (projectReg.loading()) {
             <div class="skeleton-list">
               @for (i of [0,1,2,3,4,5]; track i) {
                 <div class="skeleton-row">
@@ -106,42 +107,43 @@
           }
 
           <!-- Empty: no jobs -->
-          @if (!projLoading() && projList().length === 0 && !projError()) {
-            <div class="empty-state" (click)="loadJobs()" role="button" tabindex="0"
+          @if (!projectReg.loading() && projectReg.projects().length === 0 && !projectReg.error()) {
+            <div class="empty-state" (click)="loadJobs()" role="button" tabindex="0" aria-label="Muat ulang daftar job"
               (keydown.enter)="loadJobs()">
               <mat-icon>sync</mat-icon>
-              <p>Tidak ada job ditemukan</p>
-              <button mat-stroked-button>Reload</button>
+              <button mat-stroked-button>Muat ulang</button>
             </div>
           }
 
           <!-- Error state -->
-          @if (projError()) {
+          @if (projectReg.error()) {
             <div class="empty-state error-state">
               <mat-icon>error</mat-icon>
-              <p>{{ projError() }}</p>
-              <button mat-stroked-button (click)="loadJobs()">Retry</button>
+              <p>{{ projectReg.error() }}</p>
+              <button mat-stroked-button (click)="loadJobs()">Coba lagi</button>
             </div>
           }
 
           <!-- Project list -->
           <div class="project-list">
-            @for (p of projFiltered(); track p.name) {
+            @for (p of projectReg.filteredProjects(); track p.name) {
               <div
                 class="project-item"
-                [class.selected]="projSelectedIds().has(p.name)"
+                [class.selected]="projectReg.selectedIds().has(p.name)"
                 [class.favorite]="favoriteSet().has(p.name)"
               >
                 <mat-checkbox
                   class="project-check"
-                  [checked]="projSelectedIds().has(p.name)"
-                  (change)="toggleProject(p.name)"
+                  [checked]="projectReg.selectedIds().has(p.name)"
+                  (change)="projectReg.toggleProject(p.name)"
                   (click)="$event.stopPropagation()"
+                  [attr.aria-label]="'Pilih project ' + p.name"
                 ></mat-checkbox>
 
                 <button mat-icon-button class="fav-btn"
                   (click)="toggleFavorite({ name: p.name, url: p.url, color: p.color }); $event.stopPropagation()"
-                  [matTooltip]="favoriteSet().has(p.name) ? 'Remove favorite' : 'Add favorite'">
+                  [matTooltip]="favoriteSet().has(p.name) ? 'Hapus favorit' : 'Tambah favorit'"
+                  [attr.aria-label]="favoriteSet().has(p.name) ? 'Hapus favorit ' + p.name : 'Tambah favorit ' + p.name">
                   <mat-icon>{{ favoriteSet().has(p.name) ? 'star' : 'star_border' }}</mat-icon>
                 </button>
 
@@ -151,13 +153,15 @@
 
                 <span class="project-name" role="button" tabindex="0"
                   (click)="selectJob({ name: p.name, url: p.url, color: p.color })"
-                  (keydown.enter)="selectJob({ name: p.name, url: p.url, color: p.color })">{{ p.name }}</span>
+                  (keydown.enter)="selectJob({ name: p.name, url: p.url, color: p.color })"
+                  [attr.aria-label]="'Buka parameter untuk ' + p.name">{{ p.name }}</span>
 
                 <span class="group-pills">
                   @for (g of p.groups; track g) {
                     <span class="group-pill" role="button" tabindex="0"
-                      (click)="setActiveGroup(g); $event.stopPropagation()"
-                      (keydown.enter)="setActiveGroup(g); $event.stopPropagation()">{{ g }}</span>
+                      (click)="projectReg.activeGroup.set(g); $event.stopPropagation()"
+                      (keydown.enter)="projectReg.activeGroup.set(g); $event.stopPropagation()"
+                      [attr.aria-label]="'Filter berdasarkan grup ' + g">{{ g }}</span>
                   }
                 </span>
               </div>
@@ -166,10 +170,10 @@
 
           <!-- Footer -->
           <div class="list-footer">
-            <span>{{ projSelectedCount() }} selected / {{ projList().length }} total</span>
+            <span>{{ projectReg.selectedCount() }} selected / {{ projectReg.projects().length }} total</span>
             <div class="footer-actions">
-              <button mat-button (click)="selectAllProjects()">Select All</button>
-              <button mat-button (click)="deselectAllProjects()">Deselect All</button>
+              <button mat-button (click)="projectReg.selectAll()">Pilih semua</button>
+              <button mat-button (click)="projectReg.deselectAll()">Batal pilih</button>
             </div>
           </div>
         </div>
@@ -196,24 +200,24 @@
               <mat-form-field appearance="outline" class="preset-select">
                 <mat-label>Preset</mat-label>
                 <mat-select
-                  [value]="presetActiveId()"
+                  [value]="presetSvc.activePresetId()"
                   (selectionChange)="applyPreset($event.value)"
                 >
-                  <mat-option [value]="null">No preset</mat-option>
+                  <mat-option [value]="null">Tanpa preset</mat-option>
                   @for (p of presetsForJob(); track p.id) {
                     <mat-option [value]="p.id">{{ p.name }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
 
-              @if (presetActiveId()) {
-                <button mat-icon-button matTooltip="Clear preset" (click)="clearPreset()">
+              @if (presetSvc.activePresetId()) {
+                <button mat-icon-button matTooltip="Hapus preset" (click)="clearPreset()">
                   <mat-icon>close</mat-icon>
                 </button>
               }
 
               <button mat-stroked-button (click)="showPresetSave.set(!showPresetSave())">
-                <mat-icon>save</mat-icon> Save preset
+                <mat-icon>save</mat-icon> Simpan preset
               </button>
             </div>
 
@@ -221,15 +225,15 @@
             @if (showPresetSave()) {
               <div class="preset-save-inline">
                 <mat-form-field appearance="outline" class="preset-name-input">
-                  <mat-label>Preset name</mat-label>
-                  <input matInput [(ngModel)]="presetName" placeholder="e.g. Release v3 to Prod" />
+                  <mat-label>Nama preset</mat-label>
+                  <input matInput [(ngModel)]="presetName" placeholder="Contoh: Release v3 ke Prod" />
                 </mat-form-field>
                 <button mat-raised-button color="primary"
                   [disabled]="!presetName().trim()"
                   (click)="saveCurrentAsPreset()">
-                  Save
+                  Simpan
                 </button>
-                <button mat-button (click)="showPresetSave.set(false)">Cancel</button>
+                <button mat-button (click)="showPresetSave.set(false)">Batal</button>
               </div>
             }
 
@@ -325,58 +329,26 @@
 
               <!-- Build actions -->
               <div class="build-section">
-                @if (projSelectedCount() > 1) {
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    class="build-btn batch-armed"
-                    [class.batch-arm-glow]="batchArmed()"
-                    [disabled]="!selectedJob() || isLoading()"
-                    (click)="build()"
-                  >
-                    <mat-icon>rocket_launch</mat-icon>
-                    Build {{ projSelectedCount() }} Projects
-                  </button>
-                }
-
-                @if (projSelectedCount() === 1) {
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    class="build-btn"
-                    [disabled]="!selectedJob() || isLoading()"
-                    (click)="build()"
-                  >
-                    @if (status() === 'building') {
-                      <mat-spinner diameter="20" class="build-spinner"></mat-spinner>
-                    }
-                    <mat-icon>rocket_launch</mat-icon>
-                    Build
-                  </button>
-                }
-
-                @if (projSelectedCount() === 0) {
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    class="build-btn"
-                    [disabled]="!selectedJob() || isLoading()"
-                    (click)="build()"
-                  >
-                    @if (status() === 'building') {
-                      <mat-spinner diameter="20" class="build-spinner"></mat-spinner>
-                    }
-                    <mat-icon>rocket_launch</mat-icon>
-                    Build (current job)
-                  </button>
-                }
+                <button
+                  mat-raised-button
+                  color="primary"
+                  class="build-btn"
+                  [disabled]="!selectedJob() || isLoading()"
+                  (click)="build()"
+                >
+                  @if (status() === 'building') {
+                    <mat-spinner diameter="20" class="build-spinner"></mat-spinner>
+                  }
+                  <mat-icon>rocket_launch</mat-icon>
+                  {{ buildButtonLabel() }}
+                </button>
 
                 @if (status() === 'success') {
                   <div class="build-success" aria-live="polite">
                     <mat-icon>check_circle</mat-icon>
                     <span>{{ statusMessage() }}</span>
                     @if (buildResultUrl()) {
-                      <a [href]="buildResultUrl()" target="_blank" rel="noopener">View console</a>
+                      <a [href]="buildResultUrl()" target="_blank" rel="noopener">Lihat konsol</a>
                     }
                   </div>
                 }
@@ -387,7 +359,7 @@
                   </div>
                 }
                 @if (status() === 'idle' || status() === 'loading-jobs') {
-                  <span class="status-idle">Ready</span>
+                  <span class="status-idle">Siap</span>
                 }
               </div>
             }
@@ -398,26 +370,26 @@
       <!-- ================================================================= -->
       <!-- Zone 3: Build History drawer                                       -->
       <!-- ================================================================= -->
-      <div class="history-drawer" [class.open]="!historyCollapsed()">
-        <button class="history-toggle" (click)="toggleHistory()">
-          <mat-icon>{{ historyCollapsed() ? 'chevron_right' : 'expand_more' }}</mat-icon>
-          <span>Build History ({{ historyRecords().length }})</span>
+      <div class="history-drawer" [class.open]="!historySvc.collapsed()">
+        <button class="history-toggle" (click)="historySvc.toggle()" [attr.aria-expanded]="!historySvc.collapsed()">
+          <mat-icon>{{ historySvc.collapsed() ? 'chevron_right' : 'expand_more' }}</mat-icon>
+          <span>Riwayat Build ({{ historySvc.records().length }})</span>
         </button>
 
         <div class="history-body">
-          @if (historyRecords().length === 0) {
+          @if (historySvc.records().length === 0) {
             <div class="empty-state compact">
               <mat-icon>history</mat-icon>
               <span>Riwayat build akan muncul di sini</span>
             </div>
           } @else {
             <div class="history-actions">
-              <button mat-button color="warn" (click)="clearHistory()">
-                <mat-icon>delete</mat-icon> Clear
+              <button mat-button color="warn" (click)="historySvc.clear()">
+                <mat-icon>delete</mat-icon> Hapus
               </button>
             </div>
             <div class="history-list">
-              @for (r of historyRecords(); track r.id) {
+              @for (r of historySvc.records(); track r.id) {
                 <div class="history-row" [class.history-error]="r.status === 'failed'">
                   <mat-icon class="history-status">
                     {{ r.status === 'success' ? 'check_circle' : r.status === 'failed' ? 'error' : 'hourglass_empty' }}
@@ -431,7 +403,7 @@
                     </span>
                   </div>
                   @if (r.resultUrl) {
-                    <a [href]="r.resultUrl" target="_blank" rel="noopener" class="history-link">
+                    <a [href]="r.resultUrl" target="_blank" rel="noopener" class="history-link" [attr.aria-label]="'Buka hasil build ' + r.projectName">
                       <mat-icon>open_in_new</mat-icon>
                     </a>
                   }

@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>Akses GSLB</h2>
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Username</mat-label>
+    <input matInput [(ngModel)]="username" placeholder="Masukkan username" (keydown.enter)="login()" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Password</mat-label>
+    <input matInput [type]="showPw() ? 'text' : 'password'" [(ngModel)]="password" placeholder="Masukkan password" (keydown.enter)="login()" />
+    <button mat-icon-button matSuffix type="button" (click)="showPw.set(!showPw())" [attr.aria-label]="showPw() ? 'Sembunyikan password' : 'Tampilkan password'">
+      <mat-icon>{{ showPw() ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
+  </mat-form-field>
+
+  @if (error) {
+    <div class="err" role="alert">{{ error }}</div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close (click)="close()">Batal</button>
+  <button mat-raised-button color="primary" [disabled]="submitting" (click)="login()">
+    @if (submitting) {
+      <mat-spinner diameter="16" class="inline-spinner"></mat-spinner>
+    }
+    {{ submitting ? 'Memeriksa…' : 'Masuk' }}
+  </button>
+</mat-dialog-actions>

@@ -13,7 +13,6 @@ import {
 import { ActivityService } from '../../../shared/service/activity.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -47,6 +46,7 @@ import { PresetService } from '../../../shared/service/jenkins/preset.service';
 import { BuildHistoryService } from '../../../shared/service/jenkins/build-history.service';
 import { ServerDialogComponent } from './server-dialog.component';
 import { BatchDialogComponent } from './batch-dialog.component';
+import { JenkinsAuthDialogComponent } from './jenkins-auth-dialog.component';
 // ---------------------------------------------------------------------------
 // LocalStorage helpers
 // ---------------------------------------------------------------------------
@@ -99,11 +99,9 @@ function getDemoParams(jobName: string): JenkinsParamDef[] {
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatDividerModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatDialogModule,
@@ -113,9 +111,7 @@ function getDemoParams(jobName: string): JenkinsParamDef[] {
     MatCheckboxModule,
     MatRadioModule,
     MatSnackBarModule,
-    MatListModule,
     MatProgressBarModule,
-    MatChipsModule,
   ],
   templateUrl: './jenkins-build.component.html',
   styleUrls: ['./jenkins-build.component.css'],
@@ -123,7 +119,6 @@ function getDemoParams(jobName: string): JenkinsParamDef[] {
 })
 export class JenkinsBuildComponent {
   private readonly feed = inject(ActivityService);
-  private readonly router = inject(Router);
   readonly jenkins = inject(JenkinsService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
@@ -135,7 +130,6 @@ export class JenkinsBuildComponent {
   readonly servers = signal<JenkinsServer[]>(loadJson(LS_SERVERS, []));
   readonly activeServerId = signal<string | null>(loadJson<string | null>(LS_ACTIVE, null));
   readonly favorites = signal<string[]>([]);
-  private demoMode = false;
 
   // ---- Job list (for job selector — jobs are canonical list, projects are augmented) ----
   readonly jobs = signal<JenkinsJob[]>([]);
@@ -211,23 +205,33 @@ export class JenkinsBuildComponent {
   // ---- Smart defaults ----
   readonly smartDefaultProject = signal<string | null>(null);
   readonly smartDefaultTime = signal<number | null>(null);
-
   constructor() {
-    if (this.servers().length === 0) {
-      this.seedDemoData();
-    } else if (this.activeServerId() === 'demo-server') {
-      // Demo server persisted from previous session — re-seed
-      this.seedDemoData();
-    } else {
-      const id = this.activeServerId();
-      if (id) this.favorites.set(loadJson<string[]>(LS_FAVS_PREFIX + id, []));
-    }
+    const id = this.activeServerId();
+    if (id) this.favorites.set(loadJson<string[]>(LS_FAVS_PREFIX + id, []));
 
     effect(() => saveJson(LS_SERVERS, this.servers()));
     effect(() => saveJson(LS_ACTIVE, this.activeServerId()));
     effect(() => {
       const id = this.activeServerId();
-      if (id && !this.demoMode) this.favorites.set(loadJson<string[]>(LS_FAVS_PREFIX + id, []));
+      if (id) this.favorites.set(loadJson<string[]>(LS_FAVS_PREFIX + id, []));
+    });
+
+    if (!this.jenkins.authed()) {
+      this.openAuthDialog();
+    }
+  }
+
+  // ---- Auth ----
+  openAuthDialog(): void {
+    const ref = this.dialog.open(JenkinsAuthDialogComponent, { width: '400px', disableClose: true });
+    ref.afterClosed().subscribe((ok: boolean) => {
+      if (!ok) {
+        // User cancelled auth — stay on page, but they can't build
+        return;
+      }
+      // Auth succeeded; if a server is active, refresh jobs
+      const server = this.activeServer();
+      if (server) this.loadJobs();
     });
   }
 
@@ -243,7 +247,6 @@ export class JenkinsBuildComponent {
     });
     ref.afterClosed().subscribe((result: ServerDialogResult | null) => {
       if (!result) return;
-      this.demoMode = false;
       this.servers.set(result.servers);
       if (result.activeId !== this.activeServerId()) {
         this.activeServerId.set(result.activeId);
@@ -266,7 +269,7 @@ export class JenkinsBuildComponent {
   loadJobs(): void {
     const server = this.activeServer();
     if (!server) return;
-    if (this.demoMode || server.id === 'demo-server') {
+    if (server.id === 'demo-server') {
       this.status.set('idle');
       return;
     }
@@ -321,7 +324,7 @@ export class JenkinsBuildComponent {
     const server = this.activeServer();
     if (!server) return;
 
-    if (this.demoMode || server.id === 'demo-server') {
+    if (server.id === 'demo-server') {
       const defs = getDemoParams(job.name);
       this.applyParams(defs);
       return;
@@ -344,7 +347,7 @@ export class JenkinsBuildComponent {
     const server = this.activeServer();
     if (!server) return;
 
-    if (this.demoMode || server.id === 'demo-server') {
+    if (server.id === 'demo-server') {
       const defs = getDemoParams(job.name);
       this.applyParams(defs, lastParams);
       this.smartDefaultProject.set(projectName);
@@ -376,7 +379,7 @@ export class JenkinsBuildComponent {
       const server = this.activeServer();
       if (!server) return;
 
-      if (this.demoMode || server.id === 'demo-server') {
+      if (server.id === 'demo-server') {
         const loaded = getDemoParams(job.name);
         this.paramDefs.set(loaded);
         this.applyCrossJobPreset(preset, loaded);
@@ -482,6 +485,13 @@ export class JenkinsBuildComponent {
   }
 
   // ---- Build flow ----
+  readonly buildButtonLabel = computed(() => {
+    const count = this.projectReg.selectedCount();
+    if (count > 1) return `Build ${count} Project`;
+    if (count === 1) return 'Build';
+    return 'Build (job saat ini)';
+  });
+
   build(): void {
     const selCount = this.projectReg.selectedCount();
     if (selCount > 1) {
@@ -494,7 +504,7 @@ export class JenkinsBuildComponent {
     const job = this.selectedJob();
     if (!server || !job) return;
 
-    if (this.demoMode || server.id === 'demo-server') {
+    if (server.id === 'demo-server') {
       this.simulateBuild(job.name);
       return;
     }
@@ -544,7 +554,7 @@ export class JenkinsBuildComponent {
       if (index >= projectNames.length) return;
       const name = projectNames[index];
 
-      if (this.demoMode || server.id === 'demo-server') {
+      if (server.id === 'demo-server') {
         dialog.pushResult(name, 'queued');
         setTimeout(() => {
           dialog.pushResult(name, 'success');
@@ -721,36 +731,6 @@ export class JenkinsBuildComponent {
     onDone();
   }
 
-  private simulateBuild(jobName: string): void {
-    const selCount = this.projectReg.selectedCount();
-    const names = selCount > 0
-      ? [...this.projectReg.selectedIds()]
-      : [jobName];
-
-    this.status.set('success');
-    this.statusMessage.set('Build triggered (demo)');
-    this.buildResultUrl.set('#demo-build');
-
-    for (const n of names) {
-      this.projectReg.recordBuildParams(n, { ...this.paramValues() });
-      this.historySvc.append({
-        id: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`,
-        timestamp: Date.now(),
-        serverLabel: this.activeServer()!.label,
-        projectName: n,
-        jobName,
-        params: { ...this.paramValues() },
-        status: 'success',
-        resultUrl: '#demo-build',
-      });
-    }
-    this.snackBar.open(
-      `Demo build queued for ${names.length} project(s)`,
-      'Dismiss',
-      { duration: 4000 },
-    );
-  }
-
   // ---- Helpers ----
   private formatParamValue(v: string | boolean | undefined): string {
     if (v === undefined || v === null || v === '') return '(empty)';
@@ -825,8 +805,37 @@ export class JenkinsBuildComponent {
   }
 
   // ---- Demo mode ----
+  private simulateBuild(jobName: string): void {
+    const selCount = this.projectReg.selectedCount();
+    const names = selCount > 0
+      ? [...this.projectReg.selectedIds()]
+      : [jobName];
+
+    this.status.set('success');
+    this.statusMessage.set('Build triggered (demo)');
+    this.buildResultUrl.set('#demo-build');
+
+    for (const n of names) {
+      this.projectReg.recordBuildParams(n, { ...this.paramValues() });
+      this.historySvc.append({
+        id: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`,
+        timestamp: Date.now(),
+        serverLabel: this.activeServer()!.label,
+        projectName: n,
+        jobName,
+        params: { ...this.paramValues() },
+        status: 'success',
+        resultUrl: '#demo-build',
+      });
+    }
+    this.snackBar.open(
+      `Demo build queued for ${names.length} project(s)`,
+      'Dismiss',
+      { duration: 4000 },
+    );
+  }
+
   private seedDemoData(): void {
-    this.demoMode = true;
     this.servers.set([{ id: 'demo-server', label: 'Demo Server', url: '' }]);
     this.activeServerId.set('demo-server');
 
@@ -863,7 +872,7 @@ export class JenkinsBuildComponent {
 
   logout(): void {
     this.jenkins.logout();
-    this.router.navigateByUrl('/jenkins/login');
+    this.openAuthDialog();
   }
 }
 

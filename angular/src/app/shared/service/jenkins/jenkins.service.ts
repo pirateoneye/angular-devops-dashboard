@@ -17,7 +17,7 @@ const BUILD_CRUMB_FIELD = 'Jenkins-Crumb';
 
 
 const LS_JENKINS_USER = 'jenkins.username';
-const LS_JENKINS_PASS = 'jenkins.password';
+const LS_JENKINS_REMEMBER = 'jenkins.remember';
 interface RawParamDef {
   name: string;
   type: string;
@@ -51,54 +51,74 @@ export class JenkinsService {
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   readonly username = signal('');
-  readonly password = signal('');
-  readonly authed = computed(() => this.username().length > 0 && this.password().length > 0);
+  readonly token = signal('');
+  readonly authed = computed(() => this.username().length > 0 && this.token().length > 0);
 
   constructor() {
     this.restoreSession();
   }
 
-  async loginWithCredentials(username: string, password: string, remember: boolean): Promise<boolean> {
+  loginWithCredentials(username: string, token: string, remember: boolean, jenkinsUrl?: string): Promise<boolean> {
     const u = username.trim();
-    if (!u || !password) return false;
-    this.username.set(u);
-    this.password.set(password);
-    if (remember && this.isBrowser) {
-      localStorage.setItem(LS_JENKINS_USER, u);
-      localStorage.setItem(LS_JENKINS_PASS, password);
+    const t = token.trim();
+    if (!u || !t) return Promise.resolve(false);
+
+    // Validate against a Jenkins URL if provided; otherwise trust the credentials.
+    if (jenkinsUrl) {
+      return new Promise((resolve) => {
+        this.http.get(`${this.stripTrailingSlash(jenkinsUrl)}/api/json`, {
+          headers: { Authorization: `Basic ${btoa(`${u}:${t}`)}` },
+        }).subscribe({
+          next: () => {
+            this.setCredentials(u, t, remember);
+            resolve(true);
+          },
+          error: () => resolve(false),
+        });
+      });
     }
-    return true;
+
+    this.setCredentials(u, t, remember);
+    return Promise.resolve(true);
+  }
+
+  private setCredentials(username: string, token: string, remember: boolean): void {
+    this.username.set(username);
+    this.token.set(token);
+    if (this.isBrowser) {
+      localStorage.setItem(LS_JENKINS_USER, username);
+      localStorage.setItem(LS_JENKINS_REMEMBER, String(remember));
+    }
   }
 
   logout(): void {
     this.username.set('');
-    this.password.set('');
+    this.token.set('');
     if (this.isBrowser) {
       localStorage.removeItem(LS_JENKINS_USER);
-      localStorage.removeItem(LS_JENKINS_PASS);
+      localStorage.removeItem(LS_JENKINS_REMEMBER);
     }
   }
 
   private restoreSession(): void {
     if (!this.isBrowser) return;
     const u = localStorage.getItem(LS_JENKINS_USER);
-    const p = localStorage.getItem(LS_JENKINS_PASS);
-    if (u && p) {
+    if (u) {
       this.username.set(u);
-      this.password.set(p);
     }
   }
 
   private authHeaders(): Record<string, string> {
     const u = this.username();
-    const p = this.password();
-    if (!u || !p) return {};
+    const t = this.token();
+    if (!u || !t) return {};
     try {
-      return { Authorization: `Basic ${btoa(`${u}:${p}`)}` };
+      return { Authorization: `Basic ${btoa(`${u}:${t}`)}` };
     } catch {
       return {};
     }
   }
+
 
 
   /** GET {url}/crumbIssuer/api/json */

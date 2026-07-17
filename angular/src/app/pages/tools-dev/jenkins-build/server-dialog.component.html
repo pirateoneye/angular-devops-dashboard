@@ -1,0 +1,95 @@
+<h2 mat-dialog-title>Server Jenkins</h2>
+<mat-dialog-content>
+  <!-- Server list -->
+  @if (servers.length > 0) {
+    <div class="server-cards">
+      @for (s of servers; track s.id) {
+        <div class="server-card" [class.active]="s.id === activeId">
+          <div class="server-card-header">
+            <div class="server-card-info">
+              <strong>{{ s.label }}</strong>
+              <span class="server-url">{{ s.url }}</span>
+              @if (jobCounts[s.id] !== undefined) {
+                <span class="job-badge">{{ jobCounts[s.id] }} job dimuat</span>
+              } @else {
+                <span class="job-badge muted">Tidak terhubung</span>
+              }
+            </div>
+            <div class="server-card-actions">
+              <button mat-icon-button
+                matTooltip="Tes koneksi"
+                [disabled]="testingId === s.id"
+                (click)="testServer(s)">
+                <mat-icon>{{ testingId === s.id ? 'hourglass_empty' : 'wifi' }}</mat-icon>
+              </button>
+              @if (s.id !== activeId) {
+                <button mat-icon-button color="primary"
+                  matTooltip="Jadikan aktif"
+                  (click)="setActive(s)">
+                  <mat-icon>radio_button_unchecked</mat-icon>
+                </button>
+              } @else {
+                <mat-icon class="active-star" matTooltip="Aktif">radio_button_checked</mat-icon>
+              }
+              <button mat-icon-button color="warn"
+                matTooltip="Hapus server"
+                (click)="deleteServer(s)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Default job selector -->
+          <div class="server-card-body">
+            <mat-form-field appearance="outline" class="full-width compact">
+              <mat-label>Job Default</mat-label>
+              <mat-select
+                [value]="defaultJobs[s.id] || null"
+                (selectionChange)="setDefaultJob(s.id, $event.value)">
+                <mat-option [value]="null">Tidak ada</mat-option>
+                @for (j of data.jobs; track j.name) {
+                  <mat-option [value]="j.name">{{ j.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Test result per server -->
+          @if (testResults[s.id]) {
+            <p class="test-result" [class.test-error]="!testResults[s.id].ok">
+              {{ testResults[s.id].ok ? 'Terhubung' : '✗ ' + testResults[s.id].message }}
+            </p>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="empty-hint">Belum ada server. Tambahkan server Jenkins pertama di bawah.</p>
+  }
+
+  <mat-divider class="dialog-divider"></mat-divider>
+
+  <!-- Add new server form -->
+  <h3 class="section-label">Tambah Server</h3>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Label</mat-label>
+    <input matInput [(ngModel)]="newLabel" placeholder="Production Jenkins" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>URL</mat-label>
+    <input matInput [(ngModel)]="newUrl" placeholder="https://jenkins.example.com" />
+  </mat-form-field>
+
+  <button mat-stroked-button color="primary" (click)="addServer()"
+    [disabled]="!newLabel || !newUrl || loading">
+    <mat-icon>add</mat-icon> Tambah Server
+  </button>
+
+  @if (loading) {
+    <mat-progress-spinner diameter="20" mode="indeterminate" class="inline-spinner"></mat-progress-spinner>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Tutup</button>
+</mat-dialog-actions>

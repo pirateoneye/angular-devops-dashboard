@@ -1,0 +1,91 @@
+.server-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.server-card {
+  border: 1px solid var(--msv-border);
+  border-radius: var(--msv-radius-md);
+  padding: 12px;
+  transition: border-color var(--msv-transition-fast), background var(--msv-transition-fast);
+}
+.server-card.active {
+  border-color: var(--msv-primary);
+  background: var(--msv-accent-bg);
+}
+.server-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.server-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.server-url {
+  font-size: 0.75rem;
+  color: var(--msv-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.job-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: var(--msv-radius-pill);
+  background: var(--msv-success-bg);
+  color: var(--msv-success);
+  font-size: 0.7rem;
+  font-weight: 500;
+  width: fit-content;
+}
+.job-badge.muted {
+  background: var(--msv-border);
+  color: var(--msv-text-muted);
+}
+.server-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.server-card-body {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--msv-border);
+}
+.active-star {
+  color: var(--msv-primary);
+}
+.empty-hint {
+  color: var(--msv-text-muted);
+  font-style: italic;
+}
+.dialog-divider {
+  margin: 16px 0;
+}
+.section-label {
+  margin-bottom: 12px;
+}
+.full-width {
+  width: 100%;
+}
+.full-width.compact {
+  margin-bottom: 0;
+}
+.test-result {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+.test-error {
+  color: var(--msv-error);
+}
+.inline-spinner {
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: middle;
+}

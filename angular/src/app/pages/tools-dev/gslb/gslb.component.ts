@@ -9,6 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { ActivityService } from '../../../shared/service/activity.service';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../module/material.module';
 import { ToastComponent } from '../../../shared/component/toast/toast.component';
@@ -20,6 +21,7 @@ import {
   GslbMember,
   GslbState,
 } from '../../../shared/service/gslb/gslb.models';
+import { GslbAuthDialogComponent } from './gslb-auth-dialog.component';
 
 
 @Component({
@@ -33,6 +35,7 @@ export class GslbComponent implements OnDestroy {
   readonly svc = inject(GslbService);
   private readonly router = inject(Router);
   private readonly feed = inject(ActivityService);
+  private readonly dialog = inject(MatDialog);
   readonly toasts: { id: number; msg: string; type: 'ok' | 'err' | 'info' }[] = [];
   private toastId = 0;
   private activeTimers = new Set<ReturnType<typeof setTimeout>>();
@@ -58,15 +61,24 @@ export class GslbComponent implements OnDestroy {
   });
 
   constructor() {
-    if (this.svc.authed()) {
+    if (!this.svc.authed()) {
+      this.openAuthDialog();
+    } else {
       this.refreshAll();
     }
+  }
+
+  openAuthDialog(): void {
+    const ref = this.dialog.open(GslbAuthDialogComponent, { width: '400px', disableClose: true });
+    ref.afterClosed().subscribe((ok: boolean) => {
+      if (ok) this.refreshAll();
+    });
   }
 
   logout(): void {
     this.svc.logout();
     this.toast('Logged out', 'info');
-    this.router.navigateByUrl('/gslb/login');
+    this.openAuthDialog();
   }
 
   reloadTasks(): void {

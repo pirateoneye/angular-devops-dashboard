@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Jenkins Build Console</h2>
+<mat-dialog-content>
+  <p class="muted">Masukkan username &amp; token Jenkins Anda.</p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Username</mat-label>
+    <input matInput [(ngModel)]="username" placeholder="Masukkan username" (keydown.enter)="login()" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Token</mat-label>
+    <input matInput [type]="showToken() ? 'text' : 'password'" [(ngModel)]="token" placeholder="Masukkan token Jenkins" (keydown.enter)="login()" />
+    <button mat-icon-button matSuffix type="button" (click)="showToken.set(!showToken())" [attr.aria-label]="showToken() ? 'Sembunyikan token' : 'Tampilkan token'">
+      <mat-icon>{{ showToken() ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
+  </mat-form-field>
+
+  @if (error) {
+    <div class="err" role="alert">{{ error }}</div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close (click)="close()">Batal</button>
+  <button mat-raised-button color="primary" [disabled]="submitting" (click)="login()">
+    @if (submitting) {
+      <mat-spinner diameter="16" class="inline-spinner"></mat-spinner>
+    }
+    {{ submitting ? 'Memeriksa…' : 'Masuk' }}
+  </button>
+</mat-dialog-actions>

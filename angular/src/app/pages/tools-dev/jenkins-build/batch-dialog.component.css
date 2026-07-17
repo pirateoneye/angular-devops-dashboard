@@ -1,0 +1,24 @@
+.param-summary { margin: 12px 0; }
+.param-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  font-size: 0.85rem;
+}
+.param-key { color: var(--msv-text-muted); }
+.param-val { font-weight: 500; }
+.progress-section { margin-top: 16px; }
+.batch-progress { margin-bottom: 8px; }
+.progress-label { font-size: 0.85rem; color: var(--msv-text-muted); text-align: center; }
+.result-list { margin-top: 12px; max-height: 220px; overflow-y: auto; }
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--msv-border);
+}
+.result-error { background: var(--msv-error-bg); border-radius: var(--msv-radius-sm); padding: 6px 8px; }
+.result-icon { font-size: 18px; width: 18px; height: 18px; }
+.result-name { flex: 1; font-size: 0.85rem; }
+.retry-btn { font-size: 0.8rem; line-height: 28px; min-width: 60px; }

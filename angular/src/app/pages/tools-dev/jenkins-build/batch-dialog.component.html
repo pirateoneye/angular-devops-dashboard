@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>Batch Build — {{ data.jobName }}</h2>
+<mat-dialog-content>
+  <p>
+    Triggering <strong>{{ data.projectNames.length }} project(s)</strong> on
+    <em>{{ data.serverLabel }}</em>
+  </p>
+
+  <!-- Parameter summary -->
+  @if (data.paramSummary.length) {
+    <div class="param-summary">
+      <h4>Parameter</h4>
+      <div class="param-grid">
+        @for (p of data.paramSummary; track p.key) {
+          <span class="param-key">{{ p.key }}</span>
+          <span class="param-val">{{ p.value }}</span>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Build progress (post-arm) -->
+  @if (running()) {
+    <div class="progress-section">
+      <mat-progress-bar
+        mode="determinate"
+        [value]="progressPct()"
+        class="batch-progress">
+      </mat-progress-bar>
+      <p class="progress-label">{{ doneCount() }} / {{ total() }} selesai</p>
+
+      <div class="result-list">
+        @for (r of results(); track r.name) {
+          <div class="result-row" [class.result-error]="r.status === 'failed'">
+            <mat-icon class="result-icon">
+              {{ r.status === 'success' ? 'check_circle' : r.status === 'failed' ? 'error' : 'hourglass_empty' }}
+            </mat-icon>
+            <span class="result-name">{{ r.name }}</span>
+            @if (r.status === 'failed') {
+              <button mat-button color="warn" class="retry-btn" (click)="retry(r.name)">
+                <mat-icon>refresh</mat-icon> Ulangi
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  @if (!running()) {
+    @if (!armed()) {
+      <button mat-raised-button color="primary" (click)="arm()">
+        <mat-icon>rocket_launch</mat-icon> Jalankan?
+      </button>
+    } @else {
+      <button mat-raised-button color="warn" (click)="execute()">
+        <mat-icon>warning</mat-icon> Konfirmasi Build
+      </button>
+    }
+  }
+  <button mat-button mat-dialog-close [disabled]="running()">Tutup</button>
+</mat-dialog-actions>

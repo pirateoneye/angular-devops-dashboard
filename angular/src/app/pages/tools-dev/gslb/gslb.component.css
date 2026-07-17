@@ -59,9 +59,9 @@
 
 .verdict { display: flex; gap: 10px; font-size: 12px; }
 .v { padding: 2px 8px; border-radius: 4px; }
-.v.up   { color: var(--msv-success); background: rgba(34,197,94,.12); }
-.v.oos  { color: var(--msv-warning); background: rgba(245,158,11,.12); }
-.v.down { color: var(--msv-error);   background: rgba(239,68,68,.12); }
+.v.up   { color: var(--msv-success); background: var(--msv-success-bg); }
+.v.oos  { color: var(--msv-warning); background: var(--msv-warning-bg); }
+.v.down { color: var(--msv-error);   background: var(--msv-error-bg); }
 .v.susp { color: var(--msv-text-muted); background: rgba(100,116,139,.12); }
 
 /* --- filters ------------------------------------------------------- */
@@ -82,7 +82,7 @@
 .cards { display: flex; flex-direction: column; gap: 10px; padding-top: 8px; }
 
 .card { background: var(--msv-surface-1); border: 1px solid var(--msv-border); border-radius: 10px; overflow: hidden; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
-.card:hover { border-color: var(--msv-primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.card:hover { border-color: var(--msv-primary); transform: translateY(-2px); box-shadow: var(--msv-elev-3, 0 4px 12px rgba(0,0,0,0.3)); }
 .card.has-up  { border-left: 3px solid var(--msv-success); }
 .card.all-down { border-left: 3px solid var(--msv-error); }
 
@@ -95,8 +95,8 @@
 @keyframes dot-pulse { 0%,100%{ opacity: 1 } 50%{ opacity: .4 } }
 
 .zone { padding: 2px 8px; border-radius: 4px; font-size: 10px; text-transform: uppercase; font-weight: 600; }
-.zone.internal { background: rgba(99,102,241,.12); color: #a5b4fc; }
-.zone.external { background: rgba(34,197,94,.12); color: #86efac; }
+.zone.internal { background: var(--msv-accent-bg); color: var(--msv-primary); }
+.zone.external { background: var(--msv-success-bg); color: var(--msv-success); }
 
 .pill { padding: 1px 6px; border-radius: 8px; font-size: 10px; font-weight: 600; }
 .pill.up   { color: var(--msv-success); }
@@ -128,9 +128,9 @@
 
 /* --- member state chips -------------------------------------------- */
 .mchip { padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; white-space: nowrap; }
-.mchip.up   { background: rgba(34,197,94,.12); color: #4ade80; }
-.mchip.oos  { background: rgba(245,158,11,.12); color: #fbbf24; }
-.mchip.down { background: rgba(239,68,68,.12); color: #f87171; }
+.mchip.up   { background: var(--msv-success-bg); color: var(--msv-success); }
+.mchip.oos  { background: var(--msv-warning-bg); color: var(--msv-warning); }
+.mchip.down { background: var(--msv-error-bg); color: var(--msv-error); }
 .mchip.susp { background: rgba(100,116,139,.12); color: var(--msv-text-muted); }
 
 /* --- focus --------------------------------------------------------- */

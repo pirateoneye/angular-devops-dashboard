@@ -213,7 +213,7 @@
   height: 16px;
 }
 .project-item.favorite .fav-btn mat-icon {
-  color: #f5a623;
+  color: var(--msv-warning, #f5a623);
 }
 .job-status {
   font-size: 16px;
@@ -329,14 +329,14 @@
   gap: 8px;
   padding: 8px 12px;
   margin-bottom: 12px;
-  background: #fff8e1;
-  border: 1px solid #ffe082;
+  background: var(--msv-warning-bg);
+  border: 1px solid var(--msv-warning);
   border-radius: var(--msv-radius-sm);
   font-size: 0.8rem;
 }
 [data-theme="dark"] .smart-default-bar {
-  background: #3a2f14;
-  border-color: #5a4214;
+  background: var(--msv-warning-bg);
+  border-color: var(--msv-warning);
 }
 .cross-job-hint {
   display: flex;
@@ -543,3 +543,13 @@
     max-height: 300px;
   }
 }
+
+/* =================================================================
+   Focus visible
+   ================================================================= */
+.server-chip:focus-visible,
+.group-chip:focus-visible,
+.project-name:focus-visible,
+.history-toggle:focus-visible,
+.preset-bar button:focus-visible,
+.list-footer button:focus-visible { outline: 2px solid var(--msv-primary); outline-offset: 2px; }

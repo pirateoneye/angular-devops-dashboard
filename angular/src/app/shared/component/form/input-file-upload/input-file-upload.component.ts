@@ -1,7 +1,8 @@
-﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+﻿import {Component, EventEmitter, Input, Output, ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule],
   selector: 'input-file-upload',

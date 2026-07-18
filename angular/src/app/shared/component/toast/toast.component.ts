@@ -1,7 +1,8 @@
-import { Component, Input, output } from '@angular/core';
+import {Component, Input, output, ChangeDetectionStrategy} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   selector: 'omp-toast',
   imports: [MatIconModule],

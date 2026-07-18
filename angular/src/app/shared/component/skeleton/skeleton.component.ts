@@ -1,6 +1,7 @@
-import { Component, Input, signal } from '@angular/core';
+import {Component, Input, signal, ChangeDetectionStrategy} from '@angular/core';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   selector: 'omp-skeleton',
   template: `

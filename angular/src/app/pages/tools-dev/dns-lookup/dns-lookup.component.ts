@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -16,6 +16,7 @@ import { EmptyStateComponent } from '../../../shared/component/empty-state/empty
 interface DnsRecord { type: string; name: string; value: string; ttl: number; }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   selector: 'app-dns-lookup',
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatTableModule,

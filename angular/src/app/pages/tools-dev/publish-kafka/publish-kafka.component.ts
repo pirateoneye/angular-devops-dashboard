@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, inject, DestroyRef } from '@angular/core';
+import {Component, inject, DestroyRef, ChangeDetectionStrategy} from '@angular/core';
 import { catchError } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -9,6 +9,7 @@ import { MaterialModule } from '../../../module/material.module';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,

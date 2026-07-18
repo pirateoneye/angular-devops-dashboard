@@ -1,5 +1,7 @@
 <div class="msv-select-container">
-  <label *ngIf="label" class="msv-select-label">{{ label }}</label>
+  @if (label) {
+    <label class="msv-select-label">{{ label }}</label>
+  }
   <select
     [value]="value"
     [disabled]="disabled"
@@ -9,23 +11,21 @@
     [class.is-invalid]="showError"
   >
     <option value="" disabled>{{ placeholder }}</option>
-    <ng-container *ngFor="let option of options">
-      <ng-container *ngIf="optionTemplate; else defaultOption">
+    @for (option of options; track option.value) {
+      @if (optionTemplate) {
         <option [value]="option.value" [disabled]="option.disabled">
           <ng-container *ngTemplateOutlet="optionTemplate; context: {$implicit: option}"></ng-container>
         </option>
-      </ng-container>
-      <ng-template #defaultOption>
+      } @else {
         <option [value]="option.value" [disabled]="option.disabled">{{ option.label }}</option>
-      </ng-template>
-    </ng-container>
+      }
+    }
   </select>
-  <ng-container *ngIf="showError">
-    <ng-container *ngIf="errorTemplate; else defaultError">
+  @if (showError) {
+    @if (errorTemplate) {
       <ng-container *ngTemplateOutlet="errorTemplate; context: {$implicit: errors}"></ng-container>
-    </ng-container>
-    <ng-template #defaultError>
+    } @else {
       <div class="msv-select-error">{{ errors[0] }}</div>
-    </ng-template>
-  </ng-container>
+    }
+  }
 </div>

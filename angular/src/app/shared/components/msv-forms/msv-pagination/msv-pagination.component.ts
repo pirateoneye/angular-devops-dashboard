@@ -70,11 +70,10 @@ export interface PageChangeEvent {
       [value]="pageSize"
       (change)="onPageSizeChange($event)"
     >
-      <option *ngFor="let option of pageSizeOptions" [value]="option">
-        {{ option }}
-      </option>
+      @for (option of pageSizeOptions; track $index) {
+        <option [value]="option">{{ option }}</option>
+      }
     </select>
-  </div>
 </div>
   `,
   styles: [`

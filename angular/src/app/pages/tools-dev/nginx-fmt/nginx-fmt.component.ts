@@ -63,7 +63,7 @@ export class NginxFmtComponent {
     const rawLines = config.split('\n');
 
     for (let i = 0; i < rawLines.length; i++) {
-      let line = rawLines[i].trim();
+      const line = rawLines[i].trim();
       if (!line) { lines.push(''); continue }
 
       // Detect common issues

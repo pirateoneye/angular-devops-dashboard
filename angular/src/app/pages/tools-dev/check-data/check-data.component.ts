@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { SelectOption } from 'src/app/shared/components/msv-forms/interfaces';
@@ -10,6 +10,7 @@ import { MaterialModule } from '../../../module/material.module';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,

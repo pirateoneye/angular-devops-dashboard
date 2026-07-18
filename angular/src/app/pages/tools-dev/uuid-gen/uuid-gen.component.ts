@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import {Component, signal, computed, inject, ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -59,7 +59,8 @@ function generateUuid4(): string {
   });
 }
 
-@Component({ standalone: true, selector: 'app-uuid-gen',
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush, standalone: true, selector: 'app-uuid-gen',
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, MatSlideToggleModule],
   template: `
     <div class="container pt-3 pb-3" style="max-width:640px">

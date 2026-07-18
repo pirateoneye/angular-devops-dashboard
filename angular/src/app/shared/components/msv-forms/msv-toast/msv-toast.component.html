@@ -1,7 +1,9 @@
 <div [class]="'toast ' + toastClass" [class.toast-visible]="visible" role="alert" [attr.aria-live]="toast.type === 'error' ? 'assertive' : 'polite'">
   <div class="toast-icon">{{ iconSymbol }}</div>
   <div class="toast-content">
-    <div *ngIf="toast.title" class="toast-title">{{ toast.title }}</div>
+    @if (toast.title) {
+      <div class="toast-title">{{ toast.title }}</div>
+    }
     <div class="toast-message">{{ toast.message }}</div>
   </div>
   <button class="toast-close" (click)="onDismiss()" aria-label="Close toast">✕</button>

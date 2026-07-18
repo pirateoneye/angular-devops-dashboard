@@ -16,7 +16,6 @@ import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -26,9 +25,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatChipsModule } from '@angular/material/chips';
 import {
   JenkinsService,
   JenkinsCrumbExpiredError,
@@ -685,7 +682,7 @@ export class JenkinsBuildComponent {
   ): void {
     if (err instanceof JenkinsCrumbExpiredError) {
       this.jenkins.fetchCrumb(server.url).subscribe({
-        next: (crumb) => {
+        next: (_crumb) => {
           this.doRealBuild(server, job, onDone, projectName);
         },
         error: (e: Error) => {

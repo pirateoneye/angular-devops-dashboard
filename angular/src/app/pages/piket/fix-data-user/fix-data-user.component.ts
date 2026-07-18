@@ -1,13 +1,4 @@
-﻿import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-  DestroyRef,
-  inject,
-} from '@angular/core';
+﻿import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
@@ -42,6 +33,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,

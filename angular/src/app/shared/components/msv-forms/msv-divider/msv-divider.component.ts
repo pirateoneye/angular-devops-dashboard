@@ -4,12 +4,14 @@ import { Component, Input } from '@angular/core';
   selector: 'msv-divider',
   template: `
     <div class="msv-divider" [ngClass]="dividerClasses">
-      <span class="divider-line" *ngIf="!text || orientation === 'vertical'"></span>
-      <ng-container *ngIf="text && orientation === 'horizontal'">
+      @if (!text || orientation === 'vertical') {
+        <span class="divider-line"></span>
+      }
+      @if (text && orientation === 'horizontal') {
         <span class="divider-line"></span>
         <span class="divider-text">{{ text }}</span>
         <span class="divider-line"></span>
-      </ng-container>
+      }
     </div>
   `,
   styles: [`

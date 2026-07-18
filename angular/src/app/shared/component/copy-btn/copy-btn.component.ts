@@ -1,4 +1,4 @@
-import { Component, Input, output, signal } from '@angular/core';
+import { Component, Input, signal, OnDestroy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -21,7 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
     .copy-btn mat-icon { font-size: 16px; width: 16px; height: 16px; }
   `],
 })
-export class CopyBtnComponent {
+export class CopyBtnComponent implements OnDestroy {
   @Input({ required: true }) value!: string;
   readonly copied = signal(false);
   private timer: ReturnType<typeof setTimeout> | null = null;

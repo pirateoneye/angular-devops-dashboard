@@ -21,22 +21,23 @@ import { MsvModalService } from './msv-modal.service';
         <!-- Header Slot -->
         <div class="msv-modal-header">
           <ng-content select="[msvModalHeader]"></ng-content>
-          <button
-            *ngIf="closable"
-            class="msv-modal-close"
-            (click)="close()"
-            type="button"
-            aria-label="Close"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path
-                d="M15 5L5 15M5 5L15 15"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </button>
+          @if (closable) {
+            <button
+              class="msv-modal-close"
+              (click)="close()"
+              type="button"
+              aria-label="Close"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M15 5L5 15M5 5L15 15"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </button>
+          }
         </div>
 
         <!-- Body Slot (default content) -->

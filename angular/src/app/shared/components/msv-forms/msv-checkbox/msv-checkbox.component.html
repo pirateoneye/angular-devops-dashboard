@@ -9,14 +9,15 @@
       (blur)="onBlur()"
     />
     <span class="checkbox-custom" [class.is-invalid]="showError"></span>
-    <span *ngIf="label" class="checkbox-label">{{ label }}</span>
+    @if (label) {
+      <span class="checkbox-label">{{ label }}</span>
+    }
   </label>
-  <ng-container *ngIf="showError">
-    <ng-container *ngIf="errorTemplate; else defaultError">
+  @if (showError) {
+    @if (errorTemplate) {
       <ng-container *ngTemplateOutlet="errorTemplate; context: {$implicit: errors}"></ng-container>
-    </ng-container>
-    <ng-template #defaultError>
+    } @else {
       <div class="msv-checkbox-error">{{ errors[0] }}</div>
-    </ng-template>
-  </ng-container>
+    }
+  }
 </div>

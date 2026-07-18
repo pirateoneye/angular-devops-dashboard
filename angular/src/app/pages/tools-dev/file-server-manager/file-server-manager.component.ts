@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -18,6 +18,7 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
 import { InputFileUploadComponent } from '../../../shared/component/form/input-file-upload/input-file-upload.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,

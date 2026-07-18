@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  mockGslb: false,
   piketPassword: 'HanyaITYangBolehTau',
   hostToolsMcb: 'https://asil.com',
   hostMessiProd: 'https://asis.com',

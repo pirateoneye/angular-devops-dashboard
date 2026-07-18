@@ -1,6 +1,8 @@
 <div class="msv-file-upload">
   <!-- Label -->
-  <label *ngIf="label" class="msv-file-upload-label">{{ label }}</label>
+  @if (label) {
+    <label class="msv-file-upload-label">{{ label }}</label>
+  }
 
   <!-- Drop Zone -->
   <div
@@ -14,69 +16,81 @@
     (click)="triggerFileInput(fileInput)"
   >
     <!-- Empty state -->
-    <div *ngIf="value.length === 0 && !isDragOver" class="drop-zone-content">
-      <div class="upload-icon">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="17 8 12 3 7 8"></polyline>
-          <line x1="12" y1="3" x2="12" y2="15"></line>
-        </svg>
+    @if (value.length === 0 && !isDragOver) {
+      <div class="drop-zone-content">
+        <div class="upload-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+        </div>
+        <p class="drop-zone-text-primary">
+          Drag and drop {{ multiple ? 'files' : 'a file' }} here or click to select
+        </p>
+        @if (accept !== '*/*') {
+          <p class="drop-zone-text-secondary">
+            Accepted types: {{ accept }}
+          </p>
+        }
+        <p class="drop-zone-text-secondary">
+          Max size: {{ formatFileSize(maxSize) }}{{ multiple ? ' per file, max ' + maxFiles + ' files' : '' }}
+        </p>
       </div>
-      <p class="drop-zone-text-primary">
-        Drag and drop {{ multiple ? 'files' : 'a file' }} here or click to select
-      </p>
-      <p class="drop-zone-text-secondary" *ngIf="accept !== '*/*'">
-        Accepted types: {{ accept }}
-      </p>
-      <p class="drop-zone-text-secondary">
-        Max size: {{ formatFileSize(maxSize) }}{{ multiple ? ' per file, max ' + maxFiles + ' files' : '' }}
-      </p>
-    </div>
+    }
 
     <!-- Drag over state -->
-    <div *ngIf="isDragOver" class="drop-zone-content">
-      <div class="upload-icon pulse">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="17 8 12 3 7 8"></polyline>
-          <line x1="12" y1="3" x2="12" y2="15"></line>
-        </svg>
+    @if (isDragOver) {
+      <div class="drop-zone-content">
+        <div class="upload-icon pulse">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+        </div>
+        <p class="drop-zone-text-primary">Drop {{ multiple ? 'files' : 'file' }} here</p>
       </div>
-      <p class="drop-zone-text-primary">Drop {{ multiple ? 'files' : 'file' }} here</p>
-    </div>
+    }
 
     <!-- Files list -->
-    <div *ngIf="value.length > 0 && !isDragOver" class="files-list">
-      <div *ngFor="let file of value; let i = index" class="file-item">
-        <div class="file-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-            <polyline points="13 2 13 9 20 9"></polyline>
-          </svg>
-        </div>
-        <div class="file-info">
-          <span class="file-name">{{ file.name }}</span>
-          <span class="file-size">{{ formatFileSize(file.size) }}</span>
-        </div>
-        <button
-          type="button"
-          class="remove-btn"
-          (click)="removeFile(i); $event.stopPropagation()"
-          [disabled]="disabled"
-          aria-label="Remove file"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+    @if (value.length > 0 && !isDragOver) {
+      <div class="files-list">
+        @for (file of value; track $index) {
+          <div class="file-item">
+            <div class="file-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                <polyline points="13 2 13 9 20 9"></polyline>
+              </svg>
+            </div>
+            <div class="file-info">
+              <span class="file-name">{{ file.name }}</span>
+              <span class="file-size">{{ formatFileSize(file.size) }}</span>
+            </div>
+            <button
+              type="button"
+              class="remove-btn"
+              (click)="removeFile($index); $event.stopPropagation()"
+              [disabled]="disabled"
+              aria-label="Remove file"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        }
+
+        <!-- Add more files hint (multiple mode) -->
+        @if (multiple && value.length < maxFiles) {
+          <div class="add-more-hint">
+            <p>Click or drag to add more files ({{ value.length }}/{{ maxFiles }})</p>
+          </div>
+        }
       </div>
-      
-      <!-- Add more files hint (multiple mode) -->
-      <div *ngIf="multiple && value.length < maxFiles" class="add-more-hint">
-        <p>Click or drag to add more files ({{ value.length }}/{{ maxFiles }})</p>
-      </div>
-    </div>
+    }
 
     <!-- Hidden file input -->
     <input
@@ -91,12 +105,15 @@
   </div>
 
   <!-- Error messages -->
-  <div *ngIf="showError" class="msv-error">
-    <ng-container *ngIf="errorTemplate; else defaultErrorTemplate">
-      <ng-container *ngTemplateOutlet="errorTemplate; context: { errors: errors }"></ng-container>
-    </ng-container>
-    <ng-template #defaultErrorTemplate>
-      <div *ngFor="let error of errors" class="error-message">{{ error }}</div>
-    </ng-template>
-  </div>
+  @if (showError) {
+    <div class="msv-error">
+      @if (errorTemplate) {
+        <ng-container *ngTemplateOutlet="errorTemplate; context: { errors: errors }"></ng-container>
+      } @else {
+        @for (error of errors; track $index) {
+          <div class="error-message">{{ error }}</div>
+        }
+      }
+    </div>
+  }
 </div>

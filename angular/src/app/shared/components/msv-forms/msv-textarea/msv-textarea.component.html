@@ -1,5 +1,7 @@
 <div class="msv-textarea-container">
-  <label *ngIf="label" class="msv-textarea-label">{{ label }}</label>
+  @if (label) {
+    <label class="msv-textarea-label">{{ label }}</label>
+  }
   <textarea
     [placeholder]="placeholder"
     [value]="value"
@@ -10,12 +12,11 @@
     class="form-control"
     [class.is-invalid]="showError"
   ></textarea>
-  <ng-container *ngIf="showError">
-    <ng-container *ngIf="errorTemplate; else defaultError">
+  @if (showError) {
+    @if (errorTemplate) {
       <ng-container *ngTemplateOutlet="errorTemplate; context: {$implicit: errors}"></ng-container>
-    </ng-container>
-    <ng-template #defaultError>
+    } @else {
       <div class="msv-textarea-error">{{ errors[0] }}</div>
-    </ng-template>
-  </ng-container>
+    }
+  }
 </div>

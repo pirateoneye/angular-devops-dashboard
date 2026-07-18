@@ -3,6 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivityService, ActivityEntry } from '../../service/activity.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   selector: 'app-activity-feed',
   imports: [MatIconModule],

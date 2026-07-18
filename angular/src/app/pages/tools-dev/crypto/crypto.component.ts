@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as CryptoJS from 'crypto-js';
 
@@ -12,6 +12,7 @@ import { MaterialModule } from '../../../module/material.module';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,

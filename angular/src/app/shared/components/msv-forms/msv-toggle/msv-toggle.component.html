@@ -1,11 +1,12 @@
 <div class="msv-toggle-container">
-  <label 
-    *ngIf="label && labelPosition === 'before'" 
-    class="msv-toggle-label msv-toggle-label-before"
-    [class.disabled]="disabled"
-  >
-    {{ label }}
-  </label>
+  @if (label && labelPosition === 'before') {
+    <label 
+      class="msv-toggle-label msv-toggle-label-before"
+      [class.disabled]="disabled"
+    >
+      {{ label }}
+    </label>
+  }
   
   <div 
     class="msv-toggle-track" 
@@ -21,11 +22,12 @@
     <div class="msv-toggle-thumb"></div>
   </div>
   
-  <label 
-    *ngIf="label && labelPosition === 'after'" 
-    class="msv-toggle-label msv-toggle-label-after"
-    [class.disabled]="disabled"
-  >
-    {{ label }}
-  </label>
+  @if (label && labelPosition === 'after') {
+    <label 
+      class="msv-toggle-label msv-toggle-label-after"
+      [class.disabled]="disabled"
+    >
+      {{ label }}
+    </label>
+  }
 </div>

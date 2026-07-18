@@ -1,25 +1,28 @@
 <div class="tabs-container">
   <div class="tab-list" role="tablist">
-    <button
-      *ngFor="let tab of tabs; let i = index"
-      [class]="getTabButtonClasses(i).join(' ')"
-      [disabled]="tab.disabled"
-      [attr.role]="'tab'"
-      [attr.aria-selected]="i === selectedIndex"
-      [attr.aria-disabled]="tab.disabled"
-      [attr.tabindex]="i === selectedIndex ? 0 : -1"
-      (click)="selectTab(i)"
-      (keydown)="onKeydown($event, i)"
-    >
-      {{ tab.label }}
-    </button>
+    @for (tab of tabs; track $index) {
+      <button
+        [class]="getTabButtonClasses($index).join(' ')"
+        [disabled]="tab.disabled"
+        [attr.role]="'tab'"
+        [attr.aria-selected]="$index === selectedIndex"
+        [attr.aria-disabled]="tab.disabled"
+        [attr.tabindex]="$index === selectedIndex ? 0 : -1"
+        (click)="selectTab($index)"
+        (keydown)="onKeydown($event, $index)"
+      >
+        {{ tab.label }}
+      </button>
+    }
   </div>
-  
+
   <div class="tab-content" role="tabpanel">
-    <ng-container *ngFor="let tab of tabs; let i = index">
-      <div *ngIf="i === selectedIndex" class="tab-panel">
-        <ng-container *ngTemplateOutlet="tab.content"></ng-container>
-      </div>
-    </ng-container>
+    @for (tab of tabs; track $index) {
+      @if ($index === selectedIndex) {
+        <div class="tab-panel">
+          <ng-container *ngTemplateOutlet="tab.content"></ng-container>
+        </div>
+      }
+    }
   </div>
 </div>

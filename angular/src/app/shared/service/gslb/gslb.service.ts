@@ -178,7 +178,7 @@ export class GslbService {
   ): Promise<boolean> {
     const u = username.trim();
     if (!u || !password) return false;
-    if (true) {
+    if (environment.mockGslb) {
       await mockDelay();
       this.token.set('dev-fake-token');
       this.username.set(u);
@@ -307,7 +307,7 @@ export class GslbService {
   // ---- TASKS ----
   async loadTasks(): Promise<void> {
     if (!this.authed()) return;
-    if (true) {
+    if (environment.mockGslb) {
       this.loadingTasks.set(true);
       await mockDelay();
       const tasks = mockCards();
@@ -529,7 +529,7 @@ export class GslbService {
   }
 
   private async fetchDetail(fqdn: string): Promise<GslbSnapshot> {
-    if (true) {
+    if (environment.mockGslb) {
       await mockDelay();
       return mockSnapshot(fqdn);
     }
@@ -581,7 +581,7 @@ export class GslbService {
     if (oldState === optimistic) return true;
     this.patchMember(fqdn, member.svc_name, { state: optimistic });
     try {
-      if (true) {
+      if (environment.mockGslb) {
         await mockDelay();
         return true;
       }
@@ -650,7 +650,7 @@ export class GslbService {
     this.gtmError.set(null);
     this.gtmLoading.set(true);
     try {
-      if (true) {
+      if (environment.mockGslb) {
         await mockDelay();
         this.gtmDetail.set(mockGtm(member, fqdn));
         return;

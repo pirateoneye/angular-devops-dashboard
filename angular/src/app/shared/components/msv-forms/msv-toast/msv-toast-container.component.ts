@@ -6,11 +6,12 @@ import { Subscription } from 'rxjs';
   selector: 'msv-toast-container',
   template: `
     <div [class]="'toast-container toast-position-' + position">
-      <msv-toast
-        *ngFor="let toast of toasts"
-        [toast]="toast"
-        (dismissed)="onDismiss($event)"
-      ></msv-toast>
+      @for (toast of toasts; track toast.id) {
+        <msv-toast
+          [toast]="toast"
+          (dismissed)="onDismiss($event)"
+        ></msv-toast>
+      }
     </div>
   `,
   styles: [

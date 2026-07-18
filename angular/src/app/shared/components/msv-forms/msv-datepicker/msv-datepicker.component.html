@@ -1,5 +1,7 @@
 <div class="msv-datepicker-container">
-  <label *ngIf="label" class="msv-datepicker-label">{{ label }}</label>
+  @if (label) {
+    <label class="msv-datepicker-label">{{ label }}</label>
+  }
   <div class="datepicker-wrapper">
     <input
       matInput
@@ -17,12 +19,11 @@
     <mat-datepicker-toggle matSuffix [for]="picker" [disabled]="disabled"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </div>
-  <ng-container *ngIf="showError">
-    <ng-container *ngIf="errorTemplate; else defaultError">
+  @if (showError) {
+    @if (errorTemplate) {
       <ng-container *ngTemplateOutlet="errorTemplate; context: {$implicit: errors}"></ng-container>
-    </ng-container>
-    <ng-template #defaultError>
+    } @else {
       <div class="msv-datepicker-error">{{ errors[0] }}</div>
-    </ng-template>
-  </ng-container>
+    }
+  }
 </div>

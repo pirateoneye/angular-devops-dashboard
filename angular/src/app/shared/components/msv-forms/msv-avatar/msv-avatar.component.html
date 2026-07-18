@@ -1,10 +1,14 @@
 <div class="avatar-container" [ngClass]="[sizeClass, shapeClass]">
-  <img *ngIf="showImage" 
-       [src]="src" 
-       [alt]="name"
-       (error)="onImageError()"
-       class="avatar-image">
-  <div *ngIf="!showImage" class="avatar-initials">
-    {{ initials }}
-  </div>
+  @if (showImage) {
+    <img
+      [src]="src"
+      [alt]="name"
+      (error)="onImageError()"
+      class="avatar-image">
+  }
+  @if (!showImage) {
+    <div class="avatar-initials">
+      {{ initials }}
+    </div>
+  }
 </div>

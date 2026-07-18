@@ -1,24 +1,27 @@
 <div class="msv-radio-group" [class.horizontal]="direction === 'horizontal'" [class.disabled]="disabled">
-  <label *ngFor="let option of options" class="msv-radio-option" [class.disabled]="option.disabled || disabled">
-    <input 
-      type="radio" 
-      [name]="name" 
-      [value]="option.value" 
-      [checked]="isChecked(option.value)"
-      [disabled]="option.disabled || disabled"
-      (change)="onSelect(option.value)"
-      (blur)="onBlur()"
-    />
-    <span class="msv-radio-circle"></span>
-    <span class="msv-radio-label">{{ option.label }}</span>
-  </label>
+  @for (option of options; track option.value) {
+    <label class="msv-radio-option" [class.disabled]="option.disabled || disabled">
+      <input 
+        type="radio" 
+        [name]="name" 
+        [value]="option.value" 
+        [checked]="isChecked(option.value)"
+        [disabled]="option.disabled || disabled"
+        (change)="onSelect(option.value)"
+        (blur)="onBlur()"
+      />
+      <span class="msv-radio-circle"></span>
+      <span class="msv-radio-label">{{ option.label }}</span>
+    </label>
+  }
 </div>
 
-<div *ngIf="showError" class="msv-radio-error">
-  <ng-container *ngIf="errorTemplate; else defaultError">
-    <ng-container *ngTemplateOutlet="errorTemplate; context: { $implicit: errors }"></ng-container>
-  </ng-container>
-  <ng-template #defaultError>
-    <span class="error-message">{{ errors[0] }}</span>
-  </ng-template>
-</div>
+@if (showError) {
+  <div class="msv-radio-error">
+    @if (errorTemplate) {
+      <ng-container *ngTemplateOutlet="errorTemplate; context: { $implicit: errors }"></ng-container>
+    } @else {
+      <span class="error-message">{{ errors[0] }}</span>
+    }
+  </div>
+}

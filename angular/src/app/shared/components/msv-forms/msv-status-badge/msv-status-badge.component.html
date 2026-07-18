@@ -1,3 +1,5 @@
-<div *ngIf="status" [class]="badgeClass">
-  {{ badgeText }}
-</div>
+@if (status) {
+  <div [class]="badgeClass">
+    {{ badgeText }}
+  </div>
+}

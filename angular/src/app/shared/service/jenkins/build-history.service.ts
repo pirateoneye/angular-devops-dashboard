@@ -23,9 +23,6 @@ function saveRecords(records: BuildRecord[]): void {
   localStorage.setItem(LS_KEY, JSON.stringify(records));
 }
 
-function uuid(): string {
-  return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-}
 
 @Injectable({ providedIn: 'root' })
 export class BuildHistoryService {

@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import {Component, signal, computed, ChangeDetectionStrategy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 interface Stats { min: number; max: number; avg: number; p50: number; p95: number; p99: number; count: number; values: number[]; }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   selector: 'app-latency-stats',
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatButtonModule],

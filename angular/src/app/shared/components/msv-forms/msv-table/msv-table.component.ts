@@ -10,55 +10,61 @@ import { MsvTableColumn, SortChangeEvent, SortDirection } from './msv-table.type
     <table class="msv-table">
       <thead>
         <tr>
-          <th
-            *ngFor="let column of columns"
-            [class.sortable]="sortable && column.sortable"
-            [class.sorted]="isSorted(column)"
-            (click)="onHeaderClick(column)"
-          >
-            <div class="header-content">
-              <span class="header-text">{{ column.header }}</span>
-              <span class="sort-indicator" *ngIf="sortable && column.sortable">
-                {{ getSortIndicator(column) }}
-              </span>
-            </div>
-          </th>
+          @for (column of columns; track column.key) {
+            <th
+              [class.sortable]="sortable && column.sortable"
+              [class.sorted]="isSorted(column)"
+              (click)="onHeaderClick(column)"
+            >
+              <div class="header-content">
+                <span class="header-text">{{ column.header }}</span>
+                @if (sortable && column.sortable) {
+                  <span class="sort-indicator">
+                    {{ getSortIndicator(column) }}
+                  </span>
+                }
+              </div>
+            </th>
+          }
         </tr>
       </thead>
       <tbody>
-        <tr
-          *ngFor="let row of paginatedData; let i = index"
-          [class.even-row]="i % 2 === 0"
-          [class.odd-row]="i % 2 !== 0"
-          (click)="onRowClick(row)"
-        >
-          <td *ngFor="let column of columns">
-            <ng-container *ngIf="column.template; else defaultCell">
-              <ng-container
-                *ngTemplateOutlet="column.template; context: { $implicit: row, value: getCellValue(row, column) }"
-              ></ng-container>
-            </ng-container>
-            <ng-template #defaultCell>
-              {{ getCellValue(row, column) }}
-            </ng-template>
-          </td>
-        </tr>
+        @for (row of paginatedData; track $index) {
+          <tr
+            [class.even-row]="$index % 2 === 0"
+            [class.odd-row]="$index % 2 !== 0"
+            (click)="onRowClick(row)"
+          >
+            @for (column of columns; track column.key) {
+              <td>
+                @if (column.template) {
+                  <ng-container *ngTemplateOutlet="column.template; context: { $implicit: row, value: getCellValue(row, column) }"></ng-container>
+                } @else {
+                  {{ getCellValue(row, column) }}
+                }
+              </td>
+            }
+          </tr>
+        }
       </tbody>
     </table>
 
-    <div *ngIf="paginatedData.length === 0" class="empty-state">
-      <div class="empty-icon">📋</div>
-      <p class="empty-text">No data available</p>
-    </div>
+    @if (paginatedData.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <p class="empty-text">No data available</p>
+      </div>
+    }
   </div>
 
-  <msv-pagination
-    *ngIf="paginator && data.length > 0"
-    [totalItems]="data.length"
-    [pageSize]="pageSize"
-    [currentPage]="currentPage"
-    (pageChange)="onPageChange($event)"
-  ></msv-pagination>
+  @if (paginator && data.length > 0) {
+    <msv-pagination
+      [totalItems]="data.length"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      (pageChange)="onPageChange($event)"
+    ></msv-pagination>
+  }
 </div>
   `,
   styles: [`

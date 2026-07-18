@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -50,7 +50,8 @@ function findCommonCidrs(ip1: number, ip2: number): string[] {
   return results;
 }
 
-@Component({ standalone: true, selector: 'app-cidr-calc',
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush, standalone: true, selector: 'app-cidr-calc',
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSnackBarModule],
   template: `
     <div class="container pt-3 pb-3" style="max-width:640px">

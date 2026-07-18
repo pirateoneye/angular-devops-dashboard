@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { BatchList } from 'src/app/shared/model/interface/batchlist.interface';
 import { environment } from 'src/environments/environment';
 import { StatusAPI } from 'src/app/shared/model/enum/status-api.enum';
@@ -18,6 +18,7 @@ import { ErrorStateComponent } from '../../../shared/component/error-state/error
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule, FormsModule, RouterModule, MaterialModule,

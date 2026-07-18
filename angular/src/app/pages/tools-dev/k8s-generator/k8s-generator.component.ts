@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   selector: 'app-k8s-generator',
   imports: [CommonModule, FormsModule, MatCardModule, MatIconModule, MatButtonModule,
@@ -188,7 +189,7 @@ export class K8sGeneratorComponent {
   }
 
   copyEnvOutput() {
-    const activeSubTab = 0; // simplified: copy kubectl by default
+    // simplified: copy kubectl by default
     const text = this.envToKubectl();
     this.clipboard.copy(text);
     this.snack.open('Copied to clipboard', 'Dismiss', { duration: 2000 });

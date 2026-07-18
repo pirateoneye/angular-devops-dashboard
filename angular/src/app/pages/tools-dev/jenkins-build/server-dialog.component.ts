@@ -1,7 +1,7 @@
 // server-dialog.component.ts
 // Modal for managing Jenkins server profiles.
 
-import { Component, Inject, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +25,7 @@ interface DialogData {
 }
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   selector: 'app-server-dialog',
   imports: [

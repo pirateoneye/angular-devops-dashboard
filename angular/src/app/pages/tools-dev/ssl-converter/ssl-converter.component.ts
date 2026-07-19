@@ -54,11 +54,21 @@ interface JsrsasignKey {
   type?: KeyAlg;
   isPrivate?: boolean;
   isPublic?: boolean;
-  n?: { bitLength?: () => number; toString?: (radix?: number) => string };
+  n?: BigInteger;
   e?: unknown;
   d?: unknown;
+  p?: BigInteger;
+  q?: BigInteger;
   curveName?: string;
   json?: unknown;
+}
+
+/** jsrsasign's BigInteger surface — the methods this file calls. */
+interface BigInteger {
+  bitLength?: () => number;
+  toString?: (radix?: number) => string;
+  multiply?: (other: BigInteger) => BigInteger;
+  equals?: (other: BigInteger) => boolean;
 }
 
 export interface DetectionResult {
@@ -206,7 +216,14 @@ function pemMarkerToType(
   text: string,
 ): { type: SslType; encrypted: boolean } | null {
   for (const m of PEM_MARKER_TYPE) {
-    if (m.re.test(text)) return { type: m.type, encrypted: !!m.encrypted };
+    if (m.re.test(text)) {
+      // Legacy PKCS#1/PKCS#5 encrypted PEMs carry the RFC-1421 header
+      // `Proc-Type: 4,ENCRYPTED` inside the PEM body. The marker itself
+      // is still `RSA PRIVATE KEY`, so also inspect the body for the
+      // Proc-Type header to set the encrypted flag correctly.
+      const procEncrypted = /Proc-Type:\s*4,\s*ENCRYPTED/i.test(text);
+      return { type: m.type, encrypted: !!m.encrypted || procEncrypted };
+    }
   }
   return null;
 }
@@ -365,14 +382,31 @@ export function resolveKeyAlg(d: DetectionResult, password?: string): KeyAlg {
     const k = loadKey(d, password);
     // jsrsasign silently returns a key object even when an encrypted key is
     // decrypted with the wrong password — the bytes are garbage but still
-    // parse into something with `type: 'RSA'`. The tell-tale is a nonsense
-    // modulus bit length, so reject any private RSA key below 512 bits.
-    if (k?.isPrivate && k.type === 'RSA' && rsaBitLen(k) < 512) {
+    // parse into something with `type: 'RSA'` and plausible-looking fields.
+    // A bit-length threshold is not enough (wrong-password moduli land
+    // anywhere from ~50 to ~600 bits). The reliable signal is the CRT
+    // relationship: for a valid RSA private key, p * q === n. Garbage
+    // decrypts break this invariant, so reject the key when it fails.
+    if (k?.isPrivate && k.type === 'RSA' && !rsaCrtValid(k)) {
       return undefined;
     }
     return k?.type;
   } catch {
     return undefined;
+  }
+}
+
+/** Verify the RSA CRT relationship p * q === n. Garbage decrypts break it. */
+function rsaCrtValid(k: JsrsasignKey): boolean {
+  try {
+    const { n, p, q } = k;
+    if (!n || !p || !q) return false;
+    const multiply = p.multiply;
+    if (typeof multiply !== 'function') return false;
+    const product = multiply.call(p, q);
+    return typeof product.equals === 'function' && product.equals(n);
+  } catch {
+    return false;
   }
 }
 

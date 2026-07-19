@@ -200,10 +200,7 @@ describe('ToolCatalogService', () => {
       expect(r.length).toBeGreaterThan(0);
     });
 
-    it('returns matching inventory nav by label', () => {
-      const r = svc.searchNav('Produk');
-      expect(r.some((n: NavEntry) => n.label === 'Produk')).toBeTrue();
-    });
+    
 
     it('returns SSL Check dev tool by label', () => {
       const r = svc.searchNav('SSL').map((n: NavEntry) => n.label);
@@ -230,15 +227,7 @@ describe('ToolCatalogService', () => {
       expect(svc.devTools.length).toBe(12);
     });
 
-    it('inventory has 6 entries', () => {
-      expect(svc.inventory.length).toBe(6);
-    });
-
-    it('inventory entries all belong to Inventory group', () => {
-      for (const n of svc.inventory) {
-        expect(n.group).toBe('Inventory');
-      }
-    });
+    
 
     it('piket has 3 entries', () => {
       expect(svc.piket.length).toBe(3);

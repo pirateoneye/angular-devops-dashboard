@@ -218,11 +218,6 @@ const routes: Routes = [
         (m) => m.ToolboxComponent,
       ),
   },
-  {
-    path: 'inventory',
-    loadChildren: () =>
-      import('./inventory/inventory.routes').then((m) => m.INVENTORY_ROUTES),
-  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
 ];

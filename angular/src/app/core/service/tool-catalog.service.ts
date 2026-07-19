@@ -20,7 +20,7 @@ export interface NavEntry {
   icon: string;
   route: string;
   keywords?: string[];
-  group: 'Dev Tools' | 'Piket' | 'Inventory';
+  group: 'Dev Tools' | 'Piket';
 }
 
 const FAV_KEY = 'msv-fav';
@@ -294,52 +294,9 @@ export class ToolCatalogService {
     },
   ];
 
-  /** Inventory feature pages — products, stock, suppliers, purchase orders. */
-  readonly inventory: NavEntry[] = [
-    {
-      label: 'Dashboard',
-      icon: 'dashboard',
-      route: '/inventory/dashboard',
-      group: 'Inventory',
-    },
-    {
-      label: 'Produk',
-      icon: 'inventory_2',
-      route: '/inventory/products',
-      group: 'Inventory',
-      keywords: ['product', 'products', 'barang'],
-    },
-    {
-      label: 'Pemasok',
-      icon: 'local_shipping',
-      route: '/inventory/suppliers',
-      group: 'Inventory',
-      keywords: ['supplier', 'suppliers', 'vendor'],
-    },
-    {
-      label: 'Pesanan Pembelian',
-      icon: 'shopping_cart',
-      route: '/inventory/purchase-orders',
-      group: 'Inventory',
-      keywords: ['po', 'purchase', 'order', 'pesanan', 'pembelian'],
-    },
-    {
-      label: 'Stok',
-      icon: 'warehouse',
-      route: '/inventory/stock',
-      group: 'Inventory',
-      keywords: ['stock', 'inventory', 'stok', 'gudang'],
-    },
-    {
-      label: 'Peringatan Stok',
-      icon: 'notifications',
-      route: '/inventory/alerts',
-      group: 'Inventory',
-      keywords: ['alert', 'alerts', 'low stock', 'peringatan'],
-    },
-  ];
 
   readonly groups: ToolGroup[] = ['Encoders & Crypto', 'Text', 'Format & Data'];
+
 
   private readonly _favorites = signal<string[]>(this.read(FAV_KEY));
   private readonly _recents = signal<string[]>(this.read(RECENT_KEY));
@@ -390,7 +347,7 @@ export class ToolCatalogService {
 
   searchNav(query: string): NavEntry[] {
     const q = query.trim().toLowerCase();
-    const all = [...this.devTools, ...this.piket, ...this.inventory];
+    const all = [...this.devTools, ...this.piket];
     if (!q) return all;
     return all.filter(
       (n) =>

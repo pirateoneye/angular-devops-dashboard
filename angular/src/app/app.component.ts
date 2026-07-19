@@ -28,8 +28,6 @@ export class AppComponent implements OnInit {
   /** Piket entries for the nav dropdown. */
   readonly piketTools = this.catalog.piket;
 
-  /** Inventory feature entries for the nav dropdown. */
-  readonly inventoryTools = this.catalog.inventory;
   readonly theme = inject(ThemeService);
 
   /** Current username, exposed as a signal so OnPush tracks changes. */

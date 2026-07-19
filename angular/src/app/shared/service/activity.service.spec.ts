@@ -31,7 +31,7 @@ describe('ActivityService', () => {
     });
 
     it('accepts every documented source including inventory', () => {
-      const sources = ['jenkins', 'gitlab', 'gslb', 'inventory'] as const;
+      const sources = ['jenkins', 'gitlab', 'gslb'] as const;
       sources.forEach((src, i) => service.log(src, `msg ${i}`));
       const entries = service.entries();
       expect(entries.map((e) => e.source)).toEqual(sources);
@@ -40,7 +40,7 @@ describe('ActivityService', () => {
     it('caps the feed at the max length, dropping oldest', () => {
       // maxLen is 100; push 105 entries and verify only the last 100 remain
       for (let i = 0; i < 105; i++) {
-        service.log('inventory', `entry ${i}`, 'ok');
+        service.log('jenkins', `entry ${i}`, 'ok');
       }
       const entries = service.entries();
       expect(entries.length).toBe(100);
@@ -50,7 +50,7 @@ describe('ActivityService', () => {
 
     it('accepts all four kind values', () => {
       const kinds = ['info', 'ok', 'warn', 'err'] as const;
-      kinds.forEach((k) => service.log('inventory', `msg-${k}`, k));
+      kinds.forEach((k) => service.log('jenkins', `msg-${k}`, k));
       const entries = service.entries();
       expect(entries.map((e) => e.kind)).toEqual(kinds);
     });
@@ -79,9 +79,9 @@ describe('ActivityService', () => {
   describe('count computed', () => {
     it('tracks the number of entries', () => {
       expect(service.count()).toBe(0);
-      service.log('inventory', 'a');
+      service.log('jenkins', 'a');
       expect(service.count()).toBe(1);
-      service.log('inventory', 'b');
+      service.log('jenkins', 'b');
       expect(service.count()).toBe(2);
       service.clear();
       expect(service.count()).toBe(0);
@@ -93,7 +93,6 @@ describe('ActivityService', () => {
       expect(service.iconFor('jenkins')).toBe('build_circle');
       expect(service.iconFor('gitlab')).toBe('merge_type');
       expect(service.iconFor('gslb')).toBe('dns');
-      expect(service.iconFor('inventory')).toBe('inventory_2');
     });
   });
 

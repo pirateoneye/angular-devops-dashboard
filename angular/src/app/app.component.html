@@ -15,58 +15,6 @@
           ><mat-icon aria-hidden="true">build</mat-icon
           ><span class="ms-1">Utilities</span></a
         >
-        <button
-          type="button"
-          class="link-button menu-trigger"
-          [matMenuTriggerFor]="uatMenu"
-          aria-haspopup="true"
-        >
-          <span>Dev Tools</span>
-          <mat-icon aria-hidden="true">keyboard_arrow_down</mat-icon>
-        </button>
-        <mat-menu #uatMenu="matMenu">
-          @for (d of devTools; track d.route) {
-            <a mat-menu-item [routerLink]="d.route"
-              ><mat-icon>{{ d.icon }}</mat-icon
-              ><span>{{ d.label }}</span></a
-            >
-          }
-        </mat-menu>
-
-        <button
-          type="button"
-          class="link-button menu-trigger"
-          [matMenuTriggerFor]="piketMenu"
-          aria-haspopup="true"
-        >
-          <span>Piket</span>
-          <mat-icon aria-hidden="true">keyboard_arrow_down</mat-icon>
-        </button>
-        <mat-menu #piketMenu="matMenu">
-          @for (p of piketTools; track p.route) {
-            <a mat-menu-item [routerLink]="p.route"
-              ><mat-icon>{{ p.icon }}</mat-icon
-              ><span>{{ p.label }}</span></a
-            >
-          }
-        </mat-menu>
-        <button
-          type="button"
-          class="link-button menu-trigger"
-          [matMenuTriggerFor]="inventoryMenu"
-          aria-haspopup="true"
-        >
-          <span>Inventori</span>
-          <mat-icon aria-hidden="true">keyboard_arrow_down</mat-icon>
-        </button>
-        <mat-menu #inventoryMenu="matMenu">
-          @for (i of inventoryTools; track i.route) {
-            <a mat-menu-item [routerLink]="i.route"
-              ><mat-icon>{{ i.icon }}</mat-icon
-              ><span>{{ i.label }}</span></a
-            >
-          }
-        </mat-menu>
       </nav>
       <!-- Actions: always visible -->
       <div class="top-bar-actions">
@@ -165,16 +113,6 @@
         >
       }
 
-      <div class="mobile-nav-group">Inventori</div>
-      @for (i of inventoryTools; track i.route) {
-        <a
-          class="mobile-nav-sublink"
-          [routerLink]="i.route"
-          (click)="closeMenu()"
-          ><mat-icon aria-hidden="true">{{ i.icon }}</mat-icon
-          ><span>{{ i.label }}</span></a
-        >
-      }
 
       <div class="mobile-nav-divider"></div>
       <button

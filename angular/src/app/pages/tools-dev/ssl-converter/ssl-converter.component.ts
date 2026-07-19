@@ -48,6 +48,19 @@ export enum OutputFormat {
 
 export type KeyAlg = 'RSA' | 'EC' | 'DSA' | undefined;
 
+/** Minimal shape of a jsrsasign key object — the fields this file reads.
+ *  jsrsasign has no public TS types, so this is the boundary contract. */
+interface JsrsasignKey {
+  type?: KeyAlg;
+  isPrivate?: boolean;
+  isPublic?: boolean;
+  n?: { bitLength?: () => number; toString?: (radix?: number) => string };
+  e?: unknown;
+  d?: unknown;
+  curveName?: string;
+  json?: unknown;
+}
+
 export interface DetectionResult {
   type: SslType;
   encoding: Encoding;
@@ -349,8 +362,15 @@ export function resolveKeyAlg(d: DetectionResult, password?: string): KeyAlg {
   )
     return undefined;
   try {
-    const k: any = loadKey(d, password);
-    return (k as any).type as KeyAlg;
+    const k = loadKey(d, password);
+    // jsrsasign silently returns a key object even when an encrypted key is
+    // decrypted with the wrong password — the bytes are garbage but still
+    // parse into something with `type: 'RSA'`. The tell-tale is a nonsense
+    // modulus bit length, so reject any private RSA key below 512 bits.
+    if (k?.isPrivate && k.type === 'RSA' && rsaBitLen(k) < 512) {
+      return undefined;
+    }
+    return k?.type;
   } catch {
     return undefined;
   }
@@ -372,7 +392,7 @@ function pemForJsrsasign(d: DetectionResult): string {
   return d.raw;
 }
 
-function rsaBitLen(k: any): number {
+function rsaBitLen(k: JsrsasignKey | undefined): number {
   try {
     const n = k?.n;
     if (n == null) return 0;
@@ -734,7 +754,7 @@ function toDerOut(d: DetectionResult): ConvertOutput {
   };
 }
 
-function loadKey(d: DetectionResult, password?: string): any {
+function loadKey(d: DetectionResult, password?: string): JsrsasignKey {
   if (d.isEncrypted) {
     const pem = pemForJsrsasign(d);
     try {

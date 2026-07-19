@@ -9,7 +9,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InventoryService } from '../shared/inventory.service';
-import { PurchaseOrder } from '../shared/inventory.models';
+import { PurchaseOrder, PurchaseOrderStatus } from '../shared/inventory.models';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
@@ -212,7 +212,7 @@ export class PoDetailComponent {
             : undefined;
   }
 
-  updateStatus(s: string) {
+  updateStatus(s: PurchaseOrderStatus) {
     this.api.updatePOStatus(this.po()!.id, s).subscribe({
       next: (p) => {
         this.po.set(p);

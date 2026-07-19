@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import type {
   Product,
@@ -12,12 +12,22 @@ import type {
   PageResponse,
   Category,
   Warehouse,
+  ProductQuery,
+  ProductPayload,
+  VariantPayload,
+  SupplierPayload,
+  PurchaseOrderPayload,
+  PurchaseOrderStatus,
+  POReceiveItem,
+  MovementQuery,
+  StockAdjustPayload,
+  StockTransferPayload,
 } from './inventory.models';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
-  private http = inject(HttpClient);
-  private base = '/api';
+  private readonly http = inject(HttpClient);
+  private readonly base = '/api';
 
   // Dashboard
   getStats(): Observable<DashboardStats> {
@@ -25,18 +35,18 @@ export class InventoryService {
   }
 
   // Products
-  getProducts(params?: any): Observable<PageResponse<Product>> {
+  getProducts(params?: ProductQuery): Observable<PageResponse<Product>> {
     return this.http.get<PageResponse<Product>>(`${this.base}/products`, {
-      params,
+      params: this.toHttpParams(params),
     });
   }
   getProduct(id: number): Observable<Product> {
     return this.http.get<Product>(`${this.base}/products/${id}`);
   }
-  createProduct(data: any): Observable<Product> {
+  createProduct(data: ProductPayload): Observable<Product> {
     return this.http.post<Product>(`${this.base}/products`, data);
   }
-  updateProduct(id: number, data: any): Observable<Product> {
+  updateProduct(id: number, data: ProductPayload): Observable<Product> {
     return this.http.put<Product>(`${this.base}/products/${id}`, data);
   }
   deleteProduct(id: number): Observable<void> {
@@ -49,7 +59,10 @@ export class InventoryService {
       `${this.base}/products/${productId}/variants`,
     );
   }
-  createVariant(productId: number, data: any): Observable<ProductVariant> {
+  createVariant(
+    productId: number,
+    data: VariantPayload,
+  ): Observable<ProductVariant> {
     return this.http.post<ProductVariant>(
       `${this.base}/products/${productId}/variants`,
       data,
@@ -58,7 +71,7 @@ export class InventoryService {
   updateVariant(
     productId: number,
     id: number,
-    data: any,
+    data: VariantPayload,
   ): Observable<ProductVariant> {
     return this.http.put<ProductVariant>(
       `${this.base}/products/${productId}/variants/${id}`,
@@ -79,13 +92,13 @@ export class InventoryService {
   // Suppliers
   getSuppliers(search?: string): Observable<Supplier[]> {
     return this.http.get<Supplier[]>(`${this.base}/suppliers`, {
-      params: search ? { search } : {},
+      params: search ? { search } : undefined,
     });
   }
-  createSupplier(data: any): Observable<Supplier> {
+  createSupplier(data: SupplierPayload): Observable<Supplier> {
     return this.http.post<Supplier>(`${this.base}/suppliers`, data);
   }
-  updateSupplier(id: number, data: any): Observable<Supplier> {
+  updateSupplier(id: number, data: SupplierPayload): Observable<Supplier> {
     return this.http.put<Supplier>(`${this.base}/suppliers/${id}`, data);
   }
   deleteSupplier(id: number): Observable<void> {
@@ -98,28 +111,32 @@ export class InventoryService {
   }
 
   // Purchase Orders
-  getPurchaseOrders(params?: any): Observable<PageResponse<PurchaseOrder>> {
+  getPurchaseOrders(
+    params?: ProductQuery,
+  ): Observable<PageResponse<PurchaseOrder>> {
     return this.http.get<PageResponse<PurchaseOrder>>(
       `${this.base}/purchase-orders`,
-      { params },
+      { params: this.toHttpParams(params) },
     );
   }
   getPurchaseOrder(id: number): Observable<PurchaseOrder> {
     return this.http.get<PurchaseOrder>(`${this.base}/purchase-orders/${id}`);
   }
-  createPurchaseOrder(data: any): Observable<PurchaseOrder> {
+  createPurchaseOrder(
+    data: PurchaseOrderPayload,
+  ): Observable<PurchaseOrder> {
     return this.http.post<PurchaseOrder>(`${this.base}/purchase-orders`, data);
   }
-  updatePOStatus(id: number, status: string): Observable<PurchaseOrder> {
+  updatePOStatus(
+    id: number,
+    status: PurchaseOrderStatus,
+  ): Observable<PurchaseOrder> {
     return this.http.put<PurchaseOrder>(
       `${this.base}/purchase-orders/${id}/status`,
       { status },
     );
   }
-  receivePO(
-    id: number,
-    items: { itemId: number; quantityReceived: number }[],
-  ): Observable<PurchaseOrder> {
+  receivePO(id: number, items: POReceiveItem[]): Observable<PurchaseOrder> {
     return this.http.post<PurchaseOrder>(
       `${this.base}/purchase-orders/${id}/receive`,
       { items },
@@ -135,16 +152,18 @@ export class InventoryService {
       `${this.base}/stock/variant/${variantId}`,
     );
   }
-  getMovements(params?: any): Observable<PageResponse<StockMovement>> {
+  getMovements(
+    params?: MovementQuery,
+  ): Observable<PageResponse<StockMovement>> {
     return this.http.get<PageResponse<StockMovement>>(
       `${this.base}/stock/movements`,
-      { params },
+      { params: this.toHttpParams(params) },
     );
   }
-  adjustStock(data: any): Observable<void> {
+  adjustStock(data: StockAdjustPayload): Observable<void> {
     return this.http.post<void>(`${this.base}/stock/adjust`, data);
   }
-  transferStock(data: any): Observable<void> {
+  transferStock(data: StockTransferPayload): Observable<void> {
     return this.http.post<void>(`${this.base}/stock/transfer`, data);
   }
 
@@ -157,5 +176,16 @@ export class InventoryService {
       `${this.base}/stock/alerts/${id}/acknowledge`,
       {},
     );
+  }
+
+  /** Build HttpParams from a partial query object, dropping undefined/null values. */
+  private toHttpParams(obj: object | undefined): HttpParams {
+    let params = new HttpParams();
+    if (!obj) return params;
+    for (const [key, value] of Object.entries(obj)) {
+      if (value === undefined || value === null) continue;
+      params = params.set(key, String(value));
+    }
+    return params;
   }
 }

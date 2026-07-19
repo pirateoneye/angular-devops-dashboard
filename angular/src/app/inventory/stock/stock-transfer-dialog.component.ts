@@ -64,15 +64,26 @@ export class StockTransferDialogComponent {
   });
   constructor(public ref: MatDialogRef<StockTransferDialogComponent>) {}
   save() {
-    if (this.f.invalid) return;
-    this.api.transferStock(this.f.value).subscribe({
-      next: () => {
-        this.snack.open('Stock transferred', 'OK', { duration: 3000 });
-        this.ref.close();
-      },
-      error: (e) =>
-        this.snack.open(e.error?.message || 'Error', 'OK', { duration: 5000 }),
-    });
+    const { variantId, sourceWarehouseId, destWarehouseId, quantity, notes } =
+      this.f.value;
+    this.api
+      .transferStock({
+        variantId: variantId ?? 0,
+        sourceWarehouseId: sourceWarehouseId ?? 0,
+        destWarehouseId: destWarehouseId ?? 0,
+        quantity: quantity ?? 0,
+        notes: notes || undefined,
+      })
+      .subscribe({
+        next: () => {
+          this.snack.open('Stock transferred', 'OK', { duration: 3000 });
+          this.ref.close();
+        },
+        error: (e) =>
+          this.snack.open(e.error?.message || 'Error', 'OK', {
+            duration: 5000,
+          }),
+      });
   }
   close() {
     this.ref.close();

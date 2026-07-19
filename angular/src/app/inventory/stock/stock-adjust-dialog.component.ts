@@ -59,15 +59,24 @@ export class StockAdjustDialogComponent {
   });
   constructor(public ref: MatDialogRef<StockAdjustDialogComponent>) {}
   save() {
-    if (this.f.invalid) return;
-    this.api.adjustStock(this.f.value).subscribe({
-      next: () => {
-        this.snack.open('Stock adjusted', 'OK', { duration: 3000 });
-        this.ref.close();
-      },
-      error: (e) =>
-        this.snack.open(e.error?.message || 'Error', 'OK', { duration: 5000 }),
-    });
+    const { variantId, warehouseId, quantity, reason } = this.f.value;
+    this.api
+      .adjustStock({
+        variantId: variantId ?? 0,
+        warehouseId: warehouseId ?? 0,
+        quantity: quantity ?? 0,
+        reason: reason ?? '',
+      })
+      .subscribe({
+        next: () => {
+          this.snack.open('Stock adjusted', 'OK', { duration: 3000 });
+          this.ref.close();
+        },
+        error: (e) =>
+          this.snack.open(e.error?.message || 'Error', 'OK', {
+            duration: 5000,
+          }),
+      });
   }
   close() {
     this.ref.close();

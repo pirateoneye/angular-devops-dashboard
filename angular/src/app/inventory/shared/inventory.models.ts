@@ -150,3 +150,99 @@ export interface Warehouse {
   state?: string;
   isActive: boolean;
 }
+
+/* ---- Query / payload types — replace \`any\` at service call sites ---- */
+
+export interface ProductQuery {
+  page?: number;
+  size?: number;
+  q?: string;
+  categoryId?: number;
+  status?: Product['status'];
+}
+
+export interface ProductPayload {
+  name: string;
+  slug?: string;
+  description?: string;
+  brand?: string;
+  categoryId: number;
+  basePrice: number;
+  status?: Product['status'];
+  gender?: string;
+  material?: string;
+  careInstructions?: string;
+  imageUrl?: string;
+}
+
+export interface VariantPayload {
+  size: string;
+  color: string;
+  colorHex?: string;
+  sku: string;
+  barcode?: string;
+  costPrice: number;
+  sellingPrice: number;
+  stockQuantity?: number;
+  lowStockThreshold?: number;
+  reorderPoint?: number;
+  weightGrams?: number;
+  isActive?: boolean;
+}
+
+export interface SupplierPayload {
+  code: string;
+  name: string;
+  contactPerson?: string;
+  email?: string;
+  phone?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postalCode?: string;
+  notes?: string;
+  isActive?: boolean;
+}
+
+export type PurchaseOrderStatus = PurchaseOrder['status'];
+
+export interface PurchaseOrderPayload {
+  supplierId: number;
+  warehouseId: number;
+  orderDate?: string;
+  expectedDate?: string;
+  notes?: string;
+  items: Array<{ variantId: number; quantity: number; unitCost: number }>;
+}
+
+export interface POReceiveItem {
+  itemId: number;
+  quantityReceived: number;
+}
+
+export interface MovementQuery {
+  page?: number;
+  size?: number;
+  variantId?: number;
+  type?: string;
+  warehouseId?: number;
+  from?: string;
+  to?: string;
+}
+
+export interface StockAdjustPayload {
+  variantId: number;
+  warehouseId: number;
+  quantity: number;
+  reason: string;
+}
+
+export interface StockTransferPayload {
+  variantId: number;
+  sourceWarehouseId: number;
+  destWarehouseId: number;
+  quantity: number;
+  notes?: string;
+}

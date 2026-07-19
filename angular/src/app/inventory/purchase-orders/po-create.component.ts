@@ -229,9 +229,13 @@ export class PoCreateComponent implements OnInit {
     }
     this.unresolvedSkus.set([]);
 
+    const { supplierId, warehouseId, expectedDate, notes } = this.form.value;
     this.api
       .createPurchaseOrder({
-        ...this.form.value,
+        supplierId: supplierId ?? 0,
+        warehouseId: warehouseId ?? 0,
+        expectedDate: expectedDate || undefined,
+        notes: notes || undefined,
         items: this.items().map((i) => ({
           variantId: i.variantId || 1,
           quantity: i.quantity,

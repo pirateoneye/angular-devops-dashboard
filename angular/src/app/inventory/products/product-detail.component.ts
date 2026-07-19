@@ -30,7 +30,7 @@ import { Product, ProductVariant } from '../shared/inventory.models';
   ],
   template: `
     <div class="inv-page">
-      <a routerLink="/inventory/products" class="back">← Back to Products</a>
+      <a routerLink="/inventory/products" class="back">← Kembali ke Produk</a>
 
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
@@ -43,16 +43,16 @@ import { Product, ProductVariant } from '../shared/inventory.models';
           >
           <mat-card-content>
             <div class="info-grid">
-              <div><strong>Brand:</strong> {{ product()!.brand || '-' }}</div>
+              <div><strong>Merek:</strong> {{ product()!.brand || '-' }}</div>
               <div>
-                <strong>Category:</strong> {{ product()!.categoryName }}
+                <strong>Kategori:</strong> {{ product()!.categoryName }}
               </div>
               <div><strong>Gender:</strong> {{ product()!.gender || '-' }}</div>
               <div>
                 <strong>Material:</strong> {{ product()!.material || '-' }}
               </div>
               <div>
-                <strong>Base Price:</strong>
+                <strong>Harga Dasar:</strong>
                 {{
                   product()!.basePrice | currency: 'IDR' : 'symbol' : '1.0-0'
                 }}
@@ -67,32 +67,32 @@ import { Product, ProductVariant } from '../shared/inventory.models';
               </div>
             </div>
             @if (product()!.careInstructions) {
-              <p><strong>Care:</strong> {{ product()!.careInstructions }}</p>
+              <p><strong>Perawatan:</strong> {{ product()!.careInstructions }}</p>
             }
           </mat-card-content>
         </mat-card>
 
         <div class="section-header">
-          <h3>Variants ({{ variants().length }})</h3>
+          <h3>Varian ({{ variants().length }})</h3>
           <button
             mat-raised-button
             color="primary"
             (click)="openVariantDialog()"
           >
-            <mat-icon>add</mat-icon> Add Variant
+            <mat-icon>add</mat-icon> Tambah Varian
           </button>
         </div>
 
         @if (variants().length === 0) {
-          <p class="empty">No variants yet.</p>
+          <p class="empty">Belum ada varian.</p>
         } @else {
           <table mat-table [dataSource]="variants()" class="mat-elevation-z1">
             <ng-container matColumnDef="size"
-              ><th mat-header-cell *matHeaderCellDef>Size</th>
+              ><th mat-header-cell *matHeaderCellDef>Ukuran</th>
               <td mat-cell *matCellDef="let v">{{ v.size }}</td></ng-container
             >
             <ng-container matColumnDef="color"
-              ><th mat-header-cell *matHeaderCellDef>Color</th>
+              ><th mat-header-cell *matHeaderCellDef>Warna</th>
               <td mat-cell *matCellDef="let v">
                 <span
                   class="swatch"
@@ -106,19 +106,19 @@ import { Product, ProductVariant } from '../shared/inventory.models';
               <td mat-cell *matCellDef="let v">{{ v.sku }}</td></ng-container
             >
             <ng-container matColumnDef="cost"
-              ><th mat-header-cell *matHeaderCellDef>Cost</th>
+              ><th mat-header-cell *matHeaderCellDef>Modal</th>
               <td mat-cell *matCellDef="let v">
                 {{ v.costPrice | currency: 'IDR' : 'symbol' : '1.0-0' }}
               </td></ng-container
             >
             <ng-container matColumnDef="selling"
-              ><th mat-header-cell *matHeaderCellDef>Selling</th>
+              ><th mat-header-cell *matHeaderCellDef>Jual</th>
               <td mat-cell *matCellDef="let v">
                 {{ v.sellingPrice | currency: 'IDR' : 'symbol' : '1.0-0' }}
               </td></ng-container
             >
             <ng-container matColumnDef="stock"
-              ><th mat-header-cell *matHeaderCellDef>Stock</th>
+              ><th mat-header-cell *matHeaderCellDef>Stok</th>
               <td mat-cell *matCellDef="let v">
                 <span
                   [class.low]="
@@ -131,7 +131,7 @@ import { Product, ProductVariant } from '../shared/inventory.models';
               </td></ng-container
             >
             <ng-container matColumnDef="threshold"
-              ><th mat-header-cell *matHeaderCellDef>Threshold</th>
+              ><th mat-header-cell *matHeaderCellDef>Ambang</th>
               <td mat-cell *matCellDef="let v">
                 {{ v.lowStockThreshold }}
               </td></ng-container
@@ -184,10 +184,10 @@ export class ProductDetailComponent {
           this.api.createVariant(this.product()!.id, result).subscribe({
             next: () => {
               this.refreshVariants();
-              this.snack.open('Variant added', 'OK', { duration: 3000 });
+              this.snack.open('Varian ditambahkan', 'OK', { duration: 3000 });
             },
             error: (err) =>
-              this.snack.open(err.error?.message || 'Error', 'OK', {
+              this.snack.open(err.error?.message || 'Galat', 'OK', {
                 duration: 5000,
               }),
           });

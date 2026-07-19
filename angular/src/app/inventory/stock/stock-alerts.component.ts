@@ -28,16 +28,16 @@ import { Alert } from '../shared/inventory.models';
   ],
   template: `
     <div class="inv-page">
-      <a routerLink="/inventory/stock" class="back">← Back to Stock</a>
-      <h2>Stock Alerts</h2>
+      <a routerLink="/inventory/stock" class="back">← Kembali ke Stok</a>
+      <h2>Peringatan Stok</h2>
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
       } @else if (alerts().length === 0) {
-        <p class="empty">No active alerts.</p>
+        <p class="empty">Tidak ada peringatan aktif.</p>
       } @else {
         <table mat-table [dataSource]="alerts()" class="mat-elevation-z1">
           <ng-container matColumnDef="type"
-            ><th mat-header-cell *matHeaderCellDef>Type</th>
+            ><th mat-header-cell *matHeaderCellDef>Tipe</th>
             <td mat-cell *matCellDef="let a">
               <mat-chip
                 [color]="a.type === 'OUT_OF_STOCK' ? 'warn' : 'accent'"
@@ -53,29 +53,29 @@ import { Alert } from '../shared/inventory.models';
             </td></ng-container
           >
           <ng-container matColumnDef="product"
-            ><th mat-header-cell *matHeaderCellDef>Product</th>
+            ><th mat-header-cell *matHeaderCellDef>Produk</th>
             <td mat-cell *matCellDef="let a">
               {{ a.productName }} {{ a.size }}/{{ a.color }}
             </td></ng-container
           >
           <ng-container matColumnDef="stock"
-            ><th mat-header-cell *matHeaderCellDef>Stock</th>
+            ><th mat-header-cell *matHeaderCellDef>Stok</th>
             <td mat-cell *matCellDef="let a">
               {{ a.currentStock }}
             </td></ng-container
           >
           <ng-container matColumnDef="threshold"
-            ><th mat-header-cell *matHeaderCellDef>Threshold</th>
+            ><th mat-header-cell *matHeaderCellDef>Ambang</th>
             <td mat-cell *matCellDef="let a">
               {{ a.threshold }}
             </td></ng-container
           >
           <ng-container matColumnDef="message"
-            ><th mat-header-cell *matHeaderCellDef>Message</th>
+            ><th mat-header-cell *matHeaderCellDef>Pesan</th>
             <td mat-cell *matCellDef="let a">{{ a.message }}</td></ng-container
           >
           <ng-container matColumnDef="time"
-            ><th mat-header-cell *matHeaderCellDef>Time</th>
+            ><th mat-header-cell *matHeaderCellDef>Waktu</th>
             <td mat-cell *matCellDef="let a">
               {{ a.createdAt | date: 'short' }}
             </td></ng-container

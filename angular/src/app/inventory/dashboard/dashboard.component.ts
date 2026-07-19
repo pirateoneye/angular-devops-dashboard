@@ -24,7 +24,7 @@ import { DashboardStats } from '../shared/inventory.models';
   ],
   template: `
     <div class="inv-page">
-      <h2>Inventory Dashboard</h2>
+      <h2>Dashboard Inventori</h2>
 
       @if (loading()) {
         <mat-spinner diameter="40" style="margin: 40px auto;" />
@@ -33,38 +33,38 @@ import { DashboardStats } from '../shared/inventory.models';
           <mat-card class="stat-card"
             ><mat-icon>checkroom</mat-icon
             ><strong>{{ stats()!.totalProducts }}</strong
-            ><span>Products</span></mat-card
+            ><span>Produk</span></mat-card
           >
           <mat-card class="stat-card"
             ><mat-icon>style</mat-icon
             ><strong>{{ stats()!.totalVariants }}</strong
-            ><span>Variants</span></mat-card
+            ><span>Varian</span></mat-card
           >
           <mat-card class="stat-card"
             ><mat-icon>attach_money</mat-icon
             ><strong>{{ stats()!.totalStockValue | number: '1.0-0' }}</strong
-            ><span>Stock Value</span></mat-card
+            ><span>Nilai Stok</span></mat-card
           >
           <mat-card class="stat-card" [class.warn]="stats()!.lowStockCount > 0"
             ><mat-icon>warning</mat-icon
             ><strong>{{ stats()!.lowStockCount }}</strong
-            ><span>Low Stock Alerts</span></mat-card
+            ><span>Peringatan Stok Menipis</span></mat-card
           >
           <mat-card class="stat-card"
             ><mat-icon>receipt_long</mat-icon
             ><strong>{{ stats()!.pendingPurchaseOrders }}</strong
-            ><span>Pending POs</span></mat-card
+            ><span>PO Tertunda</span></mat-card
           >
         </div>
 
-        <h3>Recent Movements</h3>
+        <h3>Pergerakan Terbaru</h3>
         <table
           mat-table
           [dataSource]="stats()!.recentMovements || []"
           class="mat-elevation-z1"
         >
           <ng-container matColumnDef="time"
-            ><th mat-header-cell *matHeaderCellDef>Time</th>
+            ><th mat-header-cell *matHeaderCellDef>Waktu</th>
             <td mat-cell *matCellDef="let m">
               {{ m.createdAt | date: 'short' }}
             </td></ng-container
@@ -76,13 +76,13 @@ import { DashboardStats } from '../shared/inventory.models';
             </td></ng-container
           >
           <ng-container matColumnDef="product"
-            ><th mat-header-cell *matHeaderCellDef>Product</th>
+            ><th mat-header-cell *matHeaderCellDef>Produk</th>
             <td mat-cell *matCellDef="let m">
               {{ m.productName }} {{ m.variantSize }}/{{ m.variantColor }}
             </td></ng-container
           >
           <ng-container matColumnDef="type"
-            ><th mat-header-cell *matHeaderCellDef>Type</th>
+            ><th mat-header-cell *matHeaderCellDef>Tipe</th>
             <td mat-cell *matCellDef="let m">
               <mat-chip
                 [color]="m.quantity > 0 ? 'primary' : 'warn'"
@@ -92,11 +92,11 @@ import { DashboardStats } from '../shared/inventory.models';
             </td></ng-container
           >
           <ng-container matColumnDef="qty"
-            ><th mat-header-cell *matHeaderCellDef>Qty</th>
+            ><th mat-header-cell *matHeaderCellDef>Jml</th>
             <td mat-cell *matCellDef="let m">{{ m.quantity }}</td></ng-container
           >
           <ng-container matColumnDef="warehouse"
-            ><th mat-header-cell *matHeaderCellDef>Warehouse</th>
+            ><th mat-header-cell *matHeaderCellDef>Gudang</th>
             <td mat-cell *matCellDef="let m">
               {{ m.warehouseName }}
             </td></ng-container
@@ -105,7 +105,7 @@ import { DashboardStats } from '../shared/inventory.models';
           <tr mat-row *matRowDef="let row; columns: columns"></tr>
         </table>
       } @else {
-        <p>Failed to load dashboard data.</p>
+        <p>Gagal memuat data dashboard.</p>
       }
     </div>
   `,

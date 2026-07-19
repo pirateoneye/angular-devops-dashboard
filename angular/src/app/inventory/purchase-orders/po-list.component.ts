@@ -29,22 +29,22 @@ import { PurchaseOrder } from '../shared/inventory.models';
   template: `
     <div class="inv-page">
       <div class="page-header">
-        <h2>Purchase Orders</h2>
+        <h2>Pesanan Pembelian</h2>
         <a
           mat-raised-button
           color="primary"
           routerLink="/inventory/purchase-orders/new"
-          ><mat-icon>add</mat-icon> New PO</a
+          ><mat-icon>add</mat-icon> PO Baru</a
         >
       </div>
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
       } @else if (data().length === 0) {
-        <p class="empty">No purchase orders yet.</p>
+        <p class="empty">Belum ada pesanan pembelian.</p>
       } @else {
         <table mat-table [dataSource]="data()" class="mat-elevation-z1">
           <ng-container matColumnDef="number"
-            ><th mat-header-cell *matHeaderCellDef>Order #</th>
+            ><th mat-header-cell *matHeaderCellDef>No. Pesanan</th>
             <td mat-cell *matCellDef="let po">
               <a [routerLink]="['/inventory/purchase-orders', po.id]">{{
                 po.orderNumber
@@ -52,7 +52,7 @@ import { PurchaseOrder } from '../shared/inventory.models';
             </td></ng-container
           >
           <ng-container matColumnDef="supplier"
-            ><th mat-header-cell *matHeaderCellDef>Supplier</th>
+            ><th mat-header-cell *matHeaderCellDef>Pemasok</th>
             <td mat-cell *matCellDef="let po">
               {{ po.supplier.name }}
             </td></ng-container
@@ -66,13 +66,13 @@ import { PurchaseOrder } from '../shared/inventory.models';
             </td></ng-container
           >
           <ng-container matColumnDef="orderDate"
-            ><th mat-header-cell *matHeaderCellDef>Order Date</th>
+            ><th mat-header-cell *matHeaderCellDef>Tanggal Pesanan</th>
             <td mat-cell *matCellDef="let po">
               {{ po.orderDate | date }}
             </td></ng-container
           >
           <ng-container matColumnDef="expected"
-            ><th mat-header-cell *matHeaderCellDef>Expected</th>
+            ><th mat-header-cell *matHeaderCellDef>Estimasi</th>
             <td mat-cell *matCellDef="let po">
               {{ po.expectedDate | date: 'shortDate' || '-' }}
             </td></ng-container
@@ -84,7 +84,7 @@ import { PurchaseOrder } from '../shared/inventory.models';
             </td></ng-container
           >
           <ng-container matColumnDef="items"
-            ><th mat-header-cell *matHeaderCellDef>Items</th>
+            ><th mat-header-cell *matHeaderCellDef>Item</th>
             <td mat-cell *matCellDef="let po">
               {{ po.items?.length || 0 }}
             </td></ng-container

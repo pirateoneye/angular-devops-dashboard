@@ -28,16 +28,16 @@ import { StockMovement } from '../shared/inventory.models';
   ],
   template: `
     <div class="inv-page">
-      <a routerLink="/inventory/stock" class="back">← Back to Stock</a>
-      <h2>Movement History</h2>
+      <a routerLink="/inventory/stock" class="back">← Kembali ke Stok</a>
+      <h2>Riwayat Pergerakan</h2>
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
       } @else if (data().length === 0) {
-        <p class="empty">No movements recorded yet.</p>
+        <p class="empty">Belum ada pergerakan tercatat.</p>
       } @else {
         <table mat-table [dataSource]="data()" class="mat-elevation-z1">
           <ng-container matColumnDef="time"
-            ><th mat-header-cell *matHeaderCellDef>Time</th>
+            ><th mat-header-cell *matHeaderCellDef>Waktu</th>
             <td mat-cell *matCellDef="let m">
               {{ m.createdAt | date: 'short' }}
             </td></ng-container
@@ -49,13 +49,13 @@ import { StockMovement } from '../shared/inventory.models';
             </td></ng-container
           >
           <ng-container matColumnDef="product"
-            ><th mat-header-cell *matHeaderCellDef>Product</th>
+            ><th mat-header-cell *matHeaderCellDef>Produk</th>
             <td mat-cell *matCellDef="let m">
               {{ m.productName }} {{ m.variantSize }}/{{ m.variantColor }}
             </td></ng-container
           >
           <ng-container matColumnDef="type"
-            ><th mat-header-cell *matHeaderCellDef>Type</th>
+            ><th mat-header-cell *matHeaderCellDef>Tipe</th>
             <td mat-cell *matCellDef="let m">
               <mat-chip
                 [color]="m.quantity > 0 ? 'primary' : 'warn'"
@@ -69,7 +69,7 @@ import { StockMovement } from '../shared/inventory.models';
             <td mat-cell *matCellDef="let m">{{ m.quantity }}</td></ng-container
           >
           <ng-container matColumnDef="wh"
-            ><th mat-header-cell *matHeaderCellDef>Warehouse</th>
+            ><th mat-header-cell *matHeaderCellDef>Gudang</th>
             <td mat-cell *matCellDef="let m">
               {{ m.warehouseName }}
             </td></ng-container

@@ -22,27 +22,27 @@ import { InventoryService } from '../shared/inventory.service';
     MatSnackBarModule,
   ],
   template: `
-    <h2 mat-dialog-title>Adjust Stock</h2>
+    <h2 mat-dialog-title>Sesuaikan Stok</h2>
     <form [formGroup]="f" (ngSubmit)="save()" mat-dialog-content>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Variant ID</mat-label
+        ><mat-label>ID Varian</mat-label
         ><input matInput type="number" formControlName="variantId"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Warehouse ID</mat-label
+        ><mat-label>ID Gudang</mat-label
         ><input matInput type="number" formControlName="warehouseId"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Quantity (positive=add, negative=remove)</mat-label
+        ><mat-label>Jumlah (positif=tambah, negatif=kurang)</mat-label
         ><input matInput type="number" formControlName="quantity"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Reason</mat-label><input matInput formControlName="reason"
+        ><mat-label>Alasan</mat-label><input matInput formControlName="reason"
       /></mat-form-field>
       <div mat-dialog-actions align="end">
-        <button mat-button type="button" (click)="close()">Cancel</button
+        <button mat-button type="button" (click)="close()">Batal</button
         ><button mat-raised-button color="primary" [disabled]="f.invalid">
-          Adjust
+          Sesuaikan
         </button>
       </div>
     </form>
@@ -69,11 +69,11 @@ export class StockAdjustDialogComponent {
       })
       .subscribe({
         next: () => {
-          this.snack.open('Stock adjusted', 'OK', { duration: 3000 });
+          this.snack.open('Stok disesuaikan', 'OK', { duration: 3000 });
           this.ref.close();
         },
         error: (e) =>
-          this.snack.open(e.error?.message || 'Error', 'OK', {
+          this.snack.open(e.error?.message || 'Galat', 'OK', {
             duration: 5000,
           }),
       });

@@ -16,8 +16,8 @@ interface StockRow {
   quantity: number;
 }
 
-// ponytail: mock data — InventoryService has no "all stock" endpoint yet.
-// Replace with a real API call when backend exposes GET /api/stock/summary.
+// ponytail: data tiruan — InventoryService belum memiliki endpoint "semua stok".
+// Ganti dengan panggilan API nyata ketika backend menyediakan GET /api/stock/summary.
 const MOCK_STOCK: StockRow[] = [
   {
     sku: 'TSH-BLK-M',
@@ -73,37 +73,37 @@ const MOCK_STOCK: StockRow[] = [
   template: `
     <div class="inv-page">
       <div class="page-header">
-        <h2>Stock Management</h2>
+        <h2>Manajemen Stok</h2>
         <div>
           <button
             mat-raised-button
             style="margin-right:8px"
             (click)="openAdjustDialog()"
           >
-            <mat-icon>tune</mat-icon> Adjust</button
+            <mat-icon>tune</mat-icon> Sesuaikan</button
           ><button
             mat-raised-button
             color="primary"
             (click)="openTransferDialog()"
           >
-            <mat-icon>swap_horiz</mat-icon> Transfer
+            <mat-icon>swap_horiz</mat-icon> Pindah
           </button>
         </div>
       </div>
 
       <nav class="links">
         <a routerLink="/inventory/alerts"
-          ><mat-icon>warning</mat-icon> Alerts</a
+          ><mat-icon>warning</mat-icon> Peringatan</a
         >
         <a routerLink="/inventory/stock/movements"
-          ><mat-icon>history</mat-icon> Movement History</a
+          ><mat-icon>history</mat-icon> Riwayat Pergerakan</a
         >
       </nav>
 
       @if (loading()) {
         <mat-spinner diameter="40" class="spinner" />
       } @else if (rows().length === 0) {
-        <p class="empty">No stock data available</p>
+        <p class="empty">Data stok tidak tersedia</p>
       } @else {
         <table mat-table [dataSource]="rows()" class="mat-elevation-z1">
           <ng-container matColumnDef="sku">
@@ -111,19 +111,19 @@ const MOCK_STOCK: StockRow[] = [
             <td mat-cell *matCellDef="let r">{{ r.sku }}</td>
           </ng-container>
           <ng-container matColumnDef="productName">
-            <th mat-header-cell *matHeaderCellDef>Product Name</th>
+            <th mat-header-cell *matHeaderCellDef>Nama Produk</th>
             <td mat-cell *matCellDef="let r">{{ r.productName }}</td>
           </ng-container>
           <ng-container matColumnDef="variant">
-            <th mat-header-cell *matHeaderCellDef>Variant</th>
+            <th mat-header-cell *matHeaderCellDef>Varian</th>
             <td mat-cell *matCellDef="let r">{{ r.variant }}</td>
           </ng-container>
           <ng-container matColumnDef="warehouse">
-            <th mat-header-cell *matHeaderCellDef>Warehouse</th>
+            <th mat-header-cell *matHeaderCellDef>Gudang</th>
             <td mat-cell *matCellDef="let r">{{ r.warehouse }}</td>
           </ng-container>
           <ng-container matColumnDef="quantity">
-            <th mat-header-cell *matHeaderCellDef>Quantity</th>
+            <th mat-header-cell *matHeaderCellDef>Jumlah</th>
             <td mat-cell *matCellDef="let r">{{ r.quantity }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columns"></tr>
@@ -141,7 +141,7 @@ export class StockViewComponent implements OnInit {
   columns = ['sku', 'productName', 'variant', 'warehouse', 'quantity'];
 
   ngOnInit() {
-    // TODO: replace with real API call — e.g. InventoryService when stock-summary endpoint is available
+    // TODO: ganti dengan panggilan API nyata — misal InventoryService ketika endpoint ringkasan-stok tersedia
     this.rows.set(MOCK_STOCK);
     this.loading.set(false);
   }

@@ -42,21 +42,21 @@ import { Product, Category } from '../shared/inventory.models';
   template: `
     <div class="inv-page">
       <div class="page-header">
-        <h2>Products</h2>
+        <h2>Produk</h2>
         <button mat-raised-button color="primary" (click)="openDialog()">
-          <mat-icon>add</mat-icon> Add Product
+          <mat-icon>add</mat-icon> Tambah Produk
         </button>
       </div>
 
       <div class="filters">
         <mat-form-field appearance="outline" style="flex:2"
-          ><mat-label>Search</mat-label
+          ><mat-label>Cari</mat-label
           ><input matInput [(ngModel)]="search" (keyup.enter)="load()"
         /></mat-form-field>
         <mat-form-field appearance="outline" style="flex:1"
-          ><mat-label>Category</mat-label
+          ><mat-label>Kategori</mat-label
           ><mat-select [(ngModel)]="filterCategory" (selectionChange)="load()"
-            ><mat-option [value]="null">All</mat-option>
+            ><mat-option [value]="null">Semua</mat-option>
             @for (c of categories(); track c.id) {
               <mat-option [value]="c.id">{{ c.name }}</mat-option>
             }
@@ -65,10 +65,10 @@ import { Product, Category } from '../shared/inventory.models';
         <mat-form-field appearance="outline" style="flex:1"
           ><mat-label>Status</mat-label
           ><mat-select [(ngModel)]="filterStatus" (selectionChange)="load()"
-            ><mat-option [value]="null">All</mat-option
-            ><mat-option value="DRAFT">Draft</mat-option
-            ><mat-option value="ACTIVE">Active</mat-option
-            ><mat-option value="ARCHIVED">Archived</mat-option></mat-select
+            ><mat-option [value]="null">Semua</mat-option
+            ><mat-option value="DRAFT">Draf</mat-option
+            ><mat-option value="ACTIVE">Aktif</mat-option
+            ><mat-option value="ARCHIVED">Arsip</mat-option></mat-select
           ></mat-form-field
         >
       </div>
@@ -77,36 +77,36 @@ import { Product, Category } from '../shared/inventory.models';
         <mat-spinner diameter="40" style="margin:40px auto" />
       } @else if (data().length === 0) {
         <p class="empty">
-          No products yet. Click "Add Product" to get started.
+          Belum ada produk. Klik "Tambah Produk" untuk memulai.
         </p>
       } @else {
         <table mat-table [dataSource]="data()" class="mat-elevation-z1">
           <ng-container matColumnDef="name"
-            ><th mat-header-cell *matHeaderCellDef>Name</th>
+            ><th mat-header-cell *matHeaderCellDef>Nama</th>
             <td mat-cell *matCellDef="let p">
               <a [routerLink]="['/inventory/products', p.id]">{{ p.name }}</a>
             </td></ng-container
           >
           <ng-container matColumnDef="brand"
-            ><th mat-header-cell *matHeaderCellDef>Brand</th>
+            ><th mat-header-cell *matHeaderCellDef>Merek</th>
             <td mat-cell *matCellDef="let p">
               {{ p.brand || '-' }}
             </td></ng-container
           >
           <ng-container matColumnDef="category"
-            ><th mat-header-cell *matHeaderCellDef>Category</th>
+            ><th mat-header-cell *matHeaderCellDef>Kategori</th>
             <td mat-cell *matCellDef="let p">
               {{ p.categoryName }}
             </td></ng-container
           >
           <ng-container matColumnDef="price"
-            ><th mat-header-cell *matHeaderCellDef>Base Price</th>
+            ><th mat-header-cell *matHeaderCellDef>Harga Dasar</th>
             <td mat-cell *matCellDef="let p">
               {{ p.basePrice | currency: 'IDR' : 'symbol' : '1.0-0' }}
             </td></ng-container
           >
           <ng-container matColumnDef="variants"
-            ><th mat-header-cell *matHeaderCellDef>Variants</th>
+            ><th mat-header-cell *matHeaderCellDef>Varian</th>
             <td mat-cell *matCellDef="let p">
               {{ p.variantCount }}
             </td></ng-container
@@ -186,10 +186,10 @@ export class ProductListComponent implements OnInit {
           this.api.createProduct(result).subscribe({
             next: () => {
               this.load();
-              this.snack.open('Product created', 'OK', { duration: 3000 });
+              this.snack.open('Produk dibuat', 'OK', { duration: 3000 });
             },
             error: (err) =>
-              this.snack.open(err.error?.message || 'Error', 'OK', {
+              this.snack.open(err.error?.message || 'Galat', 'OK', {
                 duration: 5000,
               }),
           });

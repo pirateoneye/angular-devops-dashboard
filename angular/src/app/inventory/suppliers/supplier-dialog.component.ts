@@ -23,16 +23,16 @@ import { MatButtonModule } from '@angular/material/button';
     MatButtonModule,
   ],
   template: `
-    <h2 mat-dialog-title>{{ data?.supplier ? 'Edit' : 'Add' }} Supplier</h2>
+    <h2 mat-dialog-title>{{ data?.supplier ? 'Edit' : 'Tambah' }} Pemasok</h2>
     <form [formGroup]="f" (ngSubmit)="save()" mat-dialog-content>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Name *</mat-label><input matInput formControlName="name"
+        ><mat-label>Nama *</mat-label><input matInput formControlName="name"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Code *</mat-label><input matInput formControlName="code"
+        ><mat-label>Kode *</mat-label><input matInput formControlName="code"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Contact Person</mat-label
+        ><mat-label>Kontak Person</mat-label
         ><input matInput formControlName="contactPerson"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
@@ -40,26 +40,26 @@ import { MatButtonModule } from '@angular/material/button';
         ><input matInput formControlName="email" type="email"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Phone</mat-label><input matInput formControlName="phone"
+        ><mat-label>Telepon</mat-label><input matInput formControlName="phone"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Address</mat-label
+        ><mat-label>Alamat</mat-label
         ><input matInput formControlName="addressLine1"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>City</mat-label><input matInput formControlName="city"
+        ><mat-label>Kota</mat-label><input matInput formControlName="city"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>State</mat-label><input matInput formControlName="state"
+        ><mat-label>Provinsi</mat-label><input matInput formControlName="state"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Notes</mat-label
+        ><mat-label>Catatan</mat-label
         ><textarea matInput formControlName="notes" rows="2"></textarea>
       </mat-form-field>
       <div mat-dialog-actions align="end">
-        <button mat-button type="button" (click)="close()">Cancel</button
+        <button mat-button type="button" (click)="close()">Batal</button
         ><button mat-raised-button color="primary" [disabled]="f.invalid">
-          Save
+          Simpan
         </button>
       </div>
     </form>

@@ -38,10 +38,10 @@ const SIZES = [
     MatButtonModule,
   ],
   template: `
-    <h2 mat-dialog-title>Add Variant</h2>
+    <h2 mat-dialog-title>Tambah Varian</h2>
     <form [formGroup]="form" (ngSubmit)="save()" mat-dialog-content>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Size</mat-label
+        ><mat-label>Ukuran</mat-label
         ><mat-select formControlName="size">
           @for (s of sizes; track s) {
             <mat-option [value]="s">{{ s }}</mat-option>
@@ -49,14 +49,14 @@ const SIZES = [
         </mat-select></mat-form-field
       >
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Color</mat-label><input matInput formControlName="color"
+        ><mat-label>Warna</mat-label><input matInput formControlName="color"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Color Hex</mat-label
+        ><mat-label>Kode Warna</mat-label
         ><input matInput formControlName="colorHex" placeholder="#FF0000"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>SKU (auto if empty)</mat-label
+        ><mat-label>SKU (otomatis jika kosong)</mat-label
         ><input matInput formControlName="sku"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
@@ -64,29 +64,29 @@ const SIZES = [
         ><input matInput formControlName="barcode"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Cost Price</mat-label
+        ><mat-label>Harga Modal</mat-label
         ><input matInput type="number" formControlName="costPrice"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Selling Price</mat-label
+        ><mat-label>Harga Jual</mat-label
         ><input matInput type="number" formControlName="sellingPrice"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Initial Stock</mat-label
+        ><mat-label>Stok Awal</mat-label
         ><input matInput type="number" formControlName="stockQuantity"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Low Stock Threshold</mat-label
+        ><mat-label>Ambang Stok Menipis</mat-label
         ><input matInput type="number" formControlName="lowStockThreshold"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Reorder Point</mat-label
+        ><mat-label>Titik Pesan Ulang</mat-label
         ><input matInput type="number" formControlName="reorderPoint"
       /></mat-form-field>
       <div mat-dialog-actions align="end">
-        <button mat-button type="button" (click)="close()">Cancel</button>
+        <button mat-button type="button" (click)="close()">Batal</button>
         <button mat-raised-button color="primary" [disabled]="form.invalid">
-          Add
+          Tambah
         </button>
       </div>
     </form>

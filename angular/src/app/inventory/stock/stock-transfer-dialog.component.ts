@@ -22,31 +22,31 @@ import { InventoryService } from '../shared/inventory.service';
     MatSnackBarModule,
   ],
   template: `
-    <h2 mat-dialog-title>Transfer Stock</h2>
+    <h2 mat-dialog-title>Pindah Stok</h2>
     <form [formGroup]="f" (ngSubmit)="save()" mat-dialog-content>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Variant ID</mat-label
+        ><mat-label>ID Varian</mat-label
         ><input matInput type="number" formControlName="variantId"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Source Warehouse ID</mat-label
+        ><mat-label>ID Gudang Asal</mat-label
         ><input matInput type="number" formControlName="sourceWarehouseId"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Destination Warehouse ID</mat-label
+        ><mat-label>ID Gudang Tujuan</mat-label
         ><input matInput type="number" formControlName="destWarehouseId"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Quantity</mat-label
+        ><mat-label>Jumlah</mat-label
         ><input matInput type="number" formControlName="quantity"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Notes</mat-label><input matInput formControlName="notes"
+        ><mat-label>Catatan</mat-label><input matInput formControlName="notes"
       /></mat-form-field>
       <div mat-dialog-actions align="end">
-        <button mat-button type="button" (click)="close()">Cancel</button
+        <button mat-button type="button" (click)="close()">Batal</button
         ><button mat-raised-button color="primary" [disabled]="f.invalid">
-          Transfer
+          Pindah
         </button>
       </div>
     </form>
@@ -76,11 +76,11 @@ export class StockTransferDialogComponent {
       })
       .subscribe({
         next: () => {
-          this.snack.open('Stock transferred', 'OK', { duration: 3000 });
+          this.snack.open('Stok dipindahkan', 'OK', { duration: 3000 });
           this.ref.close();
         },
         error: (e) =>
-          this.snack.open(e.error?.message || 'Error', 'OK', {
+          this.snack.open(e.error?.message || 'Galat', 'OK', {
             duration: 5000,
           }),
       });

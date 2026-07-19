@@ -46,11 +46,11 @@ interface LineItem {
   ],
   template: `
     <div class="inv-page">
-      <a routerLink="/inventory/purchase-orders" class="back">← Back</a>
-      <h2>New Purchase Order</h2>
+      <a routerLink="/inventory/purchase-orders" class="back">← Kembali</a>
+      <h2>Pesanan Pembelian Baru</h2>
       <form [formGroup]="form">
         <mat-form-field appearance="outline" style="width:100%"
-          ><mat-label>Supplier</mat-label
+          ><mat-label>Pemasok</mat-label
           ><mat-select formControlName="supplierId">
             @for (s of suppliers(); track s.id) {
               <mat-option [value]="s.id"
@@ -60,7 +60,7 @@ interface LineItem {
           </mat-select></mat-form-field
         >
         <mat-form-field appearance="outline" style="width:100%"
-          ><mat-label>Warehouse</mat-label
+          ><mat-label>Gudang</mat-label
           ><mat-select formControlName="warehouseId">
             @for (w of warehouses(); track w.id) {
               <mat-option [value]="w.id">{{ w.name }}</mat-option>
@@ -69,40 +69,40 @@ interface LineItem {
         >
         <div style="display:flex;gap:12px">
           <mat-form-field appearance="outline" style="flex:1"
-            ><mat-label>Expected Date</mat-label
+            ><mat-label>Tanggal Estimasi</mat-label
             ><input matInput type="date" formControlName="expectedDate"
           /></mat-form-field>
         </div>
         <mat-form-field appearance="outline" style="width:100%"
-          ><mat-label>Notes</mat-label
+          ><mat-label>Catatan</mat-label
           ><textarea matInput formControlName="notes" rows="2"></textarea>
         </mat-form-field>
       </form>
 
-      <h3>Items ({{ items().length }})</h3>
+      <h3>Item ({{ items().length }})</h3>
       @if (unresolvedSkus().length) {
         <div
           style="background:#fff3e0;color:#e65100;padding:8px 12px;border-radius:4px;margin-bottom:12px;font-size:13px"
         >
-          Unresolved SKUs: {{ unresolvedSkus().join(', ') }}. These cannot be
-          submitted — remove them or fix the variant lookup.
+          SKU tidak dikenal: {{ unresolvedSkus().join(', ') }}. Tidak dapat
+          dikirim — hapus atau perbaiki pencarian varian.
         </div>
       }
       <div class="add-item" style="display:flex;gap:8px;margin-bottom:16px">
         <mat-form-field appearance="outline" style="flex:2"
-          ><mat-label>Variant SKU</mat-label
+          ><mat-label>SKU Varian</mat-label
           ><input matInput [(ngModel)]="variantSku" (keyup.enter)="addItem()"
         /></mat-form-field>
         <mat-form-field appearance="outline" style="flex:1"
-          ><mat-label>Qty</mat-label
+          ><mat-label>Jml</mat-label
           ><input matInput type="number" [(ngModel)]="itemQty"
         /></mat-form-field>
         <mat-form-field appearance="outline" style="flex:1"
-          ><mat-label>Unit Cost</mat-label
+          ><mat-label>Harga Modal</mat-label
           ><input matInput type="number" [(ngModel)]="itemCost"
         /></mat-form-field>
         <button mat-raised-button color="primary" (click)="addItem()">
-          Add
+          Tambah
         </button>
       </div>
 
@@ -113,7 +113,7 @@ interface LineItem {
             <td mat-cell *matCellDef="let i">{{ i.sku }}</td></ng-container
           >
           <ng-container matColumnDef="name"
-            ><th mat-header-cell *matHeaderCellDef>Name</th>
+            ><th mat-header-cell *matHeaderCellDef>Nama</th>
             <td mat-cell *matCellDef="let i">{{ i.name }}</td></ng-container
           >
           <ng-container matColumnDef="qty"
@@ -144,7 +144,7 @@ interface LineItem {
           [disabled]="form.invalid || !items().length"
           style="margin-top:16px"
         >
-          Create PO
+          Buat PO
         </button>
       }
     </div>
@@ -205,8 +205,8 @@ export class PoCreateComponent implements OnInit {
     if (unresolved.length) {
       this.unresolvedSkus.set(unresolved);
       this.snack.open(
-        `Cannot create PO: ${unresolved.length} item(s) have unresolved SKUs. ` +
-          'Remove them or add a variant lookup to resolve SKUs.',
+        `Tidak dapat membuat PO: ${unresolved.length} item memiliki SKU tidak dikenal. ` +
+          'Hapus atau tambahkan pencarian varian untuk resolusi SKU.',
         'OK',
         { duration: 6000 },
       );
@@ -230,10 +230,10 @@ export class PoCreateComponent implements OnInit {
       .subscribe({
         next: (p) => {
           this.router.navigate(['/inventory/purchase-orders', p.id]);
-          this.snack.open('PO created', 'OK', { duration: 3000 });
+          this.snack.open('Pesanan pembelian dibuat', 'OK', { duration: 3000 });
         },
         error: (e) =>
-          this.snack.open(e.error?.message || 'Error', 'OK', {
+          this.snack.open(e.error?.message || 'Galat', 'OK', {
             duration: 5000,
           }),
       });

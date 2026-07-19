@@ -34,7 +34,7 @@ import { FormsModule } from '@angular/forms';
   ],
   template: `
     <div class="inv-page">
-      <a routerLink="/inventory/purchase-orders" class="back">← Back</a>
+      <a routerLink="/inventory/purchase-orders" class="back">← Kembali</a>
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
       } @else if (po()) {
@@ -46,8 +46,8 @@ import { FormsModule } from '@angular/forms';
           >
           <mat-card-content>
             <div class="info-grid">
-              <div><strong>Supplier:</strong> {{ po()!.supplier.name }}</div>
-              <div><strong>Warehouse:</strong> {{ po()!.warehouse.name }}</div>
+              <div><strong>Pemasok:</strong> {{ po()!.supplier.name }}</div>
+              <div><strong>Gudang:</strong> {{ po()!.warehouse.name }}</div>
               <div>
                 <strong>Status:</strong>
                 <mat-chip [color]="statusColor(po()!.status)" selected>{{
@@ -55,10 +55,10 @@ import { FormsModule } from '@angular/forms';
                 }}</mat-chip>
               </div>
               <div>
-                <strong>Order Date:</strong> {{ po()!.orderDate | date }}
+                <strong>Tanggal Pesanan:</strong> {{ po()!.orderDate | date }}
               </div>
               <div>
-                <strong>Expected:</strong> {{ po()!.expectedDate || '-' }}
+                <strong>Estimasi:</strong> {{ po()!.expectedDate || '-' }}
               </div>
               <div>
                 <strong>Total:</strong>
@@ -72,7 +72,7 @@ import { FormsModule } from '@angular/forms';
                   color="primary"
                   (click)="updateStatus('SENT')"
                 >
-                  Send to Supplier
+                  Kirim ke Pemasok
                 </button>
               }
               @if (
@@ -93,20 +93,20 @@ import { FormsModule } from '@angular/forms';
                   </mat-form-field>
                 }
                 <button mat-raised-button color="accent" (click)="receive()">
-                  Receive
+                  Terima
                 </button>
               }
               @if (
                 po()!.status !== 'RECEIVED' && po()!.status !== 'CANCELLED'
               ) {
                 <button mat-button color="warn" (click)="cancel()">
-                  Cancel PO
+                  Batalkan PO
                 </button>
               }
             </div>
           </mat-card-content>
         </mat-card>
-        <h3>Items</h3>
+        <h3>Item</h3>
         <table mat-table [dataSource]="po()!.items" class="mat-elevation-z1">
           <ng-container matColumnDef="sku"
             ><th mat-header-cell *matHeaderCellDef>SKU</th>
@@ -115,25 +115,25 @@ import { FormsModule } from '@angular/forms';
             </td></ng-container
           >
           <ng-container matColumnDef="product"
-            ><th mat-header-cell *matHeaderCellDef>Product</th>
+            ><th mat-header-cell *matHeaderCellDef>Produk</th>
             <td mat-cell *matCellDef="let i">
               {{ i.productName }} {{ i.variantSize }}/{{ i.variantColor }}
             </td></ng-container
           >
           <ng-container matColumnDef="ordered"
-            ><th mat-header-cell *matHeaderCellDef>Ordered</th>
+            ><th mat-header-cell *matHeaderCellDef>Dipesan</th>
             <td mat-cell *matCellDef="let i">
               {{ i.quantityOrdered }}
             </td></ng-container
           >
           <ng-container matColumnDef="received"
-            ><th mat-header-cell *matHeaderCellDef>Received</th>
+            ><th mat-header-cell *matHeaderCellDef>Diterima</th>
             <td mat-cell *matCellDef="let i">
               {{ i.quantityReceived }}
             </td></ng-container
           >
           <ng-container matColumnDef="unitCost"
-            ><th mat-header-cell *matHeaderCellDef>Unit Cost</th>
+            ><th mat-header-cell *matHeaderCellDef>Harga Modal</th>
             <td mat-cell *matCellDef="let i">
               {{ i.unitCost | currency: 'IDR' : 'symbol' : '1.0-0' }}
             </td></ng-container
@@ -188,10 +188,10 @@ export class PoDetailComponent {
     this.api.updatePOStatus(this.po()!.id, s).subscribe({
       next: (p) => {
         this.po.set(p);
-        this.snack.open('Status updated', 'OK', { duration: 3000 });
+        this.snack.open('Status diperbarui', 'OK', { duration: 3000 });
       },
       error: (e) =>
-        this.snack.open(e.error?.message || 'Error', 'OK', { duration: 5000 }),
+        this.snack.open(e.error?.message || 'Galat', 'OK', { duration: 5000 }),
     });
   }
 
@@ -203,10 +203,10 @@ export class PoDetailComponent {
     this.api.receivePO(this.po()!.id, items).subscribe({
       next: (p) => {
         this.po.set(p);
-        this.snack.open('Items received', 'OK', { duration: 3000 });
+        this.snack.open('Item diterima', 'OK', { duration: 3000 });
       },
       error: (e) =>
-        this.snack.open(e.error?.message || 'Error', 'OK', { duration: 5000 }),
+        this.snack.open(e.error?.message || 'Galat', 'OK', { duration: 5000 }),
     });
   }
 
@@ -214,10 +214,10 @@ export class PoDetailComponent {
     this.api.cancelPO(this.po()!.id).subscribe({
       next: () => {
         this.po()!.status = 'CANCELLED';
-        this.snack.open('PO cancelled', 'OK', { duration: 3000 });
+        this.snack.open('Pesanan pembelian dibatalkan', 'OK', { duration: 3000 });
       },
       error: (e) =>
-        this.snack.open(e.error?.message || 'Error', 'OK', { duration: 5000 }),
+        this.snack.open(e.error?.message || 'Galat', 'OK', { duration: 5000 }),
     });
   }
 }

@@ -35,27 +35,27 @@ import { Supplier } from '../shared/inventory.models';
   template: `
     <div class="inv-page">
       <div class="page-header">
-        <h2>Suppliers</h2>
+        <h2>Pemasok</h2>
         <button mat-raised-button color="primary" (click)="openDialog()">
-          <mat-icon>add</mat-icon> Add Supplier
+          <mat-icon>add</mat-icon> Tambah Pemasok
         </button>
       </div>
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
       } @else if (data().length === 0) {
-        <p class="empty">No suppliers yet.</p>
+        <p class="empty">Belum ada pemasok.</p>
       } @else {
         <table mat-table [dataSource]="data()" class="mat-elevation-z1">
           <ng-container matColumnDef="code"
-            ><th mat-header-cell *matHeaderCellDef>Code</th>
+            ><th mat-header-cell *matHeaderCellDef>Kode</th>
             <td mat-cell *matCellDef="let s">{{ s.code }}</td></ng-container
           >
           <ng-container matColumnDef="name"
-            ><th mat-header-cell *matHeaderCellDef>Name</th>
+            ><th mat-header-cell *matHeaderCellDef>Nama</th>
             <td mat-cell *matCellDef="let s">{{ s.name }}</td></ng-container
           >
           <ng-container matColumnDef="contact"
-            ><th mat-header-cell *matHeaderCellDef>Contact</th>
+            ><th mat-header-cell *matHeaderCellDef>Kontak</th>
             <td mat-cell *matCellDef="let s">
               {{ s.contactPerson || '-' }}
             </td></ng-container
@@ -67,16 +67,16 @@ import { Supplier } from '../shared/inventory.models';
             </td></ng-container
           >
           <ng-container matColumnDef="phone"
-            ><th mat-header-cell *matHeaderCellDef>Phone</th>
+            ><th mat-header-cell *matHeaderCellDef>Telepon</th>
             <td mat-cell *matCellDef="let s">
               {{ s.phone || '-' }}
             </td></ng-container
           >
           <ng-container matColumnDef="active"
-            ><th mat-header-cell *matHeaderCellDef>Active</th>
+            ><th mat-header-cell *matHeaderCellDef>Aktif</th>
             <td mat-cell *matCellDef="let s">
               <mat-chip [color]="s.isActive ? 'primary' : 'warn'" selected>{{
-                s.isActive ? 'Yes' : 'No'
+                s.isActive ? 'Ya' : 'Tidak'
               }}</mat-chip>
             </td></ng-container
           >
@@ -133,12 +133,12 @@ export class SupplierListComponent implements OnInit {
           req.subscribe({
             next: () => {
               this.load();
-              this.snack.open(supplier ? 'Updated' : 'Created', 'OK', {
+              this.snack.open(supplier ? 'Diperbarui' : 'Dibuat', 'OK', {
                 duration: 3000,
               });
             },
             error: (e) =>
-              this.snack.open(e.error?.message || 'Error', 'OK', {
+              this.snack.open(e.error?.message || 'Galat', 'OK', {
                 duration: 5000,
               }),
           });

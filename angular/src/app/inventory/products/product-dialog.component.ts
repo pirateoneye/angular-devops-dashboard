@@ -25,20 +25,20 @@ import { MatButtonModule } from '@angular/material/button';
     MatButtonModule,
   ],
   template: `
-    <h2 mat-dialog-title>{{ data?.product ? 'Edit' : 'Add' }} Product</h2>
+    <h2 mat-dialog-title>{{ data?.product ? 'Edit' : 'Tambah' }} Produk</h2>
     <form [formGroup]="form" (ngSubmit)="save()" mat-dialog-content>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Name</mat-label><input matInput formControlName="name"
+        ><mat-label>Nama</mat-label><input matInput formControlName="name"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Description</mat-label
+        ><mat-label>Deskripsi</mat-label
         ><textarea matInput formControlName="description" rows="3"></textarea>
       </mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Brand</mat-label><input matInput formControlName="brand"
+        ><mat-label>Merek</mat-label><input matInput formControlName="brand"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Category</mat-label
+        ><mat-label>Kategori</mat-label
         ><mat-select formControlName="categoryId">
           @for (c of data.categories; track c.id) {
             <mat-option [value]="c.id">{{ c.name }}</mat-option>
@@ -46,16 +46,16 @@ import { MatButtonModule } from '@angular/material/button';
         </mat-select></mat-form-field
       >
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Base Price</mat-label
+        ><mat-label>Harga Dasar</mat-label
         ><input matInput type="number" formControlName="basePrice"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
         ><mat-label>Gender</mat-label
         ><mat-select formControlName="gender"
           ><mat-option value="">N/A</mat-option
-          ><mat-option value="MEN">Men</mat-option
-          ><mat-option value="WOMEN">Women</mat-option
-          ><mat-option value="KIDS">Kids</mat-option
+          ><mat-option value="MEN">Pria</mat-option
+          ><mat-option value="WOMEN">Wanita</mat-option
+          ><mat-option value="KIDS">Anak</mat-option
           ><mat-option value="UNISEX">Unisex</mat-option></mat-select
         ></mat-form-field
       >
@@ -64,7 +64,7 @@ import { MatButtonModule } from '@angular/material/button';
         ><input matInput formControlName="material"
       /></mat-form-field>
       <mat-form-field appearance="outline" style="width:100%"
-        ><mat-label>Care Instructions</mat-label
+        ><mat-label>Perawatan</mat-label
         ><textarea
           matInput
           formControlName="careInstructions"
@@ -72,9 +72,9 @@ import { MatButtonModule } from '@angular/material/button';
         ></textarea>
       </mat-form-field>
       <div mat-dialog-actions align="end">
-        <button mat-button type="button" (click)="close()">Cancel</button>
+        <button mat-button type="button" (click)="close()">Batal</button>
         <button mat-raised-button color="primary" [disabled]="form.invalid">
-          Save
+          Simpan
         </button>
       </div>
     </form>

@@ -7,11 +7,6 @@
   display: inline-block;
   margin-bottom: 16px;
 }
-.empty {
-  text-align: center;
-  color: #888;
-  padding: 40px;
-}
 table {
   width: 100%;
 }

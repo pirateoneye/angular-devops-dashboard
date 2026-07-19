@@ -21,11 +21,6 @@
 .spinner {
   margin: 40px auto;
 }
-.empty {
-  text-align: center;
-  color: var(--msv-text-muted);
-  padding: 40px;
-}
 table {
   width: 100%;
 }

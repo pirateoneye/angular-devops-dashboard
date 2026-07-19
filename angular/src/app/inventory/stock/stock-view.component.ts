@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { EmptyStateComponent } from '../../shared/component/empty-state/empty-state.component';
 
 interface StockRow {
   sku: string;
@@ -69,6 +70,7 @@ const MOCK_STOCK: StockRow[] = [
     MatTableModule,
     MatDialogModule,
     MatProgressSpinnerModule,
+    EmptyStateComponent,
   ],
   template: `
     <div class="inv-page">
@@ -103,7 +105,7 @@ const MOCK_STOCK: StockRow[] = [
       @if (loading()) {
         <mat-spinner diameter="40" class="spinner" />
       } @else if (rows().length === 0) {
-        <p class="empty">Data stok tidak tersedia</p>
+        <omp-empty-state message="Data stok tidak tersedia" icon="inventory_2" />
       } @else {
         <table mat-table [dataSource]="rows()" class="mat-elevation-z1">
           <ng-container matColumnDef="sku">

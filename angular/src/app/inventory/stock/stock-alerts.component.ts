@@ -9,6 +9,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InventoryService } from '../shared/inventory.service';
+import { EmptyStateComponent } from '../../shared/component/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../shared/component/error-state/error-state.component';
 import { Alert } from '../shared/inventory.models';
 
 @Component({
@@ -25,6 +27,8 @@ import { Alert } from '../shared/inventory.models';
     MatChipsModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    EmptyStateComponent,
+    ErrorStateComponent,
   ],
   template: `
     <div class="inv-page">
@@ -32,8 +36,10 @@ import { Alert } from '../shared/inventory.models';
       <h2>Peringatan Stok</h2>
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
+      } @else if (error()) {
+        <omp-error-state message="Gagal memuat peringatan." />
       } @else if (alerts().length === 0) {
-        <p class="empty">Tidak ada peringatan aktif.</p>
+        <omp-empty-state message="Tidak ada peringatan aktif." icon="notifications" />
       } @else {
         <table mat-table [dataSource]="alerts()" class="mat-elevation-z1">
           <ng-container matColumnDef="type"
@@ -92,6 +98,7 @@ export class StockAlertsComponent implements OnInit {
   private api = inject(InventoryService);
   alerts = signal<Alert[]>([]);
   loading = signal(true);
+  error = signal(false);
   columns = ['type', 'sku', 'product', 'stock', 'threshold', 'message', 'time'];
 
   ngOnInit() {
@@ -99,8 +106,12 @@ export class StockAlertsComponent implements OnInit {
       next: (a) => {
         this.alerts.set(a);
         this.loading.set(false);
+        this.error.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
     });
   }
 }

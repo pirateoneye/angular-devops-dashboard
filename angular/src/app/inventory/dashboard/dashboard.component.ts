@@ -1,3 +1,4 @@
+import { ErrorStateComponent } from '../../shared/component/error-state/error-state.component';
 import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -21,6 +22,7 @@ import { DashboardStats } from '../shared/inventory.models';
     MatTableModule,
     MatChipsModule,
     MatProgressSpinnerModule,
+    ErrorStateComponent,
   ],
   template: `
     <div class="inv-page">
@@ -105,7 +107,7 @@ import { DashboardStats } from '../shared/inventory.models';
           <tr mat-row *matRowDef="let row; columns: columns"></tr>
         </table>
       } @else {
-        <p>Gagal memuat data dashboard.</p>
+        <omp-error-state message="Gagal memuat data dashboard." />
       }
     </div>
   `,
@@ -115,6 +117,7 @@ export class DashboardComponent implements OnInit {
   private api = inject(InventoryService);
   stats = signal<DashboardStats | null>(null);
   loading = signal(true);
+  error = signal(false);
   columns = ['time', 'sku', 'product', 'type', 'qty', 'warehouse'];
 
   ngOnInit() {
@@ -122,8 +125,12 @@ export class DashboardComponent implements OnInit {
       next: (s) => {
         this.stats.set(s);
         this.loading.set(false);
+        this.error.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
     });
   }
 }

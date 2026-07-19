@@ -13,6 +13,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InventoryService } from '../shared/inventory.service';
 import { Supplier } from '../shared/inventory.models';
+import { EmptyStateComponent } from '../../shared/component/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../shared/component/error-state/error-state.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,6 +33,8 @@ import { Supplier } from '../shared/inventory.models';
     MatInputModule,
     MatChipsModule,
     MatProgressSpinnerModule,
+    EmptyStateComponent,
+    ErrorStateComponent,
   ],
   template: `
     <div class="inv-page">
@@ -42,8 +46,10 @@ import { Supplier } from '../shared/inventory.models';
       </div>
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
+      } @else if (error()) {
+        <omp-error-state message="Gagal memuat pemasok." />
       } @else if (data().length === 0) {
-        <p class="empty">Belum ada pemasok.</p>
+        <omp-empty-state message="Belum ada pemasok." icon="local_shipping" />
       } @else {
         <table mat-table [dataSource]="data()" class="mat-elevation-z1">
           <ng-container matColumnDef="code"
@@ -102,6 +108,7 @@ export class SupplierListComponent implements OnInit {
   private snack = inject(MatSnackBar);
   data = signal<Supplier[]>([]);
   loading = signal(true);
+  error = signal(false);
   columns = ['code', 'name', 'contact', 'email', 'phone', 'active', 'actions'];
 
   ngOnInit() {
@@ -113,8 +120,12 @@ export class SupplierListComponent implements OnInit {
       next: (s) => {
         this.data.set(s);
         this.loading.set(false);
+        this.error.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
     });
   }
 

@@ -8,6 +8,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { EmptyStateComponent } from '../../shared/component/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../shared/component/error-state/error-state.component';
 import { InventoryService } from '../shared/inventory.service';
 import { PurchaseOrder } from '../shared/inventory.models';
 
@@ -23,6 +25,8 @@ import { PurchaseOrder } from '../shared/inventory.models';
     MatIconModule,
     MatTableModule,
     MatPaginatorModule,
+    EmptyStateComponent,
+    ErrorStateComponent,
     MatChipsModule,
     MatProgressSpinnerModule,
   ],
@@ -39,8 +43,10 @@ import { PurchaseOrder } from '../shared/inventory.models';
       </div>
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
+      } @else if (error()) {
+        <omp-error-state message="Gagal memuat pesanan pembelian." />
       } @else if (data().length === 0) {
-        <p class="empty">Belum ada pesanan pembelian.</p>
+        <omp-empty-state message="Belum ada pesanan pembelian." icon="shopping_cart" />
       } @else {
         <table mat-table [dataSource]="data()" class="mat-elevation-z1">
           <ng-container matColumnDef="number"
@@ -107,6 +113,7 @@ export class PoListComponent implements OnInit {
   data = signal<PurchaseOrder[]>([]);
   total = signal(0);
   loading = signal(true);
+  error = signal(false);
   columns = [
     'number',
     'supplier',
@@ -127,8 +134,9 @@ export class PoListComponent implements OnInit {
         this.data.set(r.content);
         this.total.set(r.totalElements);
         this.loading.set(false);
+        this.error.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => { this.loading.set(false); this.error.set(true); },
     });
   }
   onPage(e: PageEvent) {

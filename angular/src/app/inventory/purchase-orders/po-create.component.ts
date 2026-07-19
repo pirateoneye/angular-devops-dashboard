@@ -14,8 +14,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { InventoryService } from '../shared/inventory.service';
+import { EmptyStateComponent } from '../../shared/component/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../shared/component/error-state/error-state.component';
 import { Supplier, Warehouse } from '../shared/inventory.models';
 
 interface LineItem {
@@ -41,111 +44,120 @@ interface LineItem {
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
+    EmptyStateComponent,
+    ErrorStateComponent,
     MatSelectModule,
+    MatProgressSpinnerModule,
     MatSnackBarModule,
   ],
   template: `
     <div class="inv-page">
       <a routerLink="/inventory/purchase-orders" class="back">← Kembali</a>
       <h2>Pesanan Pembelian Baru</h2>
-      <form [formGroup]="form">
-        <mat-form-field appearance="outline" style="width:100%"
-          ><mat-label>Pemasok</mat-label
-          ><mat-select formControlName="supplierId">
-            @for (s of suppliers(); track s.id) {
-              <mat-option [value]="s.id"
-                >{{ s.name }} ({{ s.code }})</mat-option
-              >
-            }
-          </mat-select></mat-form-field
-        >
-        <mat-form-field appearance="outline" style="width:100%"
-          ><mat-label>Gudang</mat-label
-          ><mat-select formControlName="warehouseId">
-            @for (w of warehouses(); track w.id) {
-              <mat-option [value]="w.id">{{ w.name }}</mat-option>
-            }
-          </mat-select></mat-form-field
-        >
-        <div style="display:flex;gap:12px">
-          <mat-form-field appearance="outline" style="flex:1"
-            ><mat-label>Tanggal Estimasi</mat-label
-            ><input matInput type="date" formControlName="expectedDate"
+      @if (loading()) {
+        <mat-spinner diameter="40" style="margin:40px auto" />
+      } @else if (error()) {
+        <omp-error-state message="Gagal memuat data pesanan." />
+      } @else {
+        <form [formGroup]="form">
+          <mat-form-field appearance="outline" style="width:100%"
+            ><mat-label>Pemasok</mat-label
+            ><mat-select formControlName="supplierId">
+              @for (s of suppliers(); track s.id) {
+                <mat-option [value]="s.id"
+                  >{{ s.name }} ({{ s.code }})</mat-option
+                >
+              }
+            </mat-select></mat-form-field
+          >
+          <mat-form-field appearance="outline" style="width:100%"
+            ><mat-label>Gudang</mat-label
+            ><mat-select formControlName="warehouseId">
+              @for (w of warehouses(); track w.id) {
+                <mat-option [value]="w.id">{{ w.name }}</mat-option>
+              }
+            </mat-select></mat-form-field
+          >
+          <div style="display:flex;gap:12px">
+            <mat-form-field appearance="outline" style="flex:1"
+              ><mat-label>Tanggal Estimasi</mat-label
+              ><input matInput type="date" formControlName="expectedDate"
+            /></mat-form-field>
+          </div>
+          <mat-form-field appearance="outline" style="width:100%"
+            ><mat-label>Catatan</mat-label
+            ><textarea matInput formControlName="notes" rows="2"></textarea>
+          </mat-form-field>
+        </form>
+
+        <h3>Item ({{ items().length }})</h3>
+        @if (unresolvedSkus().length) {
+          <div
+            style="background:#fff3e0;color:#e65100;padding:8px 12px;border-radius:4px;margin-bottom:12px;font-size:13px"
+          >
+            SKU tidak dikenal: {{ unresolvedSkus().join(', ') }}. Tidak dapat
+            dikirim — hapus atau perbaiki pencarian varian.
+          </div>
+        }
+        <div class="add-item" style="display:flex;gap:8px;margin-bottom:16px">
+          <mat-form-field appearance="outline" style="flex:2"
+            ><mat-label>SKU Varian</mat-label
+            ><input matInput [(ngModel)]="variantSku" (keyup.enter)="addItem()"
           /></mat-form-field>
+          <mat-form-field appearance="outline" style="flex:1"
+            ><mat-label>Jml</mat-label
+            ><input matInput type="number" [(ngModel)]="itemQty"
+          /></mat-form-field>
+          <mat-form-field appearance="outline" style="flex:1"
+            ><mat-label>Harga Modal</mat-label
+            ><input matInput type="number" [(ngModel)]="itemCost"
+          /></mat-form-field>
+          <button mat-raised-button color="primary" (click)="addItem()">
+            Tambah
+          </button>
         </div>
-        <mat-form-field appearance="outline" style="width:100%"
-          ><mat-label>Catatan</mat-label
-          ><textarea matInput formControlName="notes" rows="2"></textarea>
-        </mat-form-field>
-      </form>
 
-      <h3>Item ({{ items().length }})</h3>
-      @if (unresolvedSkus().length) {
-        <div
-          style="background:#fff3e0;color:#e65100;padding:8px 12px;border-radius:4px;margin-bottom:12px;font-size:13px"
-        >
-          SKU tidak dikenal: {{ unresolvedSkus().join(', ') }}. Tidak dapat
-          dikirim — hapus atau perbaiki pencarian varian.
-        </div>
-      }
-      <div class="add-item" style="display:flex;gap:8px;margin-bottom:16px">
-        <mat-form-field appearance="outline" style="flex:2"
-          ><mat-label>SKU Varian</mat-label
-          ><input matInput [(ngModel)]="variantSku" (keyup.enter)="addItem()"
-        /></mat-form-field>
-        <mat-form-field appearance="outline" style="flex:1"
-          ><mat-label>Jml</mat-label
-          ><input matInput type="number" [(ngModel)]="itemQty"
-        /></mat-form-field>
-        <mat-form-field appearance="outline" style="flex:1"
-          ><mat-label>Harga Modal</mat-label
-          ><input matInput type="number" [(ngModel)]="itemCost"
-        /></mat-form-field>
-        <button mat-raised-button color="primary" (click)="addItem()">
-          Tambah
-        </button>
-      </div>
-
-      @if (items().length) {
-        <table mat-table [dataSource]="items()" class="mat-elevation-z1">
-          <ng-container matColumnDef="sku"
-            ><th mat-header-cell *matHeaderCellDef>SKU</th>
-            <td mat-cell *matCellDef="let i">{{ i.sku }}</td></ng-container
+        @if (items().length) {
+          <table mat-table [dataSource]="items()" class="mat-elevation-z1">
+            <ng-container matColumnDef="sku"
+              ><th mat-header-cell *matHeaderCellDef>SKU</th>
+              <td mat-cell *matCellDef="let i">{{ i.sku }}</td></ng-container
+            >
+            <ng-container matColumnDef="name"
+              ><th mat-header-cell *matHeaderCellDef>Nama</th>
+              <td mat-cell *matCellDef="let i">{{ i.name }}</td></ng-container
+            >
+            <ng-container matColumnDef="qty"
+              ><th mat-header-cell *matHeaderCellDef>Qty</th>
+              <td mat-cell *matCellDef="let i">{{ i.quantity }}</td></ng-container
+            >
+            <ng-container matColumnDef="cost"
+              ><th mat-header-cell *matHeaderCellDef>Unit Cost</th>
+              <td mat-cell *matCellDef="let i">
+                {{ i.unitCost | currency: 'IDR' : 'symbol' : '1.0-0' }}
+              </td></ng-container
+            >
+            <ng-container matColumnDef="total"
+              ><th mat-header-cell *matHeaderCellDef>Total</th>
+              <td mat-cell *matCellDef="let i">
+                {{
+                  i.quantity * i.unitCost | currency: 'IDR' : 'symbol' : '1.0-0'
+                }}
+              </td></ng-container
+            >
+            <tr mat-header-row *matHeaderRowDef="itemCols"></tr>
+            <tr mat-row *matRowDef="let row; columns: itemCols"></tr>
+          </table>
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="submit()"
+            [disabled]="form.invalid || !items().length"
+            style="margin-top:16px"
           >
-          <ng-container matColumnDef="name"
-            ><th mat-header-cell *matHeaderCellDef>Nama</th>
-            <td mat-cell *matCellDef="let i">{{ i.name }}</td></ng-container
-          >
-          <ng-container matColumnDef="qty"
-            ><th mat-header-cell *matHeaderCellDef>Qty</th>
-            <td mat-cell *matCellDef="let i">{{ i.quantity }}</td></ng-container
-          >
-          <ng-container matColumnDef="cost"
-            ><th mat-header-cell *matHeaderCellDef>Unit Cost</th>
-            <td mat-cell *matCellDef="let i">
-              {{ i.unitCost | currency: 'IDR' : 'symbol' : '1.0-0' }}
-            </td></ng-container
-          >
-          <ng-container matColumnDef="total"
-            ><th mat-header-cell *matHeaderCellDef>Total</th>
-            <td mat-cell *matCellDef="let i">
-              {{
-                i.quantity * i.unitCost | currency: 'IDR' : 'symbol' : '1.0-0'
-              }}
-            </td></ng-container
-          >
-          <tr mat-header-row *matHeaderRowDef="itemCols"></tr>
-          <tr mat-row *matRowDef="let row; columns: itemCols"></tr>
-        </table>
-        <button
-          mat-raised-button
-          color="accent"
-          (click)="submit()"
-          [disabled]="form.invalid || !items().length"
-          style="margin-top:16px"
-        >
-          Buat PO
-        </button>
+            Buat PO
+          </button>
+        }
       }
     </div>
   `,
@@ -155,6 +167,8 @@ export class PoCreateComponent implements OnInit {
   private api = inject(InventoryService);
   private router = inject(Router);
   private snack = inject(MatSnackBar);
+  loading = signal(true);
+  error = signal(false);
   suppliers = signal<Supplier[]>([]);
   warehouses = signal<Warehouse[]>([]);
   items = signal<LineItem[]>([]);
@@ -173,8 +187,14 @@ export class PoCreateComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.api.getSuppliers().subscribe((s) => this.suppliers.set(s));
-    this.api.getWarehouses().subscribe((w) => this.warehouses.set(w));
+    this.api.getSuppliers().subscribe({
+      next: (s) => { this.suppliers.set(s); this.loading.set(false); this.error.set(false); },
+      error: () => { this.loading.set(false); this.error.set(true); },
+    });
+    this.api.getWarehouses().subscribe({
+      next: (w) => { this.warehouses.set(w); this.loading.set(false); this.error.set(false); },
+      error: () => { this.loading.set(false); this.error.set(true); },
+    });
   }
 
   addItem() {

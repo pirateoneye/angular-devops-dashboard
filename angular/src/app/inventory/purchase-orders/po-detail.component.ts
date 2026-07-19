@@ -13,6 +13,8 @@ import { PurchaseOrder, PurchaseOrderStatus } from '../shared/inventory.models';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { EmptyStateComponent } from '../../shared/component/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../shared/component/error-state/error-state.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,6 +31,8 @@ import { FormsModule } from '@angular/forms';
     MatChipsModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    EmptyStateComponent,
+    ErrorStateComponent,
     MatFormFieldModule,
     MatInputModule,
   ],
@@ -37,6 +41,8 @@ import { FormsModule } from '@angular/forms';
       <a routerLink="/inventory/purchase-orders" class="back">← Kembali</a>
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
+      } @else if (error()) {
+        <omp-error-state message="Gagal memuat detail pesanan." />
       } @else if (po()) {
         <mat-card class="po-header">
           <mat-card-header
@@ -158,6 +164,7 @@ export class PoDetailComponent {
   private snack = inject(MatSnackBar);
   po = signal<PurchaseOrder | null>(null);
   loading = signal(true);
+  error = signal(false);
   receiveQty: Record<number, number> = {};
   itemCols = ['sku', 'product', 'ordered', 'received', 'unitCost', 'totalCost'];
 
@@ -166,9 +173,10 @@ export class PoDetailComponent {
       next: (p) => {
         this.po.set(p);
         this.loading.set(false);
+        this.error.set(false);
         p.items.forEach((i) => (this.receiveQty[i.id] = 0));
       },
-      error: () => this.loading.set(false),
+      error: () => { this.loading.set(false); this.error.set(true); },
     });
   }
 

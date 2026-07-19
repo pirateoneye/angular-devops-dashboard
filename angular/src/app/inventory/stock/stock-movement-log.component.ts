@@ -10,6 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { InventoryService } from '../shared/inventory.service';
 import { StockMovement } from '../shared/inventory.models';
+import { EmptyStateComponent } from '../../shared/component/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../shared/component/error-state/error-state.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,6 +27,8 @@ import { StockMovement } from '../shared/inventory.models';
     MatProgressSpinnerModule,
     MatFormFieldModule,
     MatSelectModule,
+    EmptyStateComponent,
+    ErrorStateComponent,
   ],
   template: `
     <div class="inv-page">
@@ -32,8 +36,10 @@ import { StockMovement } from '../shared/inventory.models';
       <h2>Riwayat Pergerakan</h2>
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
+      } @else if (error()) {
+        <omp-error-state message="Gagal memuat pergerakan." />
       } @else if (data().length === 0) {
-        <p class="empty">Belum ada pergerakan tercatat.</p>
+        <omp-empty-state message="Belum ada pergerakan tercatat." icon="swap_horiz" />
       } @else {
         <table mat-table [dataSource]="data()" class="mat-elevation-z1">
           <ng-container matColumnDef="time"
@@ -104,6 +110,7 @@ export class StockMovementLogComponent implements OnInit {
   data = signal<StockMovement[]>([]);
   total = signal(0);
   loading = signal(true);
+  error = signal(false);
   columns = ['time', 'sku', 'product', 'type', 'qty', 'wh', 'ref', 'notes'];
 
   ngOnInit() {
@@ -116,8 +123,12 @@ export class StockMovementLogComponent implements OnInit {
         this.data.set(r.content);
         this.total.set(r.totalElements);
         this.loading.set(false);
+        this.error.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
     });
   }
   onPage(e: PageEvent) {

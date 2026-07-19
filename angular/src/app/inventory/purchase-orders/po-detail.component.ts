@@ -150,35 +150,7 @@ import { FormsModule } from '@angular/forms';
       }
     </div>
   `,
-  styles: [
-    `
-      .inv-page {
-        padding: 24px;
-      }
-      .back {
-        color: #1976d2;
-        text-decoration: none;
-        display: inline-block;
-        margin-bottom: 16px;
-      }
-      .info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin: 16px 0;
-      }
-      .actions {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        align-items: center;
-        margin-top: 16px;
-      }
-      table {
-        width: 100%;
-      }
-    `,
-  ],
+  styleUrls: ['./po-detail.component.css'],
 })
 export class PoDetailComponent {
   private api = inject(InventoryService);

@@ -130,37 +130,7 @@ import { Product, Category } from '../shared/inventory.models';
       }
     </div>
   `,
-  styles: [
-    `
-      .inv-page {
-        padding: 24px;
-      }
-      .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-      }
-      .filters {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-      .empty {
-        text-align: center;
-        color: #888;
-        padding: 40px;
-      }
-      a {
-        color: #1976d2;
-        text-decoration: none;
-        cursor: pointer;
-      }
-      table {
-        width: 100%;
-      }
-    `,
-  ],
+  styleUrls: ['./product-list.component.css'],
 })
 export class ProductListComponent implements OnInit {
   private api = inject(InventoryService);

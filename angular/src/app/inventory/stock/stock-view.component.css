@@ -1,0 +1,31 @@
+.inv-page {
+  padding: 24px;
+}
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.links {
+  margin-bottom: 16px;
+}
+.links a {
+  color: var(--msv-primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 16px;
+}
+.spinner {
+  margin: 40px auto;
+}
+.empty {
+  text-align: center;
+  color: var(--msv-text-muted);
+  padding: 40px;
+}
+table {
+  width: 100%;
+}

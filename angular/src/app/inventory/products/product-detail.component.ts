@@ -143,59 +143,7 @@ import { Product, ProductVariant } from '../shared/inventory.models';
       }
     </div>
   `,
-  styles: [
-    `
-      .inv-page {
-        padding: 24px;
-      }
-      .back {
-        color: #1976d2;
-        text-decoration: none;
-        display: inline-block;
-        margin-bottom: 16px;
-      }
-      .product-info {
-        margin-bottom: 24px;
-      }
-      .info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin: 16px 0;
-      }
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-      }
-      .swatch {
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        vertical-align: middle;
-        margin-right: 4px;
-        border: 1px solid #ccc;
-      }
-      .low {
-        color: #f57c00;
-        font-weight: bold;
-      }
-      .out {
-        color: #f44336;
-        font-weight: bold;
-      }
-      .empty {
-        text-align: center;
-        color: #888;
-        padding: 40px;
-      }
-      table {
-        width: 100%;
-      }
-    `,
-  ],
+  styleUrls: ['./product-detail.component.css'],
 })
 export class ProductDetailComponent {
   private api = inject(InventoryService);

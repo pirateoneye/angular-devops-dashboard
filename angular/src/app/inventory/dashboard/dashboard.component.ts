@@ -109,41 +109,7 @@ import { DashboardStats } from '../shared/inventory.models';
       }
     </div>
   `,
-  styles: [
-    `
-      .inv-page {
-        padding: 24px;
-      }
-      .stats-row {
-        display: flex;
-        gap: 16px;
-        flex-wrap: wrap;
-        margin-bottom: 24px;
-      }
-      .stat-card {
-        flex: 1;
-        min-width: 150px;
-        padding: 16px;
-        text-align: center;
-      }
-      .stat-card strong {
-        display: block;
-        font-size: 28px;
-        margin: 8px 0;
-      }
-      .stat-card mat-icon {
-        font-size: 28px;
-        width: 28px;
-        height: 28px;
-      }
-      .stat-card.warn {
-        border-left: 4px solid #f44336;
-      }
-      table {
-        width: 100%;
-      }
-    `,
-  ],
+  styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
   private api = inject(InventoryService);

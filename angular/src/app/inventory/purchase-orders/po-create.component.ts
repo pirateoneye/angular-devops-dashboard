@@ -149,22 +149,7 @@ interface LineItem {
       }
     </div>
   `,
-  styles: [
-    `
-      .inv-page {
-        padding: 24px;
-      }
-      .back {
-        color: #1976d2;
-        text-decoration: none;
-        display: inline-block;
-        margin-bottom: 16px;
-      }
-      table {
-        width: 100%;
-      }
-    `,
-  ],
+  styleUrls: ['./po-create.component.css'],
 })
 export class PoCreateComponent implements OnInit {
   private api = inject(InventoryService);

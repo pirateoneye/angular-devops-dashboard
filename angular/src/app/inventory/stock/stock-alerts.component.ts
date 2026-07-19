@@ -86,27 +86,7 @@ import { Alert } from '../shared/inventory.models';
       }
     </div>
   `,
-  styles: [
-    `
-      .inv-page {
-        padding: 24px;
-      }
-      .back {
-        color: #1976d2;
-        text-decoration: none;
-        display: inline-block;
-        margin-bottom: 16px;
-      }
-      .empty {
-        text-align: center;
-        color: #888;
-        padding: 40px;
-      }
-      table {
-        width: 100%;
-      }
-    `,
-  ],
+  styleUrls: ['./stock-alerts.component.css'],
 })
 export class StockAlertsComponent implements OnInit {
   private api = inject(InventoryService);

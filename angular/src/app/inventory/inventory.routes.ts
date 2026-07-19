@@ -70,4 +70,5 @@ export const INVENTORY_ROUTES: Routes = [
         (m) => m.StockAlertsComponent,
       ),
   },
+  { path: '**', redirectTo: 'dashboard', pathMatch: 'full' },
 ];

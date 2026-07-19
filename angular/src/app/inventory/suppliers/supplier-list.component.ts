@@ -94,27 +94,7 @@ import { Supplier } from '../shared/inventory.models';
       }
     </div>
   `,
-  styles: [
-    `
-      .inv-page {
-        padding: 24px;
-      }
-      .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-      }
-      .empty {
-        text-align: center;
-        color: #888;
-        padding: 40px;
-      }
-      table {
-        width: 100%;
-      }
-    `,
-  ],
+  styleUrls: ['./supplier-list.component.css'],
 })
 export class SupplierListComponent implements OnInit {
   private api = inject(InventoryService);

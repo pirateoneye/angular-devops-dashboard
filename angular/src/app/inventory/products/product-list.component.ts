@@ -16,7 +16,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InventoryService } from '../shared/inventory.service';
 import { ActivityService } from '../../shared/service/activity.service';
-import { Product, Category } from '../shared/inventory.models';
+import { Product, Category, ProductQuery } from '../shared/inventory.models';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -156,7 +156,7 @@ export class ProductListComponent implements OnInit {
 
   load(page = 0) {
     this.loading.set(true);
-    const params: any = { page, size: 20 };
+    const params: ProductQuery = { page, size: 20 };
     if (this.search) params.q = this.search;
     if (this.filterCategory) params.categoryId = this.filterCategory;
     this.api.getProducts(params).subscribe({

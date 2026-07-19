@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InventoryService } from '../shared/inventory.service';
+import { ActivityService } from '../../shared/service/activity.service';
 import { Supplier } from '../shared/inventory.models';
 import { EmptyStateComponent } from '../../shared/component/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../shared/component/error-state/error-state.component';
@@ -106,6 +107,7 @@ export class SupplierListComponent implements OnInit {
   private readonly api = inject(InventoryService);
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
+  private readonly feed = inject(ActivityService);
   data = signal<Supplier[]>([]);
   loading = signal(true);
   error = signal(false);
@@ -143,16 +145,19 @@ export class SupplierListComponent implements OnInit {
             : this.api.createSupplier(r);
           req.subscribe({
             next: () => {
+              this.feed.log('inventory', supplier ? `Pemasok diperbarui: ${supplier.code}` : `Pemasok dibuat`, 'ok');
               this.load();
               this.snack.open(supplier ? 'Diperbarui' : 'Dibuat', 'OK', {
                 duration: 3000,
               });
             },
-            error: (e) =>
+            error: (e) => {
+              this.feed.log('inventory', `Gagal menyimpan pemasok: ${e.error?.message || 'Galat'}`, 'err');
               this.snack.open(e.error?.message || 'Galat', 'OK', {
                 duration: 5000,
-              }),
-          });
+              })
+            },
+        });
         });
       },
     );

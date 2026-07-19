@@ -15,6 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InventoryService } from '../shared/inventory.service';
+import { ActivityService } from '../../shared/service/activity.service';
 import { Product, Category } from '../shared/inventory.models';
 
 @Component({
@@ -135,6 +136,7 @@ import { Product, Category } from '../shared/inventory.models';
 export class ProductListComponent implements OnInit {
   private readonly api = inject(InventoryService);
   private readonly dialog = inject(MatDialog);
+  private readonly feed = inject(ActivityService);
   private readonly snack = inject(MatSnackBar);
   private readonly router = inject(Router);
 
@@ -184,14 +186,17 @@ export class ProductListComponent implements OnInit {
       ref.afterClosed().subscribe((result) => {
         if (result) {
           this.api.createProduct(result).subscribe({
-            next: () => {
+            next: (p) => {
               this.load();
               this.snack.open('Produk dibuat', 'OK', { duration: 3000 });
+              this.feed.log('inventory', `Produk dibuat: ${p.name}`, 'ok');
             },
-            error: (err) =>
+            error: (err) => {
               this.snack.open(err.error?.message || 'Galat', 'OK', {
                 duration: 5000,
-              }),
+              });
+              this.feed.log('inventory', `Gagal membuat produk: ${err.error?.message || 'Galat'}`, 'err');
+            },
           });
         }
       });

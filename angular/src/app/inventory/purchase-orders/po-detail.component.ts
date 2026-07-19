@@ -9,6 +9,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InventoryService } from '../shared/inventory.service';
+import { ActivityService } from '../../shared/service/activity.service';
 import { PurchaseOrder, PurchaseOrderStatus } from '../shared/inventory.models';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -162,6 +163,7 @@ export class PoDetailComponent {
   private readonly api = inject(InventoryService);
   private readonly route = inject(ActivatedRoute);
   private readonly snack = inject(MatSnackBar);
+  private readonly feed = inject(ActivityService);
   po = signal<PurchaseOrder | null>(null);
   loading = signal(true);
   error = signal(false);
@@ -197,9 +199,12 @@ export class PoDetailComponent {
       next: (p) => {
         this.po.set(p);
         this.snack.open('Status diperbarui', 'OK', { duration: 3000 });
+        this.feed.log('inventory', `Status pesanan diperbarui: ${p.orderNumber} -> ${p.status}`, 'info');
       },
-      error: (e) =>
-        this.snack.open(e.error?.message || 'Galat', 'OK', { duration: 5000 }),
+      error: (e) => {
+        this.snack.open(e.error?.message || 'Galat', 'OK', { duration: 5000 });
+        this.feed.log('inventory', `Gagal memperbarui status pesanan: ${e.error?.message || 'Galat'}`, 'err');
+      },
     });
   }
 
@@ -212,9 +217,12 @@ export class PoDetailComponent {
       next: (p) => {
         this.po.set(p);
         this.snack.open('Item diterima', 'OK', { duration: 3000 });
+        this.feed.log('inventory', `Item diterima: ${p.orderNumber}`, 'ok');
       },
-      error: (e) =>
-        this.snack.open(e.error?.message || 'Galat', 'OK', { duration: 5000 }),
+      error: (e) => {
+        this.snack.open(e.error?.message || 'Galat', 'OK', { duration: 5000 });
+        this.feed.log('inventory', `Gagal menerima item: ${e.error?.message || 'Galat'}`, 'err');
+      },
     });
   }
 
@@ -223,9 +231,12 @@ export class PoDetailComponent {
       next: () => {
         this.po()!.status = 'CANCELLED';
         this.snack.open('Pesanan pembelian dibatalkan', 'OK', { duration: 3000 });
+        this.feed.log('inventory', `Pesanan dibatalkan: ${this.po()!.orderNumber}`, 'warn');
       },
-      error: (e) =>
-        this.snack.open(e.error?.message || 'Galat', 'OK', { duration: 5000 }),
+      error: (e) => {
+        this.snack.open(e.error?.message || 'Galat', 'OK', { duration: 5000 });
+        this.feed.log('inventory', `Gagal membatalkan pesanan: ${e.error?.message || 'Galat'}`, 'err');
+      },
     });
   }
 }

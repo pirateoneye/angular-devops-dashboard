@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { InventoryService } from '../shared/inventory.service';
+import { ActivityService } from '../../shared/service/activity.service';
 import { EmptyStateComponent } from '../../shared/component/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../shared/component/error-state/error-state.component';
 import { Supplier, Warehouse } from '../shared/inventory.models';
@@ -167,6 +168,7 @@ export class PoCreateComponent implements OnInit {
   private readonly api = inject(InventoryService);
   private readonly router = inject(Router);
   private readonly snack = inject(MatSnackBar);
+  private readonly feed = inject(ActivityService);
   loading = signal(true);
   error = signal(false);
   suppliers = signal<Supplier[]>([]);
@@ -251,11 +253,14 @@ export class PoCreateComponent implements OnInit {
         next: (p) => {
           this.router.navigate(['/inventory/purchase-orders', p.id]);
           this.snack.open('Pesanan pembelian dibuat', 'OK', { duration: 3000 });
+          this.feed.log('inventory', `Pesanan pembelian dibuat: ${p.orderNumber}`, 'ok');
         },
-        error: (e) =>
+        error: (e) => {
           this.snack.open(e.error?.message || 'Galat', 'OK', {
             duration: 5000,
-          }),
+          });
+          this.feed.log('inventory', `Gagal membuat pesanan pembelian: ${e.error?.message || 'Galat'}`, 'err');
+        },
       });
   }
 }

@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { InventoryService } from '../shared/inventory.service';
+import { ActivityService } from '../../shared/service/activity.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,6 +56,7 @@ import { InventoryService } from '../shared/inventory.service';
 export class StockTransferDialogComponent {
   private readonly api = inject(InventoryService);
   private readonly snack = inject(MatSnackBar);
+  private readonly feed = inject(ActivityService);
   f = new FormBuilder().group({
     variantId: [null, Validators.required],
     sourceWarehouseId: [null, Validators.required],
@@ -76,13 +78,16 @@ export class StockTransferDialogComponent {
       })
       .subscribe({
         next: () => {
+          this.feed.log('inventory', `Stok dipindahkan: ${variantId} dari ${sourceWarehouseId} ke ${destWarehouseId}`, 'ok');
           this.snack.open('Stok dipindahkan', 'OK', { duration: 3000 });
           this.ref.close();
         },
-        error: (e) =>
+        error: (e) => {
+          this.feed.log('inventory', `Gagal memindahkan stok: ${e.error?.message || 'Galat'}`, 'err');
           this.snack.open(e.error?.message || 'Galat', 'OK', {
             duration: 5000,
-          }),
+          })
+        },
       });
   }
   close() {

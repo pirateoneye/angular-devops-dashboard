@@ -10,6 +10,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InventoryService } from '../shared/inventory.service';
+import { ActivityService } from '../../shared/service/activity.service';
 import { Product, ProductVariant } from '../shared/inventory.models';
 
 @Component({
@@ -149,6 +150,7 @@ export class ProductDetailComponent {
   private readonly api = inject(InventoryService);
   private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
+  private readonly feed = inject(ActivityService);
   private readonly snack = inject(MatSnackBar);
 
   product = signal<Product | null>(null);
@@ -182,14 +184,17 @@ export class ProductDetailComponent {
       ref.afterClosed().subscribe((result) => {
         if (result) {
           this.api.createVariant(this.product()!.id, result).subscribe({
-            next: () => {
+            next: (v) => {
               this.refreshVariants();
               this.snack.open('Varian ditambahkan', 'OK', { duration: 3000 });
+              this.feed.log('inventory', `Varian ditambahkan: ${v.sku || v.color}`, 'ok');
             },
-            error: (err) =>
+            error: (err) => {
               this.snack.open(err.error?.message || 'Galat', 'OK', {
                 duration: 5000,
-              }),
+              });
+              this.feed.log('inventory', `Gagal menambahkan varian: ${err.error?.message || 'Galat'}`, 'err');
+            },
           });
         }
       });

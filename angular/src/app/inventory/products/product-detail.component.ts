@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InventoryService } from '../shared/inventory.service';
 import { ActivityService } from '../../shared/service/activity.service';
 import { Product, ProductVariant } from '../shared/inventory.models';
+import { ErrorStateComponent } from '../../shared/component/error-state/error-state.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +29,7 @@ import { Product, ProductVariant } from '../shared/inventory.models';
     MatDialogModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    ErrorStateComponent,
   ],
   template: `
     <div class="inv-page">
@@ -35,6 +37,8 @@ import { Product, ProductVariant } from '../shared/inventory.models';
 
       @if (loading()) {
         <mat-spinner diameter="40" style="margin:40px auto" />
+      } @else if (error()) {
+        <omp-error-state message="Gagal memuat detail produk." />
       } @else if (product()) {
         <mat-card class="product-info">
           <mat-card-header
@@ -156,6 +160,7 @@ export class ProductDetailComponent {
   product = signal<Product | null>(null);
   variants = signal<ProductVariant[]>([]);
   loading = signal(true);
+  error = signal(false);
   varColumns = [
     'size',
     'color',
@@ -172,8 +177,12 @@ export class ProductDetailComponent {
       next: (p) => {
         this.product.set(p);
         this.loading.set(false);
+        this.error.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.error.set(true);
+      },
     });
     this.api.getVariants(id).subscribe((v) => this.variants.set(v));
   }

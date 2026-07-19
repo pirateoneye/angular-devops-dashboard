@@ -164,9 +164,9 @@ interface LineItem {
   styleUrls: ['./po-create.component.css'],
 })
 export class PoCreateComponent implements OnInit {
-  private api = inject(InventoryService);
-  private router = inject(Router);
-  private snack = inject(MatSnackBar);
+  private readonly api = inject(InventoryService);
+  private readonly router = inject(Router);
+  private readonly snack = inject(MatSnackBar);
   loading = signal(true);
   error = signal(false);
   suppliers = signal<Supplier[]>([]);

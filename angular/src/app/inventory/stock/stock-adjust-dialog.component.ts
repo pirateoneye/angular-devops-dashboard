@@ -49,8 +49,8 @@ import { InventoryService } from '../shared/inventory.service';
   `,
 })
 export class StockAdjustDialogComponent {
-  private api = inject(InventoryService);
-  private snack = inject(MatSnackBar);
+  private readonly api = inject(InventoryService);
+  private readonly snack = inject(MatSnackBar);
   f = new FormBuilder().group({
     variantId: [null, Validators.required],
     warehouseId: [null, Validators.required],

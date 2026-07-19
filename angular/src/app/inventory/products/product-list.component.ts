@@ -133,10 +133,10 @@ import { Product, Category } from '../shared/inventory.models';
   styleUrls: ['./product-list.component.css'],
 })
 export class ProductListComponent implements OnInit {
-  private api = inject(InventoryService);
-  private dialog = inject(MatDialog);
-  private snack = inject(MatSnackBar);
-  private router = inject(Router);
+  private readonly api = inject(InventoryService);
+  private readonly dialog = inject(MatDialog);
+  private readonly snack = inject(MatSnackBar);
+  private readonly router = inject(Router);
 
   data = signal<Product[]>([]);
   total = signal(0);

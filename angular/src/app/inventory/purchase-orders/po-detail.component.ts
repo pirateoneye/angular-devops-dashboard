@@ -159,9 +159,9 @@ import { ErrorStateComponent } from '../../shared/component/error-state/error-st
   styleUrls: ['./po-detail.component.css'],
 })
 export class PoDetailComponent {
-  private api = inject(InventoryService);
-  private route = inject(ActivatedRoute);
-  private snack = inject(MatSnackBar);
+  private readonly api = inject(InventoryService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly snack = inject(MatSnackBar);
   po = signal<PurchaseOrder | null>(null);
   loading = signal(true);
   error = signal(false);

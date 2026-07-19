@@ -137,7 +137,7 @@ const MOCK_STOCK: StockRow[] = [
   styleUrls: ['./stock-view.component.css'],
 })
 export class StockViewComponent implements OnInit {
-  private dialog = inject(MatDialog);
+  private readonly dialog = inject(MatDialog);
   rows = signal<StockRow[]>([]);
   loading = signal(true);
   columns = ['sku', 'productName', 'variant', 'warehouse', 'quantity'];

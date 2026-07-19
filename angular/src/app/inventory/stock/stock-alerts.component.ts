@@ -95,7 +95,7 @@ import { Alert } from '../shared/inventory.models';
   styleUrls: ['./stock-alerts.component.css'],
 })
 export class StockAlertsComponent implements OnInit {
-  private api = inject(InventoryService);
+  private readonly api = inject(InventoryService);
   alerts = signal<Alert[]>([]);
   loading = signal(true);
   error = signal(false);

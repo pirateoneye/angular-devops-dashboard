@@ -114,7 +114,7 @@ import { DashboardStats } from '../shared/inventory.models';
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
-  private api = inject(InventoryService);
+  private readonly api = inject(InventoryService);
   stats = signal<DashboardStats | null>(null);
   loading = signal(true);
   error = signal(false);

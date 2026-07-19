@@ -103,9 +103,9 @@ import { ErrorStateComponent } from '../../shared/component/error-state/error-st
   styleUrls: ['./supplier-list.component.css'],
 })
 export class SupplierListComponent implements OnInit {
-  private api = inject(InventoryService);
-  private dialog = inject(MatDialog);
-  private snack = inject(MatSnackBar);
+  private readonly api = inject(InventoryService);
+  private readonly dialog = inject(MatDialog);
+  private readonly snack = inject(MatSnackBar);
   data = signal<Supplier[]>([]);
   loading = signal(true);
   error = signal(false);

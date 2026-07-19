@@ -106,7 +106,7 @@ import { ErrorStateComponent } from '../../shared/component/error-state/error-st
   styleUrls: ['./stock-movement-log.component.css'],
 })
 export class StockMovementLogComponent implements OnInit {
-  private api = inject(InventoryService);
+  private readonly api = inject(InventoryService);
   data = signal<StockMovement[]>([]);
   total = signal(0);
   loading = signal(true);

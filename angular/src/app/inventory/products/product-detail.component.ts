@@ -146,10 +146,10 @@ import { Product, ProductVariant } from '../shared/inventory.models';
   styleUrls: ['./product-detail.component.css'],
 })
 export class ProductDetailComponent {
-  private api = inject(InventoryService);
-  private route = inject(ActivatedRoute);
-  private dialog = inject(MatDialog);
-  private snack = inject(MatSnackBar);
+  private readonly api = inject(InventoryService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly dialog = inject(MatDialog);
+  private readonly snack = inject(MatSnackBar);
 
   product = signal<Product | null>(null);
   variants = signal<ProductVariant[]>([]);

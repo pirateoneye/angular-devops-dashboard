@@ -109,7 +109,7 @@ import { PurchaseOrder } from '../shared/inventory.models';
   styleUrls: ['./po-list.component.css'],
 })
 export class PoListComponent implements OnInit {
-  private api = inject(InventoryService);
+  private readonly api = inject(InventoryService);
   data = signal<PurchaseOrder[]>([]);
   total = signal(0);
   loading = signal(true);

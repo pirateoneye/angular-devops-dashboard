@@ -8,7 +8,7 @@ import {
   SslType,
   Encoding,
   OutputFormat,
-} from './ssl-converter.component';
+} from './ssl-converter.logic';
 import { KEYUTIL, KJUR } from 'jsrsasign';
 
 /* ------------------------------------------------------------------ */

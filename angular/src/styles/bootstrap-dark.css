@@ -1,0 +1,29 @@
+/* ===== Bootstrap dropdown / form-control dark-mode overrides ===== */
+[data-theme="dark"] .dropdown-menu {
+  background-color: var(--msv-surface);
+  border-color: var(--msv-border);
+  color: var(--msv-text);
+}
+[data-theme="dark"] .dropdown-item {
+  color: var(--msv-text);
+}
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus {
+  background-color: var(--msv-accent-bg);
+  color: var(--msv-accent-text);
+}
+[data-theme="dark"] .dropdown-divider {
+  border-color: var(--msv-border);
+}
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background-color: var(--msv-surface);
+  color: var(--msv-text);
+  border-color: var(--msv-input-border);
+}
+[data-theme="dark"] .form-control::placeholder {
+  color: var(--msv-text-muted);
+}
+[data-theme="dark"] .table {
+  color: var(--msv-text);
+}

@@ -7,7 +7,7 @@ describe('MsvStatusBadgeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvStatusBadgeComponent],
+      imports: [MsvStatusBadgeComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvStatusBadgeComponent);

@@ -14,27 +14,30 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ValidatorType } from '../interfaces';
 import { MsvValidatorHelper } from '../msv-validator.helper';
 import { MSV_FORMS_CONFIG, MsvFormsConfig } from '../msv-forms.config';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'msv-textarea',
+  imports: [CommonModule, FormsModule],
   templateUrl: './msv-textarea.component.html',
   styleUrls: ['./msv-textarea.component.css'],
   providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => MsvTextareaComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => MsvTextareaComponent),
-      multi: true,
-    },
-  ],
-})
+  {
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => MsvTextareaComponent),
+    multi: true,
+  },
+  {
+    provide: NG_VALIDATORS,
+    useExisting: forwardRef(() => MsvTextareaComponent),
+    multi: true,
+  },
+],})
 export class MsvTextareaComponent
   implements ControlValueAccessor, Validator, OnInit
 {

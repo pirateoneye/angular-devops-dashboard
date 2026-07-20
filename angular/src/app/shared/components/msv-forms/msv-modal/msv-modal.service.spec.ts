@@ -17,8 +17,7 @@ describe('MsvModalService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [OverlayModule, CommonModule],
-      declarations: [MsvModalComponent],
+      imports: [OverlayModule, CommonModule, MsvModalComponent],
       providers: [MsvModalService],
     });
     service = TestBed.inject(MsvModalService);

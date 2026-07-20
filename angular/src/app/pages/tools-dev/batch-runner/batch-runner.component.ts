@@ -16,14 +16,13 @@ import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ErrorStateComponent } from '../../../shared/component/error-state/error-state.component';
-import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule, FormsModule, RouterModule, MatIconModule, MatProgressSpinnerModule,
-    MsvFormsModule, ErrorStateComponent,
+    ErrorStateComponent,
   ],
   selector: 'msv-batch-runner',
   templateUrl: './batch-runner.component.html',

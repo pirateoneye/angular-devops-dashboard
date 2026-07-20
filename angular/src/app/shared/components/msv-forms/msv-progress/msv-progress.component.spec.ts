@@ -10,7 +10,7 @@ describe('MsvProgressComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvProgressComponent],
+      imports: [MsvProgressComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvProgressComponent);

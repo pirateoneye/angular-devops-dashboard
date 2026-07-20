@@ -27,13 +27,8 @@ describe('MsvMenuTriggerDirective', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        MsvMenuTriggerDirective,
-        MsvMenuComponent,
-        MsvMenuItemComponent,
-        TestTriggerHostComponent
-      ],
-      imports: [OverlayModule]
+      declarations: [TestTriggerHostComponent],
+      imports: [OverlayModule, MsvMenuTriggerDirective, MsvMenuComponent, MsvMenuItemComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestTriggerHostComponent);

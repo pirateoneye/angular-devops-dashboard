@@ -1,0 +1,41 @@
+/* ===== Material dark-mode surface fixes (for the prebuilt indigo-pink theme) ===== */
+[data-theme="dark"] .mat-mdc-card,
+[data-theme="dark"] .mat-mdc-dialog-surface,
+[data-theme="dark"] .mat-mdc-menu-panel,
+[data-theme="dark"] .mat-mdc-autocomplete-panel,
+[data-theme="dark"] .mat-mdc-select-panel,
+[data-theme="dark"] .cdk-overlay-pane .mat-mdc-select-panel {
+  background-color: var(--msv-surface) !important;
+  color: var(--msv-text) !important;
+}
+[data-theme="dark"] .mat-mdc-snack-bar-container {
+  background-color: var(--msv-surface-2) !important;
+  color: var(--msv-text) !important;
+}
+[data-theme="dark"] .mat-mdc-form-field input,
+[data-theme="dark"] .mat-mdc-form-field textarea {
+  color: var(--msv-text);
+}
+[data-theme="dark"] .mat-mdc-form-field-subscript-wrapper,
+[data-theme="dark"] .mat-mdc-form-field-hint {
+  color: var(--msv-text-muted);
+}
+[data-theme="dark"] .mat-mdc-paginator {
+  background-color: var(--msv-surface);
+  color: var(--msv-text);
+}
+[data-theme="dark"] .mat-mdc-table {
+  background-color: var(--msv-surface);
+}
+[data-theme="dark"] .mat-mdc-table .mdc-data-table__header-row,
+[data-theme="dark"] .mat-mdc-table .mat-mdc-header-row {
+  background-color: var(--msv-surface-2);
+}
+[data-theme="dark"] .mat-mdc-table .mat-mdc-row:hover {
+  background-color: var(--msv-surface-2);
+}
+[data-theme="dark"] .mdc-text-field--outlined .mdc-notched-outline__leading,
+[data-theme="dark"] .mdc-text-field--outlined .mdc-notched-outline__notch,
+[data-theme="dark"] .mdc-text-field--outlined .mdc-notched-outline__trailing {
+  border-color: var(--msv-input-border);
+}

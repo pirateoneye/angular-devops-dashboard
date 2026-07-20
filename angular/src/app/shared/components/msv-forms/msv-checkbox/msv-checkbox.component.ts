@@ -14,27 +14,30 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ValidatorType } from '../interfaces';
 import { MsvValidatorHelper } from '../msv-validator.helper';
 import { MSV_FORMS_CONFIG, MsvFormsConfig } from '../msv-forms.config';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'msv-checkbox',
+  imports: [CommonModule, FormsModule],
   templateUrl: './msv-checkbox.component.html',
   styleUrls: ['./msv-checkbox.component.css'],
   providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => MsvCheckboxComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => MsvCheckboxComponent),
-      multi: true,
-    },
-  ],
-})
+  {
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => MsvCheckboxComponent),
+    multi: true,
+  },
+  {
+    provide: NG_VALIDATORS,
+    useExisting: forwardRef(() => MsvCheckboxComponent),
+    multi: true,
+  },
+],})
 export class MsvCheckboxComponent
   implements ControlValueAccessor, Validator, OnInit
 {

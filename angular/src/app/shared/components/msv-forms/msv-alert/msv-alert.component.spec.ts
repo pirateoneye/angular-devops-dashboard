@@ -7,7 +7,7 @@ describe('MsvAlertComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvAlertComponent],
+      imports: [MsvAlertComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvAlertComponent);

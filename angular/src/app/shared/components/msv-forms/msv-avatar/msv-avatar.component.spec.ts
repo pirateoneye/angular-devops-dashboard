@@ -7,7 +7,7 @@ describe('MsvAvatarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvAvatarComponent],
+      imports: [MsvAvatarComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvAvatarComponent);

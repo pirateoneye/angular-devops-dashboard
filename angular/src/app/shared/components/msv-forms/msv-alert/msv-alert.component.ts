@@ -1,9 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
+  standalone: true,
   selector: 'msv-alert',
+  imports: [],
   templateUrl: './msv-alert.component.html',
-  styleUrls: ['./msv-alert.component.css']
+  styleUrls: ['./msv-alert.component.css'],
 })
 export class MsvAlertComponent {
   @Input() type: 'info' | 'success' | 'warning' | 'error' = 'info';

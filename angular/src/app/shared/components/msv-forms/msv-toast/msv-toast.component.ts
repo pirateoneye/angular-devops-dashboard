@@ -9,7 +9,9 @@ import {
 import { Toast } from './msv-toast.service';
 
 @Component({
+  standalone: true,
   selector: 'msv-toast',
+  imports: [],
   templateUrl: './msv-toast.component.html',
   styleUrls: ['./msv-toast.component.css'],
 })

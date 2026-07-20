@@ -14,27 +14,33 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ValidatorType } from '../interfaces';
 import { MsvValidatorHelper } from '../msv-validator.helper';
 import { MSV_FORMS_CONFIG, MsvFormsConfig } from '../msv-forms.config';
+import { CommonModule } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
+  standalone: true,
   selector: 'msv-datepicker',
+  imports: [CommonModule, FormsModule, MatInputModule, MatDatepickerModule, MatNativeDateModule],
   templateUrl: './msv-datepicker.component.html',
   styleUrls: ['./msv-datepicker.component.css'],
   providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => MsvDatepickerComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => MsvDatepickerComponent),
-      multi: true,
-    },
-  ],
-})
+  {
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => MsvDatepickerComponent),
+    multi: true,
+  },
+  {
+    provide: NG_VALIDATORS,
+    useExisting: forwardRef(() => MsvDatepickerComponent),
+    multi: true,
+  },
+],})
 export class MsvDatepickerComponent
   implements ControlValueAccessor, Validator, OnInit
 {

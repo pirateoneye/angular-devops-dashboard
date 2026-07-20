@@ -10,7 +10,7 @@ describe('MsvAccordionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvAccordionComponent, MsvAccordionItemComponent],
+      imports: [MsvAccordionComponent, MsvAccordionItemComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvAccordionComponent);
@@ -61,12 +61,8 @@ describe('MsvAccordionComponent with items', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        MsvAccordionComponent,
-        MsvAccordionItemComponent,
-        TestHostComponent,
-      ],
-    }).compileComponents();
+      declarations: [TestHostComponent],
+      imports: [MsvAccordionComponent, MsvAccordionItemComponent]}).compileComponents();
 
     fixture = TestBed.createComponent(TestHostComponent);
     hostComponent = fixture.componentInstance;
@@ -154,7 +150,7 @@ describe('MsvAccordionItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvAccordionItemComponent],
+      imports: [MsvAccordionItemComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvAccordionItemComponent);
@@ -297,8 +293,8 @@ describe('MsvAccordionItemComponent with content', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvAccordionItemComponent, TestContentComponent],
-    }).compileComponents();
+      declarations: [TestContentComponent],
+      imports: [MsvAccordionItemComponent]}).compileComponents();
 
     fixture = TestBed.createComponent(TestContentComponent);
     fixture.detectChanges();

@@ -19,7 +19,7 @@ describe('MsvButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvButtonComponent],
+      imports: [MsvButtonComponent],
       providers: [
         { provide: MSV_FORMS_CONFIG, useValue: mockConfig }
       ]

@@ -10,33 +10,31 @@ import {
 import { MsvListItemComponent } from './msv-list-item.component';
 
 @Component({
+  standalone: true,
   selector: 'msv-list',
+  imports: [MsvListItemComponent],
   template: `
-    <div class="msv-list" [class.selectable]="selectable">
-      <ng-content></ng-content>
-    </div>
-  `,
+  <div class="msv-list" [class.selectable]="selectable">
+    <ng-content></ng-content>
+  </div>
+`,
   styles: [
     `
+      :host {
+        display: block;
+      }
+
       .msv-list {
         display: flex;
         flex-direction: column;
-        gap: 4px;
         font-family: var(--msv-font-family, 'Open Sans', sans-serif);
-        border: 1px solid var(--msv-border-color, #ced4da);
-        border-radius: var(--msv-border-radius, 5px);
-        padding: 8px;
-        background-color: #fff;
-        max-height: 400px;
-        overflow-y: auto;
       }
 
-      .msv-list.selectable {
+      .selectable .msv-list-item {
         cursor: pointer;
       }
     `,
   ],
-  standalone: false,
 })
 export class MsvListComponent implements AfterContentInit {
   @Input() selectable: boolean = false;

@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,7 +19,6 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
     FormsModule,
     RouterModule,
     MatCardModule, MatIconModule,
-    MsvFormsModule,
   ],
   selector: 'crypto',
   templateUrl: './crypto.component.html',

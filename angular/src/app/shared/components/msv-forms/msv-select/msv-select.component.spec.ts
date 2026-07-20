@@ -11,8 +11,7 @@ describe('MsvSelectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvSelectComponent],
-      imports: [FormsModule],
+      imports: [FormsModule, MsvSelectComponent],
       providers: [
         MsvValidatorHelper,
         {
@@ -121,8 +120,8 @@ describe('MsvSelectComponent - optionTemplate', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TestHostComponent, MsvSelectComponent],
-      imports: [FormsModule],
+      declarations: [TestHostComponent],
+      imports: [FormsModule, MsvSelectComponent],
       providers: [
         MsvValidatorHelper,
         {
@@ -167,8 +166,8 @@ describe('MsvSelectComponent - errorTemplate', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TestErrorHostComponent, MsvSelectComponent],
-      imports: [FormsModule],
+      declarations: [TestErrorHostComponent],
+      imports: [FormsModule, MsvSelectComponent],
       providers: [
         MsvValidatorHelper,
         {

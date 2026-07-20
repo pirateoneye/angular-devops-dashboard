@@ -8,7 +8,9 @@ import {
 } from '@angular/core';
 
 @Component({
+  standalone: true,
   selector: 'msv-list-item',
+  imports: [],
   template: `<ng-content></ng-content>`,
   styles: [
     `

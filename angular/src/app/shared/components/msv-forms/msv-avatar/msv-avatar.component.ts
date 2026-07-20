@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
+  standalone: true,
   selector: 'msv-avatar',
+  imports: [],
   templateUrl: './msv-avatar.component.html',
   styleUrls: ['./msv-avatar.component.css'],
 })

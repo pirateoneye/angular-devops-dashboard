@@ -1,0 +1,54 @@
+@media print {
+  .bg-layout,
+  .toolbox-tabs,
+  .gl-log-panel,
+  .gl-log-overlay,
+  .toasts,
+  .overlay,
+  .dns-overlay,
+  .dns-drawer,
+  .slide,
+  .nav-icon-btn,
+  .ctrl-k-hint,
+  .link-button,
+  .user-chip,
+  .gl-head-right,
+  .gl-icon-btn,
+  .copy-btn,
+  .mchip {
+    display: none !important;
+  }
+  body {
+    color: #000 !important;
+    background: #fff !important;
+    font-size: 12px;
+  }
+  .gslb {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  .card-body {
+    max-height: none !important;
+    display: block !important;
+  }
+  .mon-table,
+  .gl-table {
+    border: 1px solid #ccc !important;
+  }
+  .mon-table th,
+  .mon-table td,
+  .gl-table th,
+  .gl-table td {
+    padding: 4px 6px !important;
+    border-color: #ddd !important;
+  }
+  .card {
+    break-inside: avoid;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+  }
+  .toolbox-content {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+}

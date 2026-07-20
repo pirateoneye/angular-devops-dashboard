@@ -21,7 +21,7 @@ describe('MsvMenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvMenuComponent, MsvMenuItemComponent],
+      imports: [MsvMenuComponent, MsvMenuItemComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvMenuComponent);
@@ -50,12 +50,8 @@ describe('MsvMenuComponent with items', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        MsvMenuComponent,
-        MsvMenuItemComponent,
-        TestMenuHostComponent,
-      ],
-    }).compileComponents();
+      declarations: [TestMenuHostComponent],
+      imports: [MsvMenuComponent, MsvMenuItemComponent]}).compileComponents();
 
     fixture = TestBed.createComponent(TestMenuHostComponent);
     fixture.detectChanges();

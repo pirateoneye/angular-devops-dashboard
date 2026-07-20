@@ -30,8 +30,8 @@ describe('MsvTooltipDirective', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvTooltipDirective, MsvTooltipContainerComponent, TestComponent],
-      imports: [OverlayModule],
+      declarations: [TestComponent],
+      imports: [OverlayModule, MsvTooltipDirective, MsvTooltipContainerComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestComponent);

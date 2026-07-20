@@ -8,12 +8,14 @@ import {
   AfterContentInit,
 } from '@angular/core';
 import { MsvTabComponent } from './msv-tab.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'msv-tabs',
+  imports: [CommonModule, MsvTabComponent],
   templateUrl: './msv-tabs.component.html',
   styleUrls: ['./msv-tabs.component.css'],
-  standalone: false,
 })
 export class MsvTabsComponent implements AfterContentInit {
   @Input() selectedIndex: number = 0;

@@ -3,9 +3,12 @@ import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
 @Component({
+  standalone: true,
   selector: 'msv-toggle',
+  imports: [FormsModule],
   templateUrl: './msv-toggle.component.html',
   styleUrls: ['./msv-toggle.component.css'],
   providers: [

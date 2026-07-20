@@ -35,8 +35,8 @@ describe('MsvCheckboxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvCheckboxComponent, TestErrorTemplateComponent],
-      imports: [FormsModule],
+      declarations: [TestErrorTemplateComponent],
+      imports: [FormsModule, MsvCheckboxComponent],
       providers: [
         MsvValidatorHelper,
         { provide: MSV_FORMS_CONFIG, useValue: mockConfig }

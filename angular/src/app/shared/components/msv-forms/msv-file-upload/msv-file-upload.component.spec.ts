@@ -11,8 +11,7 @@ describe('MsvFileUploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvFileUploadComponent],
-      imports: [CommonModule, FormsModule],
+      imports: [CommonModule, FormsModule, MsvFileUploadComponent],
       providers: [
         MsvValidatorHelper,
         {

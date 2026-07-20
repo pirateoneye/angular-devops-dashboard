@@ -27,8 +27,7 @@ describe('MsvToastComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvToastComponent],
-      imports: [CommonModule],
+      imports: [CommonModule, MsvToastComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvToastComponent);

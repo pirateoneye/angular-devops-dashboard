@@ -38,8 +38,8 @@ describe('MsvNumberComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvNumberComponent, TestErrorTemplateComponent],
-      imports: [FormsModule],
+      declarations: [TestErrorTemplateComponent],
+      imports: [FormsModule, MsvNumberComponent],
       providers: [
         MsvValidatorHelper,
         { provide: MSV_FORMS_CONFIG, useValue: mockConfig }

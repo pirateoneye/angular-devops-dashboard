@@ -1,19 +1,22 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { MsvToastService, Toast, ToastPosition } from './msv-toast.service';
 import { Subscription } from 'rxjs';
+import { MsvToastComponent } from './msv-toast.component';
 
 @Component({
+  standalone: true,
   selector: 'msv-toast-container',
+  imports: [MsvToastComponent],
   template: `
-    <div [class]="'toast-container toast-position-' + position">
-      @for (toast of toasts; track toast.id) {
-        <msv-toast
-          [toast]="toast"
-          (dismissed)="onDismiss($event)"
-        ></msv-toast>
-      }
-    </div>
-  `,
+  <div [class]="'toast-container toast-position-' + position">
+    @for (toast of toasts; track toast.id) {
+      <msv-toast
+        [toast]="toast"
+        (dismissed)="onDismiss($event)"
+      ></msv-toast>
+    }
+  </div>
+`,
   styles: [
     `
       .toast-container {

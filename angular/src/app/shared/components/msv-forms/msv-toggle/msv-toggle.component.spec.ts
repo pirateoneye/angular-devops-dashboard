@@ -8,8 +8,7 @@ describe('MsvToggleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvToggleComponent],
-      imports: [FormsModule],
+      imports: [FormsModule, MsvToggleComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvToggleComponent);

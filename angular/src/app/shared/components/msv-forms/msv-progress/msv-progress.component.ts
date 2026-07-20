@@ -1,7 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'msv-progress',
+  imports: [CommonModule],
   templateUrl: './msv-progress.component.html',
   styleUrls: ['./msv-progress.component.css'],
 })

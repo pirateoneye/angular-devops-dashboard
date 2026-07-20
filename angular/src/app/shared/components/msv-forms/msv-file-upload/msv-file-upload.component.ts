@@ -16,12 +16,16 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ValidatorType } from '../interfaces';
 import { MsvValidatorHelper } from '../msv-validator.helper';
 import { MSV_FORMS_CONFIG, MsvFormsConfig } from '../msv-forms.config';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'msv-file-upload',
+  imports: [CommonModule, FormsModule],
   templateUrl: './msv-file-upload.component.html',
   styleUrls: ['./msv-file-upload.component.css'],
   providers: [

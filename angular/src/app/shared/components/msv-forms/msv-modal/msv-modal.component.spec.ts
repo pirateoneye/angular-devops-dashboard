@@ -13,8 +13,7 @@ describe('MsvModalComponent', () => {
     mockModalRef = jasmine.createSpyObj('MsvModalRef', ['close']);
 
     await TestBed.configureTestingModule({
-      declarations: [MsvModalComponent],
-      imports: [CommonModule, OverlayModule],
+      imports: [CommonModule, OverlayModule, MsvModalComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvModalComponent);

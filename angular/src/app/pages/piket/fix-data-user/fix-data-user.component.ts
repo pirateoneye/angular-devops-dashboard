@@ -29,7 +29,6 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
-import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 
@@ -42,7 +41,6 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
     ReactiveFormsModule,
     RouterModule,
     MatCardModule,
-    MsvFormsModule,
     MatSlideToggleModule,
     InfiniteScrollDirective,
   ],

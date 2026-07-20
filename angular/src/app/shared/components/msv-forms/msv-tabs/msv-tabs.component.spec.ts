@@ -31,8 +31,8 @@ describe('MsvTabsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvTabsComponent, MsvTabComponent, TestHostComponent],
-      imports: [CommonModule]
+      declarations: [TestHostComponent],
+      imports: [CommonModule, MsvTabsComponent, MsvTabComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvTabsComponent);

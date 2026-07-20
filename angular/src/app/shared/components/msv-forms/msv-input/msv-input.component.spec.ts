@@ -46,12 +46,8 @@ describe('MsvInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        MsvInputComponent,
-        TestHostComponent,
-        TestErrorTemplateComponent,
-      ],
-      imports: [FormsModule],
+      declarations: [TestHostComponent, TestErrorTemplateComponent],
+      imports: [FormsModule, MsvInputComponent],
       providers: [
         MsvValidatorHelper,
         { provide: MSV_FORMS_CONFIG, useValue: mockConfig },

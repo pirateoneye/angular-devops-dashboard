@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
+  standalone: true,
   selector: 'msv-badge',
+  imports: [],
   templateUrl: './msv-badge.component.html',
   styleUrls: ['./msv-badge.component.css'],
-  standalone: false
 })
 export class MsvBadgeComponent {
   @Input() value: number | string = 0;

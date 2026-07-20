@@ -32,12 +32,8 @@ describe('MsvCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        MsvCardComponent,
-        TestHostComponent,
-        BodyOnlyHostComponent,
-      ],
-    }).compileComponents();
+      declarations: [TestHostComponent, BodyOnlyHostComponent],
+      imports: [MsvCardComponent]}).compileComponents();
 
     fixture = TestBed.createComponent(MsvCardComponent);
     component = fixture.componentInstance;

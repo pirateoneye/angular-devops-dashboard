@@ -32,8 +32,8 @@ describe('MsvListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvListComponent, MsvListItemComponent, TestHostComponent],
-      imports: [CommonModule]
+      declarations: [TestHostComponent],
+      imports: [CommonModule, MsvListComponent, MsvListItemComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvListComponent);
@@ -274,7 +274,7 @@ describe('MsvListItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvListItemComponent]
+      imports: [MsvListItemComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvListItemComponent);

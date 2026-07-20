@@ -7,13 +7,10 @@ export interface BreadcrumbItem {
   route?: string;
 }
 
-@Component({
-  selector: 'msv-breadcrumb',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './msv-breadcrumb.component.html',
-  styleUrls: ['./msv-breadcrumb.component.css'],
-})
+@Component({standalone: true, selector: 'msv-breadcrumb',
+imports: [CommonModule, RouterModule],
+templateUrl: './msv-breadcrumb.component.html',
+styleUrls: ['./msv-breadcrumb.component.css'],})
 export class MsvBreadcrumbComponent {
   @Input() items: BreadcrumbItem[] = [];
   @Input() separator: string = '/';

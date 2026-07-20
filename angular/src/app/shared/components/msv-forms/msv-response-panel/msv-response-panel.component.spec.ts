@@ -8,7 +8,7 @@ describe('MsvResponsePanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvResponsePanelComponent, MsvStatusBadgeComponent],
+      imports: [MsvResponsePanelComponent, MsvStatusBadgeComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvResponsePanelComponent);

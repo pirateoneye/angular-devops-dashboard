@@ -14,27 +14,30 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ValidatorType, SelectOption } from '../interfaces';
 import { MsvValidatorHelper } from '../msv-validator.helper';
 import { MSV_FORMS_CONFIG, MsvFormsConfig } from '../msv-forms.config';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'msv-radio',
+  imports: [CommonModule, FormsModule],
   templateUrl: './msv-radio.component.html',
   styleUrls: ['./msv-radio.component.css'],
   providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => MsvRadioComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => MsvRadioComponent),
-      multi: true,
-    },
-  ],
-})
+  {
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => MsvRadioComponent),
+    multi: true,
+  },
+  {
+    provide: NG_VALIDATORS,
+    useExisting: forwardRef(() => MsvRadioComponent),
+    multi: true,
+  },
+],})
 export class MsvRadioComponent
   implements ControlValueAccessor, Validator, OnInit
 {

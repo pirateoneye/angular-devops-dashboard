@@ -30,7 +30,6 @@ import {
   MAGENTA_GET_PEMILIK_BY_CIS,
   MAGENTA_GET_STICKER_QRIS_BY_MID,
 } from 'src/app/core/constant/api.constant';
-import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 
@@ -43,7 +42,6 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
     ReactiveFormsModule,
     RouterModule,
     MatCardModule, MatIconModule,
-    MsvFormsModule,
     MatSlideToggleModule,
     InfiniteScrollDirective,
   ],

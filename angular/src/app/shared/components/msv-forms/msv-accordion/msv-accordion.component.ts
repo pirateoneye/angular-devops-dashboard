@@ -8,12 +8,14 @@ import {
 import { MsvAccordionItemComponent } from './msv-accordion-item.component';
 
 @Component({
+  standalone: true,
   selector: 'msv-accordion',
+  imports: [MsvAccordionItemComponent],
   template: `
-    <div class="msv-accordion">
-      <ng-content></ng-content>
-    </div>
-  `,
+  <div class="msv-accordion">
+    <ng-content></ng-content>
+  </div>
+`,
   styles: [
     `
       .msv-accordion {

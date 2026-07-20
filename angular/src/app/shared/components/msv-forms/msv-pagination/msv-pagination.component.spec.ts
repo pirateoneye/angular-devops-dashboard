@@ -20,8 +20,7 @@ describe('MsvPaginationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CommonModule],
-      declarations: [MsvPaginationComponent],
+      imports: [CommonModule, MsvPaginationComponent],
       providers: [
         { provide: MSV_FORMS_CONFIG, useValue: mockConfig }
       ]

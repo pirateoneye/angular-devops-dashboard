@@ -42,14 +42,14 @@ describe('MsvDatepickerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvDatepickerComponent, TestErrorTemplateComponent],
+      declarations: [TestErrorTemplateComponent],
       imports: [
         FormsModule,
         MatDatepickerModule,
         MatNativeDateModule,
         MatInputModule,
-        BrowserAnimationsModule
-      ],
+        BrowserAnimationsModule,
+        MsvDatepickerComponent],
       providers: [
         MsvValidatorHelper,
         { provide: MSV_FORMS_CONFIG, useValue: mockConfig }

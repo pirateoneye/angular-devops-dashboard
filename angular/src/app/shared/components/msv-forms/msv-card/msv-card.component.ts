@@ -1,7 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'msv-card',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <div class="msv-card" [ngClass]="cardClasses">
       <div class="msv-card-header">

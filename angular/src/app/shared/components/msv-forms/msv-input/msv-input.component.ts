@@ -14,27 +14,30 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ValidatorType } from '../interfaces';
 import { MsvValidatorHelper } from '../msv-validator.helper';
 import { MSV_FORMS_CONFIG, MsvFormsConfig } from '../msv-forms.config';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'msv-input',
+  imports: [CommonModule, FormsModule],
   templateUrl: './msv-input.component.html',
   styleUrls: ['./msv-input.component.css'],
   providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => MsvInputComponent),
-      multi: true,
-    },
-    {
-      provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => MsvInputComponent),
-      multi: true,
-    },
-  ],
-})
+  {
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => MsvInputComponent),
+    multi: true,
+  },
+  {
+    provide: NG_VALIDATORS,
+    useExisting: forwardRef(() => MsvInputComponent),
+    multi: true,
+  },
+],})
 export class MsvInputComponent
   implements ControlValueAccessor, Validator, OnInit
 {

@@ -7,7 +7,7 @@ describe('MsvMenuItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvMenuItemComponent]
+      imports: [MsvMenuItemComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvMenuItemComponent);

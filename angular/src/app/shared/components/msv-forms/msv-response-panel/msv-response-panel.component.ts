@@ -1,8 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { ResponseData } from '../interfaces';
+import { MsvStatusBadgeComponent } from '../msv-status-badge/msv-status-badge.component';
 
 @Component({
+  standalone: true,
   selector: 'msv-response-panel',
+  imports: [MsvStatusBadgeComponent],
   templateUrl: './msv-response-panel.component.html',
   styleUrls: ['./msv-response-panel.component.css'],
 })

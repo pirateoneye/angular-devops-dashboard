@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
+  standalone: true,
   selector: 'msv-status-badge',
+  imports: [],
   templateUrl: './msv-status-badge.component.html',
   styleUrls: ['./msv-status-badge.component.css'],
 })

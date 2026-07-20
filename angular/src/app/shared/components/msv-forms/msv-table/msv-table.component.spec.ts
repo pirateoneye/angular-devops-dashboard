@@ -21,7 +21,7 @@ describe('MsvTableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvTableComponent],
+      imports: [MsvTableComponent],
       providers: [{ provide: MSV_FORMS_CONFIG, useValue: mockConfig }],
     }).compileComponents();
 

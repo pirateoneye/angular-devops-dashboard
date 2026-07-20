@@ -35,8 +35,8 @@ describe('MsvTextareaComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvTextareaComponent, TestErrorTemplateComponent],
-      imports: [FormsModule],
+      declarations: [TestErrorTemplateComponent],
+      imports: [FormsModule, MsvTextareaComponent],
       providers: [
         MsvValidatorHelper,
         { provide: MSV_FORMS_CONFIG, useValue: mockConfig },

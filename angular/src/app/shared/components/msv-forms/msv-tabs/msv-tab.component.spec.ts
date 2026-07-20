@@ -7,7 +7,7 @@ describe('MsvTabComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvTabComponent]
+      imports: [MsvTabComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvTabComponent);

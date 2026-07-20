@@ -9,7 +9,9 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
+import { MsvSelectComponent } from '../../../shared/components/msv-forms/msv-select/msv-select.component';
+import { MsvResponsePanelComponent } from '../../../shared/components/msv-forms/msv-response-panel/msv-response-panel.component';
+import { MsvButtonComponent } from '../../../shared/components/msv-forms/msv-button/msv-button.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,7 +21,7 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
     FormsModule,
     RouterModule,
     MatCardModule, MatIconModule,
-    MsvFormsModule,
+    MsvSelectComponent, MsvResponsePanelComponent, MsvButtonComponent,
   ],
   selector: 'app-check-data',
   templateUrl: './check-data.component.html',

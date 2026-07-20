@@ -8,8 +8,7 @@ describe('MsvDividerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvDividerComponent],
-      imports: [CommonModule],
+      imports: [CommonModule, MsvDividerComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvDividerComponent);

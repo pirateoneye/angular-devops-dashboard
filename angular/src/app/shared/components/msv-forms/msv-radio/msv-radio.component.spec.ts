@@ -11,8 +11,7 @@ describe('MsvRadioComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvRadioComponent],
-      imports: [FormsModule],
+      imports: [FormsModule, MsvRadioComponent],
       providers: [
         MsvValidatorHelper,
         {
@@ -204,8 +203,8 @@ describe('MsvRadioComponent - errorTemplate', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TestErrorHostComponent, MsvRadioComponent],
-      imports: [FormsModule],
+      declarations: [TestErrorHostComponent],
+      imports: [FormsModule, MsvRadioComponent],
       providers: [
         MsvValidatorHelper,
         {

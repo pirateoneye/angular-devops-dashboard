@@ -15,34 +15,29 @@ import {
 } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 
-@Component({
-  selector: 'msv-tooltip-container',
-  template: `<div class="msv-tooltip">{{ text }}</div>`,
-  styles: [
-    `
-      .msv-tooltip {
-        background-color: #333;
-        color: white;
-        padding: 8px 12px;
-        border-radius: var(--msv-border-radius, 5px);
-        font-family: var(--msv-font-family, 'Open Sans', sans-serif);
-        font-size: 14px;
-        max-width: 250px;
-        word-wrap: break-word;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      }
-    `,
-  ],
-  standalone: false,
+@Component({standalone: true, selector: 'msv-tooltip-container',
+template: `<div class="msv-tooltip">{{ text }}</div>`,
+styles: [
+  `
+    .msv-tooltip {
+      background-color: #333;
+      color: white;
+      padding: 8px 12px;
+      border-radius: var(--msv-border-radius, 5px);
+      font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+      font-size: 14px;
+      max-width: 250px;
+      word-wrap: break-word;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+  `,
+],
 })
 export class MsvTooltipContainerComponent {
   text: string = '';
 }
 
-@Directive({
-  selector: '[msvTooltip]',
-  standalone: false,
-})
+@Directive({standalone: true, selector: '[msvTooltip]',})
 export class MsvTooltipDirective implements OnDestroy {
   @Input() msvTooltip: string = '';
   @Input() tooltipPosition: 'top' | 'bottom' | 'left' | 'right' = 'top';

@@ -18,7 +18,6 @@ import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { QuickHandleComponent } from '../../../shared/component/quick-handle/quick-handle.component';
@@ -34,7 +33,6 @@ type KeluhanListRow = KeluhanList & { dueSoon: boolean };
     ReactiveFormsModule,
     RouterModule,
     MatCardModule, MatIconModule, MatExpansionModule,
-    MsvFormsModule,
     MatSlideToggleModule,
     InfiniteScrollDirective,
     QuickHandleComponent,

@@ -1,8 +1,11 @@
 import { Component, Input, Output, EventEmitter, Inject, TemplateRef } from '@angular/core';
 import { MSV_FORMS_CONFIG, MsvFormsConfig } from '../msv-forms.config';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'msv-button',
+  imports: [CommonModule],
   templateUrl: './msv-button.component.html',
   styleUrls: ['./msv-button.component.css'],
 })

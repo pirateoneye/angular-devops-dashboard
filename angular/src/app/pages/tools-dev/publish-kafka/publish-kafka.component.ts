@@ -9,7 +9,6 @@ import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,7 +18,6 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
     FormsModule,
     RouterModule,
     MatCardModule, MatIconModule, MatProgressSpinnerModule,
-    MsvFormsModule,
   ],
   selector: 'app-publish-kafka',
   templateUrl: './publish-kafka.component.html',

@@ -10,7 +10,7 @@ describe('MsvSpinnerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvSpinnerComponent],
+      imports: [MsvSpinnerComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MsvSpinnerComponent);

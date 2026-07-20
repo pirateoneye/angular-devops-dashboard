@@ -11,8 +11,7 @@ describe('MsvCheckboxGroupComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvCheckboxGroupComponent],
-      imports: [FormsModule],
+      imports: [FormsModule, MsvCheckboxGroupComponent],
       providers: [
         MsvValidatorHelper,
         {
@@ -241,8 +240,8 @@ describe('MsvCheckboxGroupComponent - errorTemplate', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TestErrorHostComponent, MsvCheckboxGroupComponent],
-      imports: [FormsModule],
+      declarations: [TestErrorHostComponent],
+      imports: [FormsModule, MsvCheckboxGroupComponent],
       providers: [
         MsvValidatorHelper,
         {

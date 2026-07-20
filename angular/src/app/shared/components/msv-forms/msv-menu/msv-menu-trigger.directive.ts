@@ -8,9 +8,7 @@ import {
 import { Overlay, OverlayRef, ConnectedPosition } from '@angular/cdk/overlay';
 import { MsvMenuComponent } from './msv-menu.component';
 
-@Directive({
-  selector: '[msvMenuTriggerFor]',
-})
+@Directive({standalone: true, selector: '[msvMenuTriggerFor]',})
 export class MsvMenuTriggerDirective implements OnDestroy {
   @Input() msvMenuTriggerFor!: MsvMenuComponent;
 

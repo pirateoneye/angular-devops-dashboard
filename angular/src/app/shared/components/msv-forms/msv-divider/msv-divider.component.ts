@@ -1,6 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
+  standalone: true,
+  imports: [CommonModule],
   selector: 'msv-divider',
   template: `
     <div class="msv-divider" [ngClass]="dividerClasses">

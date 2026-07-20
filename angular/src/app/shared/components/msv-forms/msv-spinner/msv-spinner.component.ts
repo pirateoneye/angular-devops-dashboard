@@ -1,7 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'msv-spinner',
+  imports: [CommonModule],
   templateUrl: './msv-spinner.component.html',
   styleUrls: ['./msv-spinner.component.css'],
 })

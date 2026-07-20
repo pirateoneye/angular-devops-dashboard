@@ -10,56 +10,34 @@ import {
 import { MsvMenuItemComponent } from './msv-menu-item.component';
 
 @Component({
+  standalone: true,
   selector: 'msv-menu',
+  imports: [MsvMenuItemComponent],
   template: `
-    <div class="msv-menu-panel" role="menu">
-      <ng-content></ng-content>
-    </div>
-  `,
+  <div class="msv-menu" role="menu">
+    <ng-content></ng-content>
+  </div>
+`,
   styles: [
     `
-      /* CSS Variables */
-      :host {
-        --msv-primary-color: #144e83;
-        --msv-error-color: #dc3545;
-        --msv-success-color: #28a745;
-        --msv-warning-color: #ffc107;
-        --msv-border-color: #ced4da;
-        --msv-focus-color: #005caa;
-        --msv-font-family: 'Open Sans', sans-serif;
-        --msv-border-radius: 5px;
-        --msv-input-height: 45px;
-        --msv-input-padding: 5px 10px;
-      }
-
       :host {
         display: block;
       }
 
-      .msv-menu-panel {
-        background: white;
-        border-radius: var(--msv-border-radius);
-        box-shadow:
-          0 10px 25px -5px rgba(0, 0, 0, 0.15),
-          0 8px 10px -6px rgba(0, 0, 0, 0.1),
-          0 0 0 1px rgba(20, 78, 131, 0.08);
-        padding: 8px 0;
-        min-width: 200px;
-        max-width: 320px;
-        font-family: var(--msv-font-family);
-        animation: menuSlideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        overflow: hidden;
+      .msv-menu {
+        display: flex;
+        flex-direction: column;
+        min-width: 160px;
+        background: #ffffff;
+        border-radius: var(--msv-border-radius, 5px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        padding: 4px 0;
+        font-family: var(--msv-font-family, 'Open Sans', sans-serif);
+        outline: none;
       }
 
-      @keyframes menuSlideIn {
-        from {
-          opacity: 0;
-          transform: scale(0.95) translateY(-8px);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1) translateY(0);
-        }
+      .msv-menu:focus {
+        box-shadow: 0 0 0 2px var(--msv-focus-color, #005caa);
       }
     `,
   ],

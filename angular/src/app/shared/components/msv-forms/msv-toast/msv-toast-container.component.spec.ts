@@ -11,8 +11,7 @@ describe('MsvToastContainerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MsvToastContainerComponent, MsvToastComponent],
-      imports: [CommonModule],
+      imports: [CommonModule, MsvToastContainerComponent, MsvToastComponent],
       providers: [MsvToastService]
     }).compileComponents();
 

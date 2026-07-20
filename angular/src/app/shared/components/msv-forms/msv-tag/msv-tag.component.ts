@@ -1,13 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-@Component({
-  selector: 'msv-tag',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './msv-tag.component.html',
-  styleUrls: ['./msv-tag.component.css'],
-})
+@Component({standalone: true, selector: 'msv-tag',
+imports: [CommonModule],
+templateUrl: './msv-tag.component.html',
+styleUrls: ['./msv-tag.component.css'],})
 export class MsvTagComponent {
   @Input() color: 'primary' | 'success' | 'warning' | 'error' | 'default' = 'default';
   @Input() removable: boolean = false;

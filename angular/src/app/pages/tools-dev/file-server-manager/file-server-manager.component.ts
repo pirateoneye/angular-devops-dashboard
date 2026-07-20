@@ -15,7 +15,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 import { InputFileUploadComponent } from '../../../shared/component/form/input-file-upload/input-file-upload.component';
 
 @Component({
@@ -26,7 +25,6 @@ import { InputFileUploadComponent } from '../../../shared/component/form/input-f
     FormsModule,
     RouterModule,
     MatCardModule, MatIconModule,
-    MsvFormsModule,
     InputFileUploadComponent,
   ],
   selector: 'app-file-server-manager',

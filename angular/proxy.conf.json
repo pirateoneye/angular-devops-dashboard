@@ -1,6 +1,6 @@
 {
     "/v1": {
-        "target": "http://10.61.45.150:8081",
+        "target": "http://localhost:20129",
         "secure": false,
         "changeOrigin": true
     }

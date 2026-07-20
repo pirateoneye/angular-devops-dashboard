@@ -179,3 +179,54 @@
   text-align: center;
   color: var(--msv-text-secondary, #6c757d);
 }
+
+.action-card.danger {
+  border-color: var(--msv-error, #dc3545);
+}
+.action-card.danger:hover {
+  background: var(--msv-error-bg, rgba(220, 53, 69, 0.08));
+}
+
+.step-back {
+  background: none;
+  border: none;
+  color: var(--msv-text-muted, #6c757d);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+}
+.step-back:hover {
+  color: var(--msv-text, #212529);
+  background: var(--msv-surface-hover, #f8f9fa);
+}
+
+.danger-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--msv-error, #dc3545);
+  background: var(--msv-error-bg, rgba(220, 53, 69, 0.08));
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+.danger-note mat-icon {
+  font-size: 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.reasons {
+  display: block;
+  color: var(--msv-error, #dc3545);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+textarea.form-control {
+  font-family: inherit;
+  font-size: 0.85rem;
+  resize: vertical;
+}

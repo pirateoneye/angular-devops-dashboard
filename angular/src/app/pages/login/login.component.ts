@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+﻿import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
   redirectPath: string = '';
   loginError: string = '';
 
-  constructor(private route: ActivatedRoute) {}
+  private readonly route = inject(ActivatedRoute);
 
   ngOnInit(): void {
     this.redirectPath = this.route.snapshot.queryParams['redirect'];
@@ -30,9 +30,12 @@ export class LoginComponent implements OnInit {
       this.usernameInput == 'merchantbca' &&
       this.passwordInput == 'bcabca01'
     ) {
-      localStorage.setItem('user', 'GSIT MSE');
-      localStorage.setItem('authorized', 'true');
-
+      try {
+        localStorage.setItem('msv-user', 'GSIT MSE');
+        localStorage.setItem('msv-authorized', 'true');
+      } catch {
+        /* ignore quota / private mode */
+      }
       window.location.href = this.safeRedirectPath(this.redirectPath);
     } else {
       this.loginError = 'Username atau password salah';

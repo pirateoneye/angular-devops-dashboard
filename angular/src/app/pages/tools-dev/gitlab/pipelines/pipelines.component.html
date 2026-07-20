@@ -1,0 +1,105 @@
+<div class="gl-pipelines">
+  <div class="gl-bar">
+    <div class="gl-filter-row">
+      <input
+        class="gl-input gl-filter"
+        [ngModel]="refFilter()"
+        (ngModelChange)="refFilter.set($event)"
+        (keydown.enter)="applyRefFilter()"
+        placeholder="Filter by ref (e.g. main, develop)"
+        aria-label="Filter pipeline by ref"
+      />
+      @if (refFilter()) {
+        <button class="gl-btn-ghost sm" (click)="clearRefFilter()" aria-label="Clear filter">
+          <mat-icon>clear</mat-icon>
+        </button>
+      }
+    </div>
+    <span class="gl-mute">{{ rows().length }} project{{ rows().length !== 1 ? 's' : '' }}</span>
+    <button class="gl-btn-ghost" (click)="loadPipelines()" [disabled]="loading()">
+      <mat-icon>refresh</mat-icon> Refresh
+    </button>
+  </div>
+
+  @if (!hasSelection()) {
+    <div class="gl-empty">
+      <mat-icon aria-hidden="true">info</mat-icon>
+      Pilih project dari Dashboard untuk melihat pipeline status.
+    </div>
+  } @else if (loading()) {
+    <div class="gl-empty">
+      <mat-icon class="gl-spin" aria-hidden="true">sync</mat-icon>
+      Memuat pipeline…
+    </div>
+  } @else {
+    @for (row of rows(); track row.project.id) {
+      <div class="gl-pipe-card">
+        <div class="gl-pipe-head">
+          <div>
+            <div class="gl-proj-name">{{ row.project.name }}</div>
+            <div class="gl-proj-path">{{ row.project.path_with_namespace }}</div>
+          </div>
+          <a
+            class="gl-btn-ghost sm"
+            href="https://asui/{{ row.project.path_with_namespace }}/-/pipelines"
+            target="_blank"
+            rel="noopener"
+            aria-label="Open pipelines in GitLab"
+          >
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+        </div>
+
+        @if (row.error) {
+          <div class="gl-error">{{ row.error }}</div>
+        } @else if (row.pipelines.length === 0) {
+          <div class="gl-empty-project">Tidak ada pipeline
+            @if (refFilter()) { untuk ref "{{ refFilter() }}" }
+          </div>
+        } @else {
+          <div class="gl-pipe-list">
+            @for (p of row.pipelines.slice(0, expandAll() ? undefined : 5); track p.id) {
+              <div class="gl-pipe-row">
+                <span
+                  class="gl-pipe-status"
+                  [style.color]="statusColor(p.status)"
+                  [title]="statusLabel(p.status)"
+                >
+                  <mat-icon aria-hidden="true">{{
+                    p.status === 'success' ? 'check_circle' :
+                    p.status === 'failed' ? 'cancel' :
+                    p.status === 'running' ? 'play_circle' :
+                    p.status === 'pending' ? 'schedule' :
+                    p.status === 'canceled' ? 'remove_circle' :
+                    p.status === 'skipped' ? 'skip_next' : 'circle'
+                  }}</mat-icon>
+                  {{ statusLabel(p.status) }}
+                </span>
+                <code class="gl-pipe-ref">{{ p.ref }}</code>
+                <span class="gl-pipe-meta">
+                  {{ ageText(p.created_at ?? null) }}
+                  @if (p.duration) { · {{ formatDuration(p.duration) }} }
+                  @if (p.user?.name) { · {{ p.user?.name }} }
+                </span>
+                @if (p.web_url) {
+                  <a class="gl-pipe-link" [href]="p.web_url" target="_blank" rel="noopener" aria-label="Open pipeline">
+                    <mat-icon>link</mat-icon>
+                  </a>
+                }
+              </div>
+            }
+            @if (row.pipelines.length > 5 && !expandAll()) {
+              <button class="gl-btn-ghost sm gl-show-more" (click)="expandAll.set(true)">
+                Show {{ row.pipelines.length - 5 }} more
+              </button>
+            } @else if (row.pipelines.length > 5 && expandAll()) {
+              <button class="gl-btn-ghost sm gl-show-more" (click)="expandAll.set(false)">
+                Collapse
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

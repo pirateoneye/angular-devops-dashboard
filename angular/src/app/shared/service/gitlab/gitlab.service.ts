@@ -18,6 +18,7 @@ import {
   Label,
   Milestone,
   MergeRequestResponse,
+  Pipeline,
   GitLabTag,
   ListTagsOptions,
   extractErrorMessage,
@@ -127,6 +128,10 @@ export class GitLabService {
     { id: 1413, name: 'Messi' },
     { id: 762, name: 'QRMS' },
   ];
+
+  /** Groups visible to the current token (fetched from API). */
+  readonly groups = signal<Group[]>([]);
+  readonly loadingGroups = signal(false);
 
   // --- Auth / account state (session only) ---------------------------------
   readonly token = signal('');
@@ -278,6 +283,76 @@ export class GitLabService {
     }
   }
 
+  /** Load top-level groups the current token can access. */
+  async listGroups(): Promise<Group[]> {
+    this.loadingGroups.set(true);
+    try {
+      const data = await this.client().listGroups({ topLevel: true });
+      this.groups.set(data);
+      return data;
+    } finally {
+      this.loadingGroups.set(false);
+    }
+  }
+
+  async listProjectPipelines(
+    pid: number,
+    opts: { perPage?: number; ref?: string } = {},
+  ): Promise<Pipeline[]> {
+    if (this.bypass) {
+      return [
+        { id: 1, status: 'success', web_url: '#', ref: 'main', created_at: new Date().toISOString(), user: { name: 'Dev', username: 'dev' } },
+        { id: 2, status: 'failed', web_url: '#', ref: 'develop', created_at: new Date(Date.now() - 86400000).toISOString(), user: { name: 'Dev', username: 'dev' } },
+      ];
+    }
+    return this.client().listProjectPipelines(pid, opts);
+  }
+
+  async listProjectMergeRequests(
+    pid: number,
+    opts: {
+      state?: 'opened' | 'closed' | 'merged' | 'all';
+      perPage?: number;
+      orderBy?: 'created_at' | 'updated_at' | 'title';
+      sort?: 'asc' | 'desc';
+      labels?: string[];
+    } = {},
+  ): Promise<MergeRequestResponse[]> {
+    if (this.bypass) {
+      return [
+        {
+          iid: 1, title: 'Sample MR', state: 'opened', web_url: '#',
+          source_branch: 'feature', target_branch: 'main',
+          author: { id: 1, name: 'Dev', username: 'dev' },
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          user_notes_count: 2, upvotes: 1, downvotes: 0, draft: false,
+        },
+      ];
+    }
+    return this.client().listProjectMergeRequests(pid, opts);
+  }
+
+  async getMergeRequest(pid: number, iid: number): Promise<MergeRequestResponse> {
+    return this.client().getMergeRequest(pid, iid);
+  }
+
+  async approveMergeRequest(pid: number, iid: number, sha?: string): Promise<void> {
+    await this.client().approveMergeRequest(pid, iid, sha);
+  }
+
+  async unapproveMergeRequest(pid: number, iid: number): Promise<void> {
+    await this.client().unapproveMergeRequest(pid, iid);
+  }
+
+  async listMergeRequestApprovals(pid: number, iid: number): Promise<{
+    approved_by: { user: { id: number; name: string; username: string } }[];
+    approvals_left?: number;
+    approvals_required?: number;
+  }> {
+    return this.client().listMergeRequestApprovals(pid, iid);
+  }
+
   async listProjectTags(pid: number, _opts?: ListTagsOptions): Promise<GitLabTag[]> {
     if (this.bypass) return [];
     return this.client().listProjectTags(pid, _opts);
@@ -299,7 +374,7 @@ export class GitLabService {
   }
   listOpenMergeRequests(pid: number): Promise<MergeRequestResponse[]> {
     if (this.bypass) return Promise.resolve([]);
-    return this.client().listOpenMergeRequests(pid);
+    return this.client().listProjectMergeRequests(pid, { state: 'opened' });
   }
 
   /** Resolve a project id to its name for the batch layer's nameOf resolver. */
@@ -394,9 +469,9 @@ export class GitLabService {
             reasons.push('no MR selected');
           } else {
             const mrs = await client
-              .listOpenMergeRequests(pid)
+              .listProjectMergeRequests(pid, { state: 'opened' })
               .catch(() => [] as MergeRequestResponse[]);
-            if (!mrs.some((m) => m.iid === iid))
+            if (!mrs.some((m: MergeRequestResponse) => m.iid === iid))
               reasons.push(`MR !${iid} not open`);
           }
         }

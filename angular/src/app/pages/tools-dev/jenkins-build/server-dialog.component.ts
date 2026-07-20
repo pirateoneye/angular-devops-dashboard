@@ -86,7 +86,11 @@ export class ServerDialogComponent {
 
   setDefaultJob(serverId: string, jobName: string | null): void {
     this.defaultJobs[serverId] = jobName;
-    localStorage.setItem('jenkins-default-jobs', JSON.stringify(this.defaultJobs));
+    try {
+      localStorage.setItem('jenkins-default-jobs', JSON.stringify(this.defaultJobs));
+    } catch {
+      /* ignore quota / private mode */
+    }
   }
 
   testServer(server: JenkinsServer): void {
@@ -142,7 +146,11 @@ export class ServerDialogComponent {
     delete this.testResults[server.id];
     delete this.jobCounts[server.id];
     delete this.defaultJobs[server.id];
-    localStorage.setItem('jenkins-default-jobs', JSON.stringify(this.defaultJobs));
+    try {
+      localStorage.setItem('jenkins-default-jobs', JSON.stringify(this.defaultJobs));
+    } catch {
+      /* ignore quota / private mode */
+    }
     if (this.activeId === server.id) {
       this.activeId = this.servers.length > 0 ? this.servers[0].id : null;
     }

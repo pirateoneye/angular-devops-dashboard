@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { MsvToastService, Toast, ToastPosition } from './msv-toast.service';
 import { Subscription } from 'rxjs';
 
@@ -70,7 +70,7 @@ export class MsvToastContainerComponent implements OnInit, OnDestroy {
   position: ToastPosition = 'top-right';
   private subscription?: Subscription;
 
-  constructor(private toastService: MsvToastService) {}
+  private readonly toastService = inject(MsvToastService);
 
   ngOnInit(): void {
     this.subscription = this.toastService.getToasts().subscribe({

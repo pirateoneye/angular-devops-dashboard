@@ -1,0 +1,317 @@
+<div class="container container-max pt-2 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Postman Library</h2>
+    <p class="tool-sub">
+      Koleksi endpoint API tim — browse, cari, dan download collection <code>.json</code> untuk import ke Postman lokal masing-masing.
+    </p>
+
+    <div class="tool-divider"></div>
+
+    <!-- ==================== LIBRARY MODE ==================== -->
+    @if (libraryView()) {
+      <!-- Import section -->
+      <details class="pm-import-section" [attr.open]="importError() ? '' : null">
+        <summary>
+          <mat-icon aria-hidden="true">add_circle</mat-icon>
+          Tambah Collection Baru
+        </summary>
+        <textarea
+          class="form-control"
+          [ngModel]="importText()"
+          (ngModelChange)="importText.set($event)"
+          placeholder='{ "info": { "name": "My API", "schema": "..." }, "item": [...] }'
+          rows="10"
+          spellcheck="false"
+          aria-label="Paste Postman collection JSON"
+        ></textarea>
+        @if (importError()) {
+          <div class="error">{{ importError() }}</div>
+        }
+        <div class="input-actions">
+          <button class="btn-primary" (click)="importCollection()" [disabled]="importing() || !importText().trim()" type="button">
+            <mat-icon aria-hidden="true">upload</mat-icon>
+            Import ke Library
+          </button>
+        </div>
+      </details>
+
+      <!-- Master Collection (dari repo git — read-only) -->
+      @if (masterCollections().length) {
+        <div class="pm-section-header">
+          <h3 class="collection-name">
+            <mat-icon aria-hidden="true">source</mat-icon>
+            Master Collections <span class="pm-section-badge">repo</span>
+          </h3>
+          <p class="pm-section-sub">Collection yang dishare via git — semua tim lihat yang sama. Update file JSON di <code>assets/postman/</code> lalu commit.</p>
+        </div>
+        <div class="pm-library-list">
+          @for (entry of masterCollections(); track entry.id) {
+            <div class="pm-library-card pm-master-card" (click)="openMaster($event, entry)" (keydown.enter)="openMaster($event, entry)" (keydown.space)="openMaster($event, entry); $event.preventDefault()" tabindex="0" role="button" [attr.aria-label]="'Buka master collection ' + entry.name">
+              <div class="pm-library-card-main">
+                <mat-icon class="pm-library-icon" aria-hidden="true">source</mat-icon>
+                <div class="pm-library-info">
+                  <h3 class="pm-library-name">{{ entry.name }}</h3>
+                  @if (entry.description) {
+                    <p class="pm-library-desc">{{ entry.description }}</p>
+                  }
+                  @if (entry.category) {
+                    <span class="stat-pill">{{ entry.category }}</span>
+                  }
+                </div>
+              </div>
+              <div class="pm-library-actions">
+                <button class="btn-secondary sm" (click)="downloadMaster($event, entry)" type="button" [attr.aria-label]="'Download ' + entry.name">
+                  <mat-icon aria-hidden="true">download</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="pm-section-header">
+        <h3 class="collection-name">
+          <mat-icon aria-hidden="true">folder</mat-icon>
+          My Collections
+        </h3>
+      </div>
+
+      <!-- Collection list -->
+      @if (savedCollections().length === 0) {
+        <div class="pm-empty pm-empty-library">
+          <mat-icon aria-hidden="true">folder_off</mat-icon>
+          <p>Belum ada collection tersimpan.</p>
+          <p class="pm-empty-hint">Expand "Tambah Collection Baru" di atas, paste JSON Postman collection, lalu klik Import. Collection akan tersimpan di browser dan bisa didownload kapan saja.</p>
+        </div>
+      } @else {
+        <div class="pm-library-list">
+          @for (col of savedCollections(); track col.id) {
+            <div class="pm-library-card" (click)="openCollection(col)" (keydown.enter)="openCollection(col)" (keydown.space)="openCollection(col); $event.preventDefault()" tabindex="0" role="button" [attr.aria-label]="'Buka collection ' + col.name">
+              <div class="pm-library-card-main">
+                <mat-icon class="pm-library-icon" aria-hidden="true">folder_open</mat-icon>
+                <div class="pm-library-info">
+                  <h3 class="pm-library-name">{{ col.name }}</h3>
+                  @if (col.description) {
+                    <p class="pm-library-desc">{{ col.description }}</p>
+                  }
+                  <div class="pm-library-stats">
+                    <span class="stat-pill">{{ col.requestCount }} requests</span>
+                    <span class="stat-pill">{{ col.folderCount }} folders</span>
+                    @if (col.variableCount) {
+                      <span class="stat-pill">{{ col.variableCount }} variables</span>
+                    }
+                  </div>
+                </div>
+              </div>
+              <div class="pm-library-actions">
+                <button class="btn-secondary sm" (click)="downloadCollection($event, col)" type="button" [attr.aria-label]="'Download ' + col.name">
+                  <mat-icon aria-hidden="true">download</mat-icon>
+                </button>
+                <button class="btn-danger sm" (click)="deleteCollection($event, col)" type="button" [attr.aria-label]="'Hapus ' + col.name">
+                  <mat-icon aria-hidden="true">delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Sample shortcut -->
+      @if (savedCollections().length === 0) {
+        <div class="pm-demo-hint" (click)="importText.set(sampleJson()); importCollection()" tabindex="0" role="button" aria-label="Load sample collection">
+          <mat-icon aria-hidden="true">lightbulb</mat-icon>
+          <span>Coba sample collection MSV Tools API →</span>
+        </div>
+      }
+    }
+
+    <!-- ==================== VIEWER MODE ==================== -->
+    @if (!libraryView()) {
+      <!-- Collection header -->
+      <div class="collection-head">
+        <div>
+          <button class="pm-back-btn" (click)="backToLibrary()" type="button" aria-label="Kembali ke library">
+            <mat-icon aria-hidden="true">arrow_back</mat-icon> Library
+          </button>
+          <div class="pm-title-row">
+            <mat-icon aria-hidden="true" class="pm-title-icon">folder_open</mat-icon>
+            <h3 class="collection-name">{{ collectionName() }}</h3>
+          </div>
+          @if (collectionDescription()) {
+            <p class="collection-desc">{{ collectionDescription() }}</p>
+          }
+        </div>
+        <div class="collection-stats">
+          <span class="stat-pill">{{ requestCount() }} requests</span>
+          <span class="stat-pill">{{ folderCount() }} folders</span>
+          @if (collectionVariables().length) {
+            <span class="stat-pill">{{ collectionVariables().length }} variables</span>
+          }
+        </div>
+      </div>
+
+      <!-- Search bar -->
+      <div class="pm-bar">
+        <input
+          type="search" class="form-control pm-search" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+          placeholder="Cari endpoint, URL, atau deskripsi…" aria-label="Search requests"
+        />
+        <button class="btn-secondary" (click)="downloadActive()" type="button" title="Download collection .json">
+          <mat-icon aria-hidden="true">download</mat-icon> Download .json
+        </button>
+      </div>
+
+      @if (collectionVariables().length) {
+        <details class="vars-section">
+          <summary>
+            <mat-icon aria-hidden="true">code</mat-icon> Collection Variables ({{ collectionVariables().length }})
+          </summary>
+          <table class="vars-table">
+            <thead><tr><th>Key</th><th>Value</th><th>Description</th></tr></thead>
+            <tbody>
+              @for (v of collectionVariables(); track v.key) {
+                <tr>
+                  <td><code>{{ v.key }}</code></td>
+                  <td><code>{{ v.value || '—' }}</code></td>
+                  <td>{{ v.description || '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </details>
+      }
+
+      <!-- Two-pane: tree + detail -->
+      <div class="pm-split">
+        <div class="pm-tree-pane">
+          @if (filteredTree().length === 0) {
+            <div class="pm-empty">
+              <mat-icon aria-hidden="true">search_off</mat-icon>
+              @if (searchQuery()) {
+                Tidak ada yang cocok dengan "{{ searchQuery() }}".
+              } @else {
+                Tidak ada request.
+              }
+            </div>
+          } @else {
+            <ul class="pm-tree" role="tree">
+              @for (node of filteredTree(); track node.id) {
+                @if (node.type === 'folder') {
+                  <li class="pm-folder" role="treeitem" [attr.aria-expanded]="isExpanded(node.id)">
+                    <button class="pm-folder-head" (click)="toggleFolder(node.id)" type="button">
+                      <mat-icon aria-hidden="true">{{ isExpanded(node.id) ? 'expand_more' : 'chevron_right' }}</mat-icon>
+                      <mat-icon class="pm-folder-icon" aria-hidden="true">folder</mat-icon>
+                      <span class="pm-folder-name">{{ node.name }}</span>
+                      @if (node.children?.length) { <span class="pm-count">{{ node.children?.length }}</span> }
+                    </button>
+                    @if (node.description) { <p class="pm-folder-desc">{{ node.description }}</p> }
+                    @if (isExpanded(node.id) && node.children) {
+                      <ul class="pm-tree-children" role="group">
+                        @for (child of node.children; track child.id) {
+                          @if (child.type === 'request') {
+                            <li class="pm-request" role="treeitem">
+                              <button class="pm-request-row" [class.selected]="selectedNode()?.id === child.id" (click)="selectNode(child)" type="button">
+                                <span class="pm-method" [class]="'m-' + child.method?.toLowerCase()">{{ child.method }}</span>
+                                <span class="pm-req-name">{{ child.name }}</span>
+                              </button>
+                            </li>
+                          } @else {
+                            <li class="pm-folder" role="treeitem">
+                              <button class="pm-folder-head sm" (click)="toggleFolder(child.id)" type="button">
+                                <mat-icon aria-hidden="true">{{ isExpanded(child.id) ? 'expand_more' : 'chevron_right' }}</mat-icon>
+                                <mat-icon class="pm-folder-icon" aria-hidden="true">folder</mat-icon>
+                                <span class="pm-folder-name">{{ child.name }}</span>
+                              </button>
+                              @if (isExpanded(child.id) && child.children) {
+                                <ul class="pm-tree-children" role="group">
+                                  @for (sub of child.children; track sub.id) {
+                                    <li class="pm-request" role="treeitem">
+                                      <button class="pm-request-row" [class.selected]="selectedNode()?.id === sub.id" (click)="selectNode(sub)" type="button">
+                                        <span class="pm-method" [class]="'m-' + sub.method?.toLowerCase()">{{ sub.method }}</span>
+                                        <span class="pm-req-name">{{ sub.name }}</span>
+                                      </button>
+                                    </li>
+                                  }
+                                </ul>
+                              }
+                            </li>
+                          }
+                        }
+                      </ul>
+                    }
+                  </li>
+                } @else {
+                  <li class="pm-request" role="treeitem">
+                    <button class="pm-request-row" [class.selected]="selectedNode()?.id === node.id" (click)="selectNode(node)" type="button">
+                      <span class="pm-method" [class]="'m-' + node.method?.toLowerCase()">{{ node.method }}</span>
+                      <span class="pm-req-name">{{ node.name }}</span>
+                    </button>
+                  </li>
+                }
+              }
+            </ul>
+          }
+        </div>
+
+        <div class="pm-detail-pane">
+          @if (selectedNode(); as sel) {
+            <div class="pm-detail">
+              <div class="pm-detail-head">
+                <div>
+                  <span class="pm-method-lg" [class]="'m-' + sel.method?.toLowerCase()">{{ sel.method }}</span>
+                  <h3 class="pm-detail-title">{{ sel.name }}</h3>
+                </div>
+                <div class="pm-detail-actions">
+                  <button class="btn-secondary sm" (click)="copyUrl(sel)" type="button">URL</button>
+                  <button class="btn-secondary sm" (click)="copyAsCurl(sel)" type="button">cURL</button>
+                </div>
+              </div>
+              @if (sel.description) { <p class="pm-detail-desc">{{ sel.description }}</p> }
+              <div class="pm-section">
+                <div class="pm-label">URL</div>
+                <code class="pm-url">{{ resolvedUrl(sel) }}</code>
+                @if (extractUrlVariables(sel.url).length) {
+                  <div class="pm-vars-used">
+                    <span class="pm-label-sm">Variables:</span>
+                    @for (v of extractUrlVariables(sel.url); track v) { <span class="pm-var-pill">{{ '{{' + v + '}}' }}</span> }
+                  </div>
+                }
+              </div>
+              @if (queryParams(sel).length) {
+                <div class="pm-section">
+                  <div class="pm-label">Query Parameters</div>
+                  <table class="pm-table"><thead><tr><th>Key</th><th>Value</th><th>Description</th></tr></thead>
+                    <tbody>@for (q of queryParams(sel); track q.key) { <tr><td><code>{{ q.key }}</code></td><td><code>{{ q.value || '—' }}</code></td><td>{{ q.description || '—' }}</td></tr> }</tbody>
+                  </table>
+                </div>
+              }
+              @if (headers(sel).length) {
+                <div class="pm-section">
+                  <div class="pm-label">Headers</div>
+                  <table class="pm-table"><thead><tr><th>Key</th><th>Value</th><th>Description</th></tr></thead>
+                    <tbody>@for (h of headers(sel); track h.key) { <tr><td><code>{{ h.key }}</code></td><td><code>{{ h.value || '—' }}</code></td><td>{{ h.description || '—' }}</td></tr> }</tbody>
+                  </table>
+                </div>
+              }
+              <div class="pm-section">
+                <div class="pm-label">Authentication</div>
+                <code class="pm-auth">{{ authSummary(sel) }}</code>
+              </div>
+              @if (bodyPreview(sel)) {
+                <div class="pm-section">
+                  <div class="pm-label">Body ({{ sel.rawRequest?.body?.mode }})</div>
+                  <pre class="pm-body">{{ bodyPreview(sel) }}</pre>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="pm-empty pm-empty-detail">
+              <mat-icon aria-hidden="true">description</mat-icon>
+              Pilih request di sebelah kiri untuk melihat detail.
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </mat-card>
+</div>

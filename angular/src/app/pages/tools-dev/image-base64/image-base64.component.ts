@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -23,7 +23,7 @@ export class ImageBase64Component {
   imgHeight = 0;
   copiedVariant = '';
 
-  constructor(private snackBar: MatSnackBar) {}
+  private readonly snackBar = inject(MatSnackBar);
 
   onFile(e: Event): void {
     const file = (e.target as HTMLInputElement).files?.[0];

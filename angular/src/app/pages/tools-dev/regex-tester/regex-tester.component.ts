@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostListener,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -50,7 +51,7 @@ export class RegexTesterComponent {
 
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  private readonly sanitizer = inject(DomSanitizer);
 
   @HostListener('execute') onExecute(): void {
     this.run();

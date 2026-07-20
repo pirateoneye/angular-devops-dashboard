@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatCardModule } from '@angular/material/card';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
@@ -16,7 +16,7 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    MaterialModule,
+    MatCardModule,
     MsvFormsModule,
     MatSlideToggleModule,
     InfiniteScrollDirective,
@@ -39,8 +39,11 @@ export class PiketAuthorizationComponent implements OnInit {
 
   loginAction() {
     if (this.passwordInput == environment.piketPassword) {
-      localStorage.setItem('authorized-piket', this.passwordInput);
-      window.location.href = this.redirectPath;
+      try {
+      localStorage.setItem('msv-authorized-piket', this.passwordInput);
+      } catch {
+        /* ignore quota / private mode */
+      }
     } else {
       this.loginError = 'Password salah';
     }

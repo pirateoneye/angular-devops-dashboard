@@ -1,4 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { API_MERCHANTCARE_COMPLAINTS, API_AUDITTRAIL_PIKET } from 'src/app/core/constant/api.constant';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -14,7 +15,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
@@ -30,7 +33,7 @@ type KeluhanListRow = KeluhanList & { dueSoon: boolean };
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    MaterialModule,
+    MatCardModule, MatIconModule, MatExpansionModule,
     MsvFormsModule,
     MatSlideToggleModule,
     InfiniteScrollDirective,
@@ -56,7 +59,7 @@ export class KeluhanListComponent implements OnInit {
 
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private httpClient: HttpClient) {}
+  private readonly httpClient = inject(HttpClient);
 
   ngOnInit(): void {
     this.getData();
@@ -75,8 +78,7 @@ export class KeluhanListComponent implements OnInit {
   }
 
   getData(): void {
-    // TODO: centralize this MerchantCare complaints endpoint in api.constant.ts (no matching constant exists yet).
-    let url = `https://apo.com/api.merchantcare/1.1/complaints?page=${this.page}&size=${this.size}&orderby=entrydate%20desc&query=idcasecategory;equals;685`;
+    let url = `${API_MERCHANTCARE_COMPLAINTS}?page=${this.page}&size=${this.size}&orderby=entrydate%20desc&query=idcasecategory;equals;685`;
     if (this.filterStatus != 'ALL') {
       url = `${url};;status;equals;${this.filterStatus}`;
     }
@@ -131,13 +133,11 @@ export class KeluhanListComponent implements OnInit {
   }
 
   getHandledRequestId(requestId: string[]) {
-    // TODO: centralize this audittrail endpoint in api.constant.ts (no matching constant exists yet).
-    const url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/audittrail/piket`;
+    const url = API_AUDITTRAIL_PIKET;
     const params = new HttpParams({ fromObject: { requestId } });
     const option: any = { observe: 'response', params: params };
     this.httpClient
       .get(url, option)
-      // auto-unsubscribes when this component is destroyed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: any) => {

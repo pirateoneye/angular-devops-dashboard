@@ -72,12 +72,81 @@ export interface MergeRequestResponse {
   web_url: string;
   source_branch: string;
   target_branch: string;
+  description?: string;
+  author?: { id: number; name: string; username: string };
+  assignees?: { id: number; name: string; username: string }[];
+  reviewers?: { id: number; name: string; username: string }[];
+  labels?: string[];
+  milestone?: { id: number; title: string };
+  created_at?: string;
+  updated_at?: string;
+  merged_at?: string | null;
+  draft?: boolean;
+  user_notes_count?: number;
+  upvotes?: number;
+  downvotes?: number;
+  merge_status?: string;
+  has_conflicts?: boolean;
+  blocking_discussions_resolved?: boolean;
+  approvals_before_merge?: number;
+  approved_by?: { id: number; name: string; username: string }[];
+  changes_count?: string;
+  head_pipeline?: {
+    id: number;
+    status: string;
+    web_url: string;
+    ref: string;
+  };
 }
-interface Pipeline {
+
+/** Human-readable MR state → label mapping (Indonesian). */
+export function mrStateLabel(state: string): string {
+  const map: Record<string, string> = {
+    opened: 'Terbuka',
+    closed: 'Ditutup',
+    merged: 'Digabung',
+    locked: 'Terkunci',
+  };
+  return map[state] ?? state;
+}
+export interface Pipeline {
   id: number;
   status: string;
   web_url: string;
   ref: string;
+  sha?: string;
+  created_at?: string;
+  updated_at?: string;
+  duration?: number;
+  user?: { name: string; username: string };
+  source?: string;
+}
+
+/** Human-readable pipeline status → color token mapping. */
+export const PIPELINE_STATUS_COLORS: Record<string, string> = {
+  success: 'var(--msv-success)',
+  failed: 'var(--msv-error)',
+  running: 'var(--msv-primary)',
+  pending: 'var(--msv-warning)',
+  canceled: 'var(--msv-text-muted)',
+  skipped: 'var(--msv-text-muted)',
+  manual: 'var(--msv-warning)',
+  created: 'var(--msv-text-muted)',
+};
+
+/** Map a pipeline status to a human-readable Indonesian label. */
+export function pipelineStatusLabel(status: string): string {
+  const map: Record<string, string> = {
+    success: 'Sukses',
+    failed: 'Gagal',
+    running: 'Berjalan',
+    pending: 'Menunggu',
+    canceled: 'Dibatalkan',
+    skipped: 'Dilewati',
+    manual: 'Manual',
+    created: 'Dibuat',
+  };
+  return map[status] ?? status;
 }
 interface Release {
   tag_name: string;
@@ -230,6 +299,16 @@ export class GitLabClient {
     return this.http.get(this.url('/user'), this.authHeaders());
   }
 
+  // -- groups discovery (top-level groups visible to the current token)
+  listGroups(
+    opts: { topLevel?: boolean; search?: string } = {},
+  ): Promise<Group[]> {
+    const params = new URLSearchParams({ per_page: String(PER_PAGE) });
+    if (opts.topLevel) params.set('top_level_only', 'true');
+    if (opts.search) params.set('search', opts.search);
+    return this.paginate<Group>(`/groups?${params.toString()}`);
+  }
+
   // -- groups / projects (paginated)
   listGroupProjects(
     gid: number,
@@ -267,9 +346,67 @@ export class GitLabClient {
   listProjectMilestones(pid: number): Promise<Milestone[]> {
     return this.paginate<Milestone>(`/projects/${pid}/milestones?state=active`);
   }
-  listOpenMergeRequests(pid: number): Promise<MergeRequestResponse[]> {
-    return this.paginate<MergeRequestResponse>(
-      `/projects/${pid}/merge_requests?state=opened`,
+  listProjectMergeRequests(
+    pid: number,
+    opts: {
+      state?: 'opened' | 'closed' | 'merged' | 'all';
+      perPage?: number;
+      sort?: 'asc' | 'desc';
+      orderBy?: 'created_at' | 'updated_at' | 'title';
+      labels?: string[];
+    } = {},
+  ): Promise<MergeRequestResponse[]> {
+    const params = new URLSearchParams();
+    params.set('state', opts.state ?? 'all');
+    params.set('per_page', String(opts.perPage ?? 20));
+    params.set('order_by', opts.orderBy ?? 'updated_at');
+    params.set('sort', opts.sort ?? 'desc');
+    if (opts.labels?.length) params.set('labels', opts.labels.join(','));
+    return this.http.get<MergeRequestResponse[]>(
+      this.url(`/projects/${pid}/merge_requests?${params.toString()}`),
+      this.authHeaders(),
+    );
+  }
+
+  /** Get a single MR with full details (approvals, labels, pipeline). */
+  getMergeRequest(pid: number, iid: number): Promise<MergeRequestResponse> {
+    return this.http.get<MergeRequestResponse>(
+      this.url(`/projects/${pid}/merge_requests/${iid}`),
+      this.authHeaders(),
+    );
+  }
+
+  /** List approvals for an MR. */
+  listMergeRequestApprovals(
+    pid: number,
+    iid: number,
+  ): Promise<{ id: number; iid: number; user_ids: number[]; approved_by: { user: { id: number; name: string; username: string } }[]; approved?: boolean; approvals_required?: number; approvals_left?: number }> {
+    return this.http.get(
+      this.url(`/projects/${pid}/merge_requests/${iid}/approvals`),
+      this.authHeaders(),
+    );
+  }
+
+  /** Approve an MR (optionally with a SHA pin). */
+  approveMergeRequest(
+    pid: number,
+    iid: number,
+    sha?: string,
+  ): Promise<unknown> {
+    const body: Record<string, unknown> = {};
+    if (sha) body['sha'] = sha;
+    return this.http.post(
+      this.url(`/projects/${pid}/merge_requests/${iid}/approve`),
+      body,
+      this.authHeaders(),
+    );
+  }
+
+  /** Revoke approval on an MR. */
+  unapproveMergeRequest(pid: number, iid: number): Promise<unknown> {
+    return this.http.delete(
+      this.url(`/projects/${pid}/merge_requests/${iid}/unapprove`),
+      this.authHeaders(),
     );
   }
 
@@ -414,6 +551,19 @@ export class GitLabClient {
     return this.http.put(
       this.url(`/projects/${pid}/merge_requests/${iid}`),
       body,
+      this.authHeaders(),
+    );
+  }
+  // -- pipelines (per-project, paginated)
+  listProjectPipelines(
+    pid: number,
+    opts: { perPage?: number; ref?: string; sort?: 'asc' | 'desc' } = {},
+  ): Promise<Pipeline[]> {
+    const params = new URLSearchParams({ per_page: String(opts.perPage ?? 20) });
+    if (opts.ref) params.set('ref', opts.ref);
+    params.set('sort', opts.sort ?? 'desc');
+    return this.http.get<Pipeline[]>(
+      this.url(`/projects/${pid}/pipelines?${params.toString()}`),
       this.authHeaders(),
     );
   }

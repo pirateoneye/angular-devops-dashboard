@@ -20,7 +20,11 @@ function loadRecords(): BuildRecord[] {
 }
 
 function saveRecords(records: BuildRecord[]): void {
-  localStorage.setItem(LS_KEY, JSON.stringify(records));
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(records));
+  } catch {
+    /* ignore quota / private mode */
+  }
 }
 
 

@@ -1,0 +1,9 @@
+[
+  {
+    "id": "msv-sample-api",
+    "file": "msv-sample-api.json",
+    "name": "MSV Sample API",
+    "description": "Contoh collection — Auth + Users endpoint.",
+    "category": "MSV Tools"
+  }
+]

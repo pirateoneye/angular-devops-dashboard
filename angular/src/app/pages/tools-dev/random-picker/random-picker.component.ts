@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -30,7 +30,7 @@ export class RandomPickerComponent {
   copied = false;
   private copyTimer: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(private snackBar: MatSnackBar) {}
+  private readonly snackBar = inject(MatSnackBar);
 
   get items(): string[] {
     return this.input

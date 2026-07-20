@@ -10,6 +10,8 @@ import {
   ProtectBranchOptions,
   TriggerPipelineOptions,
   CreateReleaseOptions,
+  Branch,
+  MergeRequestResponse,
   extractErrorMessage,
 } from './gitlab-api';
 
@@ -459,12 +461,10 @@ export async function previewMergeRequests(
       let detail = '';
       try {
         const [branches, openMrs] = await Promise.all([
-          client.listProjectBranches(pid).catch(() => [] as { name: string }[]),
+          client.listProjectBranches(pid).catch(() => [] as Branch[]),
           client
-            .listOpenMergeRequests(pid)
-            .catch(
-              () => [] as { source_branch: string; target_branch: string }[],
-            ),
+            .listProjectMergeRequests(pid, { state: 'opened' })
+            .catch(() => [] as MergeRequestResponse[]),
         ]);
         const branchNames = new Set(branches.map((b) => b.name));
 

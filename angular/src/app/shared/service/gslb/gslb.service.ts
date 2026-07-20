@@ -183,8 +183,12 @@ export class GslbService {
       this.token.set('dev-fake-token');
       this.username.set(u);
       if (remember && this.isBrowser) {
-        localStorage.setItem(LS_TOKEN, 'dev-fake-token');
-        localStorage.setItem(LS_USER, u);
+        try {
+          localStorage.setItem(LS_TOKEN, 'dev-fake-token');
+          localStorage.setItem(LS_USER, u);
+        } catch {
+          /* ignore quota / private mode */
+        }
       }
       return true;
     }
@@ -202,8 +206,12 @@ export class GslbService {
       this.token.set(token);
       this.username.set(u);
       if (remember && this.isBrowser) {
-        localStorage.setItem(LS_TOKEN, token);
-        localStorage.setItem(LS_USER, u);
+        try {
+          localStorage.setItem(LS_TOKEN, token);
+          localStorage.setItem(LS_USER, u);
+        } catch {
+          /* ignore quota / private mode */
+        }
       }
       return true;
     } catch {
@@ -231,7 +239,6 @@ export class GslbService {
     }
     return '';
   }
-
   logout(): void {
     this.token.set('');
     this.username.set('');
@@ -240,8 +247,12 @@ export class GslbService {
     this.inflight.clear();
     this.gtmDetail.set(null);
     if (this.isBrowser) {
-      localStorage.removeItem(LS_TOKEN);
-      localStorage.removeItem(LS_USER);
+      try {
+        localStorage.removeItem(LS_TOKEN);
+        localStorage.removeItem(LS_USER);
+      } catch {
+        /* ignore quota / private mode */
+      }
     }
   }
 

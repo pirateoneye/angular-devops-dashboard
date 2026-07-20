@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   HostListener,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -55,7 +56,9 @@ export class CronExplainerComponent {
     { label: 'Day of week', min: 0, max: 7 },
   ];
 
-  constructor(private snackBar: MatSnackBar) {
+  private readonly snackBar = inject(MatSnackBar);
+
+  constructor() {
     this.explain();
   }
 

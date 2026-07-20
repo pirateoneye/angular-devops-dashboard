@@ -13,7 +13,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 import { InputFileUploadComponent } from '../../../shared/component/form/input-file-upload/input-file-upload.component';
 
@@ -24,7 +25,7 @@ import { InputFileUploadComponent } from '../../../shared/component/form/input-f
     CommonModule,
     FormsModule,
     RouterModule,
-    MaterialModule,
+    MatCardModule, MatIconModule,
     MsvFormsModule,
     InputFileUploadComponent,
   ],
@@ -46,7 +47,7 @@ export class FileServerManagerComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private httpClient: HttpClient) {}
+  private readonly httpClient = inject(HttpClient);
 
   ngOnInit(): void {
     this.getListCategory();
@@ -129,7 +130,7 @@ export class FileServerManagerComponent implements OnInit {
           if (!res) {
             return;
           }
-          const user: any = localStorage.getItem('user');
+          const user: any = localStorage.getItem('msv-user');
           const category = this.response.data.category.category;
           const url = MCB_TOOLS_FILE_SERVER_MANAGER_DELETE_FILE.replace(
             '{category}',
@@ -180,7 +181,7 @@ export class FileServerManagerComponent implements OnInit {
 
           const formData = new FormData();
           formData.append('file', file);
-          const user: any = localStorage.getItem('user');
+          const user: any = localStorage.getItem('msv-user');
           const category = this.response.data.category.category;
           const url = MCB_TOOLS_FILE_SERVER_MANAGER_WRITE_FILE.replace(
             '{category}',

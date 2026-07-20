@@ -223,8 +223,8 @@ describe('ToolCatalogService', () => {
       expect(new Set(routes).size).toBe(routes.length);
     });
 
-    it('devTools has 12 entries', () => {
-      expect(svc.devTools.length).toBe(12);
+    it('devTools has 15 entries', () => {
+      expect(svc.devTools.length).toBe(15);
     });
 
     

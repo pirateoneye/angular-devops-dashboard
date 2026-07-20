@@ -12,13 +12,13 @@ import { environment } from 'src/environments/environment';
  * The route is reachable by URL, but entering requires the password in
  * `environment.piketPassword`. Wrong/missing password redirects to
  * `/piket/login`; the authorized value is cached in
- * `localStorage['authorized-piket']` so the gate persists for the browser.
+ * `localStorage['msv-authorized-piket']` so the gate persists for the browser.
  */
 export const piketGuard: CanActivateFn = (
   _route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot,
 ) => {
-  if (localStorage.getItem('authorized-piket') !== environment.piketPassword) {
+  if (localStorage.getItem('msv-authorized-piket') !== environment.piketPassword) {
     const router = inject(Router);
     router.navigate(['/piket/login'], { state: { redirectUrl: state.url } });
     return false;

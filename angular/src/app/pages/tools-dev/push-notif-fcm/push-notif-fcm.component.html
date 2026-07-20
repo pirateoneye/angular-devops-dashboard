@@ -7,14 +7,12 @@
 
     <div class="batch-list-card">
       <div class="d-flex row">
-        <label class="col-4 m-0 section-label" for="env-select">
+        <label class="col-4 m-0 section-label" aria-hidden="true">
           Environment
         </label>
         <div class="d-flex row mt-2 mb-2" style="padding-right: 0px">
           <div class="col-12" style="padding-right: 0px">
-            <select id="env-select" [(ngModel)]="env" class="select-key">
-              <option value="UAT">UAT</option>
-            </select>
+            <span class="select-key">UAT</span>
           </div>
         </div>
       </div>

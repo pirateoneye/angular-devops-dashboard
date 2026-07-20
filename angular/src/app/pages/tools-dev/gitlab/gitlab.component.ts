@@ -14,6 +14,8 @@ import { ConnectComponent } from './connect/connect.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TagsComponent } from './tags/tags.component';
 import { BulkComponent } from './bulk/bulk.component';
+import { PipelinesComponent } from './pipelines/pipelines.component';
+import { MergeRequestsComponent } from './merge-requests/merge-requests.component';
 import { ActivityComponent } from './activity/activity.component';
 import { ViewName } from './types';
 
@@ -29,6 +31,8 @@ import { ViewName } from './types';
     TagsComponent,
     BulkComponent,
     ActivityComponent,
+    PipelinesComponent,
+    MergeRequestsComponent,
   ],
   templateUrl: './gitlab.component.html',
   styleUrls: ['./gitlab.component.css'],
@@ -40,17 +44,23 @@ export class GitlabComponent {
   readonly isAuth = computed(() => this.svc.token().length > 0);
   readonly maskedToken = this.svc.maskedToken;
   readonly loading = this.svc.loadingProjects;
+  readonly groups = this.svc.groups;
+  readonly loadingGroups = this.svc.loadingGroups;
   readonly view = signal<ViewName>('connect');
-  readonly groupId = signal(991);
+  readonly groupId = signal<number>(0);
   readonly selectedProjectIds = signal<number[]>([]);
 
   constructor() {
     effect(
       () => {
         if (this.isAuth()) {
-          // ponytail: skip API call for dev bypass; mock projects already seeded
           if (this.svc.token() !== 'bypass-dummy-token') {
-            this.svc.listGroupProjects(this.groupId());
+            void this.svc.listGroups().then((g) => {
+              if (g.length && this.groupId() === 0) {
+                this.groupId.set(g[0].id);
+                void this.svc.listGroupProjects(g[0].id);
+              }
+            });
           }
           this.view.set('dashboard');
         }

@@ -1,20 +1,25 @@
 <div class="bulk-shell">
   @if (!action()) {
     <div class="action-grid">
-      <button class="action-card" (click)="selectAction('tag')">
-        <span class="action-icon">🏷️</span>
-        <h3>Bulk Tag</h3>
-        <p>Create a tag on selected projects.</p>
-      </button>
-      <button class="action-card" (click)="selectAction('merge')">
-        <span class="action-icon">🔀</span>
-        <h3>Bulk Merge Request</h3>
-        <p>Open MRs across selected projects.</p>
-      </button>
+      @for (act of ACTIONS; track act.id) {
+        <button
+          class="action-card"
+          [class.danger]="act.danger"
+          (click)="selectAction(act.id)"
+          [attr.aria-label]="act.name"
+        >
+          <mat-icon class="action-icon" aria-hidden="true">{{ act.icon }}</mat-icon>
+          <h3>{{ act.name }}</h3>
+          <p>{{ act.desc }}</p>
+        </button>
+      }
     </div>
   } @else {
     <div class="stepper">
       <div class="stepper-header">
+        <button class="step-back" (click)="backToActions()" aria-label="Back to actions">
+          <mat-icon aria-hidden="true">arrow_back</mat-icon>
+        </button>
         <div class="step" [class.active]="step() >= 1">1. Select</div>
         <div class="step" [class.active]="step() >= 2">2. Configure</div>
         <div class="step" [class.active]="step() >= 3">3. Preview</div>
@@ -28,6 +33,7 @@
               [(ngModel)]="searchFilter"
               placeholder="Search projects..."
               class="form-control"
+              aria-label="Search projects"
             />
             <div class="subbar-actions">
               <button class="btn btn-sm btn-outline" (click)="toggleAll(true)">Select all</button>
@@ -47,7 +53,6 @@
             }
           </div>
           <div class="step-actions">
-            <button class="btn btn-outline" (click)="backToActions()">Back</button>
             <button class="btn btn-primary" [disabled]="selectedCount() === 0" (click)="nextStep()">Next</button>
           </div>
         </div>
@@ -55,32 +60,143 @@
 
       @if (step() === 2) {
         <div class="step-body">
-          @if (action() === 'tag') {
-            <div class="form-group">
-              <label>Tag name</label>
-              <input type="text" [(ngModel)]="tagName" class="form-control" placeholder="e.g. v1.2.0" />
-            </div>
-            <div class="form-group">
-              <label>Target ref</label>
-              <input type="text" [(ngModel)]="tagRef" class="form-control" placeholder="main" />
-            </div>
-            <div class="form-group">
-              <label>Message</label>
-              <input type="text" [(ngModel)]="tagMsg" class="form-control" placeholder="Release v1.2.0" />
-            </div>
-          } @else {
-            <div class="form-group">
-              <label>Source branch</label>
-              <input type="text" [(ngModel)]="mrSource" class="form-control" placeholder="feature/x" />
-            </div>
-            <div class="form-group">
-              <label>Target branch</label>
-              <input type="text" [(ngModel)]="mrTarget" class="form-control" placeholder="main" />
-            </div>
-            <div class="form-group">
-              <label>MR title</label>
-              <input type="text" [(ngModel)]="mrTitle" class="form-control" placeholder="Merge feature/x" />
-            </div>
+          @switch (action()) {
+            @case ('tag') {
+              <div class="form-group">
+                <label>Tag name</label>
+                <input type="text" [(ngModel)]="tagName" class="form-control" placeholder="e.g. v1.2.0" />
+              </div>
+              <div class="form-group">
+                <label>Target ref</label>
+                <input type="text" [(ngModel)]="tagRef" class="form-control" placeholder="main" />
+              </div>
+              <div class="form-group">
+                <label>Message</label>
+                <input type="text" [(ngModel)]="tagMsg" class="form-control" placeholder="Release v1.2.0" />
+              </div>
+            }
+            @case ('branch') {
+              <div class="form-group">
+                <label>Branch name</label>
+                <input type="text" [(ngModel)]="branchName" class="form-control" placeholder="e.g. feature/x" />
+              </div>
+              <div class="form-group">
+                <label>From ref</label>
+                <input type="text" [(ngModel)]="branchRef" class="form-control" placeholder="main" />
+              </div>
+            }
+            @case ('delete-branch') {
+              <div class="form-group danger-note">
+                <mat-icon aria-hidden="true">warning</mat-icon>
+                This action deletes a branch on every selected project. This cannot be undone.
+              </div>
+              <div class="form-group">
+                <label>Branch name to delete</label>
+                <input type="text" [(ngModel)]="deleteBranchName" class="form-control" placeholder="feature/old" />
+              </div>
+            }
+            @case ('merge') {
+              <div class="form-group">
+                <label>Source branch</label>
+                <input type="text" [(ngModel)]="mrSource" class="form-control" placeholder="feature/x" />
+              </div>
+              <div class="form-group">
+                <label>Target branch</label>
+                <input type="text" [(ngModel)]="mrTarget" class="form-control" placeholder="main" />
+              </div>
+              <div class="form-group">
+                <label>MR title</label>
+                <input type="text" [(ngModel)]="mrTitle" class="form-control" placeholder="Merge feature/x" />
+              </div>
+            }
+            @case ('protect') {
+              <div class="form-group">
+                <label>Branch name</label>
+                <input type="text" [(ngModel)]="protectName" class="form-control" placeholder="main" />
+              </div>
+              <div class="form-group">
+                <label>Merge access level (0-60)</label>
+                <input type="number" [(ngModel)]="mergeAccessLevel" class="form-control" min="0" max="60" />
+              </div>
+              <div class="form-group">
+                <label>Push access level (0-60)</label>
+                <input type="number" [(ngModel)]="pushAccessLevel" class="form-control" min="0" max="60" />
+              </div>
+              <div class="form-group">
+                <label>
+                  <input type="checkbox" [(ngModel)]="allowForcePush" />
+                  Allow force push
+                </label>
+              </div>
+            }
+            @case ('unprotect') {
+              <div class="form-group danger-note">
+                <mat-icon aria-hidden="true">warning</mat-icon>
+                This action removes branch protection on every selected project.
+              </div>
+              <div class="form-group">
+                <label>Branch name</label>
+                <input type="text" [(ngModel)]="protectName" class="form-control" placeholder="main" />
+              </div>
+            }
+            @case ('pipeline') {
+              <div class="form-group">
+                <label>Pipeline ref</label>
+                <input type="text" [(ngModel)]="pipelineRef" class="form-control" placeholder="main" />
+              </div>
+              <div class="form-group">
+                <label>Variables (one per line, KEY=VALUE)</label>
+                <textarea [(ngModel)]="pipelineVars" class="form-control" rows="4" placeholder="ENV=production&#10;DEBUG=true"></textarea>
+              </div>
+            }
+            @case ('release') {
+              <div class="form-group">
+                <label>Tag name</label>
+                <input type="text" [(ngModel)]="tagName" class="form-control" placeholder="v1.2.0" />
+              </div>
+              <div class="form-group">
+                <label>Release name</label>
+                <input type="text" [(ngModel)]="releaseName" class="form-control" placeholder="Release v1.2.0" />
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea [(ngModel)]="releaseDesc" class="form-control" rows="4" placeholder="Release notes..."></textarea>
+              </div>
+              <div class="form-group">
+                <label>Ref (tag from)</label>
+                <input type="text" [(ngModel)]="releaseRef" class="form-control" placeholder="main" />
+              </div>
+            }
+            @case ('close-mr') {
+              <div class="form-group">
+                <label>MR IID (!N)</label>
+                <input type="number" [(ngModel)]="mrIid" class="form-control" min="1" placeholder="42" />
+              </div>
+              <div class="form-group">
+                <label>Action</label>
+                <select [(ngModel)]="mrAction" class="form-control">
+                  <option value="close">Close MR</option>
+                  <option value="merge">Merge MR</option>
+                </select>
+              </div>
+            }
+            @case ('update-labels') {
+              <div class="form-group">
+                <label>MR IID (!N)</label>
+                <input type="number" [(ngModel)]="mrIid" class="form-control" min="1" placeholder="42" />
+              </div>
+              <div class="form-group">
+                <label>Label action</label>
+                <select [(ngModel)]="labelAction" class="form-control">
+                  <option value="add">Add labels</option>
+                  <option value="remove">Remove labels</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Labels (comma-separated)</label>
+                <input type="text" [(ngModel)]="labelList" class="form-control" placeholder="bug,critical,hotfix" />
+              </div>
+            }
           }
           <div class="step-actions">
             <button class="btn btn-outline" (click)="prevStep()">Back</button>
@@ -92,7 +208,7 @@
       @if (step() === 3) {
         <div class="step-body">
           @if (previewing()) {
-            <p class="loading">Checking readiness…</p>
+            <p class="loading">Checking readiness...</p>
           } @else if (previewResults().length > 0) {
             <div class="summary">
               <span class="ready">{{ readyCount() }} ready</span>
@@ -107,7 +223,12 @@
                   <tr [class.ok]="r.ok" [class.fail]="!r.ok">
                     <td>{{ r.projectName }}</td>
                     <td>{{ r.ok ? 'Ready' : 'Blocked' }}</td>
-                    <td>{{ r.detail }}</td>
+                    <td>
+                      {{ r.detail }}
+                      @if (!r.ok && r.reasons.length > 0) {
+                        <span class="reasons">{{ r.reasons.join('; ') }}</span>
+                      }
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -118,7 +239,7 @@
           <div class="step-actions">
             <button class="btn btn-outline" (click)="prevStep()">Back</button>
             <button class="btn btn-primary" [disabled]="!canExecute()" (click)="armExecute()">
-              {{ executeArmed() ? 'Jalankan?' : 'Execute' }}
+              {{ executeArmed() ? 'Confirm?' : 'Execute' }}
             </button>
           </div>
         </div>
@@ -139,9 +260,9 @@
                   <td>{{ r.success ? 'Done' : 'Failed' }}</td>
                   <td>
                     @if (r.mrUrl) {
-                      <a [href]="r.mrUrl" target="_blank">MR #{{ r.mrIid }}</a>
+                      <a [href]="r.mrUrl" target="_blank" rel="noopener">MR !{{ r.mrIid }}</a>
                     } @else {
-                      {{ r.detail }}
+                      {{ r.detail || r.error || '' }}
                     }
                   </td>
                 </tr>

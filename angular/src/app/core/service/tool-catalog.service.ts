@@ -270,6 +270,27 @@ export class ToolCatalogService {
       group: 'Dev Tools',
       keywords: ['dns', 'query', 'lookup', 'a', 'aaaa', 'cname', 'mx', 'txt', 'ns', 'record'],
     },
+    {
+      label: 'Env Var Converter',
+      icon: 'sync_alt',
+      route: '/tools-dev/env-var-converter',
+      group: 'Dev Tools',
+      keywords: ['env', 'environment', 'k8s', 'secret', 'docker', 'yaml', 'bash', 'powershell', 'json'],
+    },
+    {
+      label: 'cURL Converter',
+      icon: 'code_blocks',
+      route: '/tools-dev/curl-converter',
+      group: 'Dev Tools',
+      keywords: ['curl', 'http', 'javascript', 'python', 'go', 'httpie', 'fetch', 'requests'],
+    },
+    {
+      label: 'Postman Viewer',
+      icon: 'api',
+      route: '/tools-dev/postman-viewer',
+      group: 'Dev Tools',
+      keywords: ['postman', 'collection', 'api', 'documentation', 'endpoint', 'swagger'],
+    },
   ];
 
   readonly piket: NavEntry[] = [

@@ -1,0 +1,79 @@
+<div class="container container-max pt-2 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">Env Var Converter</h2>
+    <p class="tool-sub">
+      Konversi <code>.env</code> ke K8s Secret, Docker, JSON, YAML, Bash, atau PowerShell.
+    </p>
+
+    <div class="tool-divider"></div>
+
+    <div class="converter-grid">
+      <div class="input-section">
+        <div class="section-head">
+          <h3 class="section-title">
+            <mat-icon aria-hidden="true">input</mat-icon>
+            Input (.env format)
+          </h3>
+          <div class="section-actions">
+            <button class="btn-secondary" (click)="pasteSample()" type="button">Sample</button>
+            <button class="btn-secondary" (click)="clear()" type="button" [disabled]="!input()">Clear</button>
+          </div>
+        </div>
+        <textarea
+          class="form-control"
+          [ngModel]="input()"
+          (ngModelChange)="input.set($event)"
+          placeholder="KEY=VALUE&#10;DATABASE_URL=postgres://...&#10;API_KEY=sk-..."
+          rows="14"
+          spellcheck="false"
+          aria-label="Env input"
+        ></textarea>
+        @if (stats(); as s) {
+          <div class="stats">
+            <span class="stat-pill">{{ s.count }} vars</span>
+            <span class="stat-pill">{{ s.bytes }} bytes</span>
+          </div>
+        }
+        @if (error()) {
+          <div class="error">{{ error() }}</div>
+        }
+      </div>
+
+      <div class="output-section">
+        <div class="section-head">
+          <h3 class="section-title">
+            <mat-icon aria-hidden="true">output</mat-icon>
+            Output
+          </h3>
+          <div class="section-actions">
+            <button
+              class="btn-primary"
+              (click)="copyOutput()"
+              type="button"
+              [disabled]="!output()"
+            >
+              <mat-icon aria-hidden="true">{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="format-tabs" role="group" aria-label="Output format">
+          @for (opt of formatOptions; track opt.id) {
+            <button
+              class="format-tab"
+              [class.active]="outputFormat() === opt.id"
+              (click)="outputFormat.set(opt.id)"
+              type="button"
+            >
+              <mat-icon aria-hidden="true">{{ opt.icon }}</mat-icon>
+              {{ opt.label }}
+            </button>
+          }
+        </div>
+
+        <pre class="output" aria-live="polite">{{ output() || 'Output akan muncul di sini…' }}</pre>
+      </div>
+    </div>
+  </mat-card>
+</div>

@@ -86,8 +86,12 @@ export class JenkinsService {
     this.username.set(username);
     this.token.set(token);
     if (this.isBrowser) {
-      localStorage.setItem(LS_JENKINS_USER, username);
-      localStorage.setItem(LS_JENKINS_REMEMBER, String(remember));
+      try {
+        localStorage.setItem(LS_JENKINS_USER, username);
+        localStorage.setItem(LS_JENKINS_REMEMBER, String(remember));
+      } catch {
+        /* ignore quota / private mode */
+      }
     }
   }
 
@@ -95,8 +99,12 @@ export class JenkinsService {
     this.username.set('');
     this.token.set('');
     if (this.isBrowser) {
-      localStorage.removeItem(LS_JENKINS_USER);
-      localStorage.removeItem(LS_JENKINS_REMEMBER);
+      try {
+        localStorage.removeItem(LS_JENKINS_USER);
+        localStorage.removeItem(LS_JENKINS_REMEMBER);
+      } catch {
+        /* ignore quota / private mode */
+      }
     }
   }
 

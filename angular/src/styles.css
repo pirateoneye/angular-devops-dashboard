@@ -129,7 +129,7 @@ body {
 }
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: "Open Sans", sans-serif;
   background-color: var(--msv-bg);
   color: var(--msv-text);
   line-height: 1.5;

@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   HostListener,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -38,7 +39,9 @@ export class TimestampConverterComponent {
 
   error = '';
 
-  constructor(private snackBar: MatSnackBar) {
+  private readonly snackBar = inject(MatSnackBar);
+
+  constructor() {
     this.refreshNow();
   }
 

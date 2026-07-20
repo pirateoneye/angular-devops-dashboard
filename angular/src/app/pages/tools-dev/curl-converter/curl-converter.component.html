@@ -1,0 +1,82 @@
+<div class="container container-max pt-2 pb-3">
+  <mat-card class="tool-card">
+    <h2 class="tool-title">cURL → Code Converter</h2>
+    <p class="tool-sub">
+      Paste perintah <code>curl</code>, dapatkan kode untuk JavaScript (fetch), Python (requests), Go (net/http), atau HTTPie.
+    </p>
+
+    <div class="tool-divider"></div>
+
+    <div class="converter-grid">
+      <div class="input-section">
+        <div class="section-head">
+          <h3 class="section-title">
+            <mat-icon aria-hidden="true">input</mat-icon>
+            cURL Command
+          </h3>
+          <div class="section-actions">
+            <button class="btn-secondary" (click)="pasteSample()" type="button">Sample</button>
+            <button class="btn-secondary" (click)="clear()" type="button" [disabled]="!input()">Clear</button>
+          </div>
+        </div>
+        <textarea
+          class="form-control"
+          [ngModel]="input()"
+          (ngModelChange)="input.set($event)"
+          placeholder="curl -X POST 'https://api.example.com/v1/users' &#10;  -H 'Content-Type: application/json' &#10;  -H 'Authorization: Bearer ...' &#10;  -d '{&quot;name&quot;:&quot;John&quot;}'"
+          rows="12"
+          spellcheck="false"
+          aria-label="cURL command input"
+        ></textarea>
+        @if (stats(); as s) {
+          <div class="stats">
+            <span class="stat-pill method-pill">{{ s.method }}</span>
+            <span class="stat-pill">{{ s.headerCount }} headers</span>
+            @if (s.hasBody) {
+              <span class="stat-pill">has body</span>
+            }
+          </div>
+        }
+        @if (error()) {
+          <div class="error">{{ error() }}</div>
+        }
+      </div>
+
+      <div class="output-section">
+        <div class="section-head">
+          <h3 class="section-title">
+            <mat-icon aria-hidden="true">output</mat-icon>
+            Output
+          </h3>
+          <div class="section-actions">
+            <button
+              class="btn-primary"
+              (click)="copyOutput()"
+              type="button"
+              [disabled]="!output()"
+            >
+              <mat-icon aria-hidden="true">{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="format-tabs" role="group" aria-label="Output language">
+          @for (opt of langOptions; track opt.id) {
+            <button
+              class="format-tab"
+              [class.active]="outputLang() === opt.id"
+              (click)="outputLang.set(opt.id)"
+              type="button"
+            >
+              <mat-icon aria-hidden="true">{{ opt.icon }}</mat-icon>
+              {{ opt.label }}
+            </button>
+          }
+        </div>
+
+        <pre class="output" aria-live="polite">{{ output() || 'Output akan muncul di sini…' }}</pre>
+      </div>
+    </div>
+  </mat-card>
+</div>

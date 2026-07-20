@@ -1,11 +1,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MCB_TOOLS_UTILS_SEND_KAFKA } from 'src/app/core/constant/api.constant';
 import {Component, inject, DestroyRef, ChangeDetectionStrategy} from '@angular/core';
 import { catchError } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
@@ -15,7 +18,7 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
     CommonModule,
     FormsModule,
     RouterModule,
-    MaterialModule,
+    MatCardModule, MatIconModule, MatProgressSpinnerModule,
     MsvFormsModule,
   ],
   selector: 'app-publish-kafka',
@@ -35,7 +38,7 @@ export class PublishKafkaComponent {
 
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   submit() {
     this.validationError = null;
@@ -62,7 +65,7 @@ export class PublishKafkaComponent {
       message: 'Sending to Broker',
       data: null,
     };
-    const url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/utils/send/kafka/${this.principle}/${this.topic}`;
+    const url = `${MCB_TOOLS_UTILS_SEND_KAFKA}`.replace('{principle}', this.principle).replace('{topic}', this.topic);
     return this.http
       .post(url, this.requestBody, { headers: headers, observe: 'response' })
       .pipe(

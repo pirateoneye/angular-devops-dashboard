@@ -13,7 +13,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ErrorStateComponent } from '../../../shared/component/error-state/error-state.component';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
@@ -21,7 +22,7 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CommonModule, FormsModule, RouterModule, MaterialModule,
+    CommonModule, FormsModule, RouterModule, MatIconModule, MatProgressSpinnerModule,
     MsvFormsModule, ErrorStateComponent,
   ],
   selector: 'msv-batch-runner',
@@ -49,19 +50,17 @@ export class BatchRunnerComponent implements OnInit {
     'ON-PROGRESS': 'on-progress-badge',
   };
 
-  constructor(
-    private httpClient: HttpClient,
-    private datePipe: DatePipe,
-    private ngZone: NgZone,
-    private cdr: ChangeDetectorRef,
-    public dialog: MatDialog,
-    private userService: UserService,
-  ) {}
+  private readonly httpClient = inject(HttpClient);
+  private readonly datePipe = inject(DatePipe);
+  private readonly ngZone = inject(NgZone);
+  private readonly cdr = inject(ChangeDetectorRef);
+  public readonly dialog = inject(MatDialog);
+  private readonly userService = inject(UserService);
 
   ngOnInit() {
     this.getData();
 
-    const userLocalStorage = localStorage.getItem('user');
+    const userLocalStorage = localStorage.getItem('msv-user');
     if (userLocalStorage) {
       this.userService.setNama(userLocalStorage);
       this.user = this.userService.getNama();

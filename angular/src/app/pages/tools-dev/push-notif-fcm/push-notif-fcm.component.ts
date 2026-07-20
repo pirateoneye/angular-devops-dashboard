@@ -1,13 +1,16 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {Component, inject, DestroyRef, ChangeDetectionStrategy} from '@angular/core';
+import { Component, inject, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { KJUR, KEYUTIL } from 'jsrsasign';
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
+import { environment } from 'src/environments/environment';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,7 +19,7 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
     CommonModule,
     FormsModule,
     RouterModule,
-    MaterialModule,
+    MatCardModule, MatIconModule, MatProgressSpinnerModule,
     MsvFormsModule,
   ],
   selector: 'app-push-notif-fcm',
@@ -24,34 +27,17 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
   styleUrls: ['./push-notif-fcm.component.css'],
 })
 export class PushNotifFcmComponent {
-  env: string = 'UAT';
-  requestBody: string = '';
-  response: any = {
-    status: null,
-    message: null,
-    data: null,
+  requestBody = '';
+  response = {
+    status: null as string | null,
+    message: null as string | null,
+    data: null as unknown,
   };
   validationError: string | null = null;
-  serviceAccount: any = {
-    UAT: {
-      type: 'service_account',
-      project_id: 'merchantservice-bca',
-      // TODO: Load from environment config — do not hardcode credentials.
-      // Service account JSON should be injected at build time via
-      // environment files or fetched from a secure backend proxy.
-      private_key_id:
-        /* TODO: Load from environment config — do not hardcode credentials */ '',
-      private_key:
-        /* TODO: Load from environment config — do not hardcode credentials */ '',
-      client_email:
-        'firebase-adminsdk-b2s44@merchantservice-bca.iam.gserviceaccount.com',
-      token_uri: 'https://oauth2.googleapis.com/token',
-    },
-  };
 
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   submit() {
     this.validationError = null;
@@ -61,11 +47,8 @@ export class PushNotifFcmComponent {
       return;
     }
 
-    // of(0) just kicks off the chain; the 0 value itself isn't used.
-    // switchMap chains steps: the next only runs after the previous finishes.
     of(0)
       .pipe(
-        // auto-unsubscribes when this component is destroyed
         takeUntilDestroyed(this.destroyRef),
         switchMap(() => this.generateAccessToken()),
         switchMap((accessToken: string | null) =>
@@ -93,49 +76,47 @@ export class PushNotifFcmComponent {
 
     const jwtHeader = { alg: 'RS256', typ: 'JWT' };
 
-    // Membuat payload JWT
-    const iat = Math.floor(Date.now() / 1000); // Waktu token dibuat (dalam detik sejak epoch)
-    const exp = iat + 3600; // Token berlaku selama 1 jam
+    const iat = Math.floor(Date.now() / 1000);
+    const exp = iat + 3600;
     const jwtPayload = {
-      iss: this.serviceAccount[this.env].client_email, // Email dari Service Account
-      scope: 'https://www.googleapis.com/auth/firebase.messaging', // Scope
-      aud: this.serviceAccount[this.env].token_uri, // Audience
-      exp: exp, // Waktu kadaluarsa
-      iat: iat, // Waktu token dibuat
+      iss: environment.fcmClientEmail,
+      scope: environment.fcmAuthScope,
+      aud: environment.fcmTokenUri,
+      exp,
+      iat,
     };
 
     const jwtHeaderStr = JSON.stringify(jwtHeader);
     const jwtPayloadStr = JSON.stringify(jwtPayload);
 
-    // Sign the JWT using jsrsasign
-    const key: any = KEYUTIL.getKey(this.serviceAccount[this.env].private_key);
+    const key: unknown = KEYUTIL.getKey(environment.fcmPrivateKey);
     const signedJWT = KJUR.jws.JWS.sign(
       jwtHeader.alg,
       jwtHeaderStr,
       jwtPayloadStr,
-      key,
+      key as Parameters<typeof KJUR.jws.JWS.sign>[3],
     );
 
-    const url = 'https://oauth2.googleapis.com/token';
+    const url = environment.fcmTokenUri;
     const requestBody = `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${signedJWT}`;
     const headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
 
-    return this.http.post(url, requestBody, { headers: headers }).pipe(
-      map((response: any) => {
-        if (response && response.access_token) {
-          return response.access_token;
-        } else {
-          throw new Error(response);
+    return this.http.post(url, requestBody, { headers }).pipe(
+      map((response: unknown) => {
+        const r = response as Record<string, unknown>;
+        if (r?.['access_token']) {
+          return r['access_token'] as string;
         }
+        throw new Error(String(response));
       }),
       catchError((error) => {
         this.buildErrorResponse('Error Generating Access Token', error);
-        throw new Error(error);
+        throw new Error(String(error));
       }),
     );
   }
 
-  pushNotifFcm(accessToken: string | null): Observable<any> {
+  pushNotifFcm(accessToken: string | null): Observable<unknown> {
     this.response = {
       status: 'ON_PROCESS',
       message: 'Push Notification FCM',
@@ -147,16 +128,16 @@ export class PushNotifFcmComponent {
       'Content-Type': 'application/json',
     });
 
-    const url = `https://fcm.googleapis.com/v1/projects/${this.serviceAccount[this.env].project_id}/messages:send`;
-    return this.http.post(url, this.requestBody, { headers: headers }).pipe(
+    const url = `${environment.fcmBaseUrl}/v1/projects/${environment.fcmProjectId}/messages:send`;
+    return this.http.post(url, this.requestBody, { headers }).pipe(
       catchError((error) => {
         this.buildErrorResponse('Error Push Notification FCM', error);
-        throw new Error(error);
+        throw new Error(String(error));
       }),
     );
   }
 
-  private buildErrorResponse(message: string, error: any) {
+  private buildErrorResponse(message: string, error: { url?: string; status?: number; headers?: unknown; error?: unknown }) {
     this.response.message = message;
     this.response.data = {
       url: error.url,

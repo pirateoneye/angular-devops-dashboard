@@ -1,4 +1,5 @@
 ﻿import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, DestroyRef, inject, ChangeDetectionStrategy } from '@angular/core';
+import { API_QRIS_STATIC_DETAIL } from 'src/app/core/constant/api.constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
@@ -27,7 +28,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatCardModule } from '@angular/material/card';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
@@ -40,7 +41,7 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    MaterialModule,
+    MatCardModule,
     MsvFormsModule,
     MatSlideToggleModule,
     InfiniteScrollDirective,
@@ -387,9 +388,8 @@ export class FixDataUserComponent {
 
     return from(listNotFilteredQrisStatis).pipe(
       concatMap((mid) =>
-        // TODO: centralize this QRIS-static endpoint in api.constant.ts (no matching constant exists yet).
         this.httpClient
-          .get(`https://auhau.com/v1/qris-static/detail/${mid}`, options)
+          .get(`${API_QRIS_STATIC_DETAIL}`.replace('{mid}', mid), options)
           .pipe(
             tap((response: any) => {
               if (response.status == 204) {

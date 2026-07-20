@@ -53,7 +53,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.theme.init();
 
-    const userLocalStorage = localStorage.getItem('user');
+    const userLocalStorage = localStorage.getItem('msv-user');
     if (userLocalStorage) {
       this.userService.setNama(userLocalStorage);
     } else {

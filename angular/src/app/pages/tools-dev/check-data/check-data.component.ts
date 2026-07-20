@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
+import { MCB_TOOLS_DATA_MANAGEMENT_GET_DATA } from 'src/app/core/constant/api.constant';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { SelectOption } from 'src/app/shared/components/msv-forms/interfaces';
@@ -6,7 +7,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
@@ -16,7 +18,7 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
     CommonModule,
     FormsModule,
     RouterModule,
-    MaterialModule,
+    MatCardModule, MatIconModule,
     MsvFormsModule,
   ],
   selector: 'app-check-data',
@@ -78,7 +80,7 @@ export class CheckDataComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private httpClient: HttpClient) {}
+  private readonly httpClient = inject(HttpClient);
 
   ngOnInit(): void {
     this.checkBy = this.option[this.submissionType].checkBy[0];
@@ -102,7 +104,7 @@ export class CheckDataComponent implements OnInit {
     this.response.submissionType = this.submissionType;
     this.response.checkBy = this.checkBy;
     this.response.checkValue = this.checkValue;
-    const url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/data/${this.prefix}/${this.submissionType}/${this.checkBy}/${this.checkValue}`;
+    const url = `${MCB_TOOLS_DATA_MANAGEMENT_GET_DATA}`.replace('{prefix}', this.prefix).replace('{submissionType}', this.submissionType).replace('{checkBy}', this.checkBy).replace('{checkValue}', this.checkValue);
     this.httpClient
       .get(url)
       .pipe(takeUntilDestroyed(this.destroyRef))

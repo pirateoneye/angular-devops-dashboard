@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { MCB_TOOLS_DATA_MANAGEMENT_DELETE_DATA_PENGAJUAN } from 'src/app/core/constant/api.constant';
 import { Component, inject, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalConfirmationComponent } from 'src/app/shared/component/modal/confirmation/modal-confirmation.component';
@@ -6,7 +7,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
@@ -16,7 +18,7 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
     CommonModule,
     FormsModule,
     RouterModule,
-    MaterialModule,
+    MatCardModule, MatIconModule,
     MsvFormsModule,
   ],
   selector: 'delete-data',
@@ -57,7 +59,7 @@ export class DeleteDataComponent {
   readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private httpClient: HttpClient) {}
+  private readonly httpClient = inject(HttpClient);
 
   onChangeSubmissionType() {
     this.deleteBy = this.option[this.submissionType][0];
@@ -101,8 +103,8 @@ export class DeleteDataComponent {
           this.response.submissionType = this.submissionType;
           this.response.deleteBy = this.deleteBy;
           this.response.deleteValue = this.deleteValue;
-          const user = localStorage.getItem('user');
-          const url = `https://api-tools.apps.ocpdevgra.dti.co.id/v1.0.0/data/pengajuan/${this.submissionType}/${this.deleteBy}/${this.deleteValue}?audittrailUser=${user}`;
+          const user = localStorage.getItem('msv-user');
+          const url = `${MCB_TOOLS_DATA_MANAGEMENT_DELETE_DATA_PENGAJUAN}?audittrailUser=${user}`.replace('{submissionType}', this.submissionType).replace('{checkBy}', this.deleteBy).replace('{checkValue}', this.deleteValue);
           this.httpClient
             .delete(url)
             .pipe(takeUntilDestroyed(this.destroyRef))

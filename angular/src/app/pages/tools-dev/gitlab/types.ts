@@ -15,7 +15,7 @@ export interface ActionDef {
 export type SortKey = 'projectName' | 'latestTag' | 'tagDate';
 export type SortDir = 'asc' | 'desc';
 export type FilterChip = 'all' | 'tagged' | 'untagged';
-export type ViewName = 'connect' | 'dashboard' | 'tags' | 'bulk';
+export type ViewName = 'connect' | 'dashboard' | 'tags' | 'pipelines' | 'mrs' | 'bulk';
 
 export interface ExecResult {
   projectId: number;

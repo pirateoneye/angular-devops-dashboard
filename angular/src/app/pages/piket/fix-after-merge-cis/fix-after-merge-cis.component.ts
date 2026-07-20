@@ -20,7 +20,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import {
   MESSI_GET_ACCESS_TOKEN,
   MESSI_GET_USER_BY_EMAIL,
@@ -41,7 +42,7 @@ import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    MaterialModule,
+    MatCardModule, MatIconModule,
     MsvFormsModule,
     MatSlideToggleModule,
     InfiniteScrollDirective,

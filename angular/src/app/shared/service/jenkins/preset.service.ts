@@ -19,7 +19,11 @@ function loadPresets(): ParamPreset[] {
 }
 
 function savePresets(presets: ParamPreset[]): void {
-  localStorage.setItem(LS_KEY, JSON.stringify(presets));
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(presets));
+  } catch {
+    /* ignore quota / private mode */
+  }
 }
 
 function uuid(): string {

@@ -63,7 +63,7 @@ export class YamlJsonComponent {
 
   private parseYamlValue(val: string): any { if (!val) return {}; if (val === 'true') return true; if (val === 'false') return false; if (val === 'null' || val === '~') return null; if (/^-?\d+$/.test(val)) return parseInt(val); if (/^-?\d+\.\d+$/.test(val)) return parseFloat(val); if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) return val.slice(1, -1); return val }
 
-  private jsonToYaml(json: string): string { const obj = JSON.parse(json); return this.stringifyYaml(obj, 0) }
+  private jsonToYaml(json: string): string { try { const obj = JSON.parse(json); return this.stringifyYaml(obj, 0) } catch (e) { throw new Error('JSON tidak valid: ' + (e as Error).message) } }
   private stringifyYaml(val: any, indent: number): string { const pad = '  '.repeat(indent);
     if (Array.isArray(val)) return val.map(v => `${pad}- ${this.stringifyYaml(v, indent + 1).replace(/^\s+/, '')}`).join('\n');
     if (val !== null && typeof val === 'object') return Object.entries(val).map(([k, v]) => {

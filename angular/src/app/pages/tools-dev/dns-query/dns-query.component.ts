@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../module/material.module';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ToastComponent } from '../../../shared/component/toast/toast.component';
 import { SkeletonComponent } from '../../../shared/component/skeleton/skeleton.component';
 import { CopyBtnComponent } from '../../../shared/component/copy-btn/copy-btn.component';
@@ -74,7 +75,7 @@ interface Toast {
 @Component({
   standalone: true,
   selector: 'app-dns-query',
-  imports: [FormsModule, MaterialModule, ToastComponent, SkeletonComponent, CopyBtnComponent],
+  imports: [FormsModule, MatIconModule, MatButtonToggleModule, ToastComponent, SkeletonComponent, CopyBtnComponent],
   templateUrl: './dns-query.component.html',
   styleUrl: './dns-query.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

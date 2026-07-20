@@ -5,6 +5,7 @@ import {
   AfterContentInit,
   HostListener,
   ElementRef,
+  inject,
 } from '@angular/core';
 import { MsvMenuItemComponent } from './msv-menu-item.component';
 
@@ -69,7 +70,7 @@ export class MsvMenuComponent implements AfterContentInit {
 
   private focusedIndex = -1;
 
-  constructor(public elementRef: ElementRef) {}
+  public readonly elementRef = inject(ElementRef);
 
   ngAfterContentInit(): void {
     // Set up keyboard navigation after items are loaded

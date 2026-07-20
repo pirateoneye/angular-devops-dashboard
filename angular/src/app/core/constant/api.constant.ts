@@ -1,5 +1,6 @@
 import { environment } from 'src/environments/environment';
 
+
 //Testing
 export const MCB_TOOLS_FILE_SERVER_MANAGER_LIST_FILE_BY_CATEGORY = `${environment.hostToolsMcb}/v1.0.0/file/list/category/{category}`;
 export const MCB_TOOLS_FILE_SERVER_MANAGER_DOWNLOAD_FILE =  `${environment.hostToolsMcb}/v1.0.0/file/download/category/{category}/file/{filename}`;
@@ -18,3 +19,20 @@ export const MESSI_EDIT_USER = `${environment.hostMessiProd}/messi.api/v1/sso/88
 export const MAGENTA_GET_INDUK_CICILAN =  `${environment.hostMagentaProd}/api.merchant_v2.0.0/v1.0.0/Outlet/IndukCicilan/{mid}`;
 export const MAGENTA_GET_PEMILIK_BY_CIS =  `${environment.hostMagentaProd}/api.merchant_v2.0.0/v1.0.0/Pemilik/getPemilikMerchantByCis/{cis}`;
 export const MAGENTA_GET_STICKER_QRIS_BY_MID =  `${environment.hostMagentaProd}/api.util_v2.0.0/outlet/nmid/image/{mid}`;
+
+// Piket — Keluhan List
+export const API_MERCHANTCARE_COMPLAINTS = `${environment.hostToolsMcb}/api.merchantcare/1.1/complaints`;
+export const API_AUDITTRAIL_PIKET = `${environment.hostToolsMcb}/v1.0.0/audittrail/piket`;
+export const API_AUDITTRAIL_PIKET_HANDLED = `${environment.hostToolsMcb}/v1.0.0/audittrail/piket/handled/request-id/{requestId}`;
+
+// Tools — QRIS Static
+export const API_QRIS_STATIC_DETAIL = `${environment.hostToolsMcb}/v1/qris-static/detail/{mid}`;
+
+// Tools — Kafka
+export const MCB_TOOLS_UTILS_SEND_KAFKA = `${environment.hostToolsMcb}/v1.0.0/utils/send/kafka/{principle}/{topic}`;
+
+// Tools — Data Management (check/delete already exist above but verify)
+export const MCB_TOOLS_DATA_MANAGEMENT_GET_DATA = `${environment.hostToolsMcb}/v1.0.0/data/{prefix}/{submissionType}/{checkBy}/{checkValue}`;
+
+// Tools — Batch Runner
+export const MCB_TOOLS_BATCH_LIST = `${environment.hostBatchRunner}/v1.0.0/batch/list`;

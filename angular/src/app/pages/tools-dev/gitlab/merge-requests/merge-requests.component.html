@@ -1,0 +1,185 @@
+<div class="gl-mrs">
+  <div class="gl-bar">
+    <div class="gl-filter-row">
+      <input
+        class="gl-input gl-filter"
+        [ngModel]="titleFilter()"
+        (ngModelChange)="titleFilter.set($event)"
+        placeholder="Filter by title or !iid"
+        aria-label="Filter merge requests"
+      />
+    </div>
+    <div class="gl-state-chips" role="group" aria-label="Filter by state">
+      <button class="gl-chip" [class.active]="stateFilter() === 'opened'" (click)="setStateFilter('opened')">
+        Opened ({{ openedCount() }})
+      </button>
+      <button class="gl-chip" [class.active]="stateFilter() === 'merged'" (click)="setStateFilter('merged')">
+        Merged ({{ mergedCount() }})
+      </button>
+      <button class="gl-chip" [class.active]="stateFilter() === 'closed'" (click)="setStateFilter('closed')">
+        Closed
+      </button>
+      <button class="gl-chip" [class.active]="stateFilter() === 'all'" (click)="setStateFilter('all')">
+        All
+      </button>
+    </div>
+    <button class="gl-btn-ghost" (click)="loadMergeRequests()" [disabled]="loading()">
+      <mat-icon>refresh</mat-icon> Refresh
+    </button>
+  </div>
+
+  @if (!hasSelection()) {
+    <div class="gl-empty">
+      <mat-icon aria-hidden="true">info</mat-icon>
+      Pilih project dari Dashboard untuk melihat merge requests.
+    </div>
+  } @else if (loading()) {
+    <div class="gl-empty">
+      <mat-icon class="gl-spin" aria-hidden="true">sync</mat-icon>
+      Memuat merge requests…
+    </div>
+  } @else {
+    <p class="gl-result-count">{{ totalMrCount() }} MR{{ totalMrCount() !== 1 ? 's' : '' }} found</p>
+
+    @for (row of filteredRows(); track row.project.id) {
+      @if (row.mergeRequests.length > 0 || row.error) {
+        <div class="gl-mr-card">
+          <button class="gl-mr-head" (click)="toggleProject(row.project.id)" [attr.aria-expanded]="expandedProject() === row.project.id">
+            <div>
+              <div class="gl-proj-name">{{ row.project.name }}</div>
+              <div class="gl-proj-path">{{ row.project.path_with_namespace }}</div>
+            </div>
+            <div class="gl-mr-count">
+              <span class="gl-mr-count-num">{{ row.mergeRequests.length }}</span>
+              <mat-icon aria-hidden="true">{{ expandedProject() === row.project.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </div>
+          </button>
+
+          @if (row.error) {
+            <div class="gl-error">{{ row.error }}</div>
+          }
+
+          @if (expandedProject() === row.project.id) {
+            <div class="gl-mr-list">
+              @for (mr of row.mergeRequests; track mr.iid) {
+                <button class="gl-mr-row" (click)="selectMr(row.project.id, mr)">
+                  <span class="gl-mr-state" [style.color]="stateColor(mr.state)">
+                    <mat-icon aria-hidden="true">{{ mr.state === 'opened' ? 'merge' : (mr.state === 'merged' ? 'check_circle' : 'cancel') }}</mat-icon>
+                    {{ stateLabel(mr.state) }}
+                  </span>
+                  <span class="gl-mr-iid">!{{ mr.iid }}</span>
+                  <span class="gl-mr-title" [class.draft]="mr.draft">{{ mr.draft ? 'Draft: ' : '' }}{{ mr.title }}</span>
+                  <span class="gl-mr-meta">{{ ageText(mr.updated_at ?? null) }}</span>
+                  @if (mr.head_pipeline?.status) {
+                    <span class="gl-mr-pipe" [style.color]="pipelineColor(mr.head_pipeline?.status)">
+                      <mat-icon aria-hidden="true">build_circle</mat-icon>
+                    </span>
+                  }
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  }
+
+  @if (selectedMr(); as sel) {
+    <div class="gl-overlay" (click)="closeMrDetail()" (keydown.escape)="closeMrDetail()">
+      <div class="gl-mr-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+        <div class="gl-mr-modal-head">
+          <div>
+            <span class="gl-mr-state" [style.color]="stateColor(sel.mr.state)">
+              <mat-icon aria-hidden="true">{{ sel.mr.state === 'opened' ? 'merge' : (sel.mr.state === 'merged' ? 'check_circle' : 'cancel') }}</mat-icon>
+              {{ stateLabel(sel.mr.state) }}
+            </span>
+            <h3 class="gl-mr-modal-title">!{{ sel.mr.iid }} - {{ sel.mr.draft ? 'Draft: ' : '' }}{{ sel.mr.title }}</h3>
+          </div>
+          <button class="gl-icon-btn" (click)="closeMrDetail()" aria-label="Close">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="gl-mr-modal-body">
+          <div class="gl-mr-section">
+            <div class="gl-mr-label">Branches</div>
+            <div class="gl-mr-branches">
+              <code>{{ sel.mr.source_branch }}</code>
+              <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+              <code>{{ sel.mr.target_branch }}</code>
+            </div>
+            @if (sel.mr.has_conflicts) {
+              <span class="gl-mr-conflict"><mat-icon>warning</mat-icon> Conflict</span>
+            }
+          </div>
+
+          @if (sel.mr.author) {
+            <div class="gl-mr-section">
+              <div class="gl-mr-label">Author</div>
+              <div>{{ sel.mr.author.name }} ({{ sel.mr.author.username }})</div>
+            </div>
+          }
+
+          @if (sel.mr.assignees?.length) {
+            <div class="gl-mr-section">
+              <div class="gl-mr-label">Assignees</div>
+              <div>{{ namesOf(sel.mr.assignees) }}</div>
+            </div>
+          }
+
+          @if (sel.mr.reviewers?.length) {
+            <div class="gl-mr-section">
+              <div class="gl-mr-label">Reviewers</div>
+              <div>{{ namesOf(sel.mr.reviewers) }}</div>
+            </div>
+          }
+
+          @if (sel.mr.labels?.length) {
+            <div class="gl-mr-section">
+              <div class="gl-mr-label">Labels</div>
+              <div class="gl-mr-labels">
+                @for (l of sel.mr.labels; track l) {
+                  <span class="gl-mr-label-chip">{{ l }}</span>
+                }
+              </div>
+            </div>
+          }
+
+          <div class="gl-mr-section">
+            <div class="gl-mr-label">Approvals</div>
+            <div class="gl-mr-approvers">
+              @if (approvalsFor(sel.pid, sel.mr.iid).length > 0) {
+                @for (a of approvalsFor(sel.pid, sel.mr.iid); track a.user.username) {
+                  <span class="gl-mr-approver">Approved - {{ a.user.name }}</span>
+                }
+              } @else {
+                <span class="gl-mute">Belum ada approver</span>
+              }
+            </div>
+          </div>
+
+          @if (sel.mr.description) {
+            <div class="gl-mr-section">
+              <div class="gl-mr-label">Description</div>
+              <pre class="gl-mr-desc">{{ sel.mr.description }}</pre>
+            </div>
+          }
+        </div>
+
+        <div class="gl-mr-modal-btns">
+          <a class="gl-btn-ghost" [href]="sel.mr.web_url" target="_blank" rel="noopener">
+            <mat-icon>open_in_new</mat-icon> Open in GitLab
+          </a>
+          @if (sel.mr.state === 'opened') {
+            <button class="gl-btn-primary" (click)="unapproveMr()" [disabled]="approving()">
+              <mat-icon>thumb_down</mat-icon> Unapprove
+            </button>
+            <button class="gl-btn-primary" (click)="approveMr()" [disabled]="approving()">
+              <mat-icon>thumb_up</mat-icon> {{ approving() ? 'Approving...' : 'Approve' }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

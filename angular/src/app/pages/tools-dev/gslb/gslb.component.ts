@@ -11,7 +11,9 @@ import { ActivityService } from '../../../shared/service/activity.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../module/material.module';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ToastComponent } from '../../../shared/component/toast/toast.component';
 import { CopyBtnComponent } from '../../../shared/component/copy-btn/copy-btn.component';
 import { SkeletonComponent } from '../../../shared/component/skeleton/skeleton.component';
@@ -26,7 +28,7 @@ import { GslbAuthDialogComponent } from './gslb-auth-dialog.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, MaterialModule, ToastComponent, CopyBtnComponent, SkeletonComponent],
+  imports: [CommonModule, FormsModule, MatIconModule, MatButtonToggleModule, MatProgressSpinnerModule, ToastComponent, CopyBtnComponent, SkeletonComponent],
   templateUrl: './gslb.component.html',
   styleUrl: './gslb.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

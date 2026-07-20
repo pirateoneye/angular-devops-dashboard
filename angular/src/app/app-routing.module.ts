@@ -161,6 +161,27 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'tools-dev/env-var-converter',
+    loadComponent: () =>
+      import('./pages/tools-dev/env-var-converter/env-var-converter.component').then(
+        (m) => m.EnvVarConverterComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/curl-converter',
+    loadComponent: () =>
+      import('./pages/tools-dev/curl-converter/curl-converter.component').then(
+        (m) => m.CurlConverterComponent,
+      ),
+  },
+  {
+    path: 'tools-dev/postman-viewer',
+    loadComponent: () =>
+      import('./pages/tools-dev/postman-viewer/postman-viewer.component').then(
+        (m) => m.PostmanViewerComponent,
+      ),
+  },
+  {
     path: 'piket/login',
     loadComponent: () =>
       import('./pages/piket/piket-authorization/piket-authorization.component').then(

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, HostListener, HostBinding } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, HostListener, HostBinding, inject } from '@angular/core';
 
 @Component({
   selector: 'msv-menu-item',
@@ -98,7 +98,7 @@ export class MsvMenuItemComponent {
     return this.disabled ? 'true' : 'false';
   }
 
-  constructor(private elementRef: ElementRef) {}
+  private readonly elementRef = inject(ElementRef);
 
   @HostListener('click', ['$event'])
   onClick(event: MouseEvent): void {

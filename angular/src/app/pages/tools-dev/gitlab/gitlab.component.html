@@ -23,8 +23,17 @@
     <div class="gl-subbar">
       <label class="gl-group-select" for="gl-group-select">
         <span class="gl-mute">Group</span>
-        <select id="gl-group-select" class="gl-input" [value]="groupId()" (change)="onGroupChange(+$any($event.target).value)">
-          <option [value]="991">Merchant Services</option>
+        <select id="gl-group-select" class="gl-input" [value]="groupId()" (change)="onGroupChange(+$any($event.target).value)" [disabled]="loadingGroups()">
+          @if (loadingGroups()) {
+            <option value="0">Memuat grup…</option>
+          } @else {
+            @for (g of groups(); track g.id) {
+              <option [value]="g.id">{{ g.name }} ({{ g.id }})</option>
+            }
+            @if (groups().length === 0) {
+              <option value="0">Tidak ada grup</option>
+            }
+          }
         </select>
       </label>
       <button class="gl-icon-btn" (click)="refresh()" title="Refresh projects" aria-label="Refresh projects" [disabled]="loading()">
@@ -38,6 +47,12 @@
         <button role="tab" class="gl-tab" [class.active]="view() === 'tags'" (click)="goToView('tags')">
           <mat-icon>label</mat-icon> Tags
         </button>
+        <button role="tab" class="gl-tab" [class.active]="view() === 'pipelines'" (click)="goToView('pipelines')">
+          <mat-icon>timeline</mat-icon> Pipelines
+        </button>
+        <button role="tab" class="gl-tab" [class.active]="view() === 'mrs'" (click)="goToView('mrs')">
+          <mat-icon>merge</mat-icon> Merge Requests
+        </button>
         <button role="tab" class="gl-tab" [class.active]="view() === 'bulk'" (click)="goToView('bulk')">
           <mat-icon>batch_prediction</mat-icon> Bulk
         </button>
@@ -48,6 +63,10 @@
       <gl-dashboard (projectSelected)="setProjectIds($event)" />
     } @else if (view() === 'tags') {
       <gl-tags [selectedIds]="selectedProjectIds()" />
+    } @else if (view() === 'pipelines') {
+      <gl-pipelines [selectedIds]="selectedProjectIds()" />
+    } @else if (view() === 'mrs') {
+      <gl-mrs [selectedIds]="selectedProjectIds()" />
     } @else if (view() === 'bulk') {
       <gl-bulk [preselectedIds]="selectedProjectIds()" />
     }

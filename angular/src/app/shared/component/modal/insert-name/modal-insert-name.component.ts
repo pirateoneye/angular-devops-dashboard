@@ -1,4 +1,4 @@
-﻿import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
+﻿import {Component, OnInit, ChangeDetectionStrategy, inject} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UserService } from 'src/app/shared/service/user-service/user.service';
 import { CommonModule } from '@angular/common';
@@ -18,7 +18,8 @@ export class ModalInsertNameComponent implements OnInit {
   nama: string = '';
   isLocalstorage = false;
 
-  constructor(private userService: UserService, public dialogRef: MatDialogRef<ModalInsertNameComponent>) { }
+  private readonly userService = inject(UserService);
+  public readonly dialogRef = inject(MatDialogRef<ModalInsertNameComponent>);
   
   setNama(): void {
     if (this.nama.trim().length > 0) {

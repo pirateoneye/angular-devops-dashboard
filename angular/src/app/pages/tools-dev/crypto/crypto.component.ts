@@ -8,7 +8,8 @@ type CryptoWordArray = ReturnType<typeof CryptoJS.lib.WordArray.random>;
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MaterialModule } from '../../../module/material.module';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.module';
 
 @Component({
@@ -18,7 +19,7 @@ import { MsvFormsModule } from '../../../shared/components/msv-forms/msv-forms.m
     CommonModule,
     FormsModule,
     RouterModule,
-    MaterialModule,
+    MatCardModule, MatIconModule,
     MsvFormsModule,
   ],
   selector: 'crypto',

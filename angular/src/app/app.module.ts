@@ -3,8 +3,9 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivityFeedComponent } from './shared/component/activity-feed/activity-feed.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpErrorInterceptor } from './core/interceptor/http-error.interceptor';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DatePipe } from '@angular/common';
@@ -15,14 +16,13 @@ import { AppRoutingModule } from './app-routing.module';
   imports: [
     AppRoutingModule,
     HttpClientModule,
-    ActivityFeedComponent,
     BrowserModule,
     BrowserAnimationsModule,
     MatDialogModule,
     MatIconModule,
     MatMenuModule,
   ],
-  providers: [DatePipe, { provide: LOCALE_ID, useValue: 'id' }],
+  providers: [DatePipe, { provide: LOCALE_ID, useValue: 'id' }, { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
